@@ -284,17 +284,32 @@ function RegionResults({ results, months, maxPrice }) {
   )
 }
 
+// 단지명 정규화 (공백·괄호 제거)
+function normNm(s) { return (s || '').replace(/[\s()（）]/g, '') }
+// 두 이름의 문자 겹침 비율 (0~1)
+function nameSim(a, b) {
+  const na = normNm(a), nb = normNm(b)
+  if (!na || !nb) return 0
+  if (na === nb) return 1
+  let overlap = 0
+  for (const ch of na) if (nb.includes(ch)) overlap++
+  return overlap / Math.max(na.length, nb.length)
+}
+
 function AptDetailView({ apt, tradeMonths, onChangeMonths }) {
   const [trades, setTrades] = useState(null)
+  const [matchedNm, setMatchedNm] = useState(null) // 실제 매칭된 aptNm
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     if (!apt?.bjdCode) return
     const lawdCd = apt.bjdCode.slice(0, 5)
+    const dong = (apt.addr || '').split(' ').pop() // "종로구 내수동" → "내수동"
     const ymList = getYM(tradeMonths)
     setLoading(true)
     setError(null)
+    setMatchedNm(null)
     Promise.all(
       ymList.map(ym =>
         fetch(`/api/trade?lawdCd=${lawdCd}&dealYmd=${ym}`)
@@ -309,11 +324,11 @@ function AptDetailView({ apt, tradeMonths, onChangeMonths }) {
         if (!items) return
         const arr = Array.isArray(items) ? items : [items]
         arr.forEach(item => {
-          const aptNm = (item.aptNm || '').trim()
-          if (aptNm !== apt.kaptName) return
           const amt = parseInt((item.dealAmount || '').replace(/,/g, ''))
           if (isNaN(amt)) return
           all.push({
+            aptNm: (item.aptNm || '').trim(),
+            umdNm: (item.umdNm || '').trim(),
             date: `${item.dealYear}.${String(item.dealMonth).padStart(2,'0')}.${String(item.dealDay).padStart(2,'0')}`,
             amt,
             area: parseFloat(item.excluUseAr) || 0,
@@ -321,8 +336,31 @@ function AptDetailView({ apt, tradeMonths, onChangeMonths }) {
           })
         })
       })
-      all.sort((a, b) => b.date.localeCompare(a.date))
-      setTrades(all)
+
+      // 1) 동 필터 (가능하면)
+      const byDong = dong ? all.filter(t => t.umdNm === dong) : all
+      const pool = byDong.length > 0 ? byDong : all
+
+      // 2) 단지명 유사도로 최선 매칭
+      const scoreMap = new Map()
+      pool.forEach(t => {
+        if (!scoreMap.has(t.aptNm))
+          scoreMap.set(t.aptNm, nameSim(t.aptNm, apt.kaptName))
+      })
+      const best = [...scoreMap.entries()].sort((a, b) => b[1] - a[1])[0]
+
+      let filtered
+      if (best && best[1] >= 0.5) {
+        filtered = pool.filter(t => t.aptNm === best[0])
+        setMatchedNm(best[0] !== apt.kaptName ? best[0] : null)
+      } else {
+        // 매칭 실패 → 동 전체 거래 표시
+        filtered = pool
+        setMatchedNm(pool.length > 0 ? '(인근 지역 전체 거래)' : null)
+      }
+
+      filtered.sort((a, b) => b.date.localeCompare(a.date))
+      setTrades(filtered)
       setLoading(false)
     }).catch(e => { setError(e.message); setLoading(false) })
   }, [apt, tradeMonths])
@@ -333,6 +371,11 @@ function AptDetailView({ apt, tradeMonths, onChangeMonths }) {
     <div className="apt-detail-card">
       <div className="apt-detail-name">{apt.kaptName}</div>
       <div className="apt-detail-addr">{apt.addr || '주소 정보 없음'}</div>
+      {matchedNm && (
+        <div style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 10, background: 'var(--blue-lt)', padding: '4px 10px', borderRadius: 8 }}>
+          📌 실거래 데이터 기준명: {matchedNm}
+        </div>
+      )}
 
       <div className="trade-period-tabs">
         {[3, 6, 12].map(m => (
