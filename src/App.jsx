@@ -1,0 +1,762 @@
+import { useState, useCallback, useRef, useEffect } from 'react'
+
+/* ═══════════════════════════════════════
+   데이터 상수
+═══════════════════════════════════════ */
+const SEOUL = {
+  '강남구':'11680','강동구':'11740','강북구':'11305','강서구':'11500',
+  '관악구':'11620','광진구':'11215','구로구':'11530','금천구':'11545',
+  '노원구':'11350','도봉구':'11320','동대문구':'11230','동작구':'11590',
+  '마포구':'11440','서대문구':'11410','서초구':'11650','성동구':'11200',
+  '성북구':'11290','송파구':'11710','양천구':'11470','영등포구':'11560',
+  '용산구':'11170','은평구':'11380','종로구':'11110','중구':'11140','중랑구':'11260',
+}
+const METRO = {
+  '수원장안구':'41111','수원권선구':'41113','수원팔달구':'41115','수원영통구':'41117',
+  '성남수정구':'41131','성남중원구':'41133','성남분당구':'41135',
+  '의정부시':'41150','안양만안구':'41171','안양동안구':'41173',
+  '부천시':'41190','광명시':'41210','안산상록구':'41271','안산단원구':'41273',
+  '고양덕양구':'41281','고양일산동구':'41285','고양일산서구':'41287',
+  '과천시':'41290','구리시':'41310','남양주시':'41360','하남시':'41450',
+  '용인처인구':'41461','용인기흥구':'41463','용인수지구':'41465',
+  '파주시':'41480','김포시':'41570','화성시':'41590',
+  '인천미추홀구':'28177','인천연수구':'28185','인천남동구':'28200',
+  '인천부평구':'28237','인천서구':'28260',
+}
+const PRESETS = {
+  newlywed: ['노원구','마포구','은평구','강서구','성북구'],
+  mayong:   ['마포구','용산구','성동구','광진구'],
+  nodog:    ['노원구','도봉구','강북구'],
+  gbuk:     ['강북구','노원구','도봉구','성북구','은평구','중랑구','동대문구'],
+  gnam:     ['강남구','서초구','송파구','강동구','성동구','광진구'],
+}
+const DONG = {
+  '상계동':  { sub:'4·7호선 노원역·마들역', note:'상계주공 재건축 추진', tag:'재건축기대' },
+  '중계동':  { sub:'7호선 중계역', edu:'은행사거리 학원가 (강북 대치동)', tag:'학군최강' },
+  '하계동':  { sub:'7호선 하계역·공릉역', note:'을지대병원 근접', tag:'생활편의' },
+  '공릉동':  { sub:'6호선 화랑대역', edu:'태릉초·공릉중 초세권', tag:'교육환경' },
+  '월계동':  { sub:'1호선 월계역·광운대역', note:'광운대·성신여대 인근', tag:'대학가' },
+  '도봉동':  { sub:'1호선 방학역', note:'도봉산 인근 쾌적', tag:'자연환경' },
+  '쌍문동':  { sub:'1호선 쌍문역', note:'덕성여대·한성대 인근', tag:'대학가' },
+  '방학동':  { sub:'1호선 방학역', note:'도봉산 트레킹 접근', tag:'자연환경' },
+  '창동':    { sub:'1·4호선 창동역', note:'GTX-C 수혜 예정', tag:'미래가치' },
+  '번동':    { sub:'4호선 수유역', note:'강북구 상권 중심', tag:'생활편의' },
+  '미아동':  { sub:'4호선 미아역·미아사거리역', note:'롯데백화점 미아점', tag:'생활편의' },
+  '수유동':  { sub:'4호선 수유역', note:'강북 최대 상권', tag:'생활편의' },
+  '길음동':  { sub:'4호선 길음역', note:'길음뉴타운 정비중', tag:'재건축기대' },
+  '장위동':  { sub:'6호선 돌곶이역', note:'장위뉴타운 정비중', tag:'재건축기대' },
+  '불광동':  { sub:'3·6호선 불광역', note:'더블역세권 은평 핵심', tag:'역세권' },
+  '녹번동':  { sub:'3호선 녹번역', note:'은평뉴타운 인근', tag:'재건축기대' },
+  '상암동':  { sub:'6호선 월드컵경기장역', note:'DMC IT 직주근접', tag:'직주근접' },
+  '합정동':  { sub:'2·6호선 합정역', note:'홍대 인근 젊은 감성', tag:'역세권' },
+  '망원동':  { sub:'6호선 망원역', note:'망원한강공원 인접', tag:'자연환경' },
+  '화곡동':  { sub:'5호선 화곡역·우장산역', note:'강서구 최대 상권', tag:'생활편의' },
+  '가양동':  { sub:'9호선 가양역', note:'한강 조망 가능', tag:'자연환경' },
+  '구로동':  { sub:'1·2호선 구로역', note:'구로디지털단지 직주근접', tag:'직주근접' },
+  '신도림동':{ sub:'1·2호선 신도림역', note:'교통 허브 디큐브시티', tag:'역세권' },
+  '봉천동':  { sub:'2호선 봉천역·서울대입구역', note:'서울대 상권', tag:'대학가' },
+  '신림동':  { sub:'2호선 신림역·서원역', note:'신림선 개통 역세권', tag:'역세권' },
+  '상도동':  { sub:'7호선 상도역·장승배기역', note:'숭실대 인근', tag:'대학가' },
+  '당산동':  { sub:'2·9호선 당산역', note:'영등포 핵심 역세권', tag:'역세권' },
+  '신길동':  { sub:'5호선 신길역', note:'여의도 출퇴근 쾌적', tag:'직주근접' },
+  '목동':    { sub:'5호선 목동역·오목교역', edu:'목동 학원가 최강 학군', tag:'학군최강' },
+  '행당동':  { sub:'2·5호선 왕십리역', note:'왕십리 재개발 기대', tag:'재건축기대' },
+  '구의동':  { sub:'2·5호선 구의역·광나루역', note:'강동 접근성 우수', tag:'역세권' },
+  '면목동':  { sub:'7호선 면목역', note:'경의중앙선 환승 편의', tag:'역세권' },
+  '고덕동':  { sub:'5호선 고덕역·명일역', note:'고덕강일지구 신도시', tag:'미래가치' },
+  '둔촌동':  { sub:'5호선 둔촌동역', note:'올림픽파크포레온 입주', tag:'미래가치' },
+  '분당동':  { sub:'분당선 서현역·이매역', edu:'분당 최강 학군', tag:'학군최강' },
+  '평촌동':  { sub:'4호선 범계역·평촌역', edu:'평촌 학원가', tag:'학군최강' },
+}
+
+/* ═══════════════════════════════════════
+   유틸 함수
+═══════════════════════════════════════ */
+function fP(v) {
+  if (v >= 10000) { const e = Math.floor(v / 10000), r = v % 10000; return r ? `${e}억 ${r.toLocaleString()}만` : `${e}억` }
+  return `${v.toLocaleString()}만`
+}
+function fR(a, b) { return a === b ? fP(a) : `${fP(a)} ~ ${fP(b)}` }
+
+function getYM(n) {
+  const list = []
+  const now = new Date()
+  for (let i = 0; i < n; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    list.push(`${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}`)
+  }
+  return list
+}
+
+function parseXml(xml, regionName) {
+  const trades = []
+  try {
+    const doc = new DOMParser().parseFromString(xml, 'text/xml')
+    doc.querySelectorAll('item').forEach(item => {
+      const g = t => (item.querySelector(t)?.textContent || '').trim()
+      const amt = parseInt(g('dealAmount').replace(/,/g, ''))
+      const area = parseFloat(g('excluUseAr')) || 0
+      const aptNm = g('aptNm'), dong = g('umdNm'), buildYear = g('buildYear') || '1988'
+      if (!aptNm || isNaN(amt) || amt <= 0) return
+      trades.push({ regionName, aptNm, dong, buildYear, amt, area })
+    })
+  } catch (e) { /* skip */ }
+  return trades
+}
+
+function calcScore(c, dong) {
+  const d = DONG[dong] || {}
+  const age = 2026 - parseInt(c.buildYear || 1988)
+  let s = 0
+  s += Math.min(Math.round(c.count * 1.2), 20)
+  s += age <= 5 ? 20 : age <= 10 ? 17 : age <= 15 ? 13 : age <= 25 ? 8 : 3
+  s += Math.min(Math.max(Math.round((60000 - c.avg) / 2500), 0), 20)
+  s += c.maxA >= 59 ? 15 : c.maxA >= 40 ? 10 : 3
+  const bonus = { 학군최강:25, 역세권:20, 직주근접:20, 재건축기대:18, 교육환경:18, 미래가치:15, 생활편의:12, 대학가:10, 자연환경:8 }
+  s += bonus[d.tag] || 0
+  return Math.min(Math.round(s), 100)
+}
+
+function mkReview(c, dong) {
+  const d = DONG[dong] || {}
+  const age = 2026 - parseInt(c.buildYear || 1988)
+  const parts = []
+  if (d.sub) parts.push(d.sub)
+  if (d.edu) parts.push(d.edu)
+  else if (d.note) parts.push(d.note)
+  if (age <= 5) parts.push(`${c.buildYear}년 신축`)
+  else if (age >= 33) parts.push('재건축 대상 구축')
+  if (c.maxA >= 59 && c.minA <= 59) parts.push('국민평수 59㎡ 보유')
+  parts.push(c.avg < 35000 ? '3억대 실속형' : c.avg < 45000 ? '4억대 합리적' : c.avg < 55000 ? '5억대 안정' : '6억 근접 상급지')
+  return parts.filter(Boolean).slice(0, 3).join(' · ')
+}
+
+function mkReasons(c, dong) {
+  const d = DONG[dong] || {}
+  const age = 2026 - parseInt(c.buildYear || 1988)
+  const r = []
+  r.push({ ic: '🚇', txt: d.sub ? d.sub + ' 역세권' : '버스 중심 교통 (현장 확인 권장)' })
+  r.push({ ic: '💰', txt: `평균 ${(c.avg / 10000).toFixed(1)}억 · 거래 ${c.count}건으로 시장 검증` })
+  if      (d.edu)      r.push({ ic: '🏫', txt: d.edu })
+  else if (d.note)     r.push({ ic: '✨', txt: d.note })
+  else if (age >= 33)  r.push({ ic: '🔨', txt: '재건축 추진 가능, 장기 보유시 기대' })
+  else if (c.maxA >= 59) r.push({ ic: '📐', txt: '전용 59㎡ 이상 보유, 넉넉한 신혼 공간' })
+  return r.slice(0, 3)
+}
+
+function analyze(trades) {
+  const map = new Map()
+  trades.forEach(t => {
+    const key = `${t.regionName}__${t.dong}__${t.aptNm}`
+    if (!map.has(key)) map.set(key, { ...t, prices: [], areas: [], count: 0 })
+    const c = map.get(key)
+    c.prices.push(t.amt); c.areas.push(t.area); c.count++
+    if (t.buildYear && t.buildYear !== '1988') c.buildYear = t.buildYear
+  })
+  const res = []
+  map.forEach(c => {
+    if (c.count < 2) return
+    c.minP = Math.min(...c.prices); c.maxP = Math.max(...c.prices)
+    c.avg  = Math.round(c.prices.reduce((a, b) => a + b, 0) / c.prices.length)
+    c.minA = Math.min(...c.areas);  c.maxA = Math.max(...c.areas)
+    c.score = calcScore(c, c.dong)
+    res.push(c)
+  })
+  return res.sort((a, b) => b.score - a.score).slice(0, 15)
+}
+
+/* ═══════════════════════════════════════
+   서브 컴포넌트
+═══════════════════════════════════════ */
+function Stories({ aptNm, dong }) {
+  const [stories, setStories] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const loaded = useRef(false)
+
+  useEffect(() => {
+    if (loaded.current) return
+    loaded.current = true
+    setLoading(true)
+    fetch(`/api/stories?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`)
+      .then(r => r.json())
+      .then(data => { setStories(Array.isArray(data) ? data : []); setLoading(false) })
+      .catch(() => { setStories([]); setLoading(false) })
+  }, [aptNm, dong])
+
+  if (loading) return <div className="stories-loading">블로그 후기 불러오는 중...</div>
+  if (!stories || stories.length === 0) return null
+  return (
+    <div className="stories-section">
+      <div className="sec-title" style={{ marginBottom: 8 }}>🗣 실거주 이야기</div>
+      <div className="stories-list">
+        {stories.map((s, i) => (
+          <a key={i} className="story-item" href={s.link} target="_blank" rel="noopener noreferrer">
+            <div className="story-title">{s.title}</div>
+            {s.description && <div className="story-desc">{s.description}</div>}
+            <div className="story-meta">{s.source}{s.date ? ` · ${s.date}` : ''}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function RCard({ c, rank, showStories }) {
+  const medals = ['', '🥇', '🥈', '🥉']
+  const reasons = mkReasons(c, c.dong)
+  const review  = mkReview(c, c.dong)
+  return (
+    <div className="rcard" data-r={String(rank)}>
+      <div className="rcard-top">
+        <div className="rcard-medal">{medals[rank]}</div>
+        <div className="rcard-score">
+          <div className="rcard-score-n">{c.score}</div>
+          <div className="rcard-score-s">/ 100</div>
+        </div>
+      </div>
+      <div className="rcard-name">{c.aptNm}</div>
+      <div className="rcard-loc">{c.dong} · {c.regionName} · {c.buildYear}년식</div>
+      <div className="price-box">
+        <div className="price-range">{fR(c.minP, c.maxP)}</div>
+        <div className="price-meta">
+          <span className="avg">평균 {fP(c.avg)}</span>
+          <span className="vol">거래 {c.count}건</span>
+          <span>전용 {c.minA.toFixed(0)}~{c.maxA.toFixed(0)}㎡</span>
+        </div>
+      </div>
+      <div className="divider" />
+      <div className="reasons">
+        {reasons.map((r, i) => (
+          <div key={i} className="reason">
+            <span className="reason-ic">{r.ic}</span>
+            <span>{r.txt}</span>
+          </div>
+        ))}
+      </div>
+      <div className="review">{review}</div>
+      {showStories && <Stories aptNm={c.aptNm} dong={c.dong} />}
+    </div>
+  )
+}
+
+function RegionResults({ results, months, maxPrice }) {
+  if (!results) return null
+  const { complexes, total, regions } = results
+  const rn = regions.map(r => r.name).join('·')
+  return (
+    <div className="results">
+      <div className="res-summary">
+        <span className="res-summary-info">🏢 아파트 · {rn} · 최근 {months}개월 · {maxPrice}억 이하</span>
+        <span className="res-summary-count">{complexes.length}개 단지 발견</span>
+      </div>
+      <div className="sec-title">TOP 3 추천 단지</div>
+      <div className="top3">
+        {complexes.slice(0, 3).map((c, i) => (
+          <RCard key={`${c.aptNm}-${i}`} c={c} rank={i + 1} showStories={i === 0} />
+        ))}
+      </div>
+      {complexes.length > 3 && (
+        <>
+          <div className="sec-title" style={{ marginTop: 6 }}>전체 순위</div>
+          <div className="apt-list">
+            {complexes.slice(3).map((c, i) => (
+              <div key={`${c.aptNm}-${i + 3}`} className="apt-row">
+                <div className="apt-rank">{i + 4}</div>
+                <div>
+                  <div className="apt-name">{c.aptNm}</div>
+                  <div className="apt-loc">{c.dong} · {c.regionName}</div>
+                  <div className="apt-info">
+                    <span className="pr">{fR(c.minP, c.maxP)}</span>
+                    <span>평균 {fP(c.avg)}</span>
+                    <span>{c.minA.toFixed(0)}~{c.maxA.toFixed(0)}㎡</span>
+                    <span>{c.buildYear}년식</span>
+                    <span>거래 {c.count}건</span>
+                  </div>
+                  <div className="apt-rev">{mkReview(c, c.dong)}</div>
+                </div>
+                <div className="apt-score">{c.score}점</div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+function AptDetailView({ apt, tradeMonths, onChangeMonths }) {
+  const [trades, setTrades] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    if (!apt?.bjdCode) return
+    const lawdCd = apt.bjdCode.slice(0, 5)
+    const ymList = getYM(tradeMonths)
+    setLoading(true)
+    setError(null)
+    Promise.all(
+      ymList.map(ym =>
+        fetch(`/api/trade?lawdCd=${lawdCd}&dealYmd=${ym}`)
+          .then(r => r.json())
+          .catch(() => null)
+      )
+    ).then(results => {
+      const all = []
+      results.forEach(data => {
+        if (!data) return
+        const items = data?.response?.body?.items?.item
+        if (!items) return
+        const arr = Array.isArray(items) ? items : [items]
+        arr.forEach(item => {
+          const aptNm = (item.aptNm || '').trim()
+          if (aptNm !== apt.kaptName) return
+          const amt = parseInt((item.dealAmount || '').replace(/,/g, ''))
+          if (isNaN(amt)) return
+          all.push({
+            date: `${item.dealYear}.${String(item.dealMonth).padStart(2,'0')}.${String(item.dealDay).padStart(2,'0')}`,
+            amt,
+            area: parseFloat(item.excluUseAr) || 0,
+            floor: item.floor,
+          })
+        })
+      })
+      all.sort((a, b) => b.date.localeCompare(a.date))
+      setTrades(all)
+      setLoading(false)
+    }).catch(e => { setError(e.message); setLoading(false) })
+  }, [apt, tradeMonths])
+
+  if (!apt) return null
+
+  return (
+    <div className="apt-detail-card">
+      <div className="apt-detail-name">{apt.kaptName}</div>
+      <div className="apt-detail-addr">{apt.addr || '주소 정보 없음'}</div>
+
+      <div className="trade-period-tabs">
+        {[3, 6, 12].map(m => (
+          <button
+            key={m}
+            className={`trade-period-tab${tradeMonths === m ? ' on' : ''}`}
+            onClick={() => onChangeMonths(m)}
+          >
+            {m}개월
+          </button>
+        ))}
+      </div>
+
+      {loading && (
+        <div className="loading">
+          <div className="spinner" />
+          <div className="loading-txt">실거래가 불러오는 중...</div>
+        </div>
+      )}
+      {error && <div className="err-box"><b>⚠ 오류</b><p>{error}</p></div>}
+      {!loading && trades && (
+        trades.length === 0
+          ? <div className="no-res">최근 {tradeMonths}개월 거래 내역이 없어요.</div>
+          : (
+            <>
+              <div className="trade-summary">
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#78350f', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  최근 {tradeMonths}개월 거래 {trades.length}건
+                </div>
+                <div style={{ display: 'flex', gap: 16, fontSize: 13, color: '#78350f' }}>
+                  <span>최저 <strong>{fP(Math.min(...trades.map(t => t.amt)))}</strong></span>
+                  <span>최고 <strong>{fP(Math.max(...trades.map(t => t.amt)))}</strong></span>
+                  <span>평균 <strong>{fP(Math.round(trades.reduce((s, t) => s + t.amt, 0) / trades.length))}</strong></span>
+                </div>
+              </div>
+              <div className="trade-list">
+                {trades.slice(0, 20).map((t, i) => (
+                  <div key={i} className="trade-row-item">
+                    <span className="trade-row-date">{t.date}</span>
+                    <span className="trade-row-price">{fP(t.amt)}</span>
+                    <span className="trade-row-area">{t.area.toFixed(0)}㎡{t.floor ? ` · ${t.floor}층` : ''}</span>
+                  </div>
+                ))}
+                {trades.length > 20 && (
+                  <div style={{ fontSize: 12, color: 'var(--muted)', padding: '8px 0', textAlign: 'center' }}>
+                    외 {trades.length - 20}건
+                  </div>
+                )}
+              </div>
+            </>
+          )
+      )}
+
+      <Stories aptNm={apt.kaptName} dong="" />
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════
+   메인 앱
+═══════════════════════════════════════ */
+export default function App() {
+  // ─── 모드 ───
+  const [mode, setMode] = useState('region') // 'region' | 'search'
+
+  // ─── 지역 탐색 상태 ───
+  const [selSeoul, setSelSeoul] = useState(new Set())
+  const [selMetro, setSelMetro] = useState(new Set())
+  const [curCtab, setCurCtab] = useState('seoul')
+  const [chipsOpen, setChipsOpen] = useState(false)
+  const [maxPrice, setMaxPrice] = useState(6)
+  const [months, setMonths] = useState(3)
+  const [loading, setLoading] = useState(false)
+  const [loadingTxt, setLoadingTxt] = useState('')
+  const [error, setError] = useState(null)
+  const [results, setResults] = useState(null)
+
+  // ─── 이름 검색 상태 ───
+  const [query, setQuery] = useState('')
+  const [searchLoading, setSearchLoading] = useState(false)
+  const [searchError, setSearchError] = useState(null)
+  const [searchList, setSearchList] = useState(null)
+  const [selectedApt, setSelectedApt] = useState(null)
+  const [aptInfoLoading, setAptInfoLoading] = useState(false)
+  const [aptInfo, setAptInfo] = useState(null)
+  const [tradeMonths, setTradeMonths] = useState(3)
+
+  // ─── 지역 탐색: 지역 토글 ───
+  const totalSel = selSeoul.size + selMetro.size
+
+  function toggleChip(tab, name) {
+    if (tab === 'seoul') {
+      setSelSeoul(prev => {
+        const next = new Set(prev)
+        next.has(name) ? next.delete(name) : next.add(name)
+        return next
+      })
+    } else {
+      setSelMetro(prev => {
+        const next = new Set(prev)
+        next.has(name) ? next.delete(name) : next.add(name)
+        return next
+      })
+    }
+  }
+
+  function quickSel(type) {
+    const names = PRESETS[type] || []
+    setSelSeoul(prev => {
+      const next = new Set(prev)
+      names.forEach(n => { if (SEOUL[n]) next.add(n) })
+      return next
+    })
+    setSelMetro(prev => {
+      const next = new Set(prev)
+      names.forEach(n => { if (METRO[n]) next.add(n) })
+      return next
+    })
+  }
+
+  function clearAll() {
+    setSelSeoul(new Set())
+    setSelMetro(new Set())
+  }
+
+  // ─── 지역 탐색: API 호출 ───
+  async function doFetch() {
+    const maxAmt = maxPrice * 10000
+    const regions = []
+    selSeoul.forEach(n => regions.push({ name: n, code: SEOUL[n] }))
+    selMetro.forEach(n => regions.push({ name: n, code: METRO[n] }))
+    if (!regions.length) return
+
+    const ymList = getYM(months)
+    setLoading(true)
+    setError(null)
+    setResults(null)
+    setLoadingTxt(`조회 중... (${regions.length}개 지역 × ${months}개월)`)
+
+    const allTrades = []
+    try {
+      const tasks = regions.flatMap(r => ymList.map(ym => ({ r, ym, key: `trades_${r.code}_${ym}` })))
+      const fetched = await Promise.all(tasks.map(async ({ r, ym, key }) => {
+        try {
+          const cached = sessionStorage.getItem(key)
+          const xml = cached || await (async () => {
+            const res = await fetch(`/api/trades?lawd_cd=${r.code}&deal_ymd=${ym}`)
+            if (!res.ok) throw new Error(`HTTP ${res.status}`)
+            const text = await res.text()
+            try { sessionStorage.setItem(key, text) } catch (e) { /* ignore */ }
+            return text
+          })()
+          return parseXml(xml, r.name)
+        } catch (e) { console.warn(r.name, ym, e); return [] }
+      }))
+      fetched.forEach(t => allTrades.push(...t))
+
+      if (!allTrades.length) { setError('조회된 데이터가 없습니다.'); return }
+      const filtered = allTrades.filter(t => t.amt <= maxAmt)
+      if (!filtered.length) { setError(`${maxPrice}억 이하 아파트 거래가 없습니다.`); return }
+
+      const complexes = analyze(filtered)
+      setResults({ complexes, total: filtered.length, regions })
+    } catch (e) {
+      setError('API 연결 오류가 발생했습니다.\n로컬 개발 시: npx vercel dev')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // ─── 이름 검색: 검색 ───
+  async function doSearch() {
+    if (!query.trim()) return
+    setSearchLoading(true)
+    setSearchError(null)
+    setSearchList(null)
+    setSelectedApt(null)
+    setAptInfo(null)
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(query.trim())}`)
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data = await res.json()
+      setSearchList(data)
+      if (!data.length) setSearchError('검색 결과가 없어요. 다른 이름으로 시도해보세요.')
+    } catch (e) {
+      setSearchError('검색 오류: ' + e.message)
+    } finally {
+      setSearchLoading(false)
+    }
+  }
+
+  // ─── 이름 검색: 단지 선택 ───
+  async function selectApt(item) {
+    setSelectedApt(item)
+    setAptInfo(null)
+    setAptInfoLoading(true)
+    try {
+      const res = await fetch(`/api/apt-info?kaptCode=${item.kaptCode}`)
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data = await res.json()
+      setAptInfo(data ? { ...item, ...data } : { ...item, bjdCode: null, addr: null })
+    } catch (e) {
+      setAptInfo({ ...item, bjdCode: null, addr: null })
+    } finally {
+      setAptInfoLoading(false)
+    }
+  }
+
+  // ─── 렌더 ───
+  return (
+    <div className="app">
+      {/* HEADER */}
+      <header>
+        <div className="brand">🏠 수근수근 집구하기</div>
+        <div className="brand-sub">내 집 실거래가 확인부터 이사할 동네 탐색까지</div>
+        <div className="brand-tags">
+          <span className="brand-tag apt">🏢 아파트 매물</span>
+          <span className="brand-tag">📊 국토부 실거래가</span>
+          <span className="brand-tag">🗣 실거주 이야기</span>
+        </div>
+      </header>
+
+      {/* MODE TABS */}
+      <div className="mode-tabs">
+        <button className={`mode-tab${mode === 'region' ? ' on' : ''}`} onClick={() => setMode('region')}>
+          🗺 지역 탐색
+        </button>
+        <button className={`mode-tab${mode === 'search' ? ' on' : ''}`} onClick={() => setMode('search')}>
+          🔍 아파트 검색
+        </button>
+      </div>
+
+      {/* ──────────────── 지역 탐색 모드 ──────────────── */}
+      {mode === 'region' && (
+        <>
+          <div className="search-card">
+            {/* 지역 선택 */}
+            <div className="ss">
+              <div className="ss-q">어디서 살고 싶어요?</div>
+              <div className="quick-row">
+                <span className="qlabel">테마</span>
+                <button className="qbtn theme" onClick={() => quickSel('newlywed')}>💑 신혼부부 픽</button>
+                <button className="qbtn theme" onClick={() => quickSel('mayong')}>🌊 마용성광</button>
+                <button className="qbtn theme" onClick={() => quickSel('nodog')}>🍃 노도강</button>
+                <span className="qlabel" style={{ marginLeft: 4 }}>지역</span>
+                <button className="qbtn" onClick={() => quickSel('gbuk')}>서울 강북권</button>
+                <button className="qbtn" onClick={() => quickSel('gnam')}>서울 강남권</button>
+              </div>
+
+              <button className={`expand-toggle${chipsOpen ? ' open' : ''}`} onClick={() => setChipsOpen(v => !v)}>
+                직접 선택하기 <span className="arr">▾</span>
+              </button>
+
+              {chipsOpen && (
+                <div style={{ marginTop: 14 }}>
+                  <div className="ctabs">
+                    <button className={`ctab${curCtab === 'seoul' ? ' on' : ''}`} onClick={() => setCurCtab('seoul')}>서울</button>
+                    <button className={`ctab${curCtab === 'metro' ? ' on' : ''}`} onClick={() => setCurCtab('metro')}>경기·인천</button>
+                  </div>
+                  {curCtab === 'seoul' && (
+                    <div className="chip-grid">
+                      {Object.keys(SEOUL).map(name => (
+                        <button key={name} className={`chip${selSeoul.has(name) ? ' on' : ''}`} onClick={() => toggleChip('seoul', name)}>
+                          {name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {curCtab === 'metro' && (
+                    <div className="chip-grid">
+                      {Object.keys(METRO).map(name => (
+                        <button key={name} className={`chip${selMetro.has(name) ? ' on' : ''}`} onClick={() => toggleChip('metro', name)}>
+                          {name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  <div className="sel-row">
+                    <span className="sel-count">{totalSel > 0 ? `${totalSel}개 지역 선택됨` : ''}</span>
+                    <button className="sel-clear" onClick={clearAll}>전체 해제</button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 예산/기간 */}
+            <div className="ss">
+              <div className="cond-grid">
+                <div className="cond-col">
+                  <div className="ss-label">💰 최대 예산</div>
+                  <div className="pill-wrap">
+                    <div className="pill-row">
+                      {[3, 4, 5, 6, 8, 10].map(v => (
+                        <button
+                          key={v}
+                          className={`pill${v === 6 ? ' rec' : ''}${maxPrice === v ? ' on' : ''}`}
+                          onClick={() => setMaxPrice(v)}
+                        >
+                          {v === 10 ? '10억+' : `${v}억`}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="pill-hint">신혼 첫 아파트로 가장 많이 선택하는 예산이에요</div>
+                </div>
+                <div className="cond-col">
+                  <div className="ss-label">📅 조회 기간</div>
+                  <div className="pill-wrap">
+                    <div className="pill-row">
+                      {[1, 3, 6, 12].map(v => (
+                        <button
+                          key={v}
+                          className={`pill ppill${months === v ? ' on' : ''}`}
+                          onClick={() => setMonths(v)}
+                        >
+                          {v}개월
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="sc-cta">
+              <button className="cta" onClick={doFetch} disabled={totalSel === 0 || loading}>
+                {loading ? '🔄 조회 중...' : '🔍 아파트 찾기'}
+              </button>
+            </div>
+          </div>
+
+          {/* 로딩 */}
+          {loading && (
+            <div className="loading">
+              <div className="spinner" />
+              <div className="loading-txt">{loadingTxt}</div>
+            </div>
+          )}
+
+          {/* 에러 */}
+          {error && !loading && (
+            <div className="err-box">
+              <b>⚠ 오류</b>
+              <p>{error}</p>
+            </div>
+          )}
+
+          {/* 결과 */}
+          {results && !loading && (
+            <RegionResults results={results} months={months} maxPrice={maxPrice} />
+          )}
+        </>
+      )}
+
+      {/* ──────────────── 이름 검색 모드 ──────────────── */}
+      {mode === 'search' && (
+        <>
+          <div className="search-card">
+            <div className="ss">
+              <div className="ss-q">아파트 이름으로 찾기</div>
+              <div className="name-search-wrap">
+                <input
+                  className="name-input"
+                  type="text"
+                  placeholder="예: 래미안, 힐스테이트, 자이..."
+                  value={query}
+                  onChange={e => setQuery(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && doSearch()}
+                />
+                <button className="name-search-btn" onClick={doSearch} disabled={!query.trim() || searchLoading}>
+                  {searchLoading ? '검색 중' : '검색'}
+                </button>
+              </div>
+
+              {searchLoading && (
+                <div className="loading" style={{ padding: '20px 0' }}>
+                  <div className="spinner" />
+                  <div className="loading-txt">검색 중...</div>
+                </div>
+              )}
+
+              {searchError && !searchLoading && (
+                <div className="err-box" style={{ marginTop: 12 }}>
+                  <b>⚠ 오류</b><p>{searchError}</p>
+                </div>
+              )}
+
+              {searchList && !searchLoading && searchList.length > 0 && (
+                <div className="search-results-list">
+                  {searchList.map(item => (
+                    <div
+                      key={item.kaptCode}
+                      className={`search-result-item${selectedApt?.kaptCode === item.kaptCode ? ' selected' : ''}`}
+                      onClick={() => selectApt(item)}
+                    >
+                      <span className="search-result-name">{item.kaptName}</span>
+                      <span className="search-result-code">{item.kaptCode}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 단지 상세 */}
+          {aptInfoLoading && (
+            <div className="loading">
+              <div className="spinner" />
+              <div className="loading-txt">단지 정보 불러오는 중...</div>
+            </div>
+          )}
+          {aptInfo && !aptInfoLoading && (
+            aptInfo.bjdCode
+              ? <AptDetailView apt={aptInfo} tradeMonths={tradeMonths} onChangeMonths={setTradeMonths} />
+              : (
+                <div className="err-box">
+                  <b>⚠ 단지 정보 없음</b>
+                  <p>{aptInfo.kaptName}의 상세 정보를 가져오지 못했어요.</p>
+                </div>
+              )
+          )}
+        </>
+      )}
+    </div>
+  )
+}
