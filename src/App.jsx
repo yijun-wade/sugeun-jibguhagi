@@ -416,9 +416,18 @@ export default function App() {
   const [searchError, setSearchError] = useState(null)
   const [searchList, setSearchList] = useState(null)
   const [selectedApt, setSelectedApt] = useState(null)
-  const [aptInfoLoading, setAptInfoLoading] = useState(false)
   const [aptInfo, setAptInfo] = useState(null)
   const [tradeMonths, setTradeMonths] = useState(3)
+  const aptListRef = useRef(null) // 전국 단지 목록 캐시
+
+  // 검색 탭 진입 시 apt-list.json 한 번만 로드
+  useEffect(() => {
+    if (mode !== 'search' || aptListRef.current) return
+    fetch('/apt-list.json')
+      .then(r => r.json())
+      .then(data => { aptListRef.current = data })
+      .catch(() => {})
+  }, [mode])
 
   // ─── 지역 탐색: 지역 토글 ───
   const totalSel = selSeoul.size + selMetro.size
@@ -503,7 +512,7 @@ export default function App() {
     }
   }
 
-  // ─── 이름 검색: 검색 ───
+  // ─── 이름 검색: 로컬 필터링 ───
   async function doSearch() {
     if (!query.trim()) return
     setSearchLoading(true)
@@ -511,34 +520,32 @@ export default function App() {
     setSearchList(null)
     setSelectedApt(null)
     setAptInfo(null)
-    try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(query.trim())}`)
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const data = await res.json()
-      setSearchList(data)
-      if (!data.length) setSearchError('검색 결과가 없어요. 다른 이름으로 시도해보세요.')
-    } catch (e) {
-      setSearchError('검색 오류: ' + e.message)
-    } finally {
-      setSearchLoading(false)
+
+    // 아직 로드 안 됐으면 기다리기
+    if (!aptListRef.current) {
+      try {
+        const res = await fetch('/apt-list.json')
+        aptListRef.current = await res.json()
+      } catch (e) {
+        setSearchError('단지 목록 로드 실패: ' + e.message)
+        setSearchLoading(false)
+        return
+      }
     }
+
+    const q = query.trim()
+    const matched = aptListRef.current
+      .filter(i => i.kaptName?.includes(q))
+      .slice(0, 20)
+    setSearchList(matched)
+    if (!matched.length) setSearchError('검색 결과가 없어요. 다른 이름으로 시도해보세요.')
+    setSearchLoading(false)
   }
 
-  // ─── 이름 검색: 단지 선택 ───
-  async function selectApt(item) {
+  // ─── 이름 검색: 단지 선택 (bjdCode 이미 포함됨) ───
+  function selectApt(item) {
     setSelectedApt(item)
-    setAptInfo(null)
-    setAptInfoLoading(true)
-    try {
-      const res = await fetch(`/api/apt-info?kaptCode=${item.kaptCode}`)
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const data = await res.json()
-      setAptInfo(data ? { ...item, ...data } : { ...item, bjdCode: null, addr: null })
-    } catch (e) {
-      setAptInfo({ ...item, bjdCode: null, addr: null })
-    } finally {
-      setAptInfoLoading(false)
-    }
+    setAptInfo({ kaptName: item.kaptName, bjdCode: item.bjdCode, addr: item.location })
   }
 
   // ─── 렌더 ───
@@ -739,13 +746,7 @@ export default function App() {
           </div>
 
           {/* 단지 상세 */}
-          {aptInfoLoading && (
-            <div className="loading">
-              <div className="spinner" />
-              <div className="loading-txt">단지 정보 불러오는 중...</div>
-            </div>
-          )}
-          {aptInfo && !aptInfoLoading && (
+          {aptInfo && (
             aptInfo.bjdCode
               ? <AptDetailView apt={aptInfo} tradeMonths={tradeMonths} onChangeMonths={setTradeMonths} />
               : (
