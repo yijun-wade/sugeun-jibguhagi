@@ -168,6 +168,38 @@ function analyze(trades) {
 /* ═══════════════════════════════════════
    서브 컴포넌트
 ═══════════════════════════════════════ */
+function Vibe({ aptNm, location }) {
+  const [lines, setLines] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const loaded = useRef(false)
+
+  useEffect(() => {
+    if (loaded.current) return
+    loaded.current = true
+    setLoading(true)
+    fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(location || '')}`)
+      .then(r => r.json())
+      .then(data => { setLines(data.lines || []); setLoading(false) })
+      .catch(() => { setLines([]); setLoading(false) })
+  }, [aptNm, location])
+
+  if (loading) return (
+    <div className="vibe-wrap">
+      <div className="vibe-title">🌡 지금 분위기</div>
+      <div className="vibe-loading">AI가 분위기 읽는 중...</div>
+    </div>
+  )
+  if (!lines || lines.length === 0) return null
+  return (
+    <div className="vibe-wrap">
+      <div className="vibe-title">🌡 지금 분위기</div>
+      <div className="vibe-lines">
+        {lines.map((line, i) => <div key={i} className="vibe-line">{line}</div>)}
+      </div>
+    </div>
+  )
+}
+
 function Stories({ aptNm, dong }) {
   const [stories, setStories] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -234,6 +266,7 @@ function RCard({ c, rank, showStories }) {
         ))}
       </div>
       <div className="review">{review}</div>
+      {showStories && <Vibe aptNm={c.aptNm} location={`${c.dong} ${c.regionName}`} />}
       {showStories && <Stories aptNm={c.aptNm} dong={c.dong} />}
     </div>
   )
@@ -429,6 +462,7 @@ function AptDetailView({ apt, tradeMonths, onChangeMonths }) {
           )
       )}
 
+      <Vibe aptNm={apt.kaptName} location={apt.addr || ''} />
       <Stories aptNm={apt.kaptName} dong="" />
     </div>
   )

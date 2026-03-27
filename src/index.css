@@ -290,6 +290,22 @@ header { text-align: center; padding: 4px 0 2px; }
 .apt-score { font-size: 14px; font-weight: 800; color: var(--gold); white-space: nowrap; padding-top: 1px; }
 .no-res { text-align: center; padding: 48px 20px; color: var(--muted); font-size: 14px; }
 
+/* ─── VIBE ─── */
+.vibe-wrap {
+  margin-top: 14px;
+  background: linear-gradient(135deg, #f0f4ff 0%, #fdf4ff 100%);
+  border: 1px solid #e0d7f8;
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+.vibe-title {
+  font-size: 11px; font-weight: 700; color: #6d28d9;
+  letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 8px;
+}
+.vibe-lines { display: flex; flex-direction: column; gap: 6px; }
+.vibe-line { font-size: 13px; color: #374151; line-height: 1.5; font-weight: 500; }
+.vibe-loading { font-size: 12px; color: var(--muted); }
+
 /* ─── STORIES ─── */
 .stories-section { margin-top: 8px; }
 .stories-list { display: flex; flex-direction: column; gap: 6px; }
