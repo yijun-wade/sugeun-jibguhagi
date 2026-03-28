@@ -273,7 +273,7 @@ function AreaBreakdown({ trades }) {
 
   return (
     <div className="area-breakdown">
-      {sorted.map(([bucket, { count, total }]) => (
+      {sorted.map(([bucket, { count, totalPerPy }]) => (
         <div key={bucket} className="area-bucket">
           <div className="area-bucket-label">{bucket}</div>
           <div className="area-bucket-avg">{fP(Math.round(totalPerPy / count))}<span className="area-bucket-unit">/평</span></div>
