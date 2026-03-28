@@ -32,7 +32,7 @@ export default function DetailReport({ apt, onBack }) {
 
       <div className="detail-body">
         {tab === '가격'    && <PriceTab apt={apt} />}
-        {tab === '동네'    && <NeighborhoodTab dong={apt.dong} />}
+        {tab === '동네'    && <NeighborhoodTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} />}
         {tab === '이야기'  && <StoriesTab aptNm={apt.aptNm} dong={apt.dong} />}
       </div>
     </div>
@@ -135,12 +135,14 @@ function PriceTab({ apt }) {
 }
 
 /* ── 동네 탭 ─────────────────────────────── */
-function NeighborhoodTab({ dong }) {
+function NeighborhoodTab({ dong, aptNm, addr }) {
   const d = DONG[dong] || {}
   const conditions = getLifeConditions(dong)
 
   return (
     <div className="neighborhood-tab">
+      <KakaoMap aptNm={aptNm} addr={addr} />
+
       {conditions.length > 0 ? (
         <div className="nbr-list">
           {conditions.map((item, i) => (
@@ -159,8 +161,58 @@ function NeighborhoodTab({ dong }) {
           <span className="nbr-tag">{d.tag}</span>
         </div>
       )}
+
+      <div className="map-deeplinks">
+        <a
+          className="map-deeplink-btn"
+          href={`https://map.kakao.com/link/search/${encodeURIComponent(aptNm)}`}
+          target="_blank" rel="noopener noreferrer"
+        >카카오지도에서 보기</a>
+        <a
+          className="map-deeplink-btn"
+          href={`https://map.naver.com/p/search/${encodeURIComponent(aptNm)}`}
+          target="_blank" rel="noopener noreferrer"
+        >네이버지도에서 보기</a>
+      </div>
     </div>
   )
+}
+
+/* ── 카카오 지도 ─────────────────────────── */
+function KakaoMap({ aptNm, addr }) {
+  const mapRef = useRef(null)
+
+  useEffect(() => {
+    const kakao = window.kakao
+    if (!mapRef.current || !kakao?.maps) return
+
+    const geocoder = new kakao.maps.services.Geocoder()
+    const query = addr || aptNm
+
+    geocoder.addressSearch(query, (result, status) => {
+      let coords
+      if (status === kakao.maps.services.Status.OK) {
+        coords = new kakao.maps.LatLng(result[0].y, result[0].x)
+      } else {
+        // 주소 검색 실패 시 키워드 검색으로 fallback
+        const places = new kakao.maps.services.Places()
+        places.keywordSearch(aptNm, (res, st) => {
+          if (st !== kakao.maps.services.Status.OK || !res.length) return
+          const c = new kakao.maps.LatLng(res[0].y, res[0].x)
+          renderMap(c)
+        })
+        return
+      }
+      renderMap(coords)
+    })
+
+    function renderMap(coords) {
+      const map = new kakao.maps.Map(mapRef.current, { center: coords, level: 4 })
+      new kakao.maps.Marker({ map, position: coords })
+    }
+  }, [aptNm, addr])
+
+  return <div ref={mapRef} className="kakao-map" />
 }
 
 /* ── 이야기 탭 ───────────────────────────── */
