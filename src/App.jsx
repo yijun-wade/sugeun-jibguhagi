@@ -7,18 +7,45 @@ import DetailReport from './DetailReport.jsx'
 
 async function buildEvalData(apt) {
   const bjdCode = apt.bjdCode || null
-  if (!bjdCode) return null
+
+  const addrParts = (apt.addr || '').split(' ')
+  const dong = addrParts.find(p => p.endsWith('동') || p.endsWith('읍') || p.endsWith('면')) || addrParts[addrParts.length - 1] || ''
+  const regionName = addrParts.find(p => p.endsWith('구') || p.endsWith('시') || p.endsWith('군')) || addrParts[addrParts.length - 2] || ''
+
+  if (!bjdCode) {
+    const lifeConditions = getLifeConditions(dong)
+    const storiesRes = await fetch(`/api/stories?aptName=${encodeURIComponent(apt.kaptName)}&location=${encodeURIComponent(dong)}`)
+      .then(r => r.json()).catch(() => [])
+    const voice = Array.isArray(storiesRes) && storiesRes.length > 0 ? storiesRes[0] : null
+    return {
+      kaptCode: apt.kaptCode,
+      aptNm: apt.kaptName,
+      dong,
+      regionName,
+      buildYear: apt.kaptBuldYy || '-',
+      bjdCode: null,
+      addr: apt.addr,
+      recentAvg: 0,
+      direction: '-',
+      priceLabel: '-',
+      lifeConditions,
+      verdict: '실거래 데이터 없음',
+      voice,
+    }
+  }
 
   const lawdCd = bjdCode.slice(0, 5)
   const ymList = getYM(6)
 
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 10000)
   const tradeResults = await Promise.all(
     ymList.map(ym =>
-      fetch(`/api/trade?lawdCd=${lawdCd}&dealYmd=${ym}`)
+      fetch(`/api/trade?lawdCd=${lawdCd}&dealYmd=${ym}`, { signal: controller.signal })
         .then(r => r.json())
         .catch(() => null)
     )
-  )
+  ).finally(() => clearTimeout(timeout))
 
   const allTrades = []
   tradeResults.forEach(data => {
@@ -40,10 +67,6 @@ async function buildEvalData(apt) {
   let priceLabel = '적정'
   if (recentAvg > 80000) priceLabel = '비쌈'
   else if (recentAvg < 40000) priceLabel = '저렴'
-
-  const addrParts = (apt.addr || '').split(' ')
-  const dong = addrParts[addrParts.length - 1] || ''
-  const regionName = addrParts[addrParts.length - 2] || ''
 
   const lifeConditions = getLifeConditions(dong)
   const tag = (DONG[dong] || {}).tag || ''
@@ -205,6 +228,7 @@ export default function App() {
           <input
             className="search-input"
             type="text"
+            aria-label="아파트 이름으로 검색"
             placeholder="아파트 이름으로 검색 (예: 반포자이)"
             value={query}
             onChange={handleQueryChange}

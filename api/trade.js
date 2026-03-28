@@ -12,8 +12,11 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(apiUrl)
+    if (!response.ok) {
+      console.warn(`국토부 API ${response.status}: ${lawdCd} ${dealYmd}`)
+      return res.status(502).json({ error: 'API 오류', status: response.status })
+    }
     const text = await response.text()
-    if (!response.ok) return res.status(502).json({ error: 'API 오류', status: response.status })
     let data
     try { data = JSON.parse(text) } catch { return res.status(502).json({ error: 'JSON 파싱 실패' }) }
     return res.status(200).json(data)

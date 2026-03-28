@@ -13,6 +13,10 @@ export function fP(v) {
 export function fR(a, b) { return a === b ? fP(a) : `${fP(a)} ~ ${fP(b)}` }
 
 // ── 날짜 유틸 ──────────────────────────────
+export function formatDealDate(year, month, day) {
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
+
 export function getYM(n) {
   const list = []
   const now = new Date()

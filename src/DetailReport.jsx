@@ -1,6 +1,6 @@
 // src/DetailReport.jsx
 import { useState, useEffect } from 'react'
-import { fP, fR, getYM, nameSim, getLifeConditions } from './utils.js'
+import { fP, fR, getYM, formatDealDate, nameSim, getLifeConditions } from './utils.js'
 import { DONG } from './data.js'
 
 const TABS = ['동네·이야기', '시세']
@@ -11,7 +11,7 @@ export default function DetailReport({ apt, onBack }) {
   return (
     <div className="detail-report">
       <div className="detail-header">
-        <button className="detail-back" onClick={onBack}>← 뒤로</button>
+        <button className="detail-back" aria-label="목록으로 돌아가기" onClick={onBack}>← 뒤로</button>
         <div className="detail-title">
           <div className="detail-apt-name">{apt.aptNm}</div>
           <div className="detail-apt-loc">{apt.dong} · {apt.regionName}</div>
@@ -23,6 +23,7 @@ export default function DetailReport({ apt, onBack }) {
           <button
             key={t}
             className={`detail-tab${tab === t ? ' on' : ''}`}
+            aria-pressed={tab === t}
             onClick={() => setTab(t)}
           >
             {t}
@@ -43,7 +44,7 @@ function Accordion({ label, count, children, defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
     <div className="accordion">
-      <button className="accordion-toggle" onClick={() => setOpen(o => !o)}>
+      <button className="accordion-toggle" aria-expanded={open} onClick={() => setOpen(o => !o)}>
         <span>{label}{count != null ? ` (${count})` : ''}</span>
         <span className="accordion-arrow">{open ? '▲' : '▼'}</span>
       </button>
@@ -65,9 +66,11 @@ function PriceTab({ apt }) {
     const ymList = getYM(months)
     setLoading(true)
     setTradeError(false)
+    const controller = new AbortController()
+    const timer = setTimeout(() => controller.abort(), 10000)
     Promise.all(
       ymList.map(ym =>
-        fetch(`/api/trade?lawdCd=${lawdCd}&dealYmd=${ym}`)
+        fetch(`/api/trade?lawdCd=${lawdCd}&dealYmd=${ym}`, { signal: controller.signal })
           .then(r => r.json())
           .catch(() => null)
       )
@@ -82,7 +85,7 @@ function PriceTab({ apt }) {
           const nm   = (item.aptNm || '').trim()
           const amt  = parseInt((item.dealAmount || '').replace(/,/g, ''), 10)
           const area = parseFloat(item.excluUseAr) || 0
-          const date = `${item.dealYear}-${String(item.dealMonth).padStart(2,'0')}-${String(item.dealDay).padStart(2,'0')}`
+          const date = formatDealDate(item.dealYear, item.dealMonth, item.dealDay)
           const floor = item.floor || '-'
           if (area < 40 || isNaN(amt) || amt === 0) return
           const pyeong = Math.round(area / 2.47)
@@ -94,12 +97,13 @@ function PriceTab({ apt }) {
       })
       all.sort((a, b) => b.date.localeCompare(a.date))
       setTrades(all)
-    }).catch(() => {
-      setTradeError(true)
-      setTrades([])
+    }).catch(e => {
+      if (e.name !== 'AbortError') { setTradeError(true); setTrades([]) }
     }).finally(() => {
+      clearTimeout(timer)
       setLoading(false)
     })
+    return () => { controller.abort(); clearTimeout(timer) }
   }, [apt, months])
 
   const avgPerPy = trades?.length ? Math.round(trades.reduce((s, t) => s + t.perPy, 0) / trades.length) : 0
@@ -193,13 +197,13 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
   const conditions = getLifeConditions(dong)
   const [vibe, setVibe] = useState(null)
   const [vibeLoading, setVibeLoading] = useState(true)
-  const [stories, setStories] = useState(null)
+  const [stories, setStories] = useState([])
   const [storiesLoading, setStoriesLoading] = useState(true)
   useEffect(() => {
     const controller = new AbortController()
     const { signal } = controller
     setVibe(null); setVibeLoading(true)
-    setStories(null); setStoriesLoading(true)
+    setStories([]); setStoriesLoading(true)
     fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
       .then(r => r.json())
       .then(data => { setVibe(data?.lines || []); setVibeLoading(false) })
@@ -310,9 +314,7 @@ function OSMMap({ aptNm, addr }) {
     const cacheKey = `${aptNm}|${addr}`
     if (coordCache[cacheKey]) { setCoords(coordCache[cacheKey]); return }
     const q = addr ? `${aptNm} ${addr}` : aptNm
-    fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=kr`, {
-      headers: { 'User-Agent': 'sugeun-jibguhagi/1.0' }
-    })
+    fetch(`/api/geocode?q=${encodeURIComponent(q)}`)
       .then(r => r.json())
       .then(data => {
         if (data?.[0]) {
