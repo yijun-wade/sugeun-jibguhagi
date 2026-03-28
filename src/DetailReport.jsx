@@ -82,10 +82,11 @@ function PriceTab({ apt }) {
           const area = parseFloat(item.excluUseAr) || 0
           const date = `${item.dealYear}-${String(item.dealMonth).padStart(2,'0')}-${String(item.dealDay).padStart(2,'0')}`
           const floor = item.floor || '-'
-          const py = area > 0 ? area / 3.3 : 0
-          const perPy = py > 0 ? Math.round(amt / py) : 0
+          if (area < 40) return  // 40㎡ 미만 극소형 제외
+          const pyeong = Math.round(area / 2.47)  // 공급평형 기준 (84㎡ ≈ 34평)
+          const perPy = Math.round(amt / pyeong)
           if (nameSim(nm, apt.aptNm) < 0.6 || isNaN(amt) || perPy === 0) return
-          all.push({ date, amt, area, floor, nm, perPy })
+          all.push({ date, amt, area, floor, nm, pyeong, perPy })
         })
       })
       all.sort((a, b) => b.date.localeCompare(a.date))
@@ -157,7 +158,7 @@ function PriceTab({ apt }) {
                     <div className="trade-amt">{fP(t.amt)}</div>
                     <div className="trade-per-py">{fP(t.perPy)}/평</div>
                   </div>
-                  <div className="trade-meta">{t.area.toFixed(0)}㎡ · 약 {Math.round(t.area / 3.3)}평 · {t.floor}층</div>
+                  <div className="trade-meta">{t.area.toFixed(0)}㎡ · 약 {t.pyeong}평형 · {t.floor}층</div>
                 </div>
               ))}
             </div>
@@ -261,8 +262,7 @@ function AreaBreakdown({ trades }) {
   // 평수별 그룹핑 (10평 단위)
   const groups = {}
   trades.forEach(t => {
-    const py = Math.round(t.area / 3.3)
-    const bucket = `${Math.floor(py / 10) * 10}평대`
+    const bucket = `${Math.floor(t.pyeong / 10) * 10}평형대`
     if (!groups[bucket]) groups[bucket] = { count: 0, totalPerPy: 0 }
     groups[bucket].count++
     groups[bucket].totalPerPy += t.perPy
