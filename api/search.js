@@ -1,30 +1,32 @@
-// 국토교통부_공동주택 단지 목록 API — 이름으로 아파트 검색
+// 아파트 검색 — 정적 JSON(public/apt-list.json)을 서버에서 읽어 이름 필터링
+// MOLIT API 직접 호출 제거 (28초 타임아웃 문제 해결)
+import { readFileSync } from 'fs'
+import { join } from 'path'
+
 export const config = { regions: ['icn1'] }
 
-export default async function handler(req, res) {
+let aptList = null
+
+function loadAptList() {
+  if (aptList) return aptList
+  try {
+    const filePath = join(process.cwd(), 'public', 'apt-list.json')
+    aptList = JSON.parse(readFileSync(filePath, 'utf-8'))
+  } catch {
+    aptList = []
+  }
+  return aptList
+}
+
+export default function handler(req, res) {
   const { q } = req.query
-  const KEY = process.env.MOLIT_API_KEY
-  if (!KEY) return res.status(500).json({ error: 'API 키가 없어요' })
   if (!q || q.trim().length < 1) return res.json([])
 
-  const url = `https://apis.data.go.kr/1613000/AptListService3/getTotalAptList3?serviceKey=${KEY}&numOfRows=9999&pageNo=1&_type=json`
-  try {
-    const r = await fetch(url)
-    if (!r.ok) return res.status(502).json({ error: 'API 오류', status: r.status })
-    const data = await r.json()
-    const items = data?.response?.body?.items?.item
-    if (!items) return res.json([])
-    const arr = Array.isArray(items) ? items : [items]
-    return res.json(
-      arr
-        .filter(i => i.kaptName?.includes(q.trim()))
-        .slice(0, 20)
-        .map(i => ({
-          kaptCode: i.kaptCode,
-          kaptName: i.kaptName,
-          bjdCode: i.bjdCode,
-          addr: [i.as1, i.as2, i.as3, i.as4].filter(Boolean).join(' '),
-        }))
-    )
-  } catch (e) { return res.status(500).json({ error: e.message }) }
+  const list = loadAptList()
+  const query = q.trim()
+  const results = list
+    .filter(i => i.kaptName?.includes(query))
+    .slice(0, 20)
+
+  return res.json(results)
 }
