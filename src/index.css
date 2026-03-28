@@ -355,3 +355,57 @@ header { text-align: center; padding: 4px 0 2px; }
   .rcard-name { font-size: 18px; }
   .pill { font-size: 12px; padding: 6px 13px; }
 }
+
+/* ─── EVAL CARD ─── */
+.eval-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.eval-header { display: flex; align-items: flex-start; justify-content: space-between; }
+.eval-name   { font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
+.eval-loc    { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+.eval-verdict {
+  font-size: 14px; font-weight: 600; color: var(--text2);
+  background: var(--blue-lt); border-radius: 10px; padding: 10px 14px;
+  line-height: 1.5;
+}
+
+.eval-price-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.eval-price-avg  { font-size: 14px; color: var(--text2); }
+.eval-price-avg strong { color: var(--text); }
+.eval-price-label {
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+  white-space: nowrap;
+}
+
+.eval-life       { display: flex; flex-direction: column; gap: 6px; }
+.eval-life-row   { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); }
+
+.eval-voice {
+  display: block;
+  font-size: 13px; color: var(--text2);
+  background: #f9fafb; border-radius: 10px;
+  padding: 10px 14px; line-height: 1.5;
+  text-decoration: none;
+  border: 1px solid var(--border);
+}
+.eval-voice:hover { background: var(--blue-lt); }
+
+.eval-detail-btn {
+  width: 100%; padding: 12px;
+  background: var(--blue); color: #fff;
+  border: none; border-radius: 12px;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  transition: opacity 0.15s;
+}
+.eval-detail-btn:hover { opacity: 0.88; }
