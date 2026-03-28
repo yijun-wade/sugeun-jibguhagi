@@ -1,5 +1,5 @@
 // src/DetailReport.jsx
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { fP, fR, getYM, nameSim, getLifeConditions } from './utils.js'
 import { DONG } from './data.js'
 
@@ -57,12 +57,14 @@ function PriceTab({ apt }) {
   const [trades, setTrades] = useState(null)
   const [months, setMonths] = useState(6)
   const [loading, setLoading] = useState(false)
+  const [tradeError, setTradeError] = useState(false)
 
   useEffect(() => {
     if (!apt?.bjdCode) return
     const lawdCd = apt.bjdCode.slice(0, 5)
     const ymList = getYM(months)
     setLoading(true)
+    setTradeError(false)
     Promise.all(
       ymList.map(ym =>
         fetch(`/api/trade?lawdCd=${lawdCd}&dealYmd=${ym}`)
@@ -78,7 +80,7 @@ function PriceTab({ apt }) {
         const arr = Array.isArray(items) ? items : [items]
         arr.forEach(item => {
           const nm   = (item.aptNm || '').trim()
-          const amt  = parseInt((item.dealAmount || '').replace(/,/g, ''))
+          const amt  = parseInt((item.dealAmount || '').replace(/,/g, ''), 10)
           const area = parseFloat(item.excluUseAr) || 0
           const date = `${item.dealYear}-${String(item.dealMonth).padStart(2,'0')}-${String(item.dealDay).padStart(2,'0')}`
           const floor = item.floor || '-'
@@ -93,6 +95,7 @@ function PriceTab({ apt }) {
       all.sort((a, b) => b.date.localeCompare(a.date))
       setTrades(all)
     }).catch(() => {
+      setTradeError(true)
       setTrades([])
     }).finally(() => {
       setLoading(false)
@@ -129,6 +132,8 @@ function PriceTab({ apt }) {
 
       {loading ? (
         <div className="detail-loading">실거래 데이터 불러오는 중...</div>
+      ) : tradeError ? (
+        <div className="detail-empty">거래 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</div>
       ) : !trades ? null : trades.length === 0 ? (
         <div className="detail-empty">최근 {months}개월 거래 내역이 없습니다</div>
       ) : (
@@ -190,19 +195,20 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
   const [vibeLoading, setVibeLoading] = useState(true)
   const [stories, setStories] = useState(null)
   const [storiesLoading, setStoriesLoading] = useState(true)
-  const loaded = useRef(false)
-
   useEffect(() => {
-    if (loaded.current) return
-    loaded.current = true
-    fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`)
+    const controller = new AbortController()
+    const { signal } = controller
+    setVibe(null); setVibeLoading(true)
+    setStories(null); setStoriesLoading(true)
+    fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
       .then(r => r.json())
       .then(data => { setVibe(data?.lines || []); setVibeLoading(false) })
-      .catch(() => { setVibe([]); setVibeLoading(false) })
-    fetch(`/api/stories?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`)
+      .catch(e => { if (e.name !== 'AbortError') { setVibe([]); setVibeLoading(false) } })
+    fetch(`/api/stories?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
       .then(r => r.json())
       .then(data => { setStories(Array.isArray(data) ? data : []); setStoriesLoading(false) })
-      .catch(() => { setStories([]); setStoriesLoading(false) })
+      .catch(e => { if (e.name !== 'AbortError') { setStories([]); setStoriesLoading(false) } })
+    return () => controller.abort()
   }, [aptNm, dong])
 
   return (
@@ -235,8 +241,10 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
       {/* 지도 */}
       <OSMMap aptNm={aptNm} addr={addr} />
       <div className="map-deeplinks">
-        <a className="map-deeplink-btn" href={`https://map.kakao.com/link/search/${encodeURIComponent(aptNm)}`} target="_blank" rel="noopener noreferrer">카카오지도</a>
-        <a className="map-deeplink-btn" href={`https://map.naver.com/p/search/${encodeURIComponent(aptNm)}`} target="_blank" rel="noopener noreferrer">네이버지도</a>
+        {(() => { const q = encodeURIComponent(addr ? `${aptNm} ${addr.split(' ').slice(0, 3).join(' ')}` : aptNm); return (<>
+          <a className="map-deeplink-btn" href={`https://map.kakao.com/link/search/${q}`} target="_blank" rel="noopener noreferrer">카카오지도</a>
+          <a className="map-deeplink-btn" href={`https://map.naver.com/p/search/${q}`} target="_blank" rel="noopener noreferrer">네이버지도</a>
+        </>)})()}
       </div>
 
       {/* 블로그 후기 — 아코디언 (기본 닫힘) */}
@@ -272,7 +280,10 @@ function AreaBreakdown({ trades }) {
     groups[bucket].totalPerPy += t.perPy
   })
 
-  const sorted = Object.entries(groups).sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+  const sorted = Object.entries(groups).sort((a, b) => {
+    const na = parseInt(a[0], 10), nb = parseInt(b[0], 10)
+    return (isNaN(na) ? 0 : na) - (isNaN(nb) ? 0 : nb)
+  })
   if (sorted.length === 0) return null
 
   return (
@@ -289,19 +300,31 @@ function AreaBreakdown({ trades }) {
 }
 
 /* ── OpenStreetMap 지도 ──────────────────── */
+const coordCache = {}
+
 function OSMMap({ aptNm, addr }) {
   const [coords, setCoords] = useState(null)
   const [failed, setFailed] = useState(false)
 
   useEffect(() => {
+    const cacheKey = `${aptNm}|${addr}`
+    if (coordCache[cacheKey]) { setCoords(coordCache[cacheKey]); return }
     const q = addr ? `${aptNm} ${addr}` : aptNm
     fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=kr`, {
       headers: { 'User-Agent': 'sugeun-jibguhagi/1.0' }
     })
       .then(r => r.json())
       .then(data => {
-        if (data?.[0]) setCoords({ lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) })
-        else setFailed(true)
+        if (data?.[0]) {
+          const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon)
+          if (isNaN(lat) || isNaN(lon) || lat < 33 || lat > 43 || lon < 124 || lon > 132) {
+            setFailed(true)
+          } else {
+            const c = { lat, lon }
+            coordCache[cacheKey] = c
+            setCoords(c)
+          }
+        } else setFailed(true)
       })
       .catch(() => setFailed(true))
   }, [aptNm, addr])

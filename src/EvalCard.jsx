@@ -57,7 +57,7 @@ export default function EvalCard({ apt, onDetail }) {
       )}
 
       {/* 실거주 한마디 */}
-      {apt.voice && (
+      {apt.voice?.link?.startsWith('http') && (
         <a className="eval-voice" href={apt.voice.link} target="_blank" rel="noopener noreferrer">
           🗣 "{apt.voice.description?.slice(0, 50) || apt.voice.title?.slice(0, 40)}"
         </a>

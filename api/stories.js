@@ -1,6 +1,8 @@
 // 네이버 블로그/카페 검색 — 아파트 삶의 질 이야기 수집
 export const config = { regions: ['icn1'] }
 
+import { stripHtml } from './_utils.js'
+
 const NAVER_BLOG = 'https://openapi.naver.com/v1/search/blog.json'
 const NAVER_CAFE = 'https://openapi.naver.com/v1/search/cafearticle.json'
 const AD_KEYWORDS = ['업체','견적','시공','전문점','전문업체','이사업체','포장이사','이사청소','청소업체','입주청소','도배','장판','새시','인테리어 견적','인테리어 업체','커튼','블라인드','붙박이장','에어컨 청소','세탁기 청소','할인','이벤트','협찬','광고','무료 견적','출장']
@@ -14,10 +16,6 @@ async function naverSearch(endpoint, query, display = 6) {
   })
   if (!r.ok) return []
   return (await r.json()).items || []
-}
-
-function stripHtml(str) {
-  return str?.replace(/<[^>]+>/g,'').replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').trim() || ''
 }
 
 export default async function handler(req, res) {

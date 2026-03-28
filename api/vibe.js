@@ -1,14 +1,12 @@
 // 수근수근 요약 — 블로그/카페/뉴스/지식인 수집 후 Claude로 3줄 요약
 export const config = { regions: ['icn1'] }
 
+import { stripHtml } from './_utils.js'
+
 const NAVER_BLOG = 'https://openapi.naver.com/v1/search/blog.json'
 const NAVER_CAFE = 'https://openapi.naver.com/v1/search/cafearticle.json'
 const NAVER_NEWS = 'https://openapi.naver.com/v1/search/news.json'
 const NAVER_KIN  = 'https://openapi.naver.com/v1/search/kin.json'
-
-function stripHtml(str) {
-  return (str || '').replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim()
-}
 
 async function naverSearch(endpoint, query, display = 4) {
   const url = `${endpoint}?query=${encodeURIComponent(query)}&display=${display}&sort=sim`
@@ -84,6 +82,11 @@ ${sections}
         messages: [{ role: 'user', content: prompt }],
       }),
     })
+    if (!claude.ok) {
+      const err = await claude.json().catch(() => ({}))
+      console.error('Anthropic API error:', claude.status, err)
+      return res.json({ lines: [] })
+    }
     const data = await claude.json()
     const text = data?.content?.[0]?.text || ''
     const lines = text.split('\n').map(l => l.trim()).filter(Boolean).slice(0, 3)

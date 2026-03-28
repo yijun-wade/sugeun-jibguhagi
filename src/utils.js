@@ -3,6 +3,7 @@ import { DONG } from './data.js'
 
 // ── 숫자 포맷 ──────────────────────────────
 export function fP(v) {
+  if (!v || v <= 0) return '-'
   if (v >= 10000) {
     const e = Math.floor(v / 10000), r = v % 10000
     return r ? `${e}억 ${r.toLocaleString()}만` : `${e}억`
@@ -29,7 +30,7 @@ export function parseXml(xml, regionName) {
     const doc = new DOMParser().parseFromString(xml, 'text/xml')
     doc.querySelectorAll('item').forEach(item => {
       const g = t => (item.querySelector(t)?.textContent || '').trim()
-      const amt = parseInt(g('dealAmount').replace(/,/g, ''))
+      const amt = parseInt(g('dealAmount').replace(/,/g, ''), 10)
       const area = parseFloat(g('excluUseAr')) || 0
       const aptNm = g('aptNm'), dong = g('umdNm'), buildYear = g('buildYear') || '1988'
       if (!aptNm || isNaN(amt) || amt <= 0) return

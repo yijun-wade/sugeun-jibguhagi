@@ -16,8 +16,8 @@ export default async function handler(req, res) {
     if (!response.ok) return res.status(502).json({ error: 'API 오류', status: response.status })
     let data
     try { data = JSON.parse(text) } catch { return res.status(502).json({ error: 'JSON 파싱 실패' }) }
-    res.status(200).json(data)
+    return res.status(200).json(data)
   } catch (err) {
-    res.status(500).json({ error: '실거래가 데이터를 가져오지 못했어요', detail: err.message })
+    return res.status(500).json({ error: '실거래가 데이터를 가져오지 못했어요', detail: err.message })
   }
 }

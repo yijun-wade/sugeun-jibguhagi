@@ -28,7 +28,7 @@ async function buildEvalData(apt) {
     const arr = Array.isArray(items) ? items : [items]
     arr.forEach(item => {
       const nm  = (item.aptNm || '').trim()
-      const amt = parseInt((item.dealAmount || '').replace(/,/g, ''))
+      const amt = parseInt((item.dealAmount || '').replace(/,/g, ''), 10)
       if (nameSim(nm, apt.kaptName) < 0.6 || isNaN(amt)) return
       allTrades.push({ amt, area: parseFloat(item.excluUseAr) || 0 })
     })
@@ -87,10 +87,16 @@ export default function App() {
     try {
       const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`).then(r => r.json())
       const list = Array.isArray(res) ? res.slice(0, 5) : []
-      if (list.length === 0) { setError('검색 결과가 없습니다'); setLoading(false); return }
+      if (list.length === 0) { setError(`'${q}' 검색 결과가 없습니다. 공식 아파트명으로 검색해보세요 (예: 반포자이, 래미안퍼스티지)`); setLoading(false); return }
 
-      const results = await Promise.all(list.map(apt => buildEvalData(apt)))
-      setCards(results.filter(Boolean))
+      const results = await Promise.all(list.map(apt => buildEvalData(apt).catch(() => null)))
+      const filtered = results.filter(Boolean)
+      if (filtered.length === 0) {
+        setError('아파트 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.')
+        setLoading(false)
+        return
+      }
+      setCards(filtered)
     } catch {
       setError('데이터를 불러오는 중 오류가 발생했습니다')
     }
@@ -117,6 +123,8 @@ export default function App() {
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
+
+  useEffect(() => () => clearTimeout(debounceRef.current), [])
 
   if (detailApt) {
     return (
@@ -212,7 +220,7 @@ export default function App() {
               <li
                 key={apt.kaptCode}
                 className={`sugg-item${i === activeSugg ? ' active' : ''}`}
-                onMouseDown={() => pickSuggestion(apt)}
+                onPointerDown={(e) => { e.preventDefault(); pickSuggestion(apt) }}
               >
                 <span className="sugg-name">{apt.kaptName}</span>
                 <span className="sugg-addr">{apt.addr?.split(' ').slice(0, 3).join(' ')}</span>
@@ -237,8 +245,8 @@ export default function App() {
 
       {cards.length > 0 && (
         <div className="card-list">
-          {cards.map((apt, i) => (
-            <EvalCard key={i} apt={apt} onDetail={() => setDetailApt(apt)} />
+          {cards.map((apt) => (
+            <EvalCard key={apt.kaptCode} apt={apt} onDetail={() => setDetailApt(apt)} />
           ))}
         </div>
       )}
