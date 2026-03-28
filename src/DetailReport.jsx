@@ -1,5 +1,5 @@
 // src/DetailReport.jsx
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { fP, fR, getYM, formatDealDate, nameSim, getLifeConditions } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM, SQM_TO_PYEONG, KR_LAT, KR_LON } from './constants.js'
 import { DONG } from './data.js'
@@ -273,7 +273,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
       )}
 
       {/* 지도 */}
-      <OSMMap aptNm={aptNm} addr={addr} />
+      <KakaoMap aptNm={aptNm} addr={addr} />
       <div className="map-deeplinks">
         {(() => { const q = encodeURIComponent(addr ? `${aptNm} ${addr.split(' ').slice(0, 3).join(' ')}` : aptNm); return (<>
           <a className="map-deeplink-btn" href={`https://map.kakao.com/link/search/${q}`} target="_blank" rel="noopener noreferrer">카카오지도</a>
@@ -333,16 +333,22 @@ function AreaBreakdown({ trades }) {
   )
 }
 
-/* ── OpenStreetMap 지도 ──────────────────── */
-const coordCache = {}
+/* ── 카카오 지도 ─────────────────────────── */
+const MAX_COORD_CACHE = 100
+const coordCache = new Map()
+function setCoordCache(key, val) {
+  if (coordCache.size >= MAX_COORD_CACHE) coordCache.delete(coordCache.keys().next().value)
+  coordCache.set(key, val)
+}
 
-function OSMMap({ aptNm, addr }) {
+function KakaoMap({ aptNm, addr }) {
+  const mapRef = useRef(null)
   const [coords, setCoords] = useState(null)
   const [failed, setFailed] = useState(false)
 
   useEffect(() => {
     const cacheKey = `${aptNm}|${addr}`
-    if (coordCache[cacheKey]) { setCoords(coordCache[cacheKey]); return }
+    if (coordCache.has(cacheKey)) { setCoords(coordCache.get(cacheKey)); return }
     const q = addr ? `${aptNm} ${addr}` : aptNm
     fetch(`/api/geocode?q=${encodeURIComponent(q)}`)
       .then(r => r.json())
@@ -353,7 +359,7 @@ function OSMMap({ aptNm, addr }) {
             setFailed(true)
           } else {
             const c = { lat, lon }
-            coordCache[cacheKey] = c
+            setCoordCache(cacheKey, c)
             setCoords(c)
           }
         } else setFailed(true)
@@ -361,13 +367,17 @@ function OSMMap({ aptNm, addr }) {
       .catch(() => setFailed(true))
   }, [aptNm, addr])
 
+  useEffect(() => {
+    if (!coords || !mapRef.current || !window.kakao?.maps) return
+    const { kakao } = window
+    const center = new kakao.maps.LatLng(coords.lat, coords.lon)
+    const map = new kakao.maps.Map(mapRef.current, { center, level: 3 })
+    new kakao.maps.Marker({ position: center, map })
+  }, [coords])
+
   if (failed) return null
   if (!coords) return <div className="osm-map osm-map-loading">지도 불러오는 중...</div>
 
-  const d = 0.006
-  const bbox = `${coords.lon - d},${coords.lat - d},${coords.lon + d},${coords.lat + d}`
-  const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${coords.lat},${coords.lon}`
-
-  return <iframe className="osm-map" src={src} title="지도" loading="lazy" />
+  return <div ref={mapRef} className="osm-map" />
 }
 
