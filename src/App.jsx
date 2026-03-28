@@ -104,18 +104,6 @@ export default function App() {
     setError(null)
   }, [])
 
-  if (detailApt) {
-    return (
-      <div className="app">
-        <header onClick={goHome} style={{ cursor: 'pointer' }}>
-          <div className="brand">수근수근 집구하기</div>
-          <div className="brand-sub">온라인 임장 도구</div>
-        </header>
-        <DetailReport apt={detailApt} onBack={() => setDetailApt(null)} />
-      </div>
-    )
-  }
-
   const [suggestions, setSuggestions] = useState([])
   const [showSugg, setShowSugg] = useState(false)
   const [activeSugg, setActiveSugg] = useState(-1)
@@ -129,6 +117,18 @@ export default function App() {
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
+
+  if (detailApt) {
+    return (
+      <div className="app">
+        <header onClick={goHome} style={{ cursor: 'pointer' }}>
+          <div className="brand">수근수근 집구하기</div>
+          <div className="brand-sub">온라인 임장 도구</div>
+        </header>
+        <DetailReport apt={detailApt} onBack={() => setDetailApt(null)} />
+      </div>
+    )
+  }
 
   const handleQueryChange = (e) => {
     const v = e.target.value
