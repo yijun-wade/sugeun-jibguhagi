@@ -3,10 +3,10 @@ import { useState, useEffect, useRef } from 'react'
 import { fP, fR, getYM, nameSim, getLifeConditions } from './utils.js'
 import { DONG } from './data.js'
 
-const TABS = ['시세', '동네·이야기']
+const TABS = ['동네·이야기', '시세']
 
 export default function DetailReport({ apt, onBack }) {
-  const [tab, setTab] = useState('시세')
+  const [tab, setTab] = useState('동네·이야기')
 
   return (
     <div className="detail-report">
