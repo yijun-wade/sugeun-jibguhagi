@@ -97,10 +97,17 @@ export default function App() {
     setLoading(false)
   }, [])
 
+  const goHome = useCallback(() => {
+    setDetailApt(null)
+    setCards([])
+    setQuery('')
+    setError(null)
+  }, [])
+
   if (detailApt) {
     return (
       <div className="app">
-        <header>
+        <header onClick={goHome} style={{ cursor: 'pointer' }}>
           <div className="brand">수근수근 집구하기</div>
           <div className="brand-sub">온라인 임장 도구</div>
         </header>
@@ -111,7 +118,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <header>
+      <header onClick={goHome} style={{ cursor: 'pointer' }}>
         <div className="brand">수근수근 집구하기</div>
         <div className="brand-sub">아파트 이름을 검색하면 가격·동네·실거주 후기를 한 번에</div>
       </header>
