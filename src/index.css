@@ -23,7 +23,9 @@ body {
   color: var(--text);
   font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
   min-height: 100vh;
-  padding: 28px 16px 80px;
+  padding: 28px 16px calc(80px + env(safe-area-inset-bottom));
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
   line-height: 1.6;
 }
 .app { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
@@ -597,3 +599,56 @@ header { text-align: center; padding: 4px 0 2px; }
 .error-msg   { text-align: center; color: var(--red);   font-size: 14px; padding: 20px; }
 
 .card-list { display: flex; flex-direction: column; gap: 16px; }
+
+/* ─── MOBILE ─── */
+@media (max-width: 480px) {
+  body { padding-top: 20px; }
+
+  /* 헤더 */
+  .brand { font-size: 18px; }
+  .brand-sub { font-size: 12px; }
+
+  /* 검색 */
+  .search-input { font-size: 16px; padding: 15px 16px; border-radius: 14px; }
+  .search-btn   { font-size: 15px; padding: 15px 18px; border-radius: 14px; }
+  .sugg-item    { padding: 14px 16px; }
+  .sugg-name    { font-size: 14px; }
+
+  /* 힌트칩 */
+  .hint-chip { padding: 8px 14px; font-size: 13px; }
+
+  /* 검색결과 카드 */
+  .eval-card { padding: 16px; }
+  .eval-name { font-size: 16px; }
+
+  /* 상세 리포트 헤더 */
+  .detail-apt-name { font-size: 15px; }
+  .detail-back { font-size: 15px; padding: 8px 4px; }
+
+  /* 탭 — 터치 타겟 충분히 */
+  .detail-tab { padding: 14px 0; font-size: 15px; }
+
+  /* 시세 요약 */
+  .price-tab-summary { gap: 8px; }
+  .price-summary-val { font-size: 14px; }
+
+  /* 평형 분포 */
+  .area-breakdown { gap: 6px; }
+  .area-bucket { padding: 8px 10px; }
+  .area-bucket-avg { font-size: 13px; }
+
+  /* 거래 내역 */
+  .trade-row { padding: 10px 12px; }
+  .trade-amt { font-size: 14px; }
+
+  /* 지도 */
+  .osm-map { height: 180px; }
+
+  /* 딥링크 버튼들 */
+  .listing-btn { padding: 11px; font-size: 13px; }
+  .map-deeplink-btn { padding: 9px; font-size: 12px; }
+
+  /* 블로그 후기 */
+  .story-card { padding: 12px; }
+  .story-card-title { font-size: 13px; }
+}
