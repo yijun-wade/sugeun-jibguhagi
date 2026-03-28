@@ -1,21 +1,18 @@
 // src/App.jsx
 import { useState, useCallback } from 'react'
 import { DONG, HINT_SEARCHES } from './data.js'
-import { fP, getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim } from './utils.js'
+import { getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim } from './utils.js'
 import EvalCard from './EvalCard.jsx'
 import DetailReport from './DetailReport.jsx'
 
-/* ── 검색 API 호출 후 EvalCard에 필요한 데이터 조립 ── */
 async function buildEvalData(apt) {
-  // 1) apt-info로 bjdCode(lawdCd) 확보
   const infoRes = await fetch(`/api/apt-info?kaptCode=${apt.kaptCode}`).then(r => r.json()).catch(() => null)
   const bjdCode = infoRes?.data?.bjdCode || null
   if (!bjdCode) return null
 
   const lawdCd = bjdCode.slice(0, 5)
-  const ymList = getYM(6) // 6개월치
+  const ymList = getYM(6)
 
-  // 2) 실거래 데이터
   const tradeResults = await Promise.all(
     ymList.map(ym =>
       fetch(`/api/trade?lawdCd=${lawdCd}&dealYmd=${ym}`)
@@ -38,27 +35,21 @@ async function buildEvalData(apt) {
     })
   })
 
-  // 3) 가격 신호 계산 (앞 3개월 vs 뒤 3개월)
-  const recent = allTrades.slice(0, Math.ceil(allTrades.length / 2))
-  const older  = allTrades.slice(Math.ceil(allTrades.length / 2))
-  const { recentAvg, direction } = calcPriceSignal(recent, older)
+  const half = Math.ceil(allTrades.length / 2)
+  const { recentAvg, direction } = calcPriceSignal(allTrades.slice(0, half), allTrades.slice(half))
 
-  // 4) 가격 레이블 (간소화: 6억/4억 기준)
   let priceLabel = '적정'
   if (recentAvg > 80000) priceLabel = '비쌈'
   else if (recentAvg < 40000) priceLabel = '저렴'
 
-  // 5) 동 추출 (addr: "서울특별시 양천구 목동")
   const addrParts = (apt.addr || '').split(' ')
   const dong = addrParts[addrParts.length - 1] || ''
   const regionName = addrParts[addrParts.length - 2] || ''
 
-  // 6) 생활 여건 / 한줄 판단
   const lifeConditions = getLifeConditions(dong)
   const tag = (DONG[dong] || {}).tag || ''
   const verdict = getVerdict(tag, priceLabel)
 
-  // 7) 실거주 이야기 (첫 번째 1개만 voice로)
   const storiesRes = await fetch(`/api/stories?aptName=${encodeURIComponent(apt.kaptName)}&location=${encodeURIComponent(dong)}`)
     .then(r => r.json()).catch(() => [])
   const voice = Array.isArray(storiesRes) && storiesRes.length > 0 ? storiesRes[0] : null
@@ -80,12 +71,11 @@ async function buildEvalData(apt) {
   }
 }
 
-/* ── 메인 앱 ─────────────────────────────── */
 export default function App() {
-  const [query, setQuery]         = useState('')
-  const [cards, setCards]         = useState([])
-  const [loading, setLoading]     = useState(false)
-  const [error, setError]         = useState(null)
+  const [query, setQuery]       = useState('')
+  const [cards, setCards]       = useState([])
+  const [loading, setLoading]   = useState(false)
+  const [error, setError]       = useState(null)
   const [detailApt, setDetailApt] = useState(null)
 
   const handleSearch = useCallback(async (q) => {
@@ -102,13 +92,12 @@ export default function App() {
 
       const results = await Promise.all(list.map(apt => buildEvalData(apt)))
       setCards(results.filter(Boolean))
-    } catch (e) {
+    } catch {
       setError('데이터를 불러오는 중 오류가 발생했습니다')
     }
     setLoading(false)
   }, [])
 
-  // 상세 리포트 보기
   if (detailApt) {
     return (
       <div className="app">
@@ -128,7 +117,6 @@ export default function App() {
         <div className="brand-sub">아파트 이름을 검색하면 가격·동네·실거주 후기를 한 번에</div>
       </header>
 
-      {/* 검색창 */}
       <div className="search-wrap">
         <input
           className="search-input"
@@ -141,7 +129,6 @@ export default function App() {
         <button className="search-btn" onClick={() => handleSearch(query)}>검색</button>
       </div>
 
-      {/* 힌트 검색어 */}
       {!cards.length && !loading && (
         <div className="hint-searches">
           {HINT_SEARCHES.map(h => (
@@ -152,13 +139,9 @@ export default function App() {
         </div>
       )}
 
-      {/* 로딩 */}
       {loading && <div className="loading-msg">임장 데이터 수집 중...</div>}
+      {error   && <div className="error-msg">{error}</div>}
 
-      {/* 에러 */}
-      {error && <div className="error-msg">{error}</div>}
-
-      {/* 카드 목록 */}
       {cards.length > 0 && (
         <div className="card-list">
           {cards.map((apt, i) => (
