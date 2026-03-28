@@ -243,7 +243,6 @@ header { text-align: center; padding: 4px 0 2px; }
 @media (max-width: 560px) {
   .cond-grid { grid-template-columns: 1fr; }
   .cond-col + .cond-col { border-left: none; border-top: 1px solid var(--border); padding-left: 0; padding-top: 16px; margin-top: 4px; }
-  .rcard-name { font-size: 18px; }
   .pill { font-size: 12px; padding: 6px 13px; }
 }
 
