@@ -162,8 +162,8 @@ function PriceTab({ apt }) {
           <div className="listing-deeplinks">
             <div className="listing-deeplinks-label">실매물 보기</div>
             <div className="listing-deeplinks-btns">
-              <a className="listing-btn naver" href={`https://land.naver.com/search/complexList.nhn?query=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer">네이버 부동산</a>
-              <a className="listing-btn zigbang" href={`https://www.zigbang.com/home/apt/list?keyword=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer">직방</a>
+              <a className="listing-btn naver" href={`https://new.land.naver.com/search?query=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer">네이버 부동산</a>
+              <a className="listing-btn zigbang" href={`https://www.zigbang.com/home/search?q=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer">직방</a>
             </div>
           </div>
         </>
@@ -223,7 +223,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
       )}
 
       {/* 지도 */}
-      <KakaoMap aptNm={aptNm} addr={addr} />
+      <OSMMap aptNm={aptNm} addr={addr} />
       <div className="map-deeplinks">
         <a className="map-deeplink-btn" href={`https://map.kakao.com/link/search/${encodeURIComponent(aptNm)}`} target="_blank" rel="noopener noreferrer">카카오지도</a>
         <a className="map-deeplink-btn" href={`https://map.naver.com/p/search/${encodeURIComponent(aptNm)}`} target="_blank" rel="noopener noreferrer">네이버지도</a>
@@ -279,38 +279,31 @@ function AreaBreakdown({ trades }) {
   )
 }
 
-/* ── 카카오 지도 ─────────────────────────── */
-function KakaoMap({ aptNm, addr }) {
-  const mapRef = useRef(null)
+/* ── OpenStreetMap 지도 ──────────────────── */
+function OSMMap({ aptNm, addr }) {
+  const [coords, setCoords] = useState(null)
+  const [failed, setFailed] = useState(false)
 
   useEffect(() => {
-    if (!mapRef.current || !window.kakao) return
-
-    window.kakao.maps.load(() => {
-      const kakao = window.kakao
-      const query = addr || aptNm
-
-      function renderMap(coords) {
-        if (!mapRef.current) return
-        const map = new kakao.maps.Map(mapRef.current, { center: coords, level: 4 })
-        new kakao.maps.Marker({ map, position: coords })
-      }
-
-      const geocoder = new kakao.maps.services.Geocoder()
-      geocoder.addressSearch(query, (result, status) => {
-        if (status === kakao.maps.services.Status.OK) {
-          renderMap(new kakao.maps.LatLng(result[0].y, result[0].x))
-        } else {
-          const places = new kakao.maps.services.Places()
-          places.keywordSearch(aptNm, (res, st) => {
-            if (st !== kakao.maps.services.Status.OK || !res.length) return
-            renderMap(new kakao.maps.LatLng(res[0].y, res[0].x))
-          })
-        }
-      })
+    const q = addr ? `${aptNm} ${addr}` : aptNm
+    fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=kr`, {
+      headers: { 'User-Agent': 'sugeun-jibguhagi/1.0' }
     })
+      .then(r => r.json())
+      .then(data => {
+        if (data?.[0]) setCoords({ lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) })
+        else setFailed(true)
+      })
+      .catch(() => setFailed(true))
   }, [aptNm, addr])
 
-  return <div ref={mapRef} className="kakao-map" />
+  if (failed) return null
+  if (!coords) return <div className="osm-map osm-map-loading">지도 불러오는 중...</div>
+
+  const d = 0.006
+  const bbox = `${coords.lon - d},${coords.lat - d},${coords.lon + d},${coords.lat + d}`
+  const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${coords.lat},${coords.lon}`
+
+  return <iframe className="osm-map" src={src} title="지도" loading="lazy" />
 }
 

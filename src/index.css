@@ -489,7 +489,8 @@ header { text-align: center; padding: 4px 0 2px; }
 .price-ai-label.저렴 { background: #dbeafe; color: #2563eb; }
 
 /* 동네 탭 */
-.kakao-map { width: 100%; height: 220px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; background: var(--border); }
+.osm-map { width: 100%; height: 220px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); display: block; }
+.osm-map-loading { background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--muted); }
 .map-deeplinks { display: flex; gap: 8px; margin-top: 16px; }
 .map-deeplink-btn { flex: 1; text-align: center; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; color: var(--text2); text-decoration: none; background: var(--card); }
 .map-deeplink-btn:hover { background: var(--blue-lt); border-color: var(--blue); color: var(--blue); }
