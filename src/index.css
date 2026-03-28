@@ -468,7 +468,9 @@ header { text-align: center; padding: 4px 0 2px; }
   border-radius: 10px; padding: 12px 14px;
 }
 .trade-date { font-size: 12px; color: var(--muted); }
+.trade-col-right { text-align: right; }
 .trade-amt  { font-size: 15px; font-weight: 800; color: var(--text); }
+.trade-per-py { font-size: 11px; color: var(--muted); margin-top: 1px; }
 .trade-meta { font-size: 12px; color: var(--muted); }
 
 /* 아코디언 */
@@ -531,6 +533,8 @@ header { text-align: center; padding: 4px 0 2px; }
 .area-bucket-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
 .area-bucket-avg { font-size: 14px; font-weight: 700; color: var(--text); }
 .area-bucket-count { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.area-bucket-unit { font-size: 10px; font-weight: 400; color: var(--muted); margin-left: 1px; }
+.price-summary-unit { font-size: 11px; font-weight: 400; color: var(--muted); margin-left: 2px; }
 
 .story-card {
   display: block; text-decoration: none;

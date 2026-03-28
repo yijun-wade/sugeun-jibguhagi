@@ -82,8 +82,10 @@ function PriceTab({ apt }) {
           const area = parseFloat(item.excluUseAr) || 0
           const date = `${item.dealYear}-${String(item.dealMonth).padStart(2,'0')}-${String(item.dealDay).padStart(2,'0')}`
           const floor = item.floor || '-'
-          if (nameSim(nm, apt.aptNm) < 0.6 || isNaN(amt)) return
-          all.push({ date, amt, area, floor, nm })
+          const py = area > 0 ? area / 3.3 : 0
+          const perPy = py > 0 ? Math.round(amt / py) : 0
+          if (nameSim(nm, apt.aptNm) < 0.6 || isNaN(amt) || perPy === 0) return
+          all.push({ date, amt, area, floor, nm, perPy })
         })
       })
       all.sort((a, b) => b.date.localeCompare(a.date))
@@ -92,9 +94,9 @@ function PriceTab({ apt }) {
     })
   }, [apt, months])
 
-  const avg = trades?.length ? Math.round(trades.reduce((s, t) => s + t.amt, 0) / trades.length) : 0
-  const minP = trades?.length ? Math.min(...trades.map(t => t.amt)) : 0
-  const maxP = trades?.length ? Math.max(...trades.map(t => t.amt)) : 0
+  const avgPerPy = trades?.length ? Math.round(trades.reduce((s, t) => s + t.perPy, 0) / trades.length) : 0
+  const minPerPy = trades?.length ? Math.min(...trades.map(t => t.perPy)) : 0
+  const maxPerPy = trades?.length ? Math.max(...trades.map(t => t.perPy)) : 0
 
   return (
     <div className="price-tab">
@@ -129,12 +131,12 @@ function PriceTab({ apt }) {
           {/* 핵심 요약 — 항상 노출 */}
           <div className="price-tab-summary">
             <div className="price-summary-item">
-              <div className="price-summary-label">평균</div>
-              <div className="price-summary-val">{fP(avg)}</div>
+              <div className="price-summary-label">평당 평균</div>
+              <div className="price-summary-val">{fP(avgPerPy)}<span className="price-summary-unit">/평</span></div>
             </div>
             <div className="price-summary-item">
-              <div className="price-summary-label">범위</div>
-              <div className="price-summary-val">{fR(minP, maxP)}</div>
+              <div className="price-summary-label">평당 범위</div>
+              <div className="price-summary-val">{fR(minPerPy, maxPerPy)}</div>
             </div>
             <div className="price-summary-item">
               <div className="price-summary-label">거래</div>
@@ -151,7 +153,10 @@ function PriceTab({ apt }) {
               {trades.map((t, i) => (
                 <div key={i} className="trade-row">
                   <div className="trade-date">{t.date}</div>
-                  <div className="trade-amt">{fP(t.amt)}</div>
+                  <div className="trade-col-right">
+                    <div className="trade-amt">{fP(t.amt)}</div>
+                    <div className="trade-per-py">{fP(t.perPy)}/평</div>
+                  </div>
                   <div className="trade-meta">{t.area.toFixed(0)}㎡ · 약 {Math.round(t.area / 3.3)}평 · {t.floor}층</div>
                 </div>
               ))}
@@ -258,9 +263,9 @@ function AreaBreakdown({ trades }) {
   trades.forEach(t => {
     const py = Math.round(t.area / 3.3)
     const bucket = `${Math.floor(py / 10) * 10}평대`
-    if (!groups[bucket]) groups[bucket] = { count: 0, total: 0 }
+    if (!groups[bucket]) groups[bucket] = { count: 0, totalPerPy: 0 }
     groups[bucket].count++
-    groups[bucket].total += t.amt
+    groups[bucket].totalPerPy += t.perPy
   })
 
   const sorted = Object.entries(groups).sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
@@ -271,7 +276,7 @@ function AreaBreakdown({ trades }) {
       {sorted.map(([bucket, { count, total }]) => (
         <div key={bucket} className="area-bucket">
           <div className="area-bucket-label">{bucket}</div>
-          <div className="area-bucket-avg">{fP(Math.round(total / count))}</div>
+          <div className="area-bucket-avg">{fP(Math.round(totalPerPy / count))}<span className="area-bucket-unit">/평</span></div>
           <div className="area-bucket-count">{count}건</div>
         </div>
       ))}
