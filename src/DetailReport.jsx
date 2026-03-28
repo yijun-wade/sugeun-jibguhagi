@@ -3,10 +3,10 @@ import { useState, useEffect, useRef } from 'react'
 import { fP, fR, getYM, nameSim, getLifeConditions } from './utils.js'
 import { DONG } from './data.js'
 
-const TABS = ['가격', '동네', '이야기']
+const TABS = ['동네', '시세', '이야기']
 
 export default function DetailReport({ apt, onBack }) {
-  const [tab, setTab] = useState('가격')
+  const [tab, setTab] = useState('동네')
 
   return (
     <div className="detail-report">
@@ -31,18 +31,18 @@ export default function DetailReport({ apt, onBack }) {
       </div>
 
       <div className="detail-body">
-        {tab === '가격'    && <PriceTab apt={apt} />}
         {tab === '동네'    && <NeighborhoodTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} />}
+        {tab === '시세'    && <PriceTab apt={apt} />}
         {tab === '이야기'  && <StoriesTab aptNm={apt.aptNm} dong={apt.dong} />}
       </div>
     </div>
   )
 }
 
-/* ── 가격 탭 ─────────────────────────────── */
+/* ── 시세 탭 ─────────────────────────────── */
 function PriceTab({ apt }) {
   const [trades, setTrades] = useState(null)
-  const [months, setMonths] = useState(3)
+  const [months, setMonths] = useState(6)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
