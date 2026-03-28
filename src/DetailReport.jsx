@@ -165,32 +165,57 @@ function NeighborhoodTab({ dong }) {
 
 /* ── 이야기 탭 ───────────────────────────── */
 function StoriesTab({ aptNm, dong }) {
+  const [vibe, setVibe] = useState(null)
+  const [vibeLoading, setVibeLoading] = useState(true)
   const [stories, setStories] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [storiesLoading, setStoriesLoading] = useState(true)
   const loaded = useRef(false)
 
   useEffect(() => {
     if (loaded.current) return
     loaded.current = true
-    setLoading(true)
+
+    fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`)
+      .then(r => r.json())
+      .then(data => { setVibe(data?.lines || []); setVibeLoading(false) })
+      .catch(() => { setVibe([]); setVibeLoading(false) })
+
     fetch(`/api/stories?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`)
       .then(r => r.json())
-      .then(data => { setStories(Array.isArray(data) ? data : []); setLoading(false) })
-      .catch(() => { setStories([]); setLoading(false) })
+      .then(data => { setStories(Array.isArray(data) ? data : []); setStoriesLoading(false) })
+      .catch(() => { setStories([]); setStoriesLoading(false) })
   }, [aptNm, dong])
-
-  if (loading) return <div className="detail-loading">블로그 후기 불러오는 중...</div>
-  if (!stories || stories.length === 0) return <div className="detail-empty">실거주 후기를 찾지 못했습니다</div>
 
   return (
     <div className="stories-tab">
-      {stories.map((s, i) => (
-        <a key={i} className="story-card" href={s.link} target="_blank" rel="noopener noreferrer">
-          <div className="story-card-title">{s.title}</div>
-          {s.description && <div className="story-card-desc">{s.description}</div>}
-          <div className="story-card-meta">{s.source}{s.date ? ` · ${s.date}` : ''}</div>
-        </a>
-      ))}
+      {/* 지금 분위기 요약 카드 */}
+      <div className="vibe-card">
+        <div className="vibe-card-title">지금 이 동네 분위기</div>
+        {vibeLoading ? (
+          <div className="vibe-loading">AI 요약 생성 중...</div>
+        ) : vibe && vibe.length > 0 ? (
+          <ul className="vibe-lines">
+            {vibe.map((line, i) => <li key={i}>{line}</li>)}
+          </ul>
+        ) : (
+          <div className="vibe-empty">요약을 생성하지 못했습니다</div>
+        )}
+      </div>
+
+      {/* 블로그/카페 후기 목록 */}
+      {storiesLoading ? (
+        <div className="detail-loading">블로그 후기 불러오는 중...</div>
+      ) : !stories || stories.length === 0 ? (
+        <div className="detail-empty">실거주 후기를 찾지 못했습니다</div>
+      ) : (
+        stories.map((s, i) => (
+          <a key={i} className="story-card" href={s.link} target="_blank" rel="noopener noreferrer">
+            <div className="story-card-title">{s.title}</div>
+            {s.description && <div className="story-card-desc">{s.description}</div>}
+            <div className="story-card-meta">{s.source}{s.date ? ` · ${s.date}` : ''}</div>
+          </a>
+        ))
+      )}
     </div>
   )
 }

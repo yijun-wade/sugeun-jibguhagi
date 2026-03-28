@@ -486,6 +486,12 @@ header { text-align: center; padding: 4px 0 2px; }
 
 /* 이야기 탭 */
 .stories-tab { display: flex; flex-direction: column; gap: 10px; }
+.vibe-card { background: var(--blue-lt); border: 1px solid var(--blue); border-radius: 12px; padding: 16px; margin-bottom: 4px; }
+.vibe-card-title { font-size: 12px; font-weight: 700; color: var(--blue); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+.vibe-lines { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.vibe-lines li { font-size: 14px; color: var(--text); line-height: 1.5; }
+.vibe-loading { font-size: 13px; color: var(--muted); }
+.vibe-empty   { font-size: 13px; color: var(--muted); }
 .story-card {
   display: block; text-decoration: none;
   background: var(--card); border: 1px solid var(--border);
