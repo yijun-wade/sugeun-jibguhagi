@@ -122,8 +122,8 @@ export default function App() {
     return (
       <div className="app">
         <header onClick={goHome} style={{ cursor: 'pointer' }}>
-          <div className="brand">수근수근 집구하기</div>
-          <div className="brand-sub">온라인 임장 도구</div>
+          <div className="brand">수근수근 우리집</div>
+          <div className="brand-en">SooZip</div>
         </header>
         <DetailReport apt={detailApt} onBack={() => setDetailApt(null)} />
       </div>
@@ -165,19 +165,39 @@ export default function App() {
     else if (e.key === 'Escape') setShowSugg(false)
   }
 
+  const isHome = !cards.length && !loading && !error
+
   return (
-    <div className="app">
-      <header onClick={goHome} style={{ cursor: 'pointer' }}>
-        <div className="brand">수근수근 집구하기</div>
-        <div className="brand-sub">아파트 이름을 검색하면 가격·동네·실거주 후기를 한 번에</div>
-      </header>
+    <div className={`app${isHome ? ' app-home' : ''}`}>
+
+      {/* 홈: 구글식 히어로 */}
+      {isHome && (
+        <div className="hero">
+          <div className="hero-brand" onClick={goHome} style={{ cursor: 'pointer' }}>
+            <div className="hero-logo">수근수근 우리집</div>
+            <div className="hero-logo-en">SooZip</div>
+          </div>
+          <div className="hero-sub">
+            마음에 둔 아파트를 <em>수집</em>하세요<br />
+            동네 분위기 · 실거주 후기 · 실거래가까지
+          </div>
+        </div>
+      )}
+
+      {/* 결과 있을 때만 상단 헤더 */}
+      {!isHome && (
+        <header onClick={goHome} style={{ cursor: 'pointer' }}>
+          <div className="brand">수근수근 우리집</div>
+          <div className="brand-en">SooZip</div>
+        </header>
+      )}
 
       <div className="search-wrap" ref={searchRef}>
         <div className="search-box">
           <input
             className="search-input"
             type="text"
-            placeholder="아파트 이름으로 검색"
+            placeholder="아파트 이름으로 검색 (예: 반포자이)"
             value={query}
             onChange={handleQueryChange}
             onKeyDown={handleKeyDown}
@@ -202,7 +222,7 @@ export default function App() {
         )}
       </div>
 
-      {!cards.length && !loading && (
+      {isHome && (
         <div className="hint-searches">
           {HINT_SEARCHES.map(h => (
             <button key={h} className="hint-chip" onClick={() => { setQuery(h); handleSearch(h) }}>

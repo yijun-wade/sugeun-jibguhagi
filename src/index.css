@@ -29,11 +29,32 @@ body {
   line-height: 1.6;
 }
 .app { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+.app-home { justify-content: center; min-height: 80vh; padding-top: 0; gap: 20px; }
 
-/* ─── HEADER ─── */
+/* ─── HERO (홈) ─── */
+.hero { text-align: center; padding: 20px 0 8px; }
+.hero-brand { margin-bottom: 14px; }
+.hero-logo {
+  font-size: 36px; font-weight: 900; color: var(--text);
+  letter-spacing: -1px; line-height: 1.1;
+}
+.hero-logo-en {
+  font-size: 15px; font-weight: 700; letter-spacing: 0.15em;
+  color: var(--blue); margin-top: 4px; text-transform: uppercase;
+}
+.hero-sub {
+  font-size: 15px; color: var(--text2); line-height: 1.8;
+  margin-bottom: 4px;
+}
+.hero-sub em {
+  font-style: normal; font-weight: 800; color: var(--blue);
+  background: var(--blue-lt); padding: 1px 6px; border-radius: 6px;
+}
+
+/* ─── HEADER (결과/상세 화면) ─── */
 header { text-align: center; padding: 4px 0 2px; }
 .brand { font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.4px; }
-.brand-sub { font-size: 13px; font-weight: 400; color: var(--muted); margin-top: 3px; }
+.brand-en { font-size: 11px; font-weight: 700; color: var(--blue); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 2px; }
 .brand-tags {
   display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-top: 8px;
 }
@@ -604,9 +625,11 @@ header { text-align: center; padding: 4px 0 2px; }
 @media (max-width: 480px) {
   body { padding-top: 20px; }
 
-  /* 헤더 */
+  /* 헤더 / 히어로 */
   .brand { font-size: 18px; }
-  .brand-sub { font-size: 12px; }
+  .hero-logo { font-size: 28px; }
+  .hero-logo-en { font-size: 13px; }
+  .hero-sub { font-size: 14px; }
 
   /* 검색 */
   .search-input { font-size: 16px; padding: 15px 16px; border-radius: 14px; }
