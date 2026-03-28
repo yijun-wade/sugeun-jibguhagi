@@ -1,14 +1,16 @@
-// 지금 분위기 — 네이버 블로그/카페 수집 후 Claude로 3줄 요약
+// 수근수근 요약 — 블로그/카페/뉴스/지식인 수집 후 Claude로 3줄 요약
 export const config = { regions: ['icn1'] }
 
 const NAVER_BLOG = 'https://openapi.naver.com/v1/search/blog.json'
 const NAVER_CAFE = 'https://openapi.naver.com/v1/search/cafearticle.json'
+const NAVER_NEWS = 'https://openapi.naver.com/v1/search/news.json'
+const NAVER_KIN  = 'https://openapi.naver.com/v1/search/kin.json'
 
 function stripHtml(str) {
   return (str || '').replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim()
 }
 
-async function naverSearch(endpoint, query, display = 5) {
+async function naverSearch(endpoint, query, display = 4) {
   const url = `${endpoint}?query=${encodeURIComponent(query)}&display=${display}&sort=sim`
   const r = await fetch(url, {
     headers: {
@@ -20,39 +22,54 @@ async function naverSearch(endpoint, query, display = 5) {
   return (await r.json()).items || []
 }
 
+function formatItems(items, tag) {
+  return items
+    .map(item => `[${tag}] 제목: ${stripHtml(item.title)}\n내용: ${stripHtml(item.description)}`)
+    .join('\n\n')
+}
+
 export default async function handler(req, res) {
   const { aptName, location } = req.query
   if (!aptName) return res.status(400).json({ error: 'aptName이 필요해요' })
   if (!process.env.NAVER_CLIENT_ID) return res.status(500).json({ error: 'Naver API 키 없음' })
   if (!process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: 'Anthropic API 키 없음' })
 
-  // 네이버 수집
-  const queries = [
-    `${aptName} 살아보니`,
-    `${aptName} 입주 후기`,
-    location ? `${location} 분위기` : `${aptName} 동네`,
-  ]
   try {
-    const results = await Promise.all([
-      naverSearch(NAVER_BLOG, queries[0], 4),
-      naverSearch(NAVER_BLOG, queries[1], 4),
-      naverSearch(NAVER_CAFE, queries[2], 4),
+    const [blog1, blog2, cafe, news, kin] = await Promise.all([
+      naverSearch(NAVER_BLOG, `${aptName} 살아보니`),
+      naverSearch(NAVER_BLOG, `${aptName} 입주 후기`),
+      naverSearch(NAVER_CAFE, location ? `${location} 실거주 후기` : `${aptName} 후기`),
+      naverSearch(NAVER_NEWS, `${aptName}`, 3),
+      naverSearch(NAVER_KIN,  `${aptName} 어때요`, 4),
     ])
+
+    // 소스별 중복 제거 후 합치기
     const seen = new Set()
-    const items = results.flat()
-      .filter(item => {
-        if (seen.has(item.link)) return false
-        seen.add(item.link)
-        return true
-      })
-      .slice(0, 10)
-      .map(item => `제목: ${stripHtml(item.title)}\n내용: ${stripHtml(item.description)}`)
-      .join('\n\n')
+    const dedup = (items) => items.filter(i => {
+      if (seen.has(i.link)) return false
+      seen.add(i.link)
+      return true
+    })
 
-    if (!items) return res.json({ lines: [] })
+    const sections = [
+      formatItems(dedup([...blog1, ...blog2]).slice(0, 6), '블로그'),
+      formatItems(dedup(cafe).slice(0, 3), '카페'),
+      formatItems(dedup(news).slice(0, 3), '뉴스'),
+      formatItems(dedup(kin).slice(0, 4),  '지식인'),
+    ].filter(Boolean).join('\n\n---\n\n')
 
-    // Claude Haiku로 3줄 요약
-    const prompt = `다음은 "${aptName}"${location ? ` (${location})` : ''} 관련 블로그·카페 글이야.\n\n${items}\n\n이 글들을 바탕으로, 지금 거기 사는 사람들의 솔직한 분위기를 3줄로 요약해줘.\n- 각 줄은 이모지 하나로 시작\n- 구체적이고 현실적으로 (장점/단점/생활감 골고루)\n- 한 줄에 20~35자 이내\n- 다른 설명 없이 3줄만 출력`
+    if (!sections) return res.json({ lines: [] })
+
+    const prompt = `다음은 "${aptName}"${location ? ` (${location})` : ''} 관련 인터넷 글이야. 블로그 후기, 카페 글, 뉴스, 지식인 Q&A를 포함해.
+
+${sections}
+
+이 내용을 바탕으로, 이 아파트·동네에 대한 사람들의 솔직한 수근수근을 3줄로 요약해줘.
+- 각 줄은 이모지 하나로 시작
+- 실거주 경험, 동네 분위기, 주요 이슈를 골고루 반영
+- 뉴스에 중요한 이슈(재건축, 호재 등)가 있으면 반드시 포함
+- 한 줄에 20~35자 이내
+- 다른 설명 없이 3줄만 출력`
 
     const claude = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -63,7 +80,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 200,
+        max_tokens: 250,
         messages: [{ role: 'user', content: prompt }],
       }),
     })
