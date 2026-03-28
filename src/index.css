@@ -496,3 +496,39 @@ header { text-align: center; padding: 4px 0 2px; }
 .story-card-desc  { font-size: 13px; color: var(--text2); margin-bottom: 6px; line-height: 1.5;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .story-card-meta  { font-size: 11px; color: var(--muted); }
+
+/* ─── SEARCH ─── */
+.search-wrap {
+  display: flex; gap: 8px;
+}
+.search-input {
+  flex: 1; padding: 13px 16px;
+  border: 1.5px solid var(--border); border-radius: 12px;
+  font-size: 15px; font-family: inherit; color: var(--text);
+  background: var(--card);
+  outline: none; transition: border-color 0.15s;
+}
+.search-input:focus { border-color: var(--blue); }
+.search-btn {
+  padding: 13px 20px;
+  background: var(--blue); color: #fff;
+  border: none; border-radius: 12px;
+  font-size: 15px; font-weight: 700; font-family: inherit;
+  cursor: pointer; white-space: nowrap;
+  transition: opacity 0.15s;
+}
+.search-btn:hover { opacity: 0.88; }
+
+.hint-searches { display: flex; flex-wrap: wrap; gap: 8px; }
+.hint-chip {
+  padding: 6px 14px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--card);
+  font-size: 13px; color: var(--text2); cursor: pointer;
+  font-family: inherit; transition: all 0.15s;
+}
+.hint-chip:hover { background: var(--blue-lt); border-color: var(--blue); color: var(--blue); }
+
+.loading-msg { text-align: center; color: var(--muted); font-size: 14px; padding: 20px; }
+.error-msg   { text-align: center; color: var(--red);   font-size: 14px; padding: 20px; }
+
+.card-list { display: flex; flex-direction: column; gap: 16px; }
