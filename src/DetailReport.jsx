@@ -142,6 +142,9 @@ function PriceTab({ apt }) {
             </div>
           </div>
 
+          {/* 평형 분포 */}
+          <AreaBreakdown trades={trades} />
+
           {/* 실거래 내역 — 아코디언 */}
           <Accordion label="실거래 내역" count={trades.length}>
             <div className="trade-list">
@@ -149,7 +152,7 @@ function PriceTab({ apt }) {
                 <div key={i} className="trade-row">
                   <div className="trade-date">{t.date}</div>
                   <div className="trade-amt">{fP(t.amt)}</div>
-                  <div className="trade-meta">{t.area.toFixed(0)}㎡ · {t.floor}층</div>
+                  <div className="trade-meta">{t.area.toFixed(0)}㎡ · 약 {Math.round(t.area / 3.3)}평 · {t.floor}층</div>
                 </div>
               ))}
             </div>
@@ -235,6 +238,34 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
           </div>
         )}
       </Accordion>
+    </div>
+  )
+}
+
+/* ── 평형 분포 ───────────────────────────── */
+function AreaBreakdown({ trades }) {
+  // 평수별 그룹핑 (10평 단위)
+  const groups = {}
+  trades.forEach(t => {
+    const py = Math.round(t.area / 3.3)
+    const bucket = `${Math.floor(py / 10) * 10}평대`
+    if (!groups[bucket]) groups[bucket] = { count: 0, total: 0 }
+    groups[bucket].count++
+    groups[bucket].total += t.amt
+  })
+
+  const sorted = Object.entries(groups).sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+  if (sorted.length === 0) return null
+
+  return (
+    <div className="area-breakdown">
+      {sorted.map(([bucket, { count, total }]) => (
+        <div key={bucket} className="area-bucket">
+          <div className="area-bucket-label">{bucket}</div>
+          <div className="area-bucket-avg">{fP(Math.round(total / count))}</div>
+          <div className="area-bucket-count">{count}건</div>
+        </div>
+      ))}
     </div>
   )
 }
