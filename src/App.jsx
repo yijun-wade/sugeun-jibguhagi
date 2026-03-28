@@ -52,6 +52,7 @@ async function buildEvalData(apt) {
   const allTrades = []
   tradeResults.forEach(data => {
     if (!data) return
+    if (data?.response?.header?.resultCode !== '00') return
     const items = data?.response?.body?.items?.item
     if (!items) return
     const arr = Array.isArray(items) ? items : [items]

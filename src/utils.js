@@ -125,7 +125,8 @@ export function nameSim(a, b) {
   const na = normNm(a), nb = normNm(b)
   if (!na || !nb) return 0
   if (na === nb) return 1
+  const setB = new Set(nb)
   let overlap = 0
-  for (const ch of na) if (nb.includes(ch)) overlap++
+  for (const ch of na) if (setB.has(ch)) overlap++
   return overlap / Math.max(na.length, nb.length)
 }

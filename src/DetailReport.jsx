@@ -9,12 +9,16 @@ const TABS = ['동네·이야기', '시세']
 export default function DetailReport({ apt, onBack }) {
   const [tab, setTab] = useState('동네·이야기')
   const [toast, setToast] = useState(false)
+  useEffect(() => {
+    if (!toast) return
+    const id = setTimeout(() => setToast(false), 2800)
+    return () => clearTimeout(id)
+  }, [toast])
 
   const handleCollect = useCallback(() => {
     const url = `${window.location.origin}/?q=${encodeURIComponent(apt.aptNm)}`
     navigator.clipboard.writeText(url).then(() => {
       setToast(true)
-      setTimeout(() => setToast(false), 2800)
     }).catch(() => {
       // clipboard API 미지원 fallback
       const el = document.createElement('textarea')
@@ -26,7 +30,6 @@ export default function DetailReport({ apt, onBack }) {
       document.execCommand('copy')
       document.body.removeChild(el)
       setToast(true)
-      setTimeout(() => setToast(false), 2800)
     })
   }, [apt.aptNm])
 
@@ -108,6 +111,7 @@ function PriceTab({ apt }) {
       const all = []
       results.forEach(data => {
         if (!data) return
+        if (data?.response?.header?.resultCode !== '00') return
         const items = data?.response?.body?.items?.item
         if (!items) return
         const arr = Array.isArray(items) ? items : [items]
@@ -134,7 +138,7 @@ function PriceTab({ apt }) {
       setLoading(false)
     })
     return () => { controller.abort(); clearTimeout(timer) }
-  }, [apt, months])
+  }, [apt?.bjdCode, apt?.aptNm, months])
 
   const avgPerPy = trades?.length ? Math.round(trades.reduce((s, t) => s + t.perPy, 0) / trades.length) : 0
   const minPerPy = trades?.length ? Math.min(...trades.map(t => t.perPy)) : 0
@@ -345,6 +349,7 @@ function KakaoMap({ aptNm, addr }) {
   const mapRef = useRef(null)
   const [coords, setCoords] = useState(null)
   const [failed, setFailed] = useState(false)
+  const [mapError, setMapError] = useState(false)
 
   useEffect(() => {
     const cacheKey = `${aptNm}|${addr}`
@@ -368,14 +373,15 @@ function KakaoMap({ aptNm, addr }) {
   }, [aptNm, addr])
 
   useEffect(() => {
-    if (!coords || !mapRef.current || !window.kakao?.maps) return
+    if (!coords || !mapRef.current) return
+    if (!window.kakao?.maps) { setMapError(true); return }
     const { kakao } = window
     const center = new kakao.maps.LatLng(coords.lat, coords.lon)
     const map = new kakao.maps.Map(mapRef.current, { center, level: 3 })
     new kakao.maps.Marker({ position: center, map })
   }, [coords])
 
-  if (failed) return null
+  if (failed || mapError) return <div className="osm-map osm-map-loading">지도를 불러올 수 없습니다</div>
   if (!coords) return <div className="osm-map osm-map-loading">지도 불러오는 중...</div>
 
   return <div ref={mapRef} className="osm-map" />
