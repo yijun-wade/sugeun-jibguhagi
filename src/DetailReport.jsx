@@ -162,8 +162,8 @@ function PriceTab({ apt }) {
           <div className="listing-deeplinks">
             <div className="listing-deeplinks-label">실매물 보기</div>
             <div className="listing-deeplinks-btns">
-              <a className="listing-btn naver" href={`https://land.naver.com/search?query=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer">네이버 부동산</a>
-              <a className="listing-btn hogang" href={`https://hogangnono.com/apt/search?query=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer">호갱노노</a>
+              <a className="listing-btn naver" href={`https://search.naver.com/search.naver?query=${encodeURIComponent(apt.aptNm + ' 아파트 매물')}`} target="_blank" rel="noopener noreferrer">네이버 매물검색</a>
+              <a className="listing-btn hogang" href={`https://hogangnono.com/?q=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer">호갱노노</a>
             </div>
           </div>
         </>
