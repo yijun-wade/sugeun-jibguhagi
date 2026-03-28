@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { DONG, SEOUL, METRO, HINT_SEARCHES } from './data.js'
+import { fP, fR, getYM, parseXml, calcPriceSignal, getLifeConditions, getVerdict, nameSim } from './utils.js'
 
 /* ═══════════════════════════════════════
    유틸 상수
@@ -15,38 +16,6 @@ const PRESETS = {
 /* ═══════════════════════════════════════
    유틸 함수
 ═══════════════════════════════════════ */
-function fP(v) {
-  if (v >= 10000) { const e = Math.floor(v / 10000), r = v % 10000; return r ? `${e}억 ${r.toLocaleString()}만` : `${e}억` }
-  return `${v.toLocaleString()}만`
-}
-function fR(a, b) { return a === b ? fP(a) : `${fP(a)} ~ ${fP(b)}` }
-
-function getYM(n) {
-  const list = []
-  const now = new Date()
-  for (let i = 0; i < n; i++) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    list.push(`${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}`)
-  }
-  return list
-}
-
-function parseXml(xml, regionName) {
-  const trades = []
-  try {
-    const doc = new DOMParser().parseFromString(xml, 'text/xml')
-    doc.querySelectorAll('item').forEach(item => {
-      const g = t => (item.querySelector(t)?.textContent || '').trim()
-      const amt = parseInt(g('dealAmount').replace(/,/g, ''))
-      const area = parseFloat(g('excluUseAr')) || 0
-      const aptNm = g('aptNm'), dong = g('umdNm'), buildYear = g('buildYear') || '1988'
-      if (!aptNm || isNaN(amt) || amt <= 0) return
-      trades.push({ regionName, aptNm, dong, buildYear, amt, area })
-    })
-  } catch (e) { /* skip */ }
-  return trades
-}
-
 function calcScore(c, dong) {
   const d = DONG[dong] || {}
   const age = 2026 - parseInt(c.buildYear || 1988)
@@ -260,17 +229,6 @@ function RegionResults({ results, months, maxPrice }) {
   )
 }
 
-// 단지명 정규화 (공백·괄호 제거)
-function normNm(s) { return (s || '').replace(/[\s()（）]/g, '') }
-// 두 이름의 문자 겹침 비율 (0~1)
-function nameSim(a, b) {
-  const na = normNm(a), nb = normNm(b)
-  if (!na || !nb) return 0
-  if (na === nb) return 1
-  let overlap = 0
-  for (const ch of na) if (nb.includes(ch)) overlap++
-  return overlap / Math.max(na.length, nb.length)
-}
 
 function AptDetailView({ apt, tradeMonths, onChangeMonths }) {
   const [trades, setTrades] = useState(null)
