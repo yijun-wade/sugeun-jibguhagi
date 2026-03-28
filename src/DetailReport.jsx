@@ -1,5 +1,5 @@
 // src/DetailReport.jsx
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { fP, fR, getYM, formatDealDate, nameSim, getLifeConditions } from './utils.js'
 import { DONG } from './data.js'
 
@@ -7,15 +7,44 @@ const TABS = ['동네·이야기', '시세']
 
 export default function DetailReport({ apt, onBack }) {
   const [tab, setTab] = useState('동네·이야기')
+  const [toast, setToast] = useState(false)
+
+  const handleCollect = useCallback(() => {
+    const url = `${window.location.origin}/?q=${encodeURIComponent(apt.aptNm)}`
+    navigator.clipboard.writeText(url).then(() => {
+      setToast(true)
+      setTimeout(() => setToast(false), 2800)
+    }).catch(() => {
+      // clipboard API 미지원 fallback
+      const el = document.createElement('textarea')
+      el.value = url
+      el.style.position = 'fixed'
+      el.style.opacity = '0'
+      document.body.appendChild(el)
+      el.select()
+      document.execCommand('copy')
+      document.body.removeChild(el)
+      setToast(true)
+      setTimeout(() => setToast(false), 2800)
+    })
+  }, [apt.aptNm])
 
   return (
     <div className="detail-report">
+      {toast && (
+        <div className="collect-toast">
+          주소 복사가 완료되었어요. 원하는 곳에 수집하세요.
+        </div>
+      )}
       <div className="detail-header">
         <button className="detail-back" aria-label="목록으로 돌아가기" onClick={onBack}>← 뒤로</button>
         <div className="detail-title">
           <div className="detail-apt-name">{apt.aptNm}</div>
           <div className="detail-apt-loc">{apt.dong} · {apt.regionName}</div>
         </div>
+        <button className="collect-btn" aria-label="수집하기" onClick={handleCollect}>
+          📌 수집하기
+        </button>
       </div>
 
       <div className="detail-tabs">

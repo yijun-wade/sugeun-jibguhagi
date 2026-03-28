@@ -445,8 +445,35 @@ header { text-align: center; padding: 4px 0 2px; }
   color: var(--blue); cursor: pointer; font-family: inherit;
   font-weight: 600; white-space: nowrap;
 }
+.detail-title { flex: 1; min-width: 0; }
 .detail-apt-name { font-size: 17px; font-weight: 800; }
 .detail-apt-loc  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+.collect-btn {
+  flex-shrink: 0;
+  background: var(--blue-lt); border: 1.5px solid var(--blue-md);
+  color: var(--blue); border-radius: 20px;
+  padding: 7px 13px; font-size: 13px; font-weight: 700;
+  cursor: pointer; font-family: inherit; white-space: nowrap;
+  transition: background 0.15s, transform 0.1s;
+}
+.collect-btn:hover  { background: var(--blue-md); }
+.collect-btn:active { transform: scale(0.95); }
+
+.collect-toast {
+  position: fixed; bottom: calc(28px + env(safe-area-inset-bottom));
+  left: 50%; transform: translateX(-50%);
+  background: #111827; color: #fff;
+  padding: 12px 20px; border-radius: 24px;
+  font-size: 14px; font-weight: 600; white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.22);
+  z-index: 999;
+  animation: toast-in 0.22s ease;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
 
 .detail-tabs {
   display: flex; gap: 0;
