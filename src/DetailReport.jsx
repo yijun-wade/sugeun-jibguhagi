@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { fP, fR, getYM, nameSim, getLifeConditions } from './utils.js'
 import { DONG } from './data.js'
 
-const TABS = ['시세', '동네', '이야기']
+const TABS = ['시세', '동네·이야기']
 
 export default function DetailReport({ apt, onBack }) {
   const [tab, setTab] = useState('시세')
@@ -31,9 +31,8 @@ export default function DetailReport({ apt, onBack }) {
       </div>
 
       <div className="detail-body">
-        {tab === '시세'    && <PriceTab apt={apt} />}
-        {tab === '동네'    && <NeighborhoodTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} />}
-        {tab === '이야기'  && <StoriesTab aptNm={apt.aptNm} dong={apt.dong} />}
+        {tab === '시세'       && <PriceTab apt={apt} />}
+        {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} />}
       </div>
     </div>
   )
@@ -161,48 +160,81 @@ function PriceTab({ apt }) {
   )
 }
 
-/* ── 동네 탭 ─────────────────────────────── */
-function NeighborhoodTab({ dong, aptNm, addr }) {
+/* ── 동네·이야기 통합 탭 ─────────────────── */
+function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
   const d = DONG[dong] || {}
   const conditions = getLifeConditions(dong)
+  const [vibe, setVibe] = useState(null)
+  const [vibeLoading, setVibeLoading] = useState(true)
+  const [stories, setStories] = useState(null)
+  const [storiesLoading, setStoriesLoading] = useState(true)
+  const loaded = useRef(false)
+
+  useEffect(() => {
+    if (loaded.current) return
+    loaded.current = true
+    fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`)
+      .then(r => r.json())
+      .then(data => { setVibe(data?.lines || []); setVibeLoading(false) })
+      .catch(() => { setVibe([]); setVibeLoading(false) })
+    fetch(`/api/stories?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`)
+      .then(r => r.json())
+      .then(data => { setStories(Array.isArray(data) ? data : []); setStoriesLoading(false) })
+      .catch(() => { setStories([]); setStoriesLoading(false) })
+  }, [aptNm, dong])
 
   return (
     <div className="neighborhood-tab">
-      {/* 지도 — 항상 노출 */}
+      {/* 지도 */}
       <KakaoMap aptNm={aptNm} addr={addr} />
-
-      {/* 외부 지도 링크 */}
       <div className="map-deeplinks">
-        <a
-          className="map-deeplink-btn"
-          href={`https://map.kakao.com/link/search/${encodeURIComponent(aptNm)}`}
-          target="_blank" rel="noopener noreferrer"
-        >카카오지도</a>
-        <a
-          className="map-deeplink-btn"
-          href={`https://map.naver.com/p/search/${encodeURIComponent(aptNm)}`}
-          target="_blank" rel="noopener noreferrer"
-        >네이버지도</a>
+        <a className="map-deeplink-btn" href={`https://map.kakao.com/link/search/${encodeURIComponent(aptNm)}`} target="_blank" rel="noopener noreferrer">카카오지도</a>
+        <a className="map-deeplink-btn" href={`https://map.naver.com/p/search/${encodeURIComponent(aptNm)}`} target="_blank" rel="noopener noreferrer">네이버지도</a>
       </div>
 
-      {/* 생활 여건 — 아코디언 */}
+      {/* 생활 여건 */}
       {conditions.length > 0 && (
-        <Accordion label="생활 여건" defaultOpen={true}>
-          <div className="nbr-list">
-            {conditions.map((item, i) => (
-              <div key={i} className="nbr-row">
-                <span className="nbr-icon">{item.icon}</span>
-                <span className="nbr-text">{item.text}</span>
-              </div>
+        <div className="nbr-list">
+          {conditions.map((item, i) => (
+            <div key={i} className="nbr-row">
+              <span className="nbr-icon">{item.icon}</span>
+              <span className="nbr-text">{item.text}</span>
+            </div>
+          ))}
+          {d.tag && <div className="nbr-tag-row"><span className="nbr-tag">{d.tag}</span></div>}
+        </div>
+      )}
+
+      {/* AI 분위기 요약 */}
+      <div className="vibe-card">
+        <div className="vibe-card-title">지금 이 동네 분위기</div>
+        {vibeLoading ? (
+          <div className="vibe-loading">AI 요약 생성 중...</div>
+        ) : vibe && vibe.length > 0 ? (
+          <ul className="vibe-lines">{vibe.map((line, i) => <li key={i}>{line}</li>)}</ul>
+        ) : (
+          <div className="vibe-empty">요약을 생성하지 못했습니다</div>
+        )}
+      </div>
+
+      {/* 블로그 후기 — 아코디언 (기본 닫힘) */}
+      <Accordion label="블로그 · 카페 후기" count={stories?.length ?? null}>
+        {storiesLoading ? (
+          <div className="detail-loading">후기 불러오는 중...</div>
+        ) : !stories || stories.length === 0 ? (
+          <div className="detail-empty">실거주 후기를 찾지 못했습니다</div>
+        ) : (
+          <div className="stories-tab">
+            {stories.map((s, i) => (
+              <a key={i} className="story-card" href={s.link} target="_blank" rel="noopener noreferrer">
+                <div className="story-card-title">{s.title}</div>
+                {s.description && <div className="story-card-desc">{s.description}</div>}
+                <div className="story-card-meta">{s.source}{s.date ? ` · ${s.date}` : ''}</div>
+              </a>
             ))}
           </div>
-          {d.tag && (
-            <div className="nbr-tag-row">
-              <span className="nbr-tag">{d.tag}</span>
-            </div>
-          )}
-        </Accordion>
-      )}
+        )}
+      </Accordion>
     </div>
   )
 }
@@ -242,61 +274,3 @@ function KakaoMap({ aptNm, addr }) {
   return <div ref={mapRef} className="kakao-map" />
 }
 
-/* ── 이야기 탭 ───────────────────────────── */
-function StoriesTab({ aptNm, dong }) {
-  const [vibe, setVibe] = useState(null)
-  const [vibeLoading, setVibeLoading] = useState(true)
-  const [stories, setStories] = useState(null)
-  const [storiesLoading, setStoriesLoading] = useState(true)
-  const loaded = useRef(false)
-
-  useEffect(() => {
-    if (loaded.current) return
-    loaded.current = true
-
-    fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`)
-      .then(r => r.json())
-      .then(data => { setVibe(data?.lines || []); setVibeLoading(false) })
-      .catch(() => { setVibe([]); setVibeLoading(false) })
-
-    fetch(`/api/stories?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`)
-      .then(r => r.json())
-      .then(data => { setStories(Array.isArray(data) ? data : []); setStoriesLoading(false) })
-      .catch(() => { setStories([]); setStoriesLoading(false) })
-  }, [aptNm, dong])
-
-  return (
-    <div className="stories-tab">
-      {/* Claude 요약 — 항상 노출 */}
-      <div className="vibe-card">
-        <div className="vibe-card-title">지금 이 동네 분위기</div>
-        {vibeLoading ? (
-          <div className="vibe-loading">AI 요약 생성 중...</div>
-        ) : vibe && vibe.length > 0 ? (
-          <ul className="vibe-lines">
-            {vibe.map((line, i) => <li key={i}>{line}</li>)}
-          </ul>
-        ) : (
-          <div className="vibe-empty">요약을 생성하지 못했습니다</div>
-        )}
-      </div>
-
-      {/* 블로그 후기 — 아코디언 */}
-      <Accordion label="블로그 · 카페 후기" count={stories?.length ?? null} defaultOpen={true}>
-        {storiesLoading ? (
-          <div className="detail-loading">후기 불러오는 중...</div>
-        ) : !stories || stories.length === 0 ? (
-          <div className="detail-empty">실거주 후기를 찾지 못했습니다</div>
-        ) : (
-          stories.map((s, i) => (
-            <a key={i} className="story-card" href={s.link} target="_blank" rel="noopener noreferrer">
-              <div className="story-card-title">{s.title}</div>
-              {s.description && <div className="story-card-desc">{s.description}</div>}
-              <div className="story-card-meta">{s.source}{s.date ? ` · ${s.date}` : ''}</div>
-            </a>
-          ))
-        )}
-      </Accordion>
-    </div>
-  )
-}
