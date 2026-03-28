@@ -157,6 +157,15 @@ function PriceTab({ apt }) {
               ))}
             </div>
           </Accordion>
+
+          {/* 실매물 바로가기 */}
+          <div className="listing-deeplinks">
+            <div className="listing-deeplinks-label">실매물 보기</div>
+            <div className="listing-deeplinks-btns">
+              <a className="listing-btn naver" href={`https://land.naver.com/search/complexList.nhn?query=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer">네이버 부동산</a>
+              <a className="listing-btn zigbang" href={`https://www.zigbang.com/home/apt/list?keyword=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer">직방</a>
+            </div>
+          </div>
         </>
       )}
     </div>
@@ -188,11 +197,16 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
 
   return (
     <div className="neighborhood-tab">
-      {/* 지도 */}
-      <KakaoMap aptNm={aptNm} addr={addr} />
-      <div className="map-deeplinks">
-        <a className="map-deeplink-btn" href={`https://map.kakao.com/link/search/${encodeURIComponent(aptNm)}`} target="_blank" rel="noopener noreferrer">카카오지도</a>
-        <a className="map-deeplink-btn" href={`https://map.naver.com/p/search/${encodeURIComponent(aptNm)}`} target="_blank" rel="noopener noreferrer">네이버지도</a>
+      {/* AI 분위기 요약 — 최상단 */}
+      <div className="vibe-card">
+        <div className="vibe-card-title">지금 이 동네 분위기</div>
+        {vibeLoading ? (
+          <div className="vibe-loading">AI 요약 생성 중...</div>
+        ) : vibe && vibe.length > 0 ? (
+          <ul className="vibe-lines">{vibe.map((line, i) => <li key={i}>{line}</li>)}</ul>
+        ) : (
+          <div className="vibe-empty">요약을 생성하지 못했습니다</div>
+        )}
       </div>
 
       {/* 생활 여건 */}
@@ -208,16 +222,11 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
         </div>
       )}
 
-      {/* AI 분위기 요약 */}
-      <div className="vibe-card">
-        <div className="vibe-card-title">지금 이 동네 분위기</div>
-        {vibeLoading ? (
-          <div className="vibe-loading">AI 요약 생성 중...</div>
-        ) : vibe && vibe.length > 0 ? (
-          <ul className="vibe-lines">{vibe.map((line, i) => <li key={i}>{line}</li>)}</ul>
-        ) : (
-          <div className="vibe-empty">요약을 생성하지 못했습니다</div>
-        )}
+      {/* 지도 */}
+      <KakaoMap aptNm={aptNm} addr={addr} />
+      <div className="map-deeplinks">
+        <a className="map-deeplink-btn" href={`https://map.kakao.com/link/search/${encodeURIComponent(aptNm)}`} target="_blank" rel="noopener noreferrer">카카오지도</a>
+        <a className="map-deeplink-btn" href={`https://map.naver.com/p/search/${encodeURIComponent(aptNm)}`} target="_blank" rel="noopener noreferrer">네이버지도</a>
       </div>
 
       {/* 블로그 후기 — 아코디언 (기본 닫힘) */}

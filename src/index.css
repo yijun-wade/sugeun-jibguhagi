@@ -493,6 +493,16 @@ header { text-align: center; padding: 4px 0 2px; }
 .map-deeplinks { display: flex; gap: 8px; margin-top: 16px; }
 .map-deeplink-btn { flex: 1; text-align: center; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; color: var(--text2); text-decoration: none; background: var(--card); }
 .map-deeplink-btn:hover { background: var(--blue-lt); border-color: var(--blue); color: var(--blue); }
+
+/* 실매물 바로가기 */
+.listing-deeplinks { margin-top: 16px; }
+.listing-deeplinks-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+.listing-deeplinks-btns { display: flex; gap: 8px; }
+.listing-btn { flex: 1; text-align: center; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1.5px solid transparent; }
+.listing-btn.naver { background: #03C75A; color: #fff; }
+.listing-btn.naver:hover { background: #02a84c; }
+.listing-btn.zigbang { background: #FF5A00; color: #fff; }
+.listing-btn.zigbang:hover { background: #e04e00; }
 .nbr-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
 .nbr-row  { display: flex; align-items: flex-start; gap: 10px; }
 .nbr-icon { font-size: 20px; line-height: 1; }
