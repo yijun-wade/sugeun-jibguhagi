@@ -3,10 +3,10 @@ import { useState, useEffect, useRef } from 'react'
 import { fP, fR, getYM, nameSim, getLifeConditions } from './utils.js'
 import { DONG } from './data.js'
 
-const TABS = ['동네', '시세', '이야기']
+const TABS = ['시세', '동네', '이야기']
 
 export default function DetailReport({ apt, onBack }) {
-  const [tab, setTab] = useState('동네')
+  const [tab, setTab] = useState('시세')
 
   return (
     <div className="detail-report">
@@ -31,10 +31,24 @@ export default function DetailReport({ apt, onBack }) {
       </div>
 
       <div className="detail-body">
-        {tab === '동네'    && <NeighborhoodTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} />}
         {tab === '시세'    && <PriceTab apt={apt} />}
+        {tab === '동네'    && <NeighborhoodTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} />}
         {tab === '이야기'  && <StoriesTab aptNm={apt.aptNm} dong={apt.dong} />}
       </div>
+    </div>
+  )
+}
+
+/* ── 아코디언 공통 컴포넌트 ─────────────────── */
+function Accordion({ label, count, children, defaultOpen = false }) {
+  const [open, setOpen] = useState(defaultOpen)
+  return (
+    <div className="accordion">
+      <button className="accordion-toggle" onClick={() => setOpen(o => !o)}>
+        <span>{label}{count != null ? ` (${count})` : ''}</span>
+        <span className="accordion-arrow">{open ? '▲' : '▼'}</span>
+      </button>
+      {open && <div className="accordion-body">{children}</div>}
     </div>
   )
 }
@@ -79,15 +93,22 @@ function PriceTab({ apt }) {
     })
   }, [apt, months])
 
-  if (loading) return <div className="detail-loading">실거래 데이터 불러오는 중...</div>
-  if (!trades) return null
-
-  const avg = trades.length ? Math.round(trades.reduce((s, t) => s + t.amt, 0) / trades.length) : 0
-  const minP = trades.length ? Math.min(...trades.map(t => t.amt)) : 0
-  const maxP = trades.length ? Math.max(...trades.map(t => t.amt)) : 0
+  const avg = trades?.length ? Math.round(trades.reduce((s, t) => s + t.amt, 0) / trades.length) : 0
+  const minP = trades?.length ? Math.min(...trades.map(t => t.amt)) : 0
+  const maxP = trades?.length ? Math.max(...trades.map(t => t.amt)) : 0
 
   return (
     <div className="price-tab">
+      {/* AI 요약 카드 */}
+      <div className="price-ai-card">
+        <div className="price-ai-verdict">{apt.verdict}</div>
+        <div className="price-ai-signals">
+          <span className="price-ai-dir">{apt.direction}</span>
+          <span className={`price-ai-label ${apt.priceLabel}`}>{apt.priceLabel}</span>
+        </div>
+      </div>
+
+      {/* 기간 토글 */}
       <div className="price-tab-months">
         {[3, 6, 12].map(m => (
           <button
@@ -100,8 +121,13 @@ function PriceTab({ apt }) {
         ))}
       </div>
 
-      {trades.length > 0 ? (
+      {loading ? (
+        <div className="detail-loading">실거래 데이터 불러오는 중...</div>
+      ) : !trades ? null : trades.length === 0 ? (
+        <div className="detail-empty">최근 {months}개월 거래 내역이 없습니다</div>
+      ) : (
         <>
+          {/* 핵심 요약 — 항상 노출 */}
           <div className="price-tab-summary">
             <div className="price-summary-item">
               <div className="price-summary-label">평균</div>
@@ -117,18 +143,19 @@ function PriceTab({ apt }) {
             </div>
           </div>
 
-          <div className="trade-list">
-            {trades.map((t, i) => (
-              <div key={i} className="trade-row">
-                <div className="trade-date">{t.date}</div>
-                <div className="trade-amt">{fP(t.amt)}</div>
-                <div className="trade-meta">{t.area.toFixed(0)}㎡ · {t.floor}층</div>
-              </div>
-            ))}
-          </div>
+          {/* 실거래 내역 — 아코디언 */}
+          <Accordion label="실거래 내역" count={trades.length}>
+            <div className="trade-list">
+              {trades.map((t, i) => (
+                <div key={i} className="trade-row">
+                  <div className="trade-date">{t.date}</div>
+                  <div className="trade-amt">{fP(t.amt)}</div>
+                  <div className="trade-meta">{t.area.toFixed(0)}㎡ · {t.floor}층</div>
+                </div>
+              ))}
+            </div>
+          </Accordion>
         </>
-      ) : (
-        <div className="detail-empty">최근 {months}개월 거래 내역이 없습니다</div>
       )}
     </div>
   )
@@ -141,39 +168,41 @@ function NeighborhoodTab({ dong, aptNm, addr }) {
 
   return (
     <div className="neighborhood-tab">
+      {/* 지도 — 항상 노출 */}
       <KakaoMap aptNm={aptNm} addr={addr} />
 
-      {conditions.length > 0 ? (
-        <div className="nbr-list">
-          {conditions.map((item, i) => (
-            <div key={i} className="nbr-row">
-              <span className="nbr-icon">{item.icon}</span>
-              <span className="nbr-text">{item.text}</span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="detail-empty">동네 정보를 준비 중입니다</div>
-      )}
-
-      {d.tag && (
-        <div className="nbr-tag-row">
-          <span className="nbr-tag">{d.tag}</span>
-        </div>
-      )}
-
+      {/* 외부 지도 링크 */}
       <div className="map-deeplinks">
         <a
           className="map-deeplink-btn"
           href={`https://map.kakao.com/link/search/${encodeURIComponent(aptNm)}`}
           target="_blank" rel="noopener noreferrer"
-        >카카오지도에서 보기</a>
+        >카카오지도</a>
         <a
           className="map-deeplink-btn"
           href={`https://map.naver.com/p/search/${encodeURIComponent(aptNm)}`}
           target="_blank" rel="noopener noreferrer"
-        >네이버지도에서 보기</a>
+        >네이버지도</a>
       </div>
+
+      {/* 생활 여건 — 아코디언 */}
+      {conditions.length > 0 && (
+        <Accordion label="생활 여건" defaultOpen={true}>
+          <div className="nbr-list">
+            {conditions.map((item, i) => (
+              <div key={i} className="nbr-row">
+                <span className="nbr-icon">{item.icon}</span>
+                <span className="nbr-text">{item.text}</span>
+              </div>
+            ))}
+          </div>
+          {d.tag && (
+            <div className="nbr-tag-row">
+              <span className="nbr-tag">{d.tag}</span>
+            </div>
+          )}
+        </Accordion>
+      )}
     </div>
   )
 }
@@ -200,7 +229,6 @@ function KakaoMap({ aptNm, addr }) {
         if (status === kakao.maps.services.Status.OK) {
           renderMap(new kakao.maps.LatLng(result[0].y, result[0].x))
         } else {
-          // 주소 실패 시 아파트명 키워드 검색 fallback
           const places = new kakao.maps.services.Places()
           places.keywordSearch(aptNm, (res, st) => {
             if (st !== kakao.maps.services.Status.OK || !res.length) return
@@ -239,7 +267,7 @@ function StoriesTab({ aptNm, dong }) {
 
   return (
     <div className="stories-tab">
-      {/* 지금 분위기 요약 카드 */}
+      {/* Claude 요약 — 항상 노출 */}
       <div className="vibe-card">
         <div className="vibe-card-title">지금 이 동네 분위기</div>
         {vibeLoading ? (
@@ -253,20 +281,22 @@ function StoriesTab({ aptNm, dong }) {
         )}
       </div>
 
-      {/* 블로그/카페 후기 목록 */}
-      {storiesLoading ? (
-        <div className="detail-loading">블로그 후기 불러오는 중...</div>
-      ) : !stories || stories.length === 0 ? (
-        <div className="detail-empty">실거주 후기를 찾지 못했습니다</div>
-      ) : (
-        stories.map((s, i) => (
-          <a key={i} className="story-card" href={s.link} target="_blank" rel="noopener noreferrer">
-            <div className="story-card-title">{s.title}</div>
-            {s.description && <div className="story-card-desc">{s.description}</div>}
-            <div className="story-card-meta">{s.source}{s.date ? ` · ${s.date}` : ''}</div>
-          </a>
-        ))
-      )}
+      {/* 블로그 후기 — 아코디언 */}
+      <Accordion label="블로그 · 카페 후기" count={stories?.length ?? null} defaultOpen={true}>
+        {storiesLoading ? (
+          <div className="detail-loading">후기 불러오는 중...</div>
+        ) : !stories || stories.length === 0 ? (
+          <div className="detail-empty">실거주 후기를 찾지 못했습니다</div>
+        ) : (
+          stories.map((s, i) => (
+            <a key={i} className="story-card" href={s.link} target="_blank" rel="noopener noreferrer">
+              <div className="story-card-title">{s.title}</div>
+              {s.description && <div className="story-card-desc">{s.description}</div>}
+              <div className="story-card-meta">{s.source}{s.date ? ` · ${s.date}` : ''}</div>
+            </a>
+          ))
+        )}
+      </Accordion>
     </div>
   )
 }

@@ -471,8 +471,25 @@ header { text-align: center; padding: 4px 0 2px; }
 .trade-amt  { font-size: 15px; font-weight: 800; color: var(--text); }
 .trade-meta { font-size: 12px; color: var(--muted); }
 
+/* 아코디언 */
+.accordion { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-top: 12px; }
+.accordion-toggle { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: var(--card); border: none; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text2); }
+.accordion-toggle:hover { background: var(--blue-lt); }
+.accordion-arrow { font-size: 11px; color: var(--muted); }
+.accordion-body { padding: 12px 16px 16px; border-top: 1px solid var(--border); }
+
+/* 시세 탭 AI 카드 */
+.price-ai-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+.price-ai-verdict { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.5; }
+.price-ai-signals { display: flex; gap: 8px; align-items: center; }
+.price-ai-dir { font-size: 13px; color: var(--text2); }
+.price-ai-label { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.price-ai-label.비쌈 { background: #fee2e2; color: #dc2626; }
+.price-ai-label.적정 { background: #dcfce7; color: #16a34a; }
+.price-ai-label.저렴 { background: #dbeafe; color: #2563eb; }
+
 /* 동네 탭 */
-.kakao-map { width: 100%; height: 220px; border-radius: 12px; overflow: hidden; margin-bottom: 20px; background: var(--border); }
+.kakao-map { width: 100%; height: 220px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; background: var(--border); }
 .map-deeplinks { display: flex; gap: 8px; margin-top: 16px; }
 .map-deeplink-btn { flex: 1; text-align: center; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; color: var(--text2); text-decoration: none; background: var(--card); }
 .map-deeplink-btn:hover { background: var(--blue-lt); border-color: var(--blue); color: var(--blue); }
