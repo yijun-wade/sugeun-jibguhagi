@@ -1,5 +1,5 @@
 // src/App.jsx
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { DONG, HINT_SEARCHES } from './data.js'
 import { getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim } from './utils.js'
 import EvalCard from './EvalCard.jsx'
@@ -116,6 +116,55 @@ export default function App() {
     )
   }
 
+  const [suggestions, setSuggestions] = useState([])
+  const [showSugg, setShowSugg] = useState(false)
+  const [activeSugg, setActiveSugg] = useState(-1)
+  const searchRef = useRef(null)
+  const debounceRef = useRef(null)
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) setShowSugg(false)
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
+  const handleQueryChange = (e) => {
+    const v = e.target.value
+    setQuery(v)
+    setActiveSugg(-1)
+    clearTimeout(debounceRef.current)
+    if (v.trim().length < 1) { setSuggestions([]); setShowSugg(false); return }
+    debounceRef.current = setTimeout(async () => {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(v)}`).then(r => r.json()).catch(() => [])
+      setSuggestions(Array.isArray(res) ? res.slice(0, 6) : [])
+      setShowSugg(true)
+    }, 200)
+  }
+
+  const pickSuggestion = (apt) => {
+    setQuery(apt.kaptName)
+    setSuggestions([])
+    setShowSugg(false)
+    handleSearch(apt.kaptName)
+  }
+
+  const handleKeyDown = (e) => {
+    if (!showSugg || suggestions.length === 0) {
+      if (e.key === 'Enter') handleSearch(query)
+      return
+    }
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActiveSugg(i => Math.min(i + 1, suggestions.length - 1)) }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActiveSugg(i => Math.max(i - 1, -1)) }
+    else if (e.key === 'Enter') {
+      e.preventDefault()
+      if (activeSugg >= 0) pickSuggestion(suggestions[activeSugg])
+      else { setShowSugg(false); handleSearch(query) }
+    }
+    else if (e.key === 'Escape') setShowSugg(false)
+  }
+
   return (
     <div className="app">
       <header onClick={goHome} style={{ cursor: 'pointer' }}>
@@ -123,16 +172,34 @@ export default function App() {
         <div className="brand-sub">아파트 이름을 검색하면 가격·동네·실거주 후기를 한 번에</div>
       </header>
 
-      <div className="search-wrap">
-        <input
-          className="search-input"
-          type="text"
-          placeholder="아파트 이름 검색 (예: 래미안 원베일리)"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleSearch(query)}
-        />
-        <button className="search-btn" onClick={() => handleSearch(query)}>검색</button>
+      <div className="search-wrap" ref={searchRef}>
+        <div className="search-box">
+          <input
+            className="search-input"
+            type="text"
+            placeholder="아파트 이름으로 검색"
+            value={query}
+            onChange={handleQueryChange}
+            onKeyDown={handleKeyDown}
+            onFocus={() => suggestions.length > 0 && setShowSugg(true)}
+            autoComplete="off"
+          />
+          <button className="search-btn" onClick={() => { setShowSugg(false); handleSearch(query) }}>검색</button>
+        </div>
+        {showSugg && suggestions.length > 0 && (
+          <ul className="sugg-list">
+            {suggestions.map((apt, i) => (
+              <li
+                key={apt.kaptCode}
+                className={`sugg-item${i === activeSugg ? ' active' : ''}`}
+                onMouseDown={() => pickSuggestion(apt)}
+              >
+                <span className="sugg-name">{apt.kaptName}</span>
+                <span className="sugg-addr">{apt.addr?.split(' ').slice(0, 3).join(' ')}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {!cards.length && !loading && (
