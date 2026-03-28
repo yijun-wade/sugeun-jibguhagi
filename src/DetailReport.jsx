@@ -183,33 +183,32 @@ function KakaoMap({ aptNm, addr }) {
   const mapRef = useRef(null)
 
   useEffect(() => {
-    const kakao = window.kakao
-    if (!mapRef.current || !kakao?.maps) return
+    if (!mapRef.current || !window.kakao) return
 
-    const geocoder = new kakao.maps.services.Geocoder()
-    const query = addr || aptNm
+    window.kakao.maps.load(() => {
+      const kakao = window.kakao
+      const query = addr || aptNm
 
-    geocoder.addressSearch(query, (result, status) => {
-      let coords
-      if (status === kakao.maps.services.Status.OK) {
-        coords = new kakao.maps.LatLng(result[0].y, result[0].x)
-      } else {
-        // 주소 검색 실패 시 키워드 검색으로 fallback
-        const places = new kakao.maps.services.Places()
-        places.keywordSearch(aptNm, (res, st) => {
-          if (st !== kakao.maps.services.Status.OK || !res.length) return
-          const c = new kakao.maps.LatLng(res[0].y, res[0].x)
-          renderMap(c)
-        })
-        return
+      function renderMap(coords) {
+        if (!mapRef.current) return
+        const map = new kakao.maps.Map(mapRef.current, { center: coords, level: 4 })
+        new kakao.maps.Marker({ map, position: coords })
       }
-      renderMap(coords)
-    })
 
-    function renderMap(coords) {
-      const map = new kakao.maps.Map(mapRef.current, { center: coords, level: 4 })
-      new kakao.maps.Marker({ map, position: coords })
-    }
+      const geocoder = new kakao.maps.services.Geocoder()
+      geocoder.addressSearch(query, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+          renderMap(new kakao.maps.LatLng(result[0].y, result[0].x))
+        } else {
+          // 주소 실패 시 아파트명 키워드 검색 fallback
+          const places = new kakao.maps.services.Places()
+          places.keywordSearch(aptNm, (res, st) => {
+            if (st !== kakao.maps.services.Status.OK || !res.length) return
+            renderMap(new kakao.maps.LatLng(res[0].y, res[0].x))
+          })
+        }
+      })
+    })
   }, [aptNm, addr])
 
   return <div ref={mapRef} className="kakao-map" />
