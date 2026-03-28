@@ -409,3 +409,90 @@ header { text-align: center; padding: 4px 0 2px; }
   transition: opacity 0.15s;
 }
 .eval-detail-btn:hover { opacity: 0.88; }
+
+/* ─── DETAIL REPORT ─── */
+.detail-report { display: flex; flex-direction: column; gap: 0; }
+
+.detail-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0 16px;
+}
+.detail-back {
+  background: none; border: none; font-size: 14px;
+  color: var(--blue); cursor: pointer; font-family: inherit;
+  font-weight: 600; white-space: nowrap;
+}
+.detail-apt-name { font-size: 17px; font-weight: 800; }
+.detail-apt-loc  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+.detail-tabs {
+  display: flex; gap: 0;
+  background: var(--card); border-radius: 12px;
+  border: 1px solid var(--border); overflow: hidden; margin-bottom: 16px;
+}
+.detail-tab {
+  flex: 1; padding: 11px 0;
+  border: none; background: none;
+  font-size: 14px; font-weight: 600; color: var(--muted);
+  cursor: pointer; font-family: inherit;
+}
+.detail-tab.on { background: var(--blue); color: #fff; }
+
+.detail-body { min-height: 200px; }
+.detail-loading { padding: 40px; text-align: center; color: var(--muted); font-size: 14px; }
+.detail-empty   { padding: 40px; text-align: center; color: var(--muted); font-size: 14px; }
+
+/* 가격 탭 */
+.price-tab-months { display: flex; gap: 8px; margin-bottom: 16px; }
+.months-btn {
+  padding: 6px 16px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--card);
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  cursor: pointer; font-family: inherit;
+}
+.months-btn.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+.price-tab-summary {
+  display: flex; gap: 0;
+  background: var(--blue-lt); border-radius: 12px;
+  padding: 14px; margin-bottom: 16px;
+}
+.price-summary-item { flex: 1; text-align: center; }
+.price-summary-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.price-summary-val   { font-size: 15px; font-weight: 800; color: var(--text); }
+
+.trade-list { display: flex; flex-direction: column; gap: 8px; }
+.trade-row  {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px;
+}
+.trade-date { font-size: 12px; color: var(--muted); }
+.trade-amt  { font-size: 15px; font-weight: 800; color: var(--text); }
+.trade-meta { font-size: 12px; color: var(--muted); }
+
+/* 동네 탭 */
+.nbr-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+.nbr-row  { display: flex; align-items: flex-start; gap: 10px; }
+.nbr-icon { font-size: 20px; line-height: 1; }
+.nbr-text { font-size: 14px; color: var(--text2); line-height: 1.5; }
+.nbr-tag-row { margin-top: 8px; }
+.nbr-tag {
+  display: inline-block;
+  background: var(--blue-md); color: var(--blue);
+  font-size: 12px; font-weight: 700;
+  padding: 4px 12px; border-radius: 20px;
+}
+
+/* 이야기 탭 */
+.stories-tab { display: flex; flex-direction: column; gap: 10px; }
+.story-card {
+  display: block; text-decoration: none;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px;
+}
+.story-card:hover { background: var(--blue-lt); }
+.story-card-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.story-card-desc  { font-size: 13px; color: var(--text2); margin-bottom: 6px; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.story-card-meta  { font-size: 11px; color: var(--muted); }
