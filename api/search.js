@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   if (!KEY) return res.status(500).json({ error: 'API 키가 없어요' })
   if (!q || q.trim().length < 1) return res.json([])
 
-  const url = `https://apis.data.go.kr/1613000/AptListService3/getTotalAptList3?serviceKey=${KEY}&numOfRows=9999&pageNo=1&_type=json`
+  const url = `https://apis.data.go.kr/1613000/AptListService3/getTotalAptList3?serviceKey=${KEY}&kaptName=${encodeURIComponent(q.trim())}&numOfRows=20&pageNo=1&_type=json`
   try {
     const r = await fetch(url)
     if (!r.ok) return res.status(502).json({ error: 'API 오류', status: r.status })
@@ -15,6 +15,6 @@ export default async function handler(req, res) {
     const items = data?.response?.body?.items?.item
     if (!items) return res.json([])
     const arr = Array.isArray(items) ? items : [items]
-    return res.json(arr.filter(i => i.kaptName?.includes(q.trim())).slice(0,20).map(i => ({ kaptCode: i.kaptCode, kaptName: i.kaptName })))
+    return res.json(arr.slice(0, 20).map(i => ({ kaptCode: i.kaptCode, kaptName: i.kaptName })))
   } catch (e) { return res.status(500).json({ error: e.message }) }
 }
