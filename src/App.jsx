@@ -6,8 +6,7 @@ import EvalCard from './EvalCard.jsx'
 import DetailReport from './DetailReport.jsx'
 
 async function buildEvalData(apt) {
-  const infoRes = await fetch(`/api/apt-info?kaptCode=${apt.kaptCode}`).then(r => r.json()).catch(() => null)
-  const bjdCode = infoRes?.bjdCode || null
+  const bjdCode = apt.bjdCode || null
   if (!bjdCode) return null
 
   const lawdCd = bjdCode.slice(0, 5)
@@ -42,7 +41,7 @@ async function buildEvalData(apt) {
   if (recentAvg > 80000) priceLabel = '비쌈'
   else if (recentAvg < 40000) priceLabel = '저렴'
 
-  const addrParts = (infoRes?.addr || apt.addr || '').split(' ')
+  const addrParts = (apt.addr || '').split(' ')
   const dong = addrParts[addrParts.length - 1] || ''
   const regionName = addrParts[addrParts.length - 2] || ''
 
