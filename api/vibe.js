@@ -1,24 +1,7 @@
 // 수근수근 요약 — 블로그/카페/뉴스/지식인 수집 후 Claude로 3줄 요약
 export const config = { regions: ['icn1'] }
 
-import { stripHtml } from './_utils.js'
-
-const NAVER_BLOG = 'https://openapi.naver.com/v1/search/blog.json'
-const NAVER_CAFE = 'https://openapi.naver.com/v1/search/cafearticle.json'
-const NAVER_NEWS = 'https://openapi.naver.com/v1/search/news.json'
-const NAVER_KIN  = 'https://openapi.naver.com/v1/search/kin.json'
-
-async function naverSearch(endpoint, query, display = 4) {
-  const url = `${endpoint}?query=${encodeURIComponent(query)}&display=${display}&sort=sim`
-  const r = await fetch(url, {
-    headers: {
-      'X-Naver-Client-Id': process.env.NAVER_CLIENT_ID,
-      'X-Naver-Client-Secret': process.env.NAVER_CLIENT_SECRET,
-    },
-  })
-  if (!r.ok) return []
-  return (await r.json()).items || []
-}
+import { stripHtml, naverSearch, NAVER_BLOG, NAVER_CAFE, NAVER_NEWS, NAVER_KIN } from './_utils.js'
 
 function formatItems(items, tag) {
   return items
@@ -41,7 +24,6 @@ export default async function handler(req, res) {
       naverSearch(NAVER_KIN,  `${aptName} 어때요`, 4),
     ])
 
-    // 소스별 중복 제거 후 합치기
     const seen = new Set()
     const dedup = (items) => items.filter(i => {
       if (seen.has(i.link)) return false
@@ -58,22 +40,13 @@ export default async function handler(req, res) {
 
     if (!sections) return res.json({ lines: [] })
 
-    const prompt = `다음은 "${aptName}"${location ? ` (${location})` : ''} 관련 인터넷 글이야. 블로그 후기, 카페 글, 뉴스, 지식인 Q&A를 포함해.
-
-${sections}
-
-이 내용을 바탕으로, 이 아파트·동네에 대한 사람들의 솔직한 수근수근을 3줄로 요약해줘.
-- 각 줄은 이모지 하나로 시작
-- 실거주 경험, 동네 분위기, 주요 이슈를 골고루 반영
-- 뉴스에 중요한 이슈(재건축, 호재 등)가 있으면 반드시 포함
-- 한 줄에 20~35자 이내
-- 다른 설명 없이 3줄만 출력`
+    const prompt = `다음은 "${aptName}"${location ? ` (${location})` : ''} 관련 인터넷 글이야. 블로그 후기, 카페 글, 뉴스, 지식인 Q&A를 포함해.\n\n${sections}\n\n이 내용을 바탕으로, 이 아파트·동네에 대한 사람들의 솔직한 수근수근을 3줄로 요약해줘.\n- 각 줄은 이모지 하나로 시작\n- 실거주 경험, 동네 분위기, 주요 이슈를 골고루 반영\n- 뉴스에 중요한 이슈(재건축, 호재 등)가 있으면 반드시 포함\n- 한 줄에 20~35자 이내\n- 다른 설명 없이 3줄만 출력`
 
     const claude = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
+        'anthropic-version': '2024-06-01',
         'content-type': 'application/json',
       },
       body: JSON.stringify({

@@ -2,6 +2,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { DONG, HINT_SEARCHES } from './data.js'
 import { getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim } from './utils.js'
+import { PRICE_HIGH, PRICE_LOW, FETCH_TIMEOUT } from './constants.js'
 import EvalCard from './EvalCard.jsx'
 import DetailReport from './DetailReport.jsx'
 
@@ -12,11 +13,12 @@ async function buildEvalData(apt) {
   const dong = addrParts.find(p => p.endsWith('동') || p.endsWith('읍') || p.endsWith('면')) || addrParts[addrParts.length - 1] || ''
   const regionName = addrParts.find(p => p.endsWith('구') || p.endsWith('시') || p.endsWith('군')) || addrParts[addrParts.length - 2] || ''
 
+  // stories는 bjdCode 유무와 무관하게 한 번만 호출 (#35)
+  const storiesRes = await fetch(`/api/stories?aptName=${encodeURIComponent(apt.kaptName)}&location=${encodeURIComponent(dong)}`)
+    .then(r => r.json()).catch(() => [])
+  const voice = Array.isArray(storiesRes) && storiesRes.length > 0 ? storiesRes[0] : null
+
   if (!bjdCode) {
-    const lifeConditions = getLifeConditions(dong)
-    const storiesRes = await fetch(`/api/stories?aptName=${encodeURIComponent(apt.kaptName)}&location=${encodeURIComponent(dong)}`)
-      .then(r => r.json()).catch(() => [])
-    const voice = Array.isArray(storiesRes) && storiesRes.length > 0 ? storiesRes[0] : null
     return {
       kaptCode: apt.kaptCode,
       aptNm: apt.kaptName,
@@ -28,7 +30,7 @@ async function buildEvalData(apt) {
       recentAvg: 0,
       direction: '-',
       priceLabel: '-',
-      lifeConditions,
+      lifeConditions: getLifeConditions(dong),
       verdict: '실거래 데이터 없음',
       voice,
     }
@@ -38,7 +40,7 @@ async function buildEvalData(apt) {
   const ymList = getYM(6)
 
   const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), 10000)
+  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT)
   const tradeResults = await Promise.all(
     ymList.map(ym =>
       fetch(`/api/trade?lawdCd=${lawdCd}&dealYmd=${ym}`, { signal: controller.signal })
@@ -65,16 +67,10 @@ async function buildEvalData(apt) {
   const { recentAvg, direction } = calcPriceSignal(allTrades.slice(0, half), allTrades.slice(half))
 
   let priceLabel = '적정'
-  if (recentAvg > 80000) priceLabel = '비쌈'
-  else if (recentAvg < 40000) priceLabel = '저렴'
+  if (recentAvg > PRICE_HIGH) priceLabel = '비쌈'
+  else if (recentAvg < PRICE_LOW) priceLabel = '저렴'
 
-  const lifeConditions = getLifeConditions(dong)
   const tag = (DONG[dong] || {}).tag || ''
-  const verdict = getVerdict(tag, priceLabel)
-
-  const storiesRes = await fetch(`/api/stories?aptName=${encodeURIComponent(apt.kaptName)}&location=${encodeURIComponent(dong)}`)
-    .then(r => r.json()).catch(() => [])
-  const voice = Array.isArray(storiesRes) && storiesRes.length > 0 ? storiesRes[0] : null
 
   return {
     kaptCode: apt.kaptCode,
@@ -87,19 +83,20 @@ async function buildEvalData(apt) {
     recentAvg,
     direction,
     priceLabel,
-    lifeConditions,
-    verdict,
+    lifeConditions: getLifeConditions(dong),
+    verdict: getVerdict(tag, priceLabel),
     voice,
   }
 }
 
 export default function App() {
-  const [query, setQuery]       = useState('')
-  const [cards, setCards]       = useState([])
-  const [loading, setLoading]   = useState(false)
-  const [error, setError]       = useState(null)
+  const [query, setQuery]         = useState('')
+  const [cards, setCards]         = useState([])
+  const [loading, setLoading]     = useState(false)
+  const [error, setError]         = useState(null)
   const [detailApt, setDetailApt] = useState(null)
 
+  // #37: finally로 setLoading 일원화
   const handleSearch = useCallback(async (q) => {
     if (!q.trim()) return
     setLoading(true)
@@ -110,20 +107,22 @@ export default function App() {
     try {
       const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`).then(r => r.json())
       const list = Array.isArray(res) ? res.slice(0, 5) : []
-      if (list.length === 0) { setError(`'${q}' 검색 결과가 없습니다. 공식 아파트명으로 검색해보세요 (예: 반포자이, 래미안퍼스티지)`); setLoading(false); return }
-
+      if (list.length === 0) {
+        setError(`'${q}' 검색 결과가 없습니다. 공식 아파트명으로 검색해보세요 (예: 반포자이, 래미안퍼스티지)`)
+        return
+      }
       const results = await Promise.all(list.map(apt => buildEvalData(apt).catch(() => null)))
       const filtered = results.filter(Boolean)
       if (filtered.length === 0) {
         setError('아파트 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.')
-        setLoading(false)
         return
       }
       setCards(filtered)
     } catch {
       setError('데이터를 불러오는 중 오류가 발생했습니다')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }, [])
 
   const goHome = useCallback(() => {
@@ -134,10 +133,11 @@ export default function App() {
   }, [])
 
   const [suggestions, setSuggestions] = useState([])
-  const [showSugg, setShowSugg] = useState(false)
-  const [activeSugg, setActiveSugg] = useState(-1)
-  const searchRef = useRef(null)
-  const debounceRef = useRef(null)
+  const [showSugg, setShowSugg]       = useState(false)
+  const [activeSugg, setActiveSugg]   = useState(-1)
+  const searchRef    = useRef(null)
+  const debounceRef  = useRef(null)
+  const suggAbortRef = useRef(null) // #36: race condition 방지
 
   useEffect(() => {
     const handleClick = (e) => {
@@ -147,7 +147,10 @@ export default function App() {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
-  useEffect(() => () => clearTimeout(debounceRef.current), [])
+  useEffect(() => () => {
+    clearTimeout(debounceRef.current)
+    suggAbortRef.current?.abort()
+  }, [])
 
   if (detailApt) {
     return (
@@ -161,6 +164,7 @@ export default function App() {
     )
   }
 
+  // #36: 이전 요청 abort 후 새 요청 시작
   const handleQueryChange = (e) => {
     const v = e.target.value
     setQuery(v)
@@ -168,9 +172,16 @@ export default function App() {
     clearTimeout(debounceRef.current)
     if (v.trim().length < 1) { setSuggestions([]); setShowSugg(false); return }
     debounceRef.current = setTimeout(async () => {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(v)}`).then(r => r.json()).catch(() => [])
-      setSuggestions(Array.isArray(res) ? res.slice(0, 6) : [])
-      setShowSugg(true)
+      suggAbortRef.current?.abort()
+      const controller = new AbortController()
+      suggAbortRef.current = controller
+      const res = await fetch(`/api/search?q=${encodeURIComponent(v)}`, { signal: controller.signal })
+        .then(r => r.json())
+        .catch(e => (e.name === 'AbortError' ? null : []))
+      if (res !== null) {
+        setSuggestions(Array.isArray(res) ? res.slice(0, 6) : [])
+        setShowSugg(true)
+      }
     }, 200)
   }
 

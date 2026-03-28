@@ -1,6 +1,7 @@
 // src/DetailReport.jsx
 import { useState, useEffect, useCallback } from 'react'
 import { fP, fR, getYM, formatDealDate, nameSim, getLifeConditions } from './utils.js'
+import { FETCH_TIMEOUT, MIN_AREA_SQM, SQM_TO_PYEONG, KR_LAT, KR_LON } from './constants.js'
 import { DONG } from './data.js'
 
 const TABS = ['동네·이야기', '시세']
@@ -96,7 +97,7 @@ function PriceTab({ apt }) {
     setLoading(true)
     setTradeError(false)
     const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), 10000)
+    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT)
     Promise.all(
       ymList.map(ym =>
         fetch(`/api/trade?lawdCd=${lawdCd}&dealYmd=${ym}`, { signal: controller.signal })
@@ -116,8 +117,8 @@ function PriceTab({ apt }) {
           const area = parseFloat(item.excluUseAr) || 0
           const date = formatDealDate(item.dealYear, item.dealMonth, item.dealDay)
           const floor = item.floor || '-'
-          if (area < 40 || isNaN(amt) || amt === 0) return
-          const pyeong = Math.round(area / 2.47)
+          if (area < MIN_AREA_SQM || isNaN(amt) || amt === 0) return
+          const pyeong = Math.round(area / SQM_TO_PYEONG)
           if (pyeong === 0) return
           const perPy = Math.round(amt / pyeong)
           if (nameSim(nm, apt.aptNm) < 0.6 || perPy === 0) return
@@ -348,7 +349,7 @@ function OSMMap({ aptNm, addr }) {
       .then(data => {
         if (data?.[0]) {
           const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon)
-          if (isNaN(lat) || isNaN(lon) || lat < 33 || lat > 43 || lon < 124 || lon > 132) {
+          if (isNaN(lat) || isNaN(lon) || lat < KR_LAT.min || lat > KR_LAT.max || lon < KR_LON.min || lon > KR_LON.max) {
             setFailed(true)
           } else {
             const c = { lat, lon }

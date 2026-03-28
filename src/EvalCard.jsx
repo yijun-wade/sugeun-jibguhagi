@@ -1,6 +1,11 @@
 // src/EvalCard.jsx
 import { fP } from './utils.js'
 
+function isValidUrl(url) {
+  try { const { protocol } = new URL(url); return protocol === 'http:' || protocol === 'https:' }
+  catch { return false }
+}
+
 const PRICE_LABEL_COLOR = {
   '비쌈':  { bg: '#fff1f0', color: '#D64A3A' },
   '적정':  { bg: '#fffbeb', color: '#d97706' },
@@ -57,7 +62,7 @@ export default function EvalCard({ apt, onDetail }) {
       )}
 
       {/* 실거주 한마디 */}
-      {apt.voice?.link?.startsWith('http') && (
+      {apt.voice?.link && isValidUrl(apt.voice.link) && (
         <a className="eval-voice" href={apt.voice.link} target="_blank" rel="noopener noreferrer">
           🗣 "{apt.voice.description?.slice(0, 50) || apt.voice.title?.slice(0, 40)}"
         </a>
