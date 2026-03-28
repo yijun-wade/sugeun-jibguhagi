@@ -82,15 +82,19 @@ function PriceTab({ apt }) {
           const area = parseFloat(item.excluUseAr) || 0
           const date = `${item.dealYear}-${String(item.dealMonth).padStart(2,'0')}-${String(item.dealDay).padStart(2,'0')}`
           const floor = item.floor || '-'
-          if (area < 40) return  // 40㎡ 미만 극소형 제외
-          const pyeong = Math.round(area / 2.47)  // 공급평형 기준 (84㎡ ≈ 34평)
+          if (area < 40 || isNaN(amt) || amt === 0) return
+          const pyeong = Math.round(area / 2.47)
+          if (pyeong === 0) return
           const perPy = Math.round(amt / pyeong)
-          if (nameSim(nm, apt.aptNm) < 0.6 || isNaN(amt) || perPy === 0) return
+          if (nameSim(nm, apt.aptNm) < 0.6 || perPy === 0) return
           all.push({ date, amt, area, floor, nm, pyeong, perPy })
         })
       })
       all.sort((a, b) => b.date.localeCompare(a.date))
       setTrades(all)
+    }).catch(() => {
+      setTrades([])
+    }).finally(() => {
       setLoading(false)
     })
   }, [apt, months])
