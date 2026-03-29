@@ -147,12 +147,24 @@ export function snippetText(text, maxLen = 55) {
   if (!text) return ''
   if (text.length <= maxLen) return text
   const trimmed = text.slice(0, maxLen)
-  const lastEnd = Math.max(
+
+  // Punctuation boundaries (always reliable)
+  const punctEnd = Math.max(
     trimmed.lastIndexOf('.'),
     trimmed.lastIndexOf('!'),
     trimmed.lastIndexOf('?'),
-    trimmed.lastIndexOf('요'),
-    trimmed.lastIndexOf('다'),
   )
-  return lastEnd > 20 ? trimmed.slice(0, lastEnd + 1) : trimmed + '…'
+  if (punctEnd > 20) return trimmed.slice(0, punctEnd + 1)
+
+  // Korean sentence-ending syllables (요/다) — only when terminal:
+  // followed by space, or at the very end of the trimmed string
+  for (let i = trimmed.length - 1; i > 20; i--) {
+    const ch = trimmed[i]
+    if (ch === '요' || ch === '다') {
+      const next = trimmed[i + 1]
+      if (next === undefined || next === ' ') return trimmed.slice(0, i + 1)
+    }
+  }
+
+  return trimmed + '…'
 }
