@@ -136,12 +136,16 @@ export default function App() {
   const [showSugg, setShowSugg]       = useState(false)
   const [activeSugg, setActiveSugg]   = useState(-1)
   const searchRef    = useRef(null)
+  const suggRef      = useRef(null)
   const debounceRef  = useRef(null)
   const suggAbortRef = useRef(null) // #36: race condition 방지
 
   useEffect(() => {
     const handleClick = (e) => {
-      if (searchRef.current && !searchRef.current.contains(e.target)) setShowSugg(false)
+      if (searchRef.current && !searchRef.current.contains(e.target) &&
+          !(suggRef.current && suggRef.current.contains(e.target))) {
+        setShowSugg(false)
+      }
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
@@ -250,7 +254,7 @@ export default function App() {
           <button className="search-btn" onClick={() => { setShowSugg(false); handleSearch(query) }}>검색</button>
         </div>
         {showSugg && suggestions.length > 0 && (
-          <ul className="sugg-list">
+          <ul className="sugg-list" ref={suggRef}>
             {suggestions.map((apt, i) => (
               <li
                 key={apt.kaptCode}
