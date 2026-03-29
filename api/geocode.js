@@ -3,7 +3,7 @@ export const config = { regions: ['icn1'] }
 
 const MAX_CACHE = 200
 const cache = new Map()
-let lastCall = 0
+let lastCall = 0 // 서버리스 인스턴스 내 스로틀 (다중 인스턴스 간 비공유 — 최선 노력)
 
 function setCache(key, value) {
   if (cache.size >= MAX_CACHE) cache.delete(cache.keys().next().value) // FIFO

@@ -286,7 +286,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
       </div>
 
       {/* 블로그 후기 — 아코디언 (기본 닫힘) */}
-      <Accordion label="블로그 · 카페 후기" count={stories?.length ?? null}>
+      <Accordion label="블로그 · 카페 후기" count={storiesLoading ? null : (stories?.length ?? null)}>
         {storiesLoading ? (
           <div className="detail-loading">후기 불러오는 중...</div>
         ) : !stories || stories.length === 0 ? (
@@ -354,8 +354,9 @@ function KakaoMap({ aptNm, addr }) {
   useEffect(() => {
     const cacheKey = `${aptNm}|${addr}`
     if (coordCache.has(cacheKey)) { setCoords(coordCache.get(cacheKey)); return }
+    const controller = new AbortController()
     const q = addr ? `${aptNm} ${addr}` : aptNm
-    fetch(`/api/geocode?q=${encodeURIComponent(q)}`)
+    fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { signal: controller.signal })
       .then(r => r.json())
       .then(data => {
         if (data?.[0]) {
@@ -369,7 +370,8 @@ function KakaoMap({ aptNm, addr }) {
           }
         } else setFailed(true)
       })
-      .catch(() => setFailed(true))
+      .catch(e => { if (e.name !== 'AbortError') setFailed(true) })
+    return () => controller.abort()
   }, [aptNm, addr])
 
   useEffect(() => {
