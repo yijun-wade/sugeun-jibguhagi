@@ -4,6 +4,11 @@ import { fP, fR, getYM, formatDealDate, nameSim, getLifeConditions } from './uti
 import { FETCH_TIMEOUT, MIN_AREA_SQM, SQM_TO_PYEONG, KR_LAT, KR_LON } from './constants.js'
 import { DONG } from './data.js'
 
+function isValidUrl(url) {
+  try { const { protocol } = new URL(url); return protocol === 'http:' || protocol === 'https:' }
+  catch { return false }
+}
+
 const TABS = ['동네·이야기', '시세']
 
 export default function DetailReport({ apt, onBack }) {
@@ -293,7 +298,9 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
           <div className="detail-empty">실거주 후기를 찾지 못했습니다</div>
         ) : (
           <div className="stories-tab">
-            {stories.map((s, i) => (
+            {stories
+              .filter(s => s.link && isValidUrl(s.link))
+              .map((s, i) => (
               <a key={i} className="story-card" href={s.link} target="_blank" rel="noopener noreferrer">
                 <div className="story-card-title">{s.title}</div>
                 {s.description && <div className="story-card-desc">{s.description}</div>}
