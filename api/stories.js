@@ -16,13 +16,14 @@ export default async function handler(req, res) {
   const cafeQ = [location ? `${location} 육아` : `${aptName} 육아`, location ? `${location} 임장` : `${aptName} 임장 후기`]
 
   try {
-    const [b1, b2, b3, c1, c2] = await Promise.all([
+    const settled = await Promise.allSettled([
       naverSearch(NAVER_BLOG, blogQ[0], 5),
       naverSearch(NAVER_BLOG, blogQ[1], 5),
       naverSearch(NAVER_BLOG, blogQ[2], 5),
       naverSearch(NAVER_CAFE, cafeQ[0], 4),
       naverSearch(NAVER_CAFE, cafeQ[1], 4),
     ])
+    const [b1, b2, b3, c1, c2] = settled.map(r => r.status === 'fulfilled' ? r.value : [])
     const seen = new Set()
     const stories = [...b1, ...b2, ...b3, ...c1, ...c2]
       .filter(item => {

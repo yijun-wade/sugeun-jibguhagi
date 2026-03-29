@@ -16,13 +16,14 @@ export default async function handler(req, res) {
   if (!process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: 'Anthropic API 키 없음' })
 
   try {
-    const [blog1, blog2, cafe, news, kin] = await Promise.all([
+    const settled = await Promise.allSettled([
       naverSearch(NAVER_BLOG, `${aptName} 살아보니`),
       naverSearch(NAVER_BLOG, `${aptName} 입주 후기`),
       naverSearch(NAVER_CAFE, location ? `${location} 실거주 후기` : `${aptName} 후기`),
       naverSearch(NAVER_NEWS, `${aptName}`, 3),
       naverSearch(NAVER_KIN,  `${aptName} 어때요`, 4),
     ])
+    const [blog1, blog2, cafe, news, kin] = settled.map(r => r.status === 'fulfilled' ? r.value : [])
 
     const seen = new Set()
     const dedup = (items) => items.filter(i => {
