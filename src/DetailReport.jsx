@@ -236,21 +236,23 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
   const conditions = getLifeConditions(dong)
   const [vibe, setVibe] = useState(null)
   const [vibeLoading, setVibeLoading] = useState(true)
+  const [vibeError, setVibeError] = useState(false)
   const [stories, setStories] = useState([])
   const [storiesLoading, setStoriesLoading] = useState(true)
+  const [storiesError, setStoriesError] = useState(false)
   useEffect(() => {
     const controller = new AbortController()
     const { signal } = controller
-    setVibe(null); setVibeLoading(true)
-    setStories([]); setStoriesLoading(true)
+    setVibe(null); setVibeLoading(true); setVibeError(false)
+    setStories([]); setStoriesLoading(true); setStoriesError(false)
     fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
       .then(r => r.json())
       .then(data => { setVibe(data?.lines || []); setVibeLoading(false) })
-      .catch(e => { if (e.name !== 'AbortError') { setVibe([]); setVibeLoading(false) } })
+      .catch(e => { if (e.name !== 'AbortError') { setVibeError(true); setVibeLoading(false) } })
     fetch(`/api/stories?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
       .then(r => r.json())
       .then(data => { setStories(Array.isArray(data) ? data : []); setStoriesLoading(false) })
-      .catch(e => { if (e.name !== 'AbortError') { setStories([]); setStoriesLoading(false) } })
+      .catch(e => { if (e.name !== 'AbortError') { setStoriesError(true); setStoriesLoading(false) } })
     return () => controller.abort()
   }, [aptNm, dong])
 
@@ -261,10 +263,12 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
         <div className="vibe-card-title">지금 이 동네 분위기</div>
         {vibeLoading ? (
           <div className="vibe-loading">AI 요약 생성 중...</div>
+        ) : vibeError ? (
+          <div className="vibe-empty">일시적인 오류가 발생했습니다</div>
         ) : vibe && vibe.length > 0 ? (
           <ul className="vibe-lines">{vibe.map((line, i) => <li key={i}>{line}</li>)}</ul>
         ) : (
-          <div className="vibe-empty">요약을 생성하지 못했습니다</div>
+          <div className="vibe-empty">요약 정보가 없습니다</div>
         )}
       </div>
 
@@ -294,6 +298,8 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
       <Accordion label="블로그 · 카페 후기" count={stories?.length ?? null}>
         {storiesLoading ? (
           <div className="detail-loading">후기 불러오는 중...</div>
+        ) : storiesError ? (
+          <div className="detail-empty">일시적인 오류로 후기를 불러오지 못했습니다</div>
         ) : !stories || stories.length === 0 ? (
           <div className="detail-empty">실거주 후기를 찾지 못했습니다</div>
         ) : (
