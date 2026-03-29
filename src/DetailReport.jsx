@@ -357,6 +357,16 @@ function KakaoMap({ aptNm, addr }) {
   const [coords, setCoords] = useState(null)
   const [failed, setFailed] = useState(false)
   const [mapError, setMapError] = useState(false)
+  const [kakaoReady, setKakaoReady] = useState(false)
+
+  useEffect(() => {
+    if (window.kakao?.maps) { setKakaoReady(true); return }
+    const timer = setInterval(() => {
+      if (window.kakao?.maps) { setKakaoReady(true); clearInterval(timer) }
+    }, 100)
+    const timeout = setTimeout(() => { clearInterval(timer); setMapError(true) }, 5000)
+    return () => { clearInterval(timer); clearTimeout(timeout) }
+  }, [])
 
   useEffect(() => {
     const cacheKey = `${aptNm}|${addr}`
@@ -380,13 +390,12 @@ function KakaoMap({ aptNm, addr }) {
   }, [aptNm, addr])
 
   useEffect(() => {
-    if (!coords || !mapRef.current) return
-    if (!window.kakao?.maps) { setMapError(true); return }
+    if (!coords || !mapRef.current || !kakaoReady) return
     const { kakao } = window
     const center = new kakao.maps.LatLng(coords.lat, coords.lon)
     const map = new kakao.maps.Map(mapRef.current, { center, level: 3 })
     new kakao.maps.Marker({ position: center, map })
-  }, [coords])
+  }, [coords, kakaoReady])
 
   if (failed || mapError) return <div className="osm-map osm-map-loading">지도를 불러올 수 없습니다</div>
   if (!coords) return <div className="osm-map osm-map-loading">지도 불러오는 중...</div>
