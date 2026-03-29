@@ -3,11 +3,10 @@
   "outputDirectory": "dist",
   "functions": {
     "api/trade.js":    { "regions": ["icn1"] },
-    "api/trades.js":   { "regions": ["icn1"] },
     "api/search.js":   { "regions": ["icn1"] },
-    "api/apt-info.js": { "regions": ["icn1"] },
+    "api/geocode.js":  { "regions": ["icn1"] },
     "api/stories.js":  { "regions": ["icn1"] },
-    "api/vibe.js":     { "regions": ["icn1"] }
+    "api/vibe.js":     { "regions": ["icn1"], "maxDuration": 30 }
   },
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
