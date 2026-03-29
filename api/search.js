@@ -24,8 +24,12 @@ export default function handler(req, res) {
 
   const list = loadAptList()
   const query = q.trim()
+  const normalQ = query.replace(/\s+/g, '')
   const results = list
-    .filter(i => i.kaptName?.includes(query))
+    .filter(i => {
+      const nm = i.kaptName || ''
+      return nm.includes(query) || nm.replace(/\s+/g, '').includes(normalQ)
+    })
     .slice(0, 20)
 
   return res.json(results)
