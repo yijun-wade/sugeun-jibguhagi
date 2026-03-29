@@ -1,8 +1,8 @@
 // src/App.jsx
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { DONG, HINT_SEARCHES } from './data.js'
-import { getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim } from './utils.js'
-import { PRICE_HIGH, PRICE_LOW, FETCH_TIMEOUT, MIN_AREA_SQM } from './constants.js'
+import { getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim, buildPriceJudgment } from './utils.js'
+import { FETCH_TIMEOUT, MIN_AREA_SQM } from './constants.js'
 import EvalCard from './EvalCard.jsx'
 import DetailReport from './DetailReport.jsx'
 
@@ -37,7 +37,7 @@ async function buildEvalData(apt) {
       addr: apt.addr,
       recentAvg: 0,
       direction: '-',
-      priceLabel: '-',
+      priceJudgment: { level: null, trend: null, sentence: null, verdictKey: '적정' },
       lifeConditions: getLifeConditions(dong),
       verdict: '실거래 데이터 없음',
       voice,
@@ -81,9 +81,7 @@ async function buildEvalData(apt) {
   const olderTrades  = allTrades.filter(t => t.dealYmd.slice(0, 6) <  cutoff)
   const { recentAvg, direction } = calcPriceSignal(recentTrades, olderTrades)
 
-  let priceLabel = '적정'
-  if (recentAvg > PRICE_HIGH) priceLabel = '비쌈'
-  else if (recentAvg < PRICE_LOW) priceLabel = '저렴'
+  const priceJudgment = buildPriceJudgment(recentAvg, direction)
 
   const tag = (DONG[dong] || {}).tag || ''
 
@@ -97,9 +95,9 @@ async function buildEvalData(apt) {
     addr: apt.addr,
     recentAvg,
     direction,
-    priceLabel,
+    priceJudgment,
     lifeConditions: getLifeConditions(dong),
-    verdict: getVerdict(tag, priceLabel),
+    verdict: getVerdict(tag, priceJudgment.verdictKey),
     voice,
   }
 }

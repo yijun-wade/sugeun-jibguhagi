@@ -413,6 +413,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .eval-life       { display: flex; flex-direction: column; gap: 6px; }
 .eval-life-row   { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); }
 
+.eval-price-judgment { font-size: 13px; color: var(--text2); line-height: 1.5; }
 .eval-voice {
   display: block;
   font-size: 13px; color: var(--text2);
@@ -539,6 +540,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .price-ai-label.비쌈 { background: #fee2e2; color: #dc2626; }
 .price-ai-label.적정 { background: #dcfce7; color: #16a34a; }
 .price-ai-label.저렴 { background: #dbeafe; color: #2563eb; }
+.price-ai-judgment { font-size: 13px; color: var(--text2); margin-top: 8px; line-height: 1.5; }
 
 /* 동네 탭 */
 .osm-map { width: 100%; height: 220px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); display: block; }

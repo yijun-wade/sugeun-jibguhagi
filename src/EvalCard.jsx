@@ -6,12 +6,6 @@ function isValidUrl(url) {
   catch { return false }
 }
 
-const PRICE_LABEL_COLOR = {
-  '비쌈':  { bg: '#fff1f0', color: '#D64A3A' },
-  '적정':  { bg: '#fffbeb', color: '#d97706' },
-  '저렴':  { bg: '#f0fdf4', color: '#16a34a' },
-}
-
 const DIRECTION_COLOR = {
   '↑ 상승세': '#D64A3A',
   '→ 보합':   '#6b7280',
@@ -19,7 +13,6 @@ const DIRECTION_COLOR = {
 }
 
 export default function EvalCard({ apt, onDetail }) {
-  const labelStyle = PRICE_LABEL_COLOR[apt.priceLabel] || {}
   const dirColor   = DIRECTION_COLOR[apt.direction] || '#6b7280'
 
   return (
@@ -35,19 +28,15 @@ export default function EvalCard({ apt, onDetail }) {
       {/* 한줄 판단 */}
       <div className="eval-verdict">💬 {apt.verdict}</div>
 
-      {/* 가격 신호 */}
-      <div className="eval-price-row">
-        <div className="eval-price-avg">
-          💰 최근 3개월 평균 <strong>{fP(apt.recentAvg)}</strong>
+      {/* 가격 판단 — 절대 신호(가격대) + 상대 신호(거래 흐름) */}
+      {apt.priceJudgment?.sentence ? (
+        <div className="eval-price-judgment">{apt.priceJudgment.sentence}</div>
+      ) : apt.recentAvg > 0 ? (
+        <div className="eval-price-row">
+          <span className="eval-price-avg">💰 최근 평균 <strong>{fP(apt.recentAvg)}</strong></span>
           <span style={{ color: dirColor, marginLeft: 6 }}>{apt.direction}</span>
         </div>
-        <div
-          className="eval-price-label"
-          style={{ background: labelStyle.bg, color: labelStyle.color }}
-        >
-          {apt.priceLabel}
-        </div>
-      </div>
+      ) : null}
 
       {/* 생활 여건 */}
       {apt.lifeConditions.length > 0 && (

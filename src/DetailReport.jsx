@@ -151,13 +151,20 @@ function PriceTab({ apt }) {
 
   return (
     <div className="price-tab">
-      {/* AI 요약 카드 */}
+      {/* 가격 판단 카드 */}
       <div className="price-ai-card">
         <div className="price-ai-verdict">{apt.verdict}</div>
         <div className="price-ai-signals">
           <span className="price-ai-dir">{apt.direction}</span>
-          <span className={`price-ai-label ${apt.priceLabel}`}>{apt.priceLabel}</span>
+          {apt.priceJudgment?.level && (
+            <span className={`price-ai-label ${apt.priceJudgment.verdictKey}`}>
+              {apt.priceJudgment.level}
+            </span>
+          )}
         </div>
+        {apt.priceJudgment?.sentence && (
+          <div className="price-ai-judgment">{apt.priceJudgment.sentence}</div>
+        )}
       </div>
 
       {/* 기간 토글 */}

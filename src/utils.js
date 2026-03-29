@@ -1,5 +1,6 @@
 // src/utils.js
 import { DONG } from './data.js'
+import { PRICE_HIGH, PRICE_LOW } from './constants.js'
 
 // ── 숫자 포맷 ──────────────────────────────
 export function fP(v) {
@@ -73,6 +74,42 @@ export function getLifeConditions(dong) {
   if (d.note) items.push({ icon: '✨', text: d.note })
   if (items.length < 3 && d.tag === '자연환경') items.push({ icon: '🌿', text: '자연환경 우수' })
   return items.slice(0, 3)
+}
+
+// ── 가격 판단 2층 구조 ──────────────────────────────────
+// layer 1: 절대가격 신호 (가격대 자체, 지역 보정 없음)
+// layer 2: 상대가격 신호 (최근 3개월 vs 이전 3개월 — calcPriceSignal 결과)
+// verdictKey: getVerdict() 내부 조회용 키 (표시 안 함)
+export function buildPriceJudgment(recentAvg, direction) {
+  if (!recentAvg || recentAvg <= 0) {
+    return { level: null, trend: null, sentence: null, verdictKey: '적정' }
+  }
+
+  // Layer 1: 절대가격
+  let level, verdictKey
+  if (recentAvg > PRICE_HIGH) {
+    level = '높은 편'
+    verdictKey = '비쌈'
+  } else if (recentAvg < PRICE_LOW) {
+    level = '낮은 편'
+    verdictKey = '저렴'
+  } else {
+    level = '중간 수준'
+    verdictKey = '적정'
+  }
+
+  // Layer 2: 상대가격 (최근 거래 흐름)
+  const trendMap = {
+    '↑ 상승세': '오름세',
+    '→ 보합':   '안정적',
+    '↓ 하락세': '내림세',
+  }
+  const trend = trendMap[direction] || '안정적'
+
+  // 문장 조합 — 실제 가격 노출로 "무엇 대비인지" 사용자가 스스로 판단 가능
+  const sentence = `평균 ${fP(recentAvg)}으로 가격대가 ${level} — 최근 거래는 ${trend}입니다`
+
+  return { level, trend, sentence, verdictKey }
 }
 
 // ── 한줄 판단 문장 ──────────────────────────
