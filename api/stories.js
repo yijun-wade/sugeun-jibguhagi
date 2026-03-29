@@ -28,6 +28,7 @@ export default async function handler(req, res) {
       .filter(item => {
         const t = stripHtml(item.title)
         if (isCommercial(t) || seen.has(item.link)) return false
+        if (!item.link?.startsWith('http://') && !item.link?.startsWith('https://')) return false
         seen.add(item.link)
         return true
       })

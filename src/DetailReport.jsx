@@ -9,12 +9,14 @@ const TABS = ['동네·이야기', '시세']
 export default function DetailReport({ apt, onBack }) {
   const [tab, setTab] = useState('동네·이야기')
   const [toast, setToast] = useState(false)
+  const toastTimerRef = useRef(null)
 
   const handleCollect = useCallback(() => {
     const url = `${window.location.origin}/?q=${encodeURIComponent(apt.aptNm)}`
     navigator.clipboard.writeText(url).then(() => {
+      clearTimeout(toastTimerRef.current)
       setToast(true)
-      setTimeout(() => setToast(false), 2800)
+      toastTimerRef.current = setTimeout(() => setToast(false), 2800)
     }).catch(() => {
       // clipboard API 미지원 fallback
       const el = document.createElement('textarea')
@@ -25,10 +27,13 @@ export default function DetailReport({ apt, onBack }) {
       el.select()
       document.execCommand('copy')
       document.body.removeChild(el)
+      clearTimeout(toastTimerRef.current)
       setToast(true)
-      setTimeout(() => setToast(false), 2800)
+      toastTimerRef.current = setTimeout(() => setToast(false), 2800)
     })
   }, [apt.aptNm])
+
+  useEffect(() => () => clearTimeout(toastTimerRef.current), [])
 
   return (
     <div className="detail-report">
