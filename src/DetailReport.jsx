@@ -157,7 +157,7 @@ function PriceTab({ apt }) {
         <div className="price-ai-signals">
           <span className="price-ai-dir">{apt.direction}</span>
           {apt.priceJudgment?.level && (
-            <span className={`price-ai-label ${apt.priceJudgment.verdictKey}`}>
+            <span className={`price-ai-label ${{ '높은 수준': 'high', '중간 수준': 'mid', '낮은 수준': 'low' }[apt.priceJudgment.level] || ''}`}>
               {apt.priceJudgment.level}
             </span>
           )}

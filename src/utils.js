@@ -79,7 +79,6 @@ export function getLifeConditions(dong) {
 // ── 가격 판단 2층 구조 ──────────────────────────────────
 // layer 1: 절대가격 신호 (가격대 자체, 지역 보정 없음)
 // layer 2: 상대가격 신호 (최근 3개월 vs 이전 3개월 — calcPriceSignal 결과)
-// verdictKey: getVerdict() 내부 조회용 키 (표시 안 함)
 export function buildPriceJudgment(recentAvg, direction) {
   if (!recentAvg || recentAvg <= 0) {
     return { level: null, trend: null, sentence: null }
