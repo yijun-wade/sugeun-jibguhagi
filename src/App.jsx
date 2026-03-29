@@ -2,7 +2,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { DONG, HINT_SEARCHES } from './data.js'
 import { getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim } from './utils.js'
-import { PRICE_HIGH, PRICE_LOW, FETCH_TIMEOUT } from './constants.js'
+import { PRICE_HIGH, PRICE_LOW, FETCH_TIMEOUT, MIN_AREA_SQM } from './constants.js'
 import EvalCard from './EvalCard.jsx'
 import DetailReport from './DetailReport.jsx'
 
@@ -57,18 +57,21 @@ async function buildEvalData(apt) {
     if (!items) return
     const arr = Array.isArray(items) ? items : [items]
     arr.forEach(item => {
-      const nm  = (item.aptNm || '').trim()
-      const amt = parseInt((item.dealAmount || '').replace(/,/g, ''), 10)
-      if (nameSim(nm, apt.kaptName) < 0.6 || isNaN(amt)) return
+      const nm   = (item.aptNm || '').trim()
+      const amt  = parseInt((item.dealAmount || '').replace(/,/g, ''), 10)
+      const area = parseFloat(item.excluUseAr) || 0
+      if (nameSim(nm, apt.kaptName) < 0.6 || isNaN(amt) || area < MIN_AREA_SQM) return
       const dealYmd = `${item.dealYear}${String(item.dealMonth || 0).padStart(2,'0')}${String(item.dealDay || 0).padStart(2,'0')}`
-      allTrades.push({ amt, area: parseFloat(item.excluUseAr) || 0, dealYmd })
+      allTrades.push({ amt, area, dealYmd })
     })
   })
 
   allTrades.sort((a, b) => b.dealYmd.localeCompare(a.dealYmd))
 
-  const half = Math.ceil(allTrades.length / 2)
-  const { recentAvg, direction } = calcPriceSignal(allTrades.slice(0, half), allTrades.slice(half))
+  const cutoff = ymList[2]
+  const recentTrades = allTrades.filter(t => t.dealYmd.slice(0, 6) >= cutoff)
+  const olderTrades  = allTrades.filter(t => t.dealYmd.slice(0, 6) <  cutoff)
+  const { recentAvg, direction } = calcPriceSignal(recentTrades, olderTrades)
 
   let priceLabel = '적정'
   if (recentAvg > PRICE_HIGH) priceLabel = '비쌈'
