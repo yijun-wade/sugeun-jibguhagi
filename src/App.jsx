@@ -99,6 +99,7 @@ export default function App() {
   const [loading, setLoading]     = useState(false)
   const [error, setError]         = useState(null)
   const [detailApt, setDetailApt] = useState(null)
+  const [totalCount, setTotalCount] = useState(0)
 
   // #37: finally로 setLoading 일원화
   const handleSearch = useCallback(async (q) => {
@@ -106,6 +107,7 @@ export default function App() {
     setLoading(true)
     setError(null)
     setCards([])
+    setTotalCount(0)
     setDetailApt(null)
 
     try {
@@ -122,6 +124,7 @@ export default function App() {
         return
       }
       setCards(filtered)
+      setTotalCount(Array.isArray(res) ? res.length : 0)
     } catch {
       setError('데이터를 불러오는 중 오류가 발생했습니다')
     } finally {
@@ -134,6 +137,7 @@ export default function App() {
     setCards([])
     setQuery('')
     setError(null)
+    setTotalCount(0)
   }, [])
 
   const [suggestions, setSuggestions] = useState([])
@@ -287,6 +291,9 @@ export default function App() {
           {cards.map((apt) => (
             <EvalCard key={apt.kaptCode} apt={apt} onDetail={() => setDetailApt(apt)} />
           ))}
+          {totalCount > cards.length && (
+            <div className="search-count-hint">{totalCount}개 중 상위 {cards.length}개 표시</div>
+          )}
         </div>
       )}
     </div>
