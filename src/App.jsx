@@ -16,6 +16,10 @@ async function buildEvalData(apt) {
   // stories는 bjdCode 유무와 무관하게 한 번만 호출 (#35)
   const storiesRes = await fetch(`/api/stories?aptName=${encodeURIComponent(apt.kaptName)}&location=${encodeURIComponent(dong)}`)
     .then(r => r.json()).catch(() => [])
+  // 후기 대표 선택 — 임시 품질 기준: description이 가장 긴 결과 우선
+  // (긴 본문 = 실거주 경험 서술 가능성 높음, 짧은 제목만 있는 광고성 글 후순위)
+  // TODO: 향후 반복 언급 기반 요약(키워드 빈도 집계)으로 교체 예정.
+  //       이 로직을 별도 함수 selectVoice(stories) 로 분리하면 교체가 쉬움.
   const voice = Array.isArray(storiesRes) && storiesRes.length > 0
     ? storiesRes.reduce((best, s) =>
         (s.description?.length || 0) > (best.description?.length || 0) ? s : best
