@@ -140,3 +140,19 @@ export function nameSim(a, b) {
   for (const ch of na) if (setB.has(ch)) overlap++
   return overlap / Math.max(na.length, nb.length)
 }
+
+// ── 후기 텍스트 스니펫 ──────────────────────────────
+// 문장 완결 단위로 maxLen 이하로 자름
+export function snippetText(text, maxLen = 55) {
+  if (!text) return ''
+  if (text.length <= maxLen) return text
+  const trimmed = text.slice(0, maxLen)
+  const lastEnd = Math.max(
+    trimmed.lastIndexOf('.'),
+    trimmed.lastIndexOf('!'),
+    trimmed.lastIndexOf('?'),
+    trimmed.lastIndexOf('요'),
+    trimmed.lastIndexOf('다'),
+  )
+  return lastEnd > 20 ? trimmed.slice(0, lastEnd + 1) : trimmed + '…'
+}

@@ -16,7 +16,11 @@ async function buildEvalData(apt) {
   // stories는 bjdCode 유무와 무관하게 한 번만 호출 (#35)
   const storiesRes = await fetch(`/api/stories?aptName=${encodeURIComponent(apt.kaptName)}&location=${encodeURIComponent(dong)}`)
     .then(r => r.json()).catch(() => [])
-  const voice = Array.isArray(storiesRes) && storiesRes.length > 0 ? storiesRes[0] : null
+  const voice = Array.isArray(storiesRes) && storiesRes.length > 0
+    ? storiesRes.reduce((best, s) =>
+        (s.description?.length || 0) > (best.description?.length || 0) ? s : best
+      , storiesRes[0])
+    : null
 
   if (!bjdCode) {
     return {

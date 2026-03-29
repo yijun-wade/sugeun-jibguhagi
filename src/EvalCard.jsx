@@ -1,5 +1,5 @@
 // src/EvalCard.jsx
-import { fP } from './utils.js'
+import { fP, snippetText } from './utils.js'
 
 function isValidUrl(url) {
   try { const { protocol } = new URL(url); return protocol === 'http:' || protocol === 'https:' }
@@ -62,9 +62,9 @@ export default function EvalCard({ apt, onDetail }) {
       )}
 
       {/* 실거주 한마디 */}
-      {apt.voice?.link && isValidUrl(apt.voice.link) && (apt.voice.description?.slice(0, 50) || apt.voice.title?.slice(0, 40)) && (
+      {apt.voice?.link && isValidUrl(apt.voice.link) && (apt.voice.description || apt.voice.title) && (
         <a className="eval-voice" href={apt.voice.link} target="_blank" rel="noopener noreferrer">
-          🗣 "{apt.voice.description?.slice(0, 50) || apt.voice.title?.slice(0, 40)}"
+          🗣 "{snippetText(apt.voice.description || apt.voice.title)}"
         </a>
       )}
 
