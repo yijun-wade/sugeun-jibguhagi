@@ -276,17 +276,33 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
       </div>
 
       {/* 생활 여건 */}
-      {conditions.length > 0 && (
-        <div className="nbr-list">
-          {conditions.map((item, i) => (
-            <div key={i} className="nbr-row">
-              <span className="nbr-icon">{item.icon}</span>
-              <span className="nbr-text">{item.text}</span>
-            </div>
-          ))}
-          {d.tag && <div className="nbr-tag-row"><span className="nbr-tag">{d.tag}</span></div>}
-        </div>
-      )}
+      {(() => {
+        const lc = conditions
+        if (!lc || (!lc.mobility && !lc.infra && !lc.risk)) return null
+        return (
+          <div className="nbr-list">
+            {lc.mobility && (
+              <div className="nbr-row">
+                <span className="nbr-row-label">이동</span>
+                <span>{lc.mobility}</span>
+              </div>
+            )}
+            {lc.infra && (
+              <div className="nbr-row">
+                <span className="nbr-row-label">생활</span>
+                <span>{lc.infra}</span>
+              </div>
+            )}
+            {lc.risk && (
+              <div className="nbr-row nbr-row--risk">
+                <span className="nbr-row-label">주의</span>
+                <span>{lc.risk}</span>
+              </div>
+            )}
+            {d.tag && <div className="nbr-tag-row"><span className="nbr-tag">{d.tag}</span></div>}
+          </div>
+        )
+      })()}
 
       {/* 지도 */}
       <KakaoMap aptNm={aptNm} addr={addr} />

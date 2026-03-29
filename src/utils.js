@@ -64,16 +64,32 @@ export function calcPriceSignal(recentTrades, olderTrades) {
   return { recentAvg, olderAvg, direction }
 }
 
-// ── 동네 생활 여건 top 3 ───────────────────
-// 반환값: [{ icon, text }] 최대 3개
+// ── 동네 생활 여건 3축 구조 ───────────────────
+// 반환값: { mobility, infra, risk }
 export function getLifeConditions(dong) {
   const d = DONG[dong] || {}
-  const items = []
-  if (d.sub)  items.push({ icon: '🚇', text: d.sub })
-  if (d.edu)  items.push({ icon: '🏫', text: d.edu })
-  if (d.note) items.push({ icon: '✨', text: d.note })
-  if (items.length < 3 && d.tag === '자연환경') items.push({ icon: '🌿', text: '자연환경 우수' })
-  return items.slice(0, 3)
+
+  const mobility = d.sub || null
+
+  // edu 우선, 없으면 note (태그 무관하게 항상 사용)
+  let infra = null
+  if (d.edu) {
+    infra = d.edu
+  } else if (d.note) {
+    infra = d.note
+  } else if (d.tag === '자연환경') {
+    infra = '자연환경 우수'
+  }
+
+  // risk: tag 기반 파생, 보수적 톤
+  let risk = null
+  if (d.tag === '재건축기대') {
+    risk = '재건축 이슈가 있어 거주 기간은 확인이 필요합니다'
+  } else if (d.tag === '미래가치') {
+    risk = '개발이 진행 중인 지역이라 현재 생활 편의는 확인이 필요합니다'
+  }
+
+  return { mobility, infra, risk }
 }
 
 // ── 가격 판단 2층 구조 ──────────────────────────────────

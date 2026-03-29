@@ -39,16 +39,32 @@ export default function EvalCard({ apt, onDetail }) {
       ) : null}
 
       {/* 생활 여건 */}
-      {apt.lifeConditions.length > 0 && (
-        <div className="eval-life">
-          {apt.lifeConditions.map((item, i) => (
-            <div key={i} className="eval-life-row">
-              <span>{item.icon}</span>
-              <span>{item.text}</span>
-            </div>
-          ))}
-        </div>
-      )}
+      {(() => {
+        const lc = apt.lifeConditions
+        if (!lc || (!lc.mobility && !lc.infra && !lc.risk)) return null
+        return (
+          <div className="eval-life">
+            {lc.mobility && (
+              <div className="eval-life-row">
+                <span className="eval-life-label">이동</span>
+                <span>{lc.mobility}</span>
+              </div>
+            )}
+            {lc.infra && (
+              <div className="eval-life-row">
+                <span className="eval-life-label">생활</span>
+                <span>{lc.infra}</span>
+              </div>
+            )}
+            {lc.risk && (
+              <div className="eval-life-row eval-life-row--risk">
+                <span className="eval-life-label">주의</span>
+                <span>{lc.risk}</span>
+              </div>
+            )}
+          </div>
+        )
+      })()}
 
       {/* 실거주 한마디 */}
       {apt.voice?.link && isValidUrl(apt.voice.link) && (apt.voice.description || apt.voice.title) && (
