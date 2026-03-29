@@ -37,7 +37,7 @@ async function buildEvalData(apt) {
       addr: apt.addr,
       recentAvg: 0,
       direction: '-',
-      priceJudgment: { level: null, trend: null, sentence: null, verdictKey: '적정' },
+      priceJudgment: { level: null, trend: null, sentence: null },
       lifeConditions: getLifeConditions(dong),
       verdict: '실거래 데이터 없음',
       voice,
@@ -97,7 +97,7 @@ async function buildEvalData(apt) {
     direction,
     priceJudgment,
     lifeConditions: getLifeConditions(dong),
-    verdict: getVerdict(tag, priceJudgment.verdictKey),
+    verdict: getVerdict(tag),
     voice,
   }
 }
