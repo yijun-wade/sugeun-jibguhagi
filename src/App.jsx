@@ -60,9 +60,12 @@ async function buildEvalData(apt) {
       const nm  = (item.aptNm || '').trim()
       const amt = parseInt((item.dealAmount || '').replace(/,/g, ''), 10)
       if (nameSim(nm, apt.kaptName) < 0.6 || isNaN(amt)) return
-      allTrades.push({ amt, area: parseFloat(item.excluUseAr) || 0 })
+      const dealYmd = `${item.dealYear}${String(item.dealMonth || 0).padStart(2,'0')}${String(item.dealDay || 0).padStart(2,'0')}`
+      allTrades.push({ amt, area: parseFloat(item.excluUseAr) || 0, dealYmd })
     })
   })
+
+  allTrades.sort((a, b) => b.dealYmd.localeCompare(a.dealYmd))
 
   const half = Math.ceil(allTrades.length / 2)
   const { recentAvg, direction } = calcPriceSignal(allTrades.slice(0, half), allTrades.slice(half))
