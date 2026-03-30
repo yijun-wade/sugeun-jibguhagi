@@ -300,7 +300,7 @@ export default function App() {
                 onPointerDown={(e) => { e.preventDefault(); pickSuggestion(apt) }}
               >
                 <span className="sugg-name">{apt.kaptName}</span>
-                <span className="sugg-addr">{apt.addr?.split(' ').slice(0, 3).join(' ')}</span>
+                <span className="sugg-addr">{apt.addr?.split(' ').slice(1, 4).join(' ')}</span>
               </li>
             ))}
           </ul>
