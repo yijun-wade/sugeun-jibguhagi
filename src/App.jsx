@@ -116,10 +116,12 @@ export default function App() {
   const handleSearch = useCallback(async (q) => {
     if (!q.trim()) {
       setError('아파트명이나 동네명을 입력해주세요')
-      setTimeout(() => setError(null), 2000)
+      clearTimeout(emptyQueryTimerRef.current)
+      emptyQueryTimerRef.current = setTimeout(() => setError(null), 2000)
       inputRef.current?.focus()
       return
     }
+    clearTimeout(emptyQueryTimerRef.current)
     setLoading(true)
     setError(null)
     setErrorType(null)
@@ -171,8 +173,9 @@ export default function App() {
   const searchRef    = useRef(null)
   const inputRef     = useRef(null)
   const suggRef      = useRef(null)
-  const debounceRef  = useRef(null)
-  const suggAbortRef = useRef(null) // #36: race condition 방지
+  const debounceRef      = useRef(null)
+  const suggAbortRef     = useRef(null) // #36: race condition 방지
+  const emptyQueryTimerRef = useRef(null)
 
   useEffect(() => {
     const handleClick = (e) => {
@@ -323,6 +326,8 @@ export default function App() {
               className="retry-btn"
               onClick={() => {
                 if (errorType === 'no-results') {
+                  setError(null)
+                  setErrorType(null)
                   inputRef.current?.focus()
                 } else {
                   handleSearch(query)
