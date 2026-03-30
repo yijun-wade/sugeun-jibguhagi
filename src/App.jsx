@@ -109,13 +109,20 @@ export default function App() {
   const [totalCount, setTotalCount] = useState(0)
   const [loading, setLoading]     = useState(false)
   const [error, setError]         = useState(null)
+  const [errorType, setErrorType] = useState(null) // 'no-results' | 'load-fail' | 'network' | null
   const [detailApt, setDetailApt] = useState(null)
 
   // #37: finally로 setLoading 일원화
   const handleSearch = useCallback(async (q) => {
-    if (!q.trim()) return
+    if (!q.trim()) {
+      setError('아파트명이나 동네명을 입력해주세요')
+      setTimeout(() => setError(null), 2000)
+      inputRef.current?.focus()
+      return
+    }
     setLoading(true)
     setError(null)
+    setErrorType(null)
     setCards([])
     setSearchedQuery('')
     setTotalCount(0)
@@ -126,20 +133,23 @@ export default function App() {
       const list = Array.isArray(res) ? res.slice(0, 5) : []
       const total = Array.isArray(res) ? res.length : 0
       if (list.length === 0) {
-        setError(`'${q}' 검색 결과가 없습니다. 공식 아파트명으로 검색해보세요 (예: 반포자이, 래미안퍼스티지)`)
+        setError(`'${q}' 검색 결과가 없습니다. 아파트명이나 동네명으로 다시 검색해보세요.\n예: 반포자이, 망원동, 강남구`)
+        setErrorType('no-results')
         return
       }
       const results = await Promise.all(list.map(apt => buildEvalData(apt).catch(() => null)))
       const filtered = results.filter(Boolean)
       if (filtered.length === 0) {
         setError('아파트 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.')
+        setErrorType('load-fail')
         return
       }
       setSearchedQuery(q)
       setCards(filtered)
       setTotalCount(total)
     } catch {
-      setError('데이터를 불러오는 중 오류가 발생했습니다')
+      setError('데이터를 불러오지 못했습니다. 네트워크를 확인하거나 잠시 후 다시 시도해주세요.')
+      setErrorType('network')
     } finally {
       setLoading(false)
     }
@@ -151,6 +161,7 @@ export default function App() {
     setQuery('')
     setSearchedQuery('')
     setError(null)
+    setErrorType(null)
     setTotalCount(0)
   }, [])
 
@@ -158,6 +169,7 @@ export default function App() {
   const [showSugg, setShowSugg]       = useState(false)
   const [activeSugg, setActiveSugg]   = useState(-1)
   const searchRef    = useRef(null)
+  const inputRef     = useRef(null)
   const suggRef      = useRef(null)
   const debounceRef  = useRef(null)
   const suggAbortRef = useRef(null) // #36: race condition 방지
@@ -263,6 +275,7 @@ export default function App() {
       <div className="search-wrap" ref={searchRef}>
         <div className="search-box">
           <input
+            ref={inputRef}
             className="search-input"
             type="text"
             aria-label="아파트 이름으로 검색"
@@ -302,7 +315,34 @@ export default function App() {
       )}
 
       {loading && <div className="loading-msg">임장 데이터 수집 중...</div>}
-      {error   && <div className="error-msg">{error}</div>}
+      {error && (
+        <div className="error-block">
+          <div className="error-msg" style={{ whiteSpace: 'pre-line' }}>{error}</div>
+          {(errorType === 'no-results' || errorType === 'load-fail' || errorType === 'network') && (
+            <button
+              className="retry-btn"
+              onClick={() => {
+                if (errorType === 'no-results') {
+                  inputRef.current?.focus()
+                } else {
+                  handleSearch(query)
+                }
+              }}
+            >
+              {errorType === 'no-results' ? '다시 검색하기' : '다시 시도하기'}
+            </button>
+          )}
+          {errorType === 'no-results' && (
+            <div className="hint-searches hint-searches--error">
+              {HINT_SEARCHES.map(h => (
+                <button key={h} className="hint-chip" onClick={() => { setQuery(h); handleSearch(h) }}>
+                  {h}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {cards.length > 0 && (
         <div className="result-section">

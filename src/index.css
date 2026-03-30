@@ -687,6 +687,34 @@ header { text-align: center; padding: 4px 0 2px; }
 .loading-msg { text-align: center; color: var(--muted); font-size: 14px; padding: 20px; }
 .error-msg   { text-align: center; color: var(--red);   font-size: 14px; padding: 20px; }
 
+/* 8차: 에러 복구 UI */
+.error-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.retry-btn {
+  padding: 8px 20px;
+  background: var(--blue, #2563eb);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.retry-btn:hover {
+  opacity: 0.88;
+}
+
+.hint-searches--error {
+  margin-top: 0;
+}
+
 /* 검색 결과 섹션 */
 .result-section {
   display: flex;
