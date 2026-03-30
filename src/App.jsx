@@ -105,6 +105,7 @@ async function buildEvalData(apt) {
 export default function App() {
   const [query, setQuery]         = useState('')
   const [cards, setCards]         = useState([])
+  const [totalCount, setTotalCount] = useState(0)
   const [loading, setLoading]     = useState(false)
   const [error, setError]         = useState(null)
   const [detailApt, setDetailApt] = useState(null)
@@ -115,11 +116,13 @@ export default function App() {
     setLoading(true)
     setError(null)
     setCards([])
+    setTotalCount(0)
     setDetailApt(null)
 
     try {
       const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`).then(r => r.json())
       const list = Array.isArray(res) ? res.slice(0, 5) : []
+      const total = Array.isArray(res) ? res.length : 0
       if (list.length === 0) {
         setError(`'${q}' 검색 결과가 없습니다. 공식 아파트명으로 검색해보세요 (예: 반포자이, 래미안퍼스티지)`)
         return
@@ -131,6 +134,7 @@ export default function App() {
         return
       }
       setCards(filtered)
+      setTotalCount(total)
     } catch {
       setError('데이터를 불러오는 중 오류가 발생했습니다')
     } finally {
@@ -143,6 +147,7 @@ export default function App() {
     setCards([])
     setQuery('')
     setError(null)
+    setTotalCount(0)
   }, [])
 
   const [suggestions, setSuggestions] = useState([])
@@ -296,11 +301,28 @@ export default function App() {
       {error   && <div className="error-msg">{error}</div>}
 
       {cards.length > 0 && (
-        <div className="card-list">
-          {cards.map((apt) => (
-            <EvalCard key={apt.kaptCode} apt={apt} onDetail={() => setDetailApt(apt)} />
-          ))}
-        </div>
+        <>
+          <div className="search-result-header">
+            <span className="search-result-title">
+              '{query}' 검색 결과
+            </span>
+            <span className="search-result-count">
+              {totalCount <= cards.length
+                ? `${cards.length}개`
+                : `${cards.length}개 표시 / 전체 ${totalCount}개`}
+            </span>
+          </div>
+          {totalCount > cards.length && (
+            <div className="search-more-hint">
+              검색 결과가 더 있어요. 아파트명이나 도로명을 함께 입력하면 더 정확하게 찾을 수 있어요.
+            </div>
+          )}
+          <div className="card-list">
+            {cards.map((apt) => (
+              <EvalCard key={apt.kaptCode} apt={apt} onDetail={() => setDetailApt(apt)} />
+            ))}
+          </div>
+        </>
       )}
     </div>
   )

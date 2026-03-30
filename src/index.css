@@ -687,6 +687,38 @@ header { text-align: center; padding: 4px 0 2px; }
 .loading-msg { text-align: center; color: var(--muted); font-size: 14px; padding: 20px; }
 .error-msg   { text-align: center; color: var(--red);   font-size: 14px; padding: 20px; }
 
+/* 검색 결과 헤더 */
+.search-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--blue-lt, #eff6ff);
+  border: 1px solid var(--blue-md, #dbeafe);
+  border-radius: 10px;
+  margin-bottom: 4px;
+}
+
+.search-result-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text, #111827);
+}
+
+.search-result-count {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--blue, #2563eb);
+  white-space: nowrap;
+}
+
+.search-more-hint {
+  font-size: 12px;
+  color: var(--muted, #6b7280);
+  padding: 6px 2px;
+  line-height: 1.5;
+}
+
 .card-list { display: flex; flex-direction: column; gap: 16px; }
 
 /* ─── MOBILE ─── */
