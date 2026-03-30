@@ -77,8 +77,6 @@ export function getLifeConditions(dong) {
     infra = d.edu
   } else if (d.note) {
     infra = d.note
-  } else if (d.tag === '자연환경') {
-    infra = '자연환경 우수'
   }
 
   // risk: tag 기반 파생, 보수적 톤

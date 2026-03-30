@@ -429,7 +429,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .eval-life-row--risk {
   background: #fffbeb;
   border-left: 2px solid #f59e0b;
-  padding: 0.2rem 0.4rem;
+  padding: 0.2rem 0.5rem;
   border-radius: 3px;
   color: #b45309;
 }
@@ -583,9 +583,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .listing-btn.hogang { background: #6B48FF; color: #fff; }
 .listing-btn.hogang:hover { background: #5a3de0; }
 .nbr-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
-.nbr-row  { display: flex; align-items: flex-start; gap: 10px; }
-.nbr-icon { font-size: 20px; line-height: 1; }
-.nbr-text { font-size: 14px; color: var(--text2); line-height: 1.5; }
+.nbr-row  { display: flex; align-items: baseline; gap: 10px; }
 .nbr-row-label {
   display: inline-block;
   width: 3.5em;

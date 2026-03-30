@@ -1,6 +1,6 @@
 // src/DetailReport.jsx
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { fP, fR, getYM, formatDealDate, nameSim, getLifeConditions } from './utils.js'
+import { fP, fR, getYM, formatDealDate, nameSim } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM, SQM_TO_PYEONG, KR_LAT, KR_LON } from './constants.js'
 import { DONG } from './data.js'
 
@@ -71,7 +71,7 @@ export default function DetailReport({ apt, onBack }) {
 
       <div className="detail-body">
         {tab === '시세'       && <PriceTab apt={apt} />}
-        {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} />}
+        {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} lifeConditions={apt.lifeConditions} />}
       </div>
     </div>
   )
@@ -238,9 +238,9 @@ function PriceTab({ apt }) {
 }
 
 /* ── 동네·이야기 통합 탭 ─────────────────── */
-function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
+function NeighborhoodStoriesTab({ dong, aptNm, addr, lifeConditions }) {
   const d = DONG[dong] || {}
-  const conditions = getLifeConditions(dong)
+  const conditions = lifeConditions || {}
   const [vibe, setVibe] = useState(null)
   const [vibeLoading, setVibeLoading] = useState(true)
   const [stories, setStories] = useState([])
