@@ -104,6 +104,7 @@ async function buildEvalData(apt) {
 
 export default function App() {
   const [query, setQuery]         = useState('')
+  const [searchedQuery, setSearchedQuery] = useState('')
   const [cards, setCards]         = useState([])
   const [totalCount, setTotalCount] = useState(0)
   const [loading, setLoading]     = useState(false)
@@ -116,6 +117,7 @@ export default function App() {
     setLoading(true)
     setError(null)
     setCards([])
+    setSearchedQuery('')
     setTotalCount(0)
     setDetailApt(null)
 
@@ -133,6 +135,7 @@ export default function App() {
         setError('아파트 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.')
         return
       }
+      setSearchedQuery(q)
       setCards(filtered)
       setTotalCount(total)
     } catch {
@@ -146,6 +149,7 @@ export default function App() {
     setDetailApt(null)
     setCards([])
     setQuery('')
+    setSearchedQuery('')
     setError(null)
     setTotalCount(0)
   }, [])
@@ -301,10 +305,10 @@ export default function App() {
       {error   && <div className="error-msg">{error}</div>}
 
       {cards.length > 0 && (
-        <>
+        <div className="result-section">
           <div className="search-result-header">
             <span className="search-result-title">
-              '{query}' 검색 결과
+              '{searchedQuery}' 검색 결과
             </span>
             <span className="search-result-count">
               {totalCount <= cards.length
@@ -322,7 +326,7 @@ export default function App() {
               <EvalCard key={apt.kaptCode} apt={apt} onDetail={() => setDetailApt(apt)} />
             ))}
           </div>
-        </>
+        </div>
       )}
     </div>
   )

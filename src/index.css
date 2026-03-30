@@ -687,6 +687,13 @@ header { text-align: center; padding: 4px 0 2px; }
 .loading-msg { text-align: center; color: var(--muted); font-size: 14px; padding: 20px; }
 .error-msg   { text-align: center; color: var(--red);   font-size: 14px; padding: 20px; }
 
+/* 검색 결과 섹션 */
+.result-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 /* 검색 결과 헤더 */
 .search-result-header {
   display: flex;
@@ -696,7 +703,6 @@ header { text-align: center; padding: 4px 0 2px; }
   background: var(--blue-lt, #eff6ff);
   border: 1px solid var(--blue-md, #dbeafe);
   border-radius: 10px;
-  margin-bottom: 4px;
 }
 
 .search-result-title {
