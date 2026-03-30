@@ -28,7 +28,7 @@ export default function handler(req, res) {
   const results = list
     .filter(i => {
       const nm = i.kaptName || ''
-      return nm.includes(query) || nm.replace(/\s+/g, '').includes(normalQ)
+      return nm.includes(query) || nm.replace(/\s+/g, '').includes(normalQ) || (i.addr || '').includes(query)
     })
     .slice(0, 20)
 
