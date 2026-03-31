@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { fP, fR, getYM, formatDealDate, nameSim } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM, SQM_TO_PYEONG, KR_LAT, KR_LON } from './constants.js'
-import { DONG } from './data.js'
 
 function isValidUrl(url) {
   try { const { protocol } = new URL(url); return protocol === 'http:' || protocol === 'https:' }
@@ -71,7 +70,7 @@ export default function DetailReport({ apt, onBack }) {
 
       <div className="detail-body">
         {tab === '시세'       && <PriceTab apt={apt} />}
-        {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} lifeConditions={apt.lifeConditions} />}
+        {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} />}
       </div>
     </div>
   )
@@ -153,7 +152,6 @@ function PriceTab({ apt }) {
     <div className="price-tab">
       {/* 가격 판단 카드 */}
       <div className="price-ai-card">
-        <div className="price-ai-verdict">{apt.verdict}</div>
         <div className="price-ai-signals">
           <span className="price-ai-dir">{apt.direction}</span>
           {apt.priceJudgment?.level && (
@@ -238,9 +236,7 @@ function PriceTab({ apt }) {
 }
 
 /* ── 동네·이야기 통합 탭 ─────────────────── */
-function NeighborhoodStoriesTab({ dong, aptNm, addr, lifeConditions }) {
-  const d = DONG[dong] || {}
-  const conditions = lifeConditions || {}
+function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
   const [vibe, setVibe] = useState(null)
   const [vibeLoading, setVibeLoading] = useState(true)
   const [stories, setStories] = useState([])
@@ -274,35 +270,6 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, lifeConditions }) {
           <div className="vibe-empty">요약을 생성하지 못했습니다</div>
         )}
       </div>
-
-      {/* 생활 여건 */}
-      {(() => {
-        const lc = conditions
-        if (!lc || (!lc.mobility && !lc.infra && !lc.risk)) return null
-        return (
-          <div className="nbr-list">
-            {lc.mobility && (
-              <div className="nbr-row">
-                <span className="nbr-row-label">이동</span>
-                <span>{lc.mobility}</span>
-              </div>
-            )}
-            {lc.infra && (
-              <div className="nbr-row">
-                <span className="nbr-row-label">생활</span>
-                <span>{lc.infra}</span>
-              </div>
-            )}
-            {lc.risk && (
-              <div className="nbr-row nbr-row--risk">
-                <span className="nbr-row-label">주의</span>
-                <span>{lc.risk}</span>
-              </div>
-            )}
-            {d.tag && <div className="nbr-tag-row"><span className="nbr-tag">{d.tag}</span></div>}
-          </div>
-        )
-      })()}
 
       {/* 지도 */}
       <KakaoMap aptNm={aptNm} addr={addr} />

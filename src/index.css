@@ -557,7 +557,6 @@ header { text-align: center; padding: 4px 0 2px; }
 
 /* 시세 탭 AI 카드 */
 .price-ai-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
-.price-ai-verdict { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.5; }
 .price-ai-signals { display: flex; gap: 8px; align-items: center; }
 .price-ai-dir { font-size: 13px; color: var(--text2); }
 .price-ai-label { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
@@ -582,32 +581,6 @@ header { text-align: center; padding: 4px 0 2px; }
 .listing-btn.naver:hover { background: #02a84c; }
 .listing-btn.hogang { background: #6B48FF; color: #fff; }
 .listing-btn.hogang:hover { background: #5a3de0; }
-.nbr-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
-.nbr-row  { display: flex; align-items: baseline; gap: 10px; }
-.nbr-row-label {
-  display: inline-block;
-  width: 3.5em;
-  color: #6b7280;
-  font-size: 0.78rem;
-  flex-shrink: 0;
-}
-.nbr-row--risk {
-  background: #fffbeb;
-  border-left: 2px solid #f59e0b;
-  padding: 0.2rem 0.5rem;
-  border-radius: 3px;
-  color: #b45309;
-}
-.nbr-row--risk .nbr-row-label {
-  color: #d97706;
-}
-.nbr-tag-row { margin-top: 8px; }
-.nbr-tag {
-  display: inline-block;
-  background: var(--blue-md); color: var(--blue);
-  font-size: 12px; font-weight: 700;
-  padding: 4px 12px; border-radius: 20px;
-}
 
 /* 이야기 탭 */
 .stories-tab { display: flex; flex-direction: column; gap: 10px; }
