@@ -97,7 +97,7 @@ async function buildEvalData(apt) {
     direction,
     priceJudgment,
     lifeConditions: getLifeConditions(dong),
-    verdict: getVerdict(tag),
+    verdict: getVerdict(tag, dong),
     voice,
   }
 }
