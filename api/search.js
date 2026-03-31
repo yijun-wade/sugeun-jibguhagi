@@ -18,6 +18,15 @@ function loadAptList() {
   return aptList
 }
 
+// addr에서 동/구 단위 추출 헬퍼
+// "서울특별시 마포구 망원동 12-3" → ["마포구", "망원동"]
+function extractAdminUnits(addr) {
+  return (addr || '').split(' ').filter(part =>
+    part.endsWith('동') || part.endsWith('구') || part.endsWith('시') ||
+    part.endsWith('군') || part.endsWith('읍') || part.endsWith('면')
+  )
+}
+
 export default function handler(req, res) {
   const { q } = req.query
   if (!q || q.trim().length < 1) return res.json([])
@@ -25,15 +34,6 @@ export default function handler(req, res) {
   const list = loadAptList()
   const query = q.trim()
   const normalQ = query.replace(/\s+/g, '')
-
-  // addr에서 동/구 단위 추출 헬퍼
-  // "서울특별시 마포구 망원동 12-3" → ["마포구", "망원동"]
-  function extractAdminUnits(addr) {
-    return (addr || '').split(' ').filter(part =>
-      part.endsWith('동') || part.endsWith('구') || part.endsWith('시') ||
-      part.endsWith('군') || part.endsWith('읍') || part.endsWith('면')
-    )
-  }
 
   const results = list
     .map(i => {
@@ -54,7 +54,7 @@ export default function handler(req, res) {
         // "망원동" → 망원동.includes("망원동") → 매칭
         // "강남구" → 강남구.includes("강남구") → 매칭
         const units = extractAdminUnits(addr)
-        const unitMatch = units.some(unit =>
+        const unitMatch = query.length >= 2 && units.some(unit =>
           unit.includes(query) || unit.includes(normalQ) || query.includes(unit)
         )
         if (unitMatch) {
