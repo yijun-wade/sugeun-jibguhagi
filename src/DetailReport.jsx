@@ -144,40 +144,72 @@ function PriceTab({ apt }) {
     return () => { controller.abort(); clearTimeout(timer) }
   }, [apt?.bjdCode, apt?.aptNm, months])
 
+  const avgAmt   = trades?.length ? Math.round(trades.reduce((s, t) => s + t.amt,   0) / trades.length) : 0
   const avgPerPy = trades?.length ? Math.round(trades.reduce((s, t) => s + t.perPy, 0) / trades.length) : 0
-  const minPerPy = trades?.length ? Math.min(...trades.map(t => t.perPy)) : 0
-  const maxPerPy = trades?.length ? Math.max(...trades.map(t => t.perPy)) : 0
+
+  const changePct = apt.olderAvg > 0
+    ? Math.round((apt.recentAvg - apt.olderAvg) / apt.olderAvg * 100)
+    : null
+  const dirLabel = { '↑ 상승세': '오름세', '→ 보합': '보합', '↓ 하락세': '내림세' }[apt.direction] || ''
+  const dirCls   = apt.direction?.includes('상승') ? 'up' : apt.direction?.includes('하락') ? 'down' : 'flat'
+  const levelCls = { '높은 수준': 'high', '중간 수준': 'mid', '낮은 수준': 'low' }[apt.priceJudgment?.level] || ''
+
+  if (!apt.bjdCode) {
+    return (
+      <div className="price-tab">
+        <div className="detail-empty">실거래 데이터가 없는 단지입니다</div>
+        <div className="listing-deeplinks">
+          <div className="listing-deeplinks-label">실매물 보기</div>
+          <div className="listing-deeplinks-btns">
+            <a className="listing-btn naver" href={`https://search.naver.com/search.naver?query=${encodeURIComponent(apt.aptNm + ' 아파트 매물')}`} target="_blank" rel="noopener noreferrer">네이버 매물검색</a>
+            <a className="listing-btn hogang" href={`https://hogangnono.com/?q=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer">호갱노노</a>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="price-tab">
-      {/* 가격 판단 카드 */}
-      <div className="price-ai-card">
-        <div className="price-ai-signals">
-          <span className="price-ai-dir">{apt.direction}</span>
-          {apt.priceJudgment?.level && (
-            <span className={`price-ai-label ${{ '높은 수준': 'high', '중간 수준': 'mid', '낮은 수준': 'low' }[apt.priceJudgment.level] || ''}`}>
-              {apt.priceJudgment.level}
-            </span>
+
+      {/* 상단: 가격 요약 Hero */}
+      <div className="price-hero">
+        <div className="price-tab-months">
+          {[3, 6, 12].map(m => (
+            <button key={m} className={`months-btn${months === m ? ' on' : ''}`} onClick={() => setMonths(m)}>
+              {m}개월
+            </button>
+          ))}
+        </div>
+        {loading ? (
+          <div className="price-hero-loading">평균가 계산 중...</div>
+        ) : avgAmt > 0 ? (
+          <>
+            <div className="price-hero-label">{months}개월 거래 평균</div>
+            <div className="price-hero-main">{fP(avgAmt)}</div>
+            {avgPerPy > 0 && <div className="price-hero-sub">평당 {fP(avgPerPy)}</div>}
+          </>
+        ) : null}
+      </div>
+
+      {/* 중단: 해석 */}
+      {(dirLabel || apt.priceJudgment?.level || changePct !== null) && (
+        <div className="price-interpret">
+          <div className="price-interpret-badges">
+            {dirLabel && <span className={`price-dir-badge ${dirCls}`}>{dirLabel}</span>}
+            {apt.priceJudgment?.level && (
+              <span className={`price-ai-label ${levelCls}`}>{apt.priceJudgment.level}</span>
+            )}
+          </div>
+          {changePct !== null && (
+            <div className="price-interpret-change">
+              이전 3개월 대비 {changePct > 0 ? `+${changePct}` : `${changePct}`}%
+            </div>
           )}
         </div>
-        {apt.priceJudgment?.sentence && (
-          <div className="price-ai-judgment">{apt.priceJudgment.sentence}</div>
-        )}
-      </div>
+      )}
 
-      {/* 기간 토글 */}
-      <div className="price-tab-months">
-        {[3, 6, 12].map(m => (
-          <button
-            key={m}
-            className={`months-btn${months === m ? ' on' : ''}`}
-            onClick={() => setMonths(m)}
-          >
-            {m}개월
-          </button>
-        ))}
-      </div>
-
+      {/* 하단: 근거 */}
       {loading ? (
         <div className="detail-loading">실거래 데이터 불러오는 중...</div>
       ) : tradeError ? (
@@ -186,27 +218,9 @@ function PriceTab({ apt }) {
         <div className="detail-empty">최근 {months}개월 거래 내역이 없습니다</div>
       ) : (
         <>
-          {/* 핵심 요약 — 항상 노출 */}
-          <div className="price-tab-summary">
-            <div className="price-summary-item">
-              <div className="price-summary-label">평당 평균</div>
-              <div className="price-summary-val">{fP(avgPerPy)}<span className="price-summary-unit">/평</span></div>
-            </div>
-            <div className="price-summary-item">
-              <div className="price-summary-label">평당 범위</div>
-              <div className="price-summary-val">{fR(minPerPy, maxPerPy)}</div>
-            </div>
-            <div className="price-summary-item">
-              <div className="price-summary-label">거래</div>
-              <div className="price-summary-val">{trades.length}건</div>
-            </div>
-          </div>
-
-          {/* 평형 분포 */}
           <AreaBreakdown trades={trades} />
 
-          {/* 실거래 내역 — 아코디언 */}
-          <Accordion label="실거래 내역" count={trades.length}>
+          <Accordion label="실거래 내역" count={trades.length} defaultOpen={true}>
             <div className="trade-list">
               {trades.map((t, i) => (
                 <div key={i} className="trade-row">
@@ -221,7 +235,6 @@ function PriceTab({ apt }) {
             </div>
           </Accordion>
 
-          {/* 실매물 바로가기 */}
           <div className="listing-deeplinks">
             <div className="listing-deeplinks-label">실매물 보기</div>
             <div className="listing-deeplinks-btns">

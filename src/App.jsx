@@ -36,6 +36,7 @@ async function buildEvalData(apt) {
       bjdCode: null,
       addr: apt.addr,
       recentAvg: 0,
+      olderAvg: 0,
       direction: '-',
       priceJudgment: { level: null, trend: null, sentence: null },
       lifeConditions: getLifeConditions(dong),
@@ -79,7 +80,7 @@ async function buildEvalData(apt) {
   const cutoff = ymList[2]
   const recentTrades = allTrades.filter(t => t.dealYmd.slice(0, 6) >= cutoff)
   const olderTrades  = allTrades.filter(t => t.dealYmd.slice(0, 6) <  cutoff)
-  const { recentAvg, direction } = calcPriceSignal(recentTrades, olderTrades)
+  const { recentAvg, olderAvg, direction } = calcPriceSignal(recentTrades, olderTrades)
 
   const priceJudgment = buildPriceJudgment(recentAvg, direction)
 
@@ -94,6 +95,7 @@ async function buildEvalData(apt) {
     bjdCode,
     addr: apt.addr,
     recentAvg,
+    olderAvg,
     direction,
     priceJudgment,
     lifeConditions: getLifeConditions(dong),
