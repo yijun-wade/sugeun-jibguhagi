@@ -203,8 +203,11 @@ function PriceTab({ apt }) {
           </div>
           {changePct !== null && changePct !== 0 && (
             <div className="price-interpret-change">
-              최근 3개월 기준 {changePct > 0 ? `+${changePct}` : `${changePct}`}%
+              직전 3개월 대비 {changePct > 0 ? `+${changePct}` : `${changePct}`}%
             </div>
+          )}
+          {apt.priceJudgment?.level && (
+            <div className="price-interpret-basis">서울·수도권 실거래 기준</div>
           )}
         </div>
       )}
@@ -218,9 +221,13 @@ function PriceTab({ apt }) {
         <div className="detail-empty">최근 {months}개월 거래 내역이 없습니다</div>
       ) : (
         <>
+          {trades.length <= 2 && (
+            <div className="price-sparse-warn">거래 건수가 적어 참고용으로만 확인하세요</div>
+          )}
+
           <AreaBreakdown trades={trades} />
 
-          <Accordion label="실거래 내역" count={trades.length} defaultOpen={true}>
+          <Accordion label="실거래 내역" count={trades.length} defaultOpen={trades.length <= 10}>
             <div className="trade-list">
               {trades.map((t, i) => (
                 <div key={i} className="trade-row">

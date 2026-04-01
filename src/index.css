@@ -551,6 +551,8 @@ header { text-align: center; padding: 4px 0 2px; }
 .price-dir-badge.down { background: #dbeafe; color: #2563eb; }
 .price-dir-badge.flat { background: #f3f4f6; color: #6b7280; }
 .price-interpret-change { font-size: 13px; color: var(--text2); }
+.price-interpret-basis  { font-size: 11px; color: var(--muted); margin-top: 6px; }
+.price-sparse-warn { font-size: 12px; color: #b45309; background: #fffbeb; border: 1px solid #f59e0b; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; }
 
 .trade-list { display: flex; flex-direction: column; gap: 8px; }
 .trade-row  {
