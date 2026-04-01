@@ -75,7 +75,9 @@ export default function EvalCard({ apt, onDetail }) {
 
       {/* CTA */}
       <button className="eval-detail-btn" onClick={onDetail}>
-        자세히 보기 →
+        {apt.voice?.link && isValidUrl(apt.voice.link) && (apt.voice.description || apt.voice.title)
+          ? '후기 · 실거래 보기 →'
+          : '실거래 상세 보기 →'}
       </button>
     </div>
   )
