@@ -193,7 +193,7 @@ function PriceTab({ apt }) {
       </div>
 
       {/* 중단: 해석 */}
-      {(dirLabel || apt.priceJudgment?.level || changePct !== null) && (
+      {!loading && (dirLabel || apt.priceJudgment?.level || changePct !== null) && (
         <div className="price-interpret">
           <div className="price-interpret-badges">
             {dirLabel && <span className={`price-dir-badge ${dirCls}`}>{dirLabel}</span>}
@@ -201,9 +201,9 @@ function PriceTab({ apt }) {
               <span className={`price-ai-label ${levelCls}`}>{apt.priceJudgment.level}</span>
             )}
           </div>
-          {changePct !== null && (
+          {changePct !== null && changePct !== 0 && (
             <div className="price-interpret-change">
-              이전 3개월 대비 {changePct > 0 ? `+${changePct}` : `${changePct}`}%
+              최근 3개월 기준 {changePct > 0 ? `+${changePct}` : `${changePct}`}%
             </div>
           )}
         </div>
