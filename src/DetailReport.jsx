@@ -301,7 +301,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
       </div>
 
       {/* 블로그 후기 — 아코디언 (기본 닫힘) */}
-      <Accordion label="블로그 · 카페 후기" count={stories?.length ?? null}>
+      <Accordion label="블로그 · 카페 후기" count={storiesLoading ? null : stories.length}>
         {storiesLoading ? (
           <div className="detail-loading">후기 불러오는 중...</div>
         ) : !stories || stories.length === 0 ? (
