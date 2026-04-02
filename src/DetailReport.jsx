@@ -115,7 +115,7 @@ function PriceTab({ apt }) {
       const all = []
       results.forEach(data => {
         if (!data) return
-        if (data?.response?.header?.resultCode !== '00') return
+        if (!['00', '000'].includes(data?.response?.header?.resultCode)) return
         const items = data?.response?.body?.items?.item
         if (!items) return
         const arr = Array.isArray(items) ? items : [items]
@@ -371,22 +371,30 @@ function KakaoMap({ aptNm, addr }) {
   useEffect(() => {
     const cacheKey = `${aptNm}|${addr}`
     if (coordCache.has(cacheKey)) { setCoords(coordCache.get(cacheKey)); return }
-    const q = addr ? `${aptNm} ${addr}` : aptNm
-    fetch(`/api/geocode?q=${encodeURIComponent(q)}`)
-      .then(r => r.json())
-      .then(data => {
-        if (data?.[0]) {
-          const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon)
-          if (isNaN(lat) || isNaN(lon) || lat < KR_LAT.min || lat > KR_LAT.max || lon < KR_LON.min || lon > KR_LON.max) {
-            setFailed(true)
-          } else {
-            const c = { lat, lon }
-            setCoordCache(cacheKey, c)
-            setCoords(c)
-          }
-        } else setFailed(true)
-      })
-      .catch(() => setFailed(true))
+
+    const tryGeocode = (q) =>
+      fetch(`/api/geocode?q=${encodeURIComponent(q)}`).then(r => r.json()).catch(() => [])
+
+    const parseCoords = (data) => {
+      if (!data?.[0]) return null
+      const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon)
+      if (isNaN(lat) || isNaN(lon) || lat < KR_LAT.min || lat > KR_LAT.max || lon < KR_LON.min || lon > KR_LON.max) return null
+      return { lat, lon }
+    }
+
+    // 1차: 아파트명 + 주소, 2차 fallback: 주소 앞 3토큰(시 구 동)
+    const q1 = addr ? `${aptNm} ${addr}` : aptNm
+    const q2 = addr ? addr.split(' ').slice(0, 3).join(' ') : null
+
+    tryGeocode(q1).then(async data => {
+      let c = parseCoords(data)
+      if (!c && q2) {
+        const data2 = await tryGeocode(q2)
+        c = parseCoords(data2)
+      }
+      if (c) { setCoordCache(cacheKey, c); setCoords(c) }
+      else setFailed(true)
+    }).catch(() => setFailed(true))
   }, [aptNm, addr])
 
   useEffect(() => {
