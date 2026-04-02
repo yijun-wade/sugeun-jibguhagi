@@ -110,9 +110,18 @@ export default function App() {
   const [cards, setCards]         = useState([])
   const [totalCount, setTotalCount] = useState(0)
   const [loading, setLoading]     = useState(false)
+  const [loadingMsg, setLoadingMsg] = useState('')
   const [error, setError]         = useState(null)
   const [errorType, setErrorType] = useState(null) // 'no-results' | 'load-fail' | 'network' | null
   const [detailApt, setDetailApt] = useState(null)
+
+  const LOADING_MSGS = [
+    '아파트 매매 실거래가 조회 중...',
+    '커뮤니티 후기 검색 중...',
+    '동네 분위기 파악 중...',
+    '여러 정보를 모아 정리하는 중...',
+  ]
+  const loadingMsgRef = useRef(null)
 
   // #37: finally로 setLoading 일원화
   const handleSearch = useCallback(async (q) => {
@@ -125,6 +134,12 @@ export default function App() {
     }
     clearTimeout(emptyQueryTimerRef.current)
     setLoading(true)
+    setLoadingMsg(LOADING_MSGS[0])
+    let msgIdx = 1
+    loadingMsgRef.current = setInterval(() => {
+      setLoadingMsg(LOADING_MSGS[msgIdx % LOADING_MSGS.length])
+      msgIdx++
+    }, 2000)
     setError(null)
     setErrorType(null)
     setCards([])
@@ -155,6 +170,7 @@ export default function App() {
       setError('데이터를 불러오지 못했습니다. 네트워크를 확인하거나 잠시 후 다시 시도해주세요.')
       setErrorType('network')
     } finally {
+      clearInterval(loadingMsgRef.current)
       setLoading(false)
     }
   }, [])
@@ -192,6 +208,7 @@ export default function App() {
 
   useEffect(() => () => {
     clearTimeout(debounceRef.current)
+    clearInterval(loadingMsgRef.current)
     suggAbortRef.current?.abort()
   }, [])
 
@@ -319,7 +336,7 @@ export default function App() {
         </div>
       )}
 
-      {loading && <div className="loading-msg">임장 데이터 수집 중...</div>}
+      {loading && <div className="loading-msg">{loadingMsg}</div>}
       {error && (
         <div className="error-block">
           <div className="error-msg" style={{ whiteSpace: 'pre-line' }}>{error}</div>
