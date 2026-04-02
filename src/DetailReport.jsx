@@ -268,7 +268,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
     setStories([]); setStoriesLoading(true)
     fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
       .then(r => r.json())
-      .then(data => { setVibe(data?.lines || []); setVibeLoading(false) })
+      .then(data => { setVibe(data?.categories || []); setVibeLoading(false) })
       .catch(e => { if (e.name !== 'AbortError') { setVibe([]); setVibeLoading(false) } })
     fetch(`/api/stories?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
       .then(r => r.json())
@@ -285,7 +285,18 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
         {vibeLoading ? (
           <div className="vibe-loading">AI 요약 생성 중...</div>
         ) : vibe && vibe.length > 0 ? (
-          <ul className="vibe-lines">{vibe.map((line, i) => <li key={i}>{line}</li>)}</ul>
+          <div className="vibe-categories">
+            {vibe.map((cat) => (
+              cat.lines.length > 0 && (
+                <div key={cat.label}>
+                  <div className="vibe-category-label">{cat.label}</div>
+                  <div className="vibe-category-lines">
+                    {cat.lines.map((line, i) => <span key={i}>{line}</span>)}
+                  </div>
+                </div>
+              )
+            ))}
+          </div>
         ) : (
           <div className="vibe-empty">요약을 생성하지 못했습니다</div>
         )}

@@ -41,7 +41,7 @@ export default async function handler(req, res) {
 
     if (!sections) return res.json({ lines: [] })
 
-    const prompt = `다음은 "${aptName}"${location ? ` (${location})` : ''} 관련 인터넷 글이야. 블로그 후기, 카페 글, 뉴스, 지식인 Q&A를 포함해.\n\n${sections}\n\n이 내용을 바탕으로, 이 아파트·동네에 대한 사람들의 솔직한 수근수근을 3줄로 요약해줘.\n- 각 줄은 이모지 하나로 시작\n- 실거주 경험, 동네 분위기, 주요 이슈를 골고루 반영\n- 뉴스에 중요한 이슈(재건축, 호재 등)가 있으면 반드시 포함\n- 한 줄에 20~35자 이내\n- 다른 설명 없이 3줄만 출력`
+    const prompt = `다음은 "${aptName}"${location ? ` (${location})` : ''} 관련 인터넷 글이야. 블로그 후기, 카페 글, 뉴스, 지식인 Q&A를 포함해.\n\n${sections}\n\n이 내용을 바탕으로, 이 아파트·동네에 대한 사람들의 솔직한 수근수근을 아래 4개 카테고리로 각 2줄씩 요약해줘.\n\n출력 형식 (반드시 지켜줘):\n[교통]\n한 줄 내용\n한 줄 내용\n[학군]\n한 줄 내용\n한 줄 내용\n[분위기]\n한 줄 내용\n한 줄 내용\n[이슈]\n한 줄 내용\n한 줄 내용\n\n규칙:\n- 각 줄은 15~30자 이내\n- 이모지 사용 금지\n- 정보가 부족한 카테고리는 "정보 없음"으로 채워줘\n- 다른 설명 없이 위 형식만 출력`
 
     const claude = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -52,19 +52,30 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 250,
+        max_tokens: 450,
         messages: [{ role: 'user', content: prompt }],
       }),
     })
     if (!claude.ok) {
       const err = await claude.json().catch(() => ({}))
       console.error('Anthropic API error:', claude.status, err)
-      return res.json({ lines: [] })
+      return res.json({ categories: [] })
     }
     const data = await claude.json()
     const text = data?.content?.[0]?.text || ''
-    const lines = text.split('\n').map(l => l.trim()).filter(Boolean).slice(0, 3)
-    return res.json({ lines })
+
+    // 카테고리 파싱: [교통] ... [학군] ... 형식
+    const LABELS = ['교통', '학군', '분위기', '이슈']
+    const categories = LABELS.map(label => {
+      const regex = new RegExp(`\\[${label}\\]([\\s\\S]*?)(?=\\[|$)`)
+      const match = text.match(regex)
+      const lines = match
+        ? match[1].split('\n').map(l => l.trim()).filter(l => l && l !== '정보 없음')
+        : []
+      return { label, lines }
+    })
+
+    return res.json({ categories })
   } catch (e) {
     return res.status(500).json({ error: e.message })
   }
