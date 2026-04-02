@@ -216,8 +216,10 @@ export default function App() {
     return (
       <div className="app">
         <header onClick={goHome} style={{ cursor: 'pointer' }}>
-          <div className="brand">수근수근 우리집</div>
-          <div className="brand-en">SooZip</div>
+          <div className="brand">
+            <span className="logo-accent">수</span>근수근 우리<span className="logo-accent">집</span>
+          </div>
+          <div className="brand-en">SooZip · 수집</div>
         </header>
         <DetailReport apt={detailApt} onBack={() => setDetailApt(null)} />
       </div>
@@ -276,8 +278,18 @@ export default function App() {
       {isHome && (
         <div className="hero">
           <div className="hero-brand" onClick={goHome} style={{ cursor: 'pointer' }}>
-            <div className="hero-logo">수근수근 우리집</div>
-            <div className="hero-logo-en">SooZip</div>
+            <div className="hero-logo-mark">
+              <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="56" height="56" rx="14" fill="#2563eb"/>
+                <path d="M28 10 L48 26 L8 26 Z" fill="white"/>
+                <rect x="12" y="26" width="32" height="22" rx="2" fill="white"/>
+                <rect x="22" y="33" width="12" height="15" rx="3" fill="#2563eb"/>
+              </svg>
+            </div>
+            <div className="hero-logo">
+              <span className="logo-accent">수</span>근수근 우리<span className="logo-accent">집</span>
+            </div>
+            <div className="hero-logo-en">SooZip · 수집</div>
           </div>
           <div className="hero-sub">
             마음에 둔 아파트를 <em>수집</em>하세요<br />
@@ -289,8 +301,10 @@ export default function App() {
       {/* 결과 있을 때만 상단 헤더 */}
       {!isHome && (
         <header onClick={goHome} style={{ cursor: 'pointer' }}>
-          <div className="brand">수근수근 우리집</div>
-          <div className="brand-en">SooZip</div>
+          <div className="brand">
+            <span className="logo-accent">수</span>근수근 우리<span className="logo-accent">집</span>
+          </div>
+          <div className="brand-en">SooZip · 수집</div>
         </header>
       )}
 
