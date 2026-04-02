@@ -6,7 +6,8 @@
     "api/search.js":   { "regions": ["icn1"] },
     "api/geocode.js":  { "regions": ["icn1"] },
     "api/stories.js":  { "regions": ["icn1"] },
-    "api/vibe.js":     { "regions": ["icn1"], "maxDuration": 30 }
+    "api/vibe.js":     { "regions": ["icn1"], "maxDuration": 30 },
+    "api/og.jsx":      { "memory": 512 }
   },
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
