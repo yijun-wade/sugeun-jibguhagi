@@ -328,7 +328,7 @@ function AptInfoCard({ apt }) {
     subway         && { label: walkMin ? `${subway.name}` : subway.name,
                         value: walkMin ? `도보 ${walkMin}분` : '인근' },
     facilities?.school != null && { label: '초등학교', value: `반경 1km ${facilities.school}개` },
-    facilities?.mart   != null && { label: '마트/편의',  value: `반경 500m ${facilities.mart}개` },
+    facilities?.mart   != null && { label: '대형마트',  value: `반경 500m ${facilities.mart}개` },
   ].filter(Boolean)
 
   if (items.length === 0) return null
