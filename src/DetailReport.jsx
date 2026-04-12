@@ -249,6 +249,7 @@ function PriceTab({ apt }) {
               <a className="listing-btn hogang" href={`https://hogangnono.com/?q=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer">호갱노노</a>
             </div>
           </div>
+          <p className="data-disclaimer">국토교통부 실거래가 공개시스템에서 직접 조회한 실제 거래 데이터예요.</p>
         </>
       )}
     </div>
@@ -377,7 +378,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
       <div className="vibe-card">
         <div className="vibe-card-header">
           <span className="vibe-card-badge">AI 동네 분석</span>
-          <span className="vibe-card-sub">네이버 검색 기반</span>
+          <span className="vibe-card-sub">네이버·구글 검색 및 뉴스 정보를 AI가 요약한 결과예요</span>
         </div>
         {vibeLoading ? (
           <div className="vibe-loading">동네 분위기 분석 중...</div>
@@ -392,11 +393,11 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
             )}
             <div className="vibe-categories">
               {vibe.map((cat) => {
-                const ICONS = { 교통: '🚇', 학군: '🏫', 분위기: '🏙', 이슈: '⚡' }
+                const DOT_CLS = { 교통: 'dot-blue', 학군: 'dot-green', 분위기: 'dot-orange', 이슈: 'dot-red' }
                 return cat.lines.length > 0 && (
                   <div key={cat.label} className="vibe-category-item">
                     <div className="vibe-category-label">
-                      <span className="vibe-cat-icon">{ICONS[cat.label] || '•'}</span>
+                      <span className={`vibe-cat-dot ${DOT_CLS[cat.label] || 'dot-blue'}`} />
                       {cat.label}
                     </div>
                     <div className="vibe-category-lines">
@@ -407,7 +408,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
               })}
             </div>
             <div className="vibe-source-note">
-              참고용 정보예요. 실제 구매 결정 전 직접 확인해보세요.
+              관심이 생긴다면, 직접 방문해보는 것도 추천해요!
             </div>
           </>
         ) : (

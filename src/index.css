@@ -701,7 +701,14 @@ header { text-align: center; padding: 4px 0 2px; }
   font-size: 12px; font-weight: 700; color: var(--text2);
   margin-bottom: 6px;
 }
-.vibe-cat-icon { font-size: 14px; }
+.vibe-cat-dot {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  display: inline-block;
+}
+.dot-blue   { background: #2563eb; }
+.dot-green  { background: #16a34a; }
+.dot-orange { background: #ea580c; }
+.dot-red    { background: #dc2626; }
 .vibe-category-lines { display: flex; flex-direction: column; gap: 4px; }
 .vibe-category-lines span {
   font-size: 12px; color: var(--text); line-height: 1.6;
