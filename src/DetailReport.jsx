@@ -375,28 +375,39 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
     <div className="neighborhood-tab">
       {/* AI 분위기 요약 — 최상단 */}
       <div className="vibe-card">
-        <div className="vibe-card-title">지금 이 동네 분위기</div>
+        <div className="vibe-card-header">
+          <span className="vibe-card-badge">AI 동네 분석</span>
+          <span className="vibe-card-sub">네이버 검색 기반</span>
+        </div>
         {vibeLoading ? (
-          <div className="vibe-loading">AI 요약 생성 중...</div>
+          <div className="vibe-loading">동네 분위기 분석 중...</div>
         ) : vibe && vibe.length > 0 ? (
           <>
+            {vibeSummary && (
+              <div className="vibe-summary">
+                <span className="vibe-summary-quote">"</span>
+                {vibeSummary}
+                <span className="vibe-summary-quote">"</span>
+              </div>
+            )}
             <div className="vibe-categories">
-              {vibe.map((cat) => (
-                cat.lines.length > 0 && (
-                  <div key={cat.label}>
-                    <div className="vibe-category-label">{cat.label}</div>
+              {vibe.map((cat) => {
+                const ICONS = { 교통: '🚇', 학군: '🏫', 분위기: '🏙', 이슈: '⚡' }
+                return cat.lines.length > 0 && (
+                  <div key={cat.label} className="vibe-category-item">
+                    <div className="vibe-category-label">
+                      <span className="vibe-cat-icon">{ICONS[cat.label] || '•'}</span>
+                      {cat.label}
+                    </div>
                     <div className="vibe-category-lines">
                       {cat.lines.map((line, i) => <span key={i}>{line}</span>)}
                     </div>
                   </div>
                 )
-              ))}
+              })}
             </div>
-            {vibeSummary && (
-              <div className="vibe-summary">{vibeSummary}</div>
-            )}
             <div className="vibe-source-note">
-              네이버 블로그·카페·뉴스·지식인 검색 결과를 AI가 요약했어요. 참고용이며 실제 구매 결정 전 직접 확인해보세요.
+              참고용 정보예요. 실제 구매 결정 전 직접 확인해보세요.
             </div>
           </>
         ) : (
