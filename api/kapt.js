@@ -21,12 +21,16 @@ export default async function handler(req, res) {
     if (!item) return res.json(null)
 
     const obj = Array.isArray(item) ? item[0] : item
+    const 세대수 = obj.kaptdaCnt || obj.hoCnt || null
+    const 건축연도 = obj.kaptUsedate
+      ? parseInt(obj.kaptUsedate.slice(0, 4)) || null
+      : null
+
     return res.json({
-      세대수:   obj.kaptMgCnt  || obj.kaptdaCnt || null,
-      난방방식:  obj.heatMethodNm || null,
-      난방연료:  obj.heatFuelNm  || null,
-      건축연도:  obj.kaptBldYe   || null,
-      동수:     obj.kaptDaCnt   || null,
+      세대수:   세대수 ? Math.round(세대수) : null,
+      난방방식:  obj.codeHeatNm || null,
+      건축연도,
+      동수:     obj.kaptDongCnt ? parseInt(obj.kaptDongCnt) : null,
     })
   } catch (e) {
     return res.status(500).json({ error: e.message })

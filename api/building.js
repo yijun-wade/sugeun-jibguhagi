@@ -37,15 +37,20 @@ export default async function handler(req, res) {
 
     // 주차대수 = 옥내자주식 + 옥외자주식 + 기계식 합산
     const parking =
+      (parseInt(matched.totPkngCnt)     || 0) ||
       (parseInt(matched.indrAutoUtcnt)  || 0) +
       (parseInt(matched.oudrAutoUtcnt)  || 0) +
       (parseInt(matched.indrMechUtcnt)  || 0) +
       (parseInt(matched.oudrMechUtcnt)  || 0)
 
+    const vlRat = parseFloat(matched.vlRat)
+    const bcRat = parseFloat(matched.bcRat)
+
     return res.json({
-      용적률:   matched.vlRat  ? Math.round(parseFloat(matched.vlRat))  : null,
-      건폐율:   matched.bcRat  ? Math.round(parseFloat(matched.bcRat))  : null,
+      용적률:   (vlRat && vlRat > 0) ? Math.round(vlRat) : null,
+      건폐율:   (bcRat && bcRat > 0) ? Math.round(bcRat) : null,
       주차대수:  parking || null,
+      세대수_건축:  matched.hhldCnt ? parseInt(matched.hhldCnt) : null,
       건물명:   matched.bldNm  || null,
     })
   } catch (e) {

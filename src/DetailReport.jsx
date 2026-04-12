@@ -319,8 +319,9 @@ function AptInfoCard({ apt }) {
 
   const walkMin = subway?.distM ? Math.round(subway.distM / 67) : null  // 도보 67m/분
 
+  const 세대수 = kapt?.세대수 || building?.세대수_건축
   const items = [
-    kapt?.세대수   && { label: '세대수',  value: `${parseInt(kapt.세대수).toLocaleString()}세대` },
+    세대수         && { label: '세대수',  value: `${parseInt(세대수).toLocaleString()}세대` },
     kapt?.난방방식  && { label: '난방',    value: kapt.난방방식 },
     building?.용적률 && { label: '용적률', value: `${building.용적률}%` },
     building?.주차대수 && { label: '주차', value: `${building.주차대수.toLocaleString()}대` },
@@ -371,9 +372,6 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
 
   return (
     <div className="neighborhood-tab">
-      {/* 단지 인포 카드 */}
-      <AptInfoCard apt={apt} />
-
       {/* AI 분위기 요약 — 최상단 */}
       <div className="vibe-card">
         <div className="vibe-card-title">지금 이 동네 분위기</div>
@@ -396,6 +394,9 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
           <div className="vibe-empty">요약을 생성하지 못했습니다</div>
         )}
       </div>
+
+      {/* 단지 인포 카드 */}
+      <AptInfoCard apt={apt} />
 
       {/* 지도 */}
       <KakaoMap aptNm={aptNm} addr={addr} />
