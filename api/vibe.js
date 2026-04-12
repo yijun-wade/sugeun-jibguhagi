@@ -41,7 +41,7 @@ export default async function handler(req, res) {
 
     if (!sections) return res.json({ lines: [] })
 
-    const prompt = `다음은 "${aptName}"${location ? ` (${location})` : ''} 관련 인터넷 글이야. 블로그 후기, 카페 글, 뉴스, 지식인 Q&A를 포함해.\n\n${sections}\n\n이 내용을 바탕으로, 이 아파트·동네에 대한 사람들의 솔직한 수근수근을 아래 4개 카테고리로 각 2줄씩 요약해줘.\n\n출력 형식 (반드시 지켜줘):\n[교통]\n한 줄 내용\n한 줄 내용\n[학군]\n한 줄 내용\n한 줄 내용\n[분위기]\n한 줄 내용\n한 줄 내용\n[이슈]\n한 줄 내용\n한 줄 내용\n\n규칙:\n- 각 줄은 15~30자 이내\n- 이모지 사용 금지\n- 정보가 부족한 카테고리는 "정보 없음"으로 채워줘\n- 다른 설명 없이 위 형식만 출력`
+    const prompt = `다음은 "${aptName}"${location ? ` (${location})` : ''} 관련 인터넷 글이야. 블로그 후기, 카페 글, 뉴스, 지식인 Q&A를 포함해.\n\n${sections}\n\n이 내용을 바탕으로, 이 아파트·동네에 대한 사람들의 솔직한 수근수근을 아래 4개 카테고리로 각 2줄씩 요약하고, 마지막에 총평을 1줄로 작성해줘.\n\n출력 형식 (반드시 지켜줘):\n[교통]\n한 줄 내용\n한 줄 내용\n[학군]\n한 줄 내용\n한 줄 내용\n[분위기]\n한 줄 내용\n한 줄 내용\n[이슈]\n한 줄 내용\n한 줄 내용\n[총평]\n한 줄 종합 평가\n\n규칙:\n- 각 줄은 15~35자 이내\n- 이모지 사용 금지\n- 총평은 이 아파트·동네를 한 문장으로 종합 평가 (예: "교통과 학군이 뛰어나 실거주 선호도가 높은 단지")\n- 정보가 부족한 카테고리는 "정보 없음"으로 채워줘\n- 다른 설명 없이 위 형식만 출력`
 
     const claude = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -52,7 +52,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 450,
+        max_tokens: 550,
         messages: [{ role: 'user', content: prompt }],
       }),
     })
@@ -75,7 +75,13 @@ export default async function handler(req, res) {
       return { label, lines }
     })
 
-    return res.json({ categories })
+    // 총평 파싱
+    const summaryMatch = text.match(/\[총평\]([\s\S]*?)(?=\[|$)/)
+    const summary = summaryMatch
+      ? summaryMatch[1].split('\n').map(l => l.trim()).filter(Boolean)[0] || null
+      : null
+
+    return res.json({ categories, summary })
   } catch (e) {
     return res.status(500).json({ error: e.message })
   }

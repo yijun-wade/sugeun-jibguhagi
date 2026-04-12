@@ -657,6 +657,16 @@ header { text-align: center; padding: 4px 0 2px; }
 .vibe-category-lines span { font-size: 13px; color: var(--text); line-height: 1.55; }
 .vibe-loading { font-size: 13px; color: var(--muted); }
 .vibe-empty   { font-size: 13px; color: var(--muted); }
+.vibe-summary {
+  margin-top: 14px; padding: 10px 12px;
+  background: var(--blue); border-radius: 8px;
+  font-size: 13px; font-weight: 600; color: #fff; line-height: 1.5;
+}
+.vibe-source-note {
+  margin-top: 10px;
+  font-size: 11px; color: #6b7280; line-height: 1.6;
+  border-top: 1px solid var(--blue-md); padding-top: 8px;
+}
 
 /* 평형 분포 */
 .area-breakdown { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }

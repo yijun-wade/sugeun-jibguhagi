@@ -351,17 +351,18 @@ function AptInfoCard({ apt }) {
 /* ── 동네·이야기 통합 탭 ─────────────────── */
 function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
   const [vibe, setVibe] = useState(null)
+  const [vibeSummary, setVibeSummary] = useState(null)
   const [vibeLoading, setVibeLoading] = useState(true)
   const [stories, setStories] = useState([])
   const [storiesLoading, setStoriesLoading] = useState(true)
   useEffect(() => {
     const controller = new AbortController()
     const { signal } = controller
-    setVibe(null); setVibeLoading(true)
+    setVibe(null); setVibeSummary(null); setVibeLoading(true)
     setStories([]); setStoriesLoading(true)
     fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
       .then(r => r.json())
-      .then(data => { setVibe(data?.categories || []); setVibeLoading(false) })
+      .then(data => { setVibe(data?.categories || []); setVibeSummary(data?.summary || null); setVibeLoading(false) })
       .catch(e => { if (e.name !== 'AbortError') { setVibe([]); setVibeLoading(false) } })
     fetch(`/api/stories?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
       .then(r => r.json())
@@ -378,18 +379,26 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
         {vibeLoading ? (
           <div className="vibe-loading">AI 요약 생성 중...</div>
         ) : vibe && vibe.length > 0 ? (
-          <div className="vibe-categories">
-            {vibe.map((cat) => (
-              cat.lines.length > 0 && (
-                <div key={cat.label}>
-                  <div className="vibe-category-label">{cat.label}</div>
-                  <div className="vibe-category-lines">
-                    {cat.lines.map((line, i) => <span key={i}>{line}</span>)}
+          <>
+            <div className="vibe-categories">
+              {vibe.map((cat) => (
+                cat.lines.length > 0 && (
+                  <div key={cat.label}>
+                    <div className="vibe-category-label">{cat.label}</div>
+                    <div className="vibe-category-lines">
+                      {cat.lines.map((line, i) => <span key={i}>{line}</span>)}
+                    </div>
                   </div>
-                </div>
-              )
-            ))}
-          </div>
+                )
+              ))}
+            </div>
+            {vibeSummary && (
+              <div className="vibe-summary">{vibeSummary}</div>
+            )}
+            <div className="vibe-source-note">
+              네이버 블로그·카페·뉴스·지식인 검색 결과를 AI가 요약했어요. 참고용이며 실제 구매 결정 전 직접 확인해보세요.
+            </div>
+          </>
         ) : (
           <div className="vibe-empty">요약을 생성하지 못했습니다</div>
         )}
