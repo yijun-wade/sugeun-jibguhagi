@@ -611,6 +611,42 @@ header { text-align: center; padding: 4px 0 2px; }
 .listing-btn.hogang { background: #6B48FF; color: #fff; }
 .listing-btn.hogang:hover { background: #5a3de0; }
 
+/* 단지 인포 카드 */
+.apt-info-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.apt-info-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted, #9ca3af);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+.apt-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 8px;
+}
+.apt-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.apt-info-label {
+  font-size: 11px;
+  color: var(--muted, #9ca3af);
+}
+.apt-info-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text, #111827);
+}
+
 /* 이야기 탭 */
 .stories-tab { display: flex; flex-direction: column; gap: 10px; }
 .vibe-card { background: var(--blue-lt); border: 1px solid var(--blue); border-radius: 12px; padding: 16px; margin-bottom: 4px; }

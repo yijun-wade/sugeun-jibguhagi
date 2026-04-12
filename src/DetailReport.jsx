@@ -70,7 +70,7 @@ export default function DetailReport({ apt, onBack }) {
 
       <div className="detail-body">
         {tab === '시세'       && <PriceTab apt={apt} />}
-        {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} />}
+        {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} apt={apt} />}
       </div>
     </div>
   )
@@ -255,8 +255,100 @@ function PriceTab({ apt }) {
   )
 }
 
+/* ── 단지 인포 카드 ─────────────────────── */
+function AptInfoCard({ apt }) {
+  const [kapt, setKapt]         = useState(null)
+  const [building, setBuilding] = useState(null)
+  const [subway, setSubway]     = useState(null)    // { name, distM }
+  const [facilities, setFacilities] = useState(null) // { mart, school, hospital }
+
+  useEffect(() => {
+    if (!apt?.kaptCode) return
+    fetch(`/api/kapt?kaptCode=${apt.kaptCode}`)
+      .then(r => r.json()).then(setKapt).catch(() => {})
+  }, [apt?.kaptCode])
+
+  useEffect(() => {
+    if (!apt?.bjdCode) return
+    fetch(`/api/building?bjdCode=${apt.bjdCode}&aptName=${encodeURIComponent(apt.aptNm)}`)
+      .then(r => r.json()).then(setBuilding).catch(() => {})
+  }, [apt?.bjdCode, apt?.aptNm])
+
+  // Kakao 클라이언트 검색 — 좌표 먼저 획득 후 지하철·시설 검색
+  useEffect(() => {
+    if (!apt?.aptNm) return
+    const waitKakao = setInterval(() => {
+      if (!window.kakao?.maps?.services) return
+      clearInterval(waitKakao)
+
+      const ps = new window.kakao.maps.services.Places()
+      const addrShort = apt.addr ? apt.addr.split(' ').slice(0, 4).join(' ') : ''
+      const q = addrShort ? `${apt.aptNm} ${addrShort}` : apt.aptNm
+
+      ps.keywordSearch(q, (res, status) => {
+        if (status !== 'OK' || !res.length) return
+        const lat = parseFloat(res[0].y)
+        const lng = parseFloat(res[0].x)
+        if (isNaN(lat) || isNaN(lng)) return
+
+        const center = new window.kakao.maps.LatLng(lat, lng)
+        const opts = { location: center, sort: window.kakao.maps.services.SortBy.DISTANCE }
+
+        ps.categorySearch('SW8', (r, s) => {
+          if (s === 'OK' && r.length > 0) {
+            const d = parseInt(r[0].distance)
+            setSubway({ name: r[0].place_name.replace(/역$/, '').trim() + '역', distM: d })
+          }
+        }, { ...opts, radius: 2000 })
+
+        ps.categorySearch('SC4', (r, s) => {
+          setFacilities(prev => ({ ...prev, school: s === 'OK' ? r.length : 0 }))
+        }, { ...opts, radius: 1000 })
+
+        ps.categorySearch('MT1', (r, s) => {
+          setFacilities(prev => ({ ...prev, mart: s === 'OK' ? r.length : 0 }))
+        }, { ...opts, radius: 500 })
+
+        ps.categorySearch('HP8', (r, s) => {
+          setFacilities(prev => ({ ...prev, hospital: s === 'OK' ? r.length : 0 }))
+        }, { ...opts, radius: 500 })
+      })
+    }, 300)
+    return () => clearInterval(waitKakao)
+  }, [apt?.aptNm, apt?.addr])
+
+  const walkMin = subway?.distM ? Math.round(subway.distM / 67) : null  // 도보 67m/분
+
+  const items = [
+    kapt?.세대수   && { label: '세대수',  value: `${parseInt(kapt.세대수).toLocaleString()}세대` },
+    kapt?.난방방식  && { label: '난방',    value: kapt.난방방식 },
+    building?.용적률 && { label: '용적률', value: `${building.용적률}%` },
+    building?.주차대수 && { label: '주차', value: `${building.주차대수.toLocaleString()}대` },
+    subway         && { label: walkMin ? `${subway.name}` : subway.name,
+                        value: walkMin ? `도보 ${walkMin}분` : '인근' },
+    facilities?.school != null && { label: '초등학교', value: `반경 1km ${facilities.school}개` },
+    facilities?.mart   != null && { label: '마트/편의',  value: `반경 500m ${facilities.mart}개` },
+  ].filter(Boolean)
+
+  if (items.length === 0) return null
+
+  return (
+    <div className="apt-info-card">
+      <div className="apt-info-title">단지 정보</div>
+      <div className="apt-info-grid">
+        {items.map(({ label, value }) => (
+          <div key={label} className="apt-info-item">
+            <span className="apt-info-label">{label}</span>
+            <span className="apt-info-value">{value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 /* ── 동네·이야기 통합 탭 ─────────────────── */
-function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
+function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
   const [vibe, setVibe] = useState(null)
   const [vibeLoading, setVibeLoading] = useState(true)
   const [stories, setStories] = useState([])
@@ -279,6 +371,9 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr }) {
 
   return (
     <div className="neighborhood-tab">
+      {/* 단지 인포 카드 */}
+      <AptInfoCard apt={apt} />
+
       {/* AI 분위기 요약 — 최상단 */}
       <div className="vibe-card">
         <div className="vibe-card-title">지금 이 동네 분위기</div>
@@ -383,29 +478,31 @@ function KakaoMap({ aptNm, addr }) {
     const cacheKey = `${aptNm}|${addr}`
     if (coordCache.has(cacheKey)) { setCoords(coordCache.get(cacheKey)); return }
 
-    const tryGeocode = (q) =>
-      fetch(`/api/geocode?q=${encodeURIComponent(q)}`).then(r => r.json()).catch(() => [])
+    if (!window.kakao?.maps?.services) { setFailed(true); return }
+    const places = new window.kakao.maps.services.Places()
 
-    const parseCoords = (data) => {
-      if (!data?.[0]) return null
-      const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon)
-      if (isNaN(lat) || isNaN(lon) || lat < KR_LAT.min || lat > KR_LAT.max || lon < KR_LON.min || lon > KR_LON.max) return null
-      return { lat, lon }
+    const tryKeyword = (q, cb) => {
+      places.keywordSearch(q, (result, status) => {
+        if (status === window.kakao.maps.services.Status.OK && result.length > 0) {
+          const lat = parseFloat(result[0].y), lon = parseFloat(result[0].x)
+          if (!isNaN(lat) && !isNaN(lon)) { cb({ lat, lon }); return }
+        }
+        cb(null)
+      })
     }
 
-    // 1차: 아파트명 + 주소, 2차 fallback: 주소 앞 3토큰(시 구 동)
-    const q1 = addr ? `${aptNm} ${addr}` : aptNm
-    const q2 = addr ? addr.split(' ').slice(0, 3).join(' ') : null
+    // 1차: 아파트명 + 주소(시 구 동), 2차 fallback: 아파트명만
+    const addrShort = addr ? addr.split(' ').slice(0, 4).join(' ') : ''
+    const q1 = addrShort ? `${aptNm} ${addrShort}` : aptNm
+    const q2 = aptNm
 
-    tryGeocode(q1).then(async data => {
-      let c = parseCoords(data)
-      if (!c && q2) {
-        const data2 = await tryGeocode(q2)
-        c = parseCoords(data2)
-      }
-      if (c) { setCoordCache(cacheKey, c); setCoords(c) }
-      else setFailed(true)
-    }).catch(() => setFailed(true))
+    tryKeyword(q1, c => {
+      if (c) { setCoordCache(cacheKey, c); setCoords(c); return }
+      tryKeyword(q2, c2 => {
+        if (c2) { setCoordCache(cacheKey, c2); setCoords(c2) }
+        else setFailed(true)
+      })
+    })
   }, [aptNm, addr])
 
   useEffect(() => {
