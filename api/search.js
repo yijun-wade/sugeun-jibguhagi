@@ -18,8 +18,26 @@ function loadAptList() {
   return aptList
 }
 
-// addr에서 동/구 단위 추출 헬퍼
-// "서울특별시 마포구 망원동 12-3" → ["마포구", "망원동"]
+// 브랜드명 오타 보정 (예: 프루지오 → 푸르지오)
+const BRAND_ALIASES = {
+  '프루지오': '푸르지오',
+  '레미안': '래미안',
+  '힐스테잇': '힐스테이트',
+  '힐스테잇': '힐스테이트',
+  '아이파크': '아이파크',
+  '캐슬': '캐슬',
+}
+
+function normalizeQuery(q) {
+  let result = q
+  for (const [wrong, right] of Object.entries(BRAND_ALIASES)) {
+    if (result.includes(wrong)) result = result.replaceAll(wrong, right)
+  }
+  return result
+}
+
+// addr에서 동/구/시 단위 추출 헬퍼
+// "경기도 광명시 철산동" → ["광명시", "철산동"]
 function extractAdminUnits(addr) {
   return (addr || '').split(' ').filter(part =>
     part.endsWith('동') || part.endsWith('구') || part.endsWith('시') ||
@@ -32,7 +50,9 @@ export default function handler(req, res) {
   if (!q || q.trim().length < 1) return res.json([])
 
   const list = loadAptList()
-  const query = q.trim()
+  const rawQuery = q.trim()
+  // 브랜드 오타 보정 후 검색
+  const query = normalizeQuery(rawQuery)
   const normalQ = query.replace(/\s+/g, '')
 
   const results = list
@@ -49,15 +69,17 @@ export default function handler(req, res) {
       } else if (nmNorm.includes(normalQ)) {
         score = 3  // 아파트명 공백제거 포함
       } else {
-        // 동/구 단위 추출 후 매칭 (Score 2.5)
-        // "망원" → 망원동.includes("망원") → 매칭
-        // "망원동" → 망원동.includes("망원동") → 매칭
-        // "강남구" → 강남구.includes("강남구") → 매칭
         const units = extractAdminUnits(addr)
-        const unitMatch = query.length >= 2 && units.some(unit =>
-          unit.includes(query) || unit.includes(normalQ) || query.includes(unit)
+        // 시/구/동 이름이 쿼리로 시작하면 강한 지역 매칭 (예: "광명" → "광명시")
+        const strongUnitMatch = query.length >= 2 && units.some(unit => unit.startsWith(query))
+        // 부분 지역 매칭 (예: "망원동" ↔ "망원")
+        const weakUnitMatch = query.length >= 2 && units.some(unit =>
+          unit.includes(query) || query.includes(unit)
         )
-        if (unitMatch) {
+
+        if (strongUnitMatch) {
+          score = 3.5  // 지역명 시작 매칭 — 아파트명 매칭과 동급에 가깝게
+        } else if (weakUnitMatch) {
           score = 2.5
         } else if (addr.includes(query)) {
           score = 2  // 주소 전체 포함

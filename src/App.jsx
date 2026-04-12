@@ -404,6 +404,7 @@ export default function App() {
               <EvalCard key={apt.kaptCode} apt={apt} onDetail={() => setDetailApt(apt)} />
             ))}
           </div>
+          <p className="data-disclaimer">실거래 데이터는 국토교통부 실거래가 공개시스템 기준이에요. 분위기·뉴스·커뮤니티 요약은 AI가 웹에서 수집한 정보예요.</p>
         </div>
       )}
     </div>

@@ -1,6 +1,9 @@
 {
   "buildCommand": "npx vite build",
+  "devCommand": "npx vite --port $PORT",
+  "installCommand": "npm install",
   "outputDirectory": "dist",
+  "framework": null,
   "functions": {
     "api/trade.js":    { "regions": ["icn1"] },
     "api/search.js":   { "regions": ["icn1"] },
