@@ -114,6 +114,8 @@ export default function App() {
   const [error, setError]         = useState(null)
   const [errorType, setErrorType] = useState(null) // 'no-results' | 'load-fail' | 'network' | null
   const [detailApt, setDetailApt] = useState(null)
+  const [nearbyState, setNearbyState] = useState('idle') // 'idle' | 'loading' | 'done' | 'error' | 'denied'
+  const [nearbyApts, setNearbyApts] = useState([])
 
   const LOADING_MSGS = [
     '아파트 매매 실거래가 조회 중...',
@@ -183,6 +185,49 @@ export default function App() {
     setError(null)
     setErrorType(null)
     setTotalCount(0)
+  }, [])
+
+  const handleNearby = useCallback(() => {
+    if (!navigator.geolocation) {
+      setNearbyState('error')
+      return
+    }
+    setNearbyState('loading')
+    setNearbyApts([])
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude: lat, longitude: lng } = pos.coords
+        const kakao = window.kakao
+        if (!kakao?.maps?.services) {
+          setNearbyState('error')
+          return
+        }
+        const ps = new kakao.maps.services.Places()
+        const center = new kakao.maps.LatLng(lat, lng)
+        ps.keywordSearch('아파트', (results, status) => {
+          if (status !== kakao.maps.services.Status.OK || !results?.length) {
+            setNearbyState('error')
+            return
+          }
+          const names = results.slice(0, 15).map(r => r.place_name).join(',')
+          fetch(`/api/nearby?names=${encodeURIComponent(names)}`)
+            .then(r => r.json())
+            .then(data => {
+              if (Array.isArray(data) && data.length > 0) {
+                setNearbyApts(data)
+                setNearbyState('done')
+              } else {
+                setNearbyState('error')
+              }
+            })
+            .catch(() => setNearbyState('error'))
+        }, { location: center, radius: 3000, sort: kakao.maps.services.SortBy.DISTANCE })
+      },
+      (err) => {
+        setNearbyState(err.code === 1 ? 'denied' : 'error')
+      },
+      { timeout: 10000 }
+    )
   }, [])
 
   const [suggestions, setSuggestions] = useState([])
@@ -341,13 +386,50 @@ export default function App() {
       </div>
 
       {isHome && (
-        <div className="hint-searches">
-          {HINT_SEARCHES.map(h => (
-            <button key={h} className="hint-chip" onClick={() => { setQuery(h); handleSearch(h) }}>
-              {h}
-            </button>
-          ))}
-        </div>
+        <>
+          <div className="hint-searches">
+            {HINT_SEARCHES.map(h => (
+              <button key={h} className="hint-chip" onClick={() => { setQuery(h); handleSearch(h) }}>
+                {h}
+              </button>
+            ))}
+          </div>
+
+          <div className="nearby-section">
+            {nearbyState === 'idle' && (
+              <button className="nearby-btn" onClick={handleNearby}>
+                📍 내 주변 아파트 보기
+              </button>
+            )}
+            {nearbyState === 'loading' && (
+              <div className="nearby-loading">내 주변 아파트 찾는 중...</div>
+            )}
+            {nearbyState === 'denied' && (
+              <div className="nearby-error">위치 권한이 필요해요. 브라우저 설정에서 위치 접근을 허용해주세요.</div>
+            )}
+            {nearbyState === 'error' && (
+              <div className="nearby-error">
+                주변 아파트를 찾지 못했어요.
+                <button className="nearby-retry" onClick={handleNearby}>다시 시도</button>
+              </div>
+            )}
+            {nearbyState === 'done' && nearbyApts.length > 0 && (
+              <div className="nearby-results">
+                <div className="nearby-title">📍 내 주변 아파트</div>
+                {nearbyApts.map(apt => (
+                  <button
+                    key={apt.kaptCode}
+                    className="nearby-apt-item"
+                    onClick={() => { setQuery(apt.kaptName); handleSearch(apt.kaptName) }}
+                  >
+                    <span className="nearby-apt-name">{apt.kaptName}</span>
+                    <span className="nearby-apt-addr">{apt.addr?.split(' ').slice(1, 4).join(' ')}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
       )}
 
       {loading && <div className="loading-msg">{loadingMsg}</div>}

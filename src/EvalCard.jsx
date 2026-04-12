@@ -66,18 +66,9 @@ export default function EvalCard({ apt, onDetail }) {
         )
       })()}
 
-      {/* 실거주 한마디 */}
-      {apt.voice?.link && isValidUrl(apt.voice.link) && (apt.voice.description || apt.voice.title) && (
-        <a className="eval-voice" href={apt.voice.link} target="_blank" rel="noopener noreferrer">
-          🗣 "{snippetText(apt.voice.description || apt.voice.title)}"
-        </a>
-      )}
-
       {/* CTA */}
       <button className="eval-detail-btn" onClick={onDetail}>
-        {apt.voice?.link && isValidUrl(apt.voice.link) && (apt.voice.description || apt.voice.title)
-          ? '후기 · 실거래 보기 →'
-          : '실거래 상세 보기 →'}
+        후기 · 실거래 보기 →
       </button>
     </div>
   )

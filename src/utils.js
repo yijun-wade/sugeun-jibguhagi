@@ -152,11 +152,13 @@ export function getVerdict(tag, dong) {
 }
 
 // ── 이름 유사도 ────────────────────────────
-function normNm(s) { return (s || '').replace(/[\s()（）]/g, '') }
+function normNm(s) { return (s || '').replace(/[\s()（）아파트]/g, '') }
 export function nameSim(a, b) {
   const na = normNm(a), nb = normNm(b)
   if (!na || !nb) return 0
   if (na === nb) return 1
+  // 포함 관계면 바로 매칭 (예: "동아그린" ⊂ "이촌동아그린아파트")
+  if (na.includes(nb) || nb.includes(na)) return 1
   const setB = new Set(nb)
   let overlap = 0
   for (const ch of na) if (setB.has(ch)) overlap++
