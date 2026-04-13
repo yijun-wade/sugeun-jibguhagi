@@ -1,5 +1,6 @@
 // src/App.jsx
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import { DONG, HINT_SEARCHES } from './data.js'
 import { getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim, buildPriceJudgment } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM } from './constants.js'
@@ -267,6 +268,7 @@ export default function App() {
           <div className="brand-en">SooZip · 수집</div>
         </header>
         <DetailReport apt={detailApt} onBack={() => setDetailApt(null)} />
+        <Analytics />
       </div>
     )
   }
@@ -489,6 +491,7 @@ export default function App() {
           <p className="data-disclaimer">실거래 데이터는 국토교통부 실거래가 공개시스템 기준이에요. 분위기·뉴스·커뮤니티 요약은 AI가 웹에서 수집한 정보예요.</p>
         </div>
       )}
+      <Analytics />
     </div>
   )
 }
