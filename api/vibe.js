@@ -1,7 +1,7 @@
 // 수근수근 요약 — 블로그/카페/뉴스/지식인 수집 후 Claude로 3줄 요약
 export const config = { maxDuration: 45, regions: ['icn1'] }
 
-import { stripHtml, naverSearch, NAVER_BLOG, NAVER_CAFE, NAVER_NEWS, NAVER_KIN } from './_utils.js'
+import { stripHtml, naverSearch, setCors, NAVER_BLOG, NAVER_CAFE, NAVER_NEWS, NAVER_KIN } from './_utils.js'
 
 function formatItems(items, tag) {
   return items
@@ -10,6 +10,7 @@ function formatItems(items, tag) {
 }
 
 export default async function handler(req, res) {
+  if (setCors(req, res)) return
   const { aptName, location } = req.query
   if (!aptName) return res.status(400).json({ error: 'aptName이 필요해요' })
   if (!process.env.NAVER_CLIENT_ID) return res.status(500).json({ error: 'Naver API 키 없음' })

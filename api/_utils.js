@@ -1,5 +1,24 @@
 // 공통 유틸 - API 서버리스 함수에서 공유
 
+// ── CORS 헤더 설정 ───────────────────────────
+const ALLOWED_ORIGINS = [
+  'https://www.suzip.kr',
+  'https://suzip.kr',
+  'http://localhost:5173',
+  'http://localhost:5174',
+]
+
+export function setCors(req, res) {
+  const origin = req.headers.origin || ''
+  if (ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin)
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  if (req.method === 'OPTIONS') { res.status(204).end(); return true }
+  return false
+}
+
 // ── HTML 태그 제거 ──────────────────────────
 export function stripHtml(str) {
   return (str || '')

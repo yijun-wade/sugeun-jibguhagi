@@ -1,13 +1,14 @@
 // 네이버 블로그/카페 검색 — 아파트 삶의 질 이야기 수집
 export const config = { regions: ['icn1'] }
 
-import { stripHtml, naverSearch, NAVER_BLOG, NAVER_CAFE } from './_utils.js'
+import { stripHtml, naverSearch, setCors, NAVER_BLOG, NAVER_CAFE } from './_utils.js'
 
 const AD_KEYWORDS = ['업체','견적','시공','전문점','전문업체','이사업체','포장이사','이사청소','청소업체','입주청소','도배','장판','새시','인테리어 견적','인테리어 업체','커튼','블라인드','붙박이장','에어컨 청소','세탁기 청소','할인','이벤트','협찬','광고','무료 견적','출장']
 
 function isCommercial(title) { return AD_KEYWORDS.some(kw => title.includes(kw)) }
 
 export default async function handler(req, res) {
+  if (setCors(req, res)) return
   const { aptName, location } = req.query
   if (!aptName) return res.status(400).json({ error: 'aptName이 필요해요' })
   if (!process.env.NAVER_CLIENT_ID) return res.status(500).json({ error: 'Naver API 키가 없어요' })

@@ -2,6 +2,7 @@
 // MOLIT API 직접 호출 제거 (28초 타임아웃 문제 해결)
 import { readFileSync } from 'fs'
 import { join } from 'path'
+import { setCors } from './_utils.js'
 
 export const config = { regions: ['icn1'] }
 
@@ -46,6 +47,7 @@ function extractAdminUnits(addr) {
 }
 
 export default function handler(req, res) {
+  if (setCors(req, res)) return
   const { q } = req.query
   if (!q || q.trim().length < 1) return res.json([])
 
