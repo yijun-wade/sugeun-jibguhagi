@@ -1,5 +1,5 @@
 // 수근수근 요약 — 블로그/카페/뉴스/지식인 수집 후 Claude로 3줄 요약
-export const config = { maxDuration: 30, regions: ['icn1'] }
+export const config = { maxDuration: 45, regions: ['icn1'] }
 
 import { stripHtml, naverSearch, NAVER_BLOG, NAVER_CAFE, NAVER_NEWS, NAVER_KIN } from './_utils.js'
 
@@ -52,7 +52,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 550,
+        max_tokens: 800,
         messages: [{ role: 'user', content: prompt }],
       }),
     })

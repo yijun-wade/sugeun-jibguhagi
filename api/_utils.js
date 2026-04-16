@@ -21,12 +21,21 @@ export const NAVER_KIN  = 'https://openapi.naver.com/v1/search/kin.json'
 // ── 네이버 검색 공통 함수 ────────────────────
 export async function naverSearch(endpoint, query, display = 4) {
   const url = `${endpoint}?query=${encodeURIComponent(query)}&display=${display}&sort=sim`
-  const r = await fetch(url, {
-    headers: {
-      'X-Naver-Client-Id':     process.env.NAVER_CLIENT_ID,
-      'X-Naver-Client-Secret': process.env.NAVER_CLIENT_SECRET,
-    },
-  })
-  if (!r.ok) return []
-  return (await r.json()).items || []
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 6000)
+  try {
+    const r = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        'X-Naver-Client-Id':     process.env.NAVER_CLIENT_ID,
+        'X-Naver-Client-Secret': process.env.NAVER_CLIENT_SECRET,
+      },
+    })
+    if (!r.ok) return []
+    return (await r.json()).items || []
+  } catch {
+    return []
+  } finally {
+    clearTimeout(timer)
+  }
 }
