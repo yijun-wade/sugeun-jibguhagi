@@ -375,45 +375,43 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
 
   return (
     <div className="neighborhood-tab">
-      {/* AI 분위기 요약 — 최상단 */}
+      {/* 수근수근 — 동네 이야기 */}
       <div className="vibe-card">
         <div className="vibe-card-header">
-          <span className="vibe-card-badge">AI 동네 분석</span>
-          <span className="vibe-card-sub">네이버·구글 검색 및 뉴스 정보를 AI가 요약한 결과예요</span>
+          <span className="vibe-card-badge">수근수근</span>
+          <span className="vibe-card-sub">인터넷에 떠도는 이야기를 AI가 모아봤어요</span>
         </div>
         {vibeLoading ? (
-          <div className="vibe-loading">동네 분위기 분석 중...</div>
+          <div className="vibe-loading">소문 수집 중이에요...</div>
         ) : vibe && vibe.length > 0 ? (
           <>
             {vibeSummary && (
-              <div className="vibe-summary">
-                <span className="vibe-summary-quote">"</span>
-                {vibeSummary}
-                <span className="vibe-summary-quote">"</span>
-              </div>
+              <div className="vibe-summary">{vibeSummary}</div>
             )}
-            <div className="vibe-categories">
+            <div className="vibe-feed">
               {vibe.map((cat) => {
-                const DOT_CLS = { 교통: 'dot-blue', 학군: 'dot-green', 분위기: 'dot-orange', 이슈: 'dot-red' }
+                const CAT_ICON = { 교통: '🚇', 학군: '📚', 분위기: '🏘️', 이슈: '📣' }
                 return cat.lines.length > 0 && (
-                  <div key={cat.label} className="vibe-category-item">
-                    <div className="vibe-category-label">
-                      <span className={`vibe-cat-dot ${DOT_CLS[cat.label] || 'dot-blue'}`} />
+                  <div key={cat.label} className="vibe-feed-item">
+                    <div className="vibe-feed-label">
+                      <span className="vibe-feed-icon">{CAT_ICON[cat.label] || '💬'}</span>
                       {cat.label}
                     </div>
-                    <div className="vibe-category-lines">
-                      {cat.lines.map((line, i) => <span key={i}>{line}</span>)}
+                    <div className="vibe-feed-lines">
+                      {cat.lines.map((line, i) => (
+                        <p key={i} className="vibe-feed-line">{line}</p>
+                      ))}
                     </div>
                   </div>
                 )
               })}
             </div>
             <div className="vibe-source-note">
-              관심이 생긴다면, 직접 방문해보는 것도 추천해요!
+              직접 임장 가보는 게 제일 정확해요 😊
             </div>
           </>
         ) : (
-          <div className="vibe-empty">요약을 생성하지 못했습니다</div>
+          <div className="vibe-empty">아직 소문이 없네요</div>
         )}
       </div>
 

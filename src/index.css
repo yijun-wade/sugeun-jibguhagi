@@ -673,48 +673,45 @@ header { text-align: center; padding: 4px 0 2px; }
   font-size: 11px; color: var(--muted);
 }
 
-/* 총평 — 헤드라인 */
+/* 총평 */
 .vibe-summary {
-  font-size: 17px; font-weight: 700; color: var(--text);
-  line-height: 1.55; margin-bottom: 18px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
-}
-.vibe-summary-quote {
-  color: var(--blue); font-size: 22px; font-weight: 900;
-  line-height: 0; vertical-align: -4px; margin: 0 2px;
+  font-size: 15px; font-weight: 600; color: var(--text);
+  line-height: 1.6; margin-bottom: 20px;
+  padding: 14px 16px;
+  background: var(--blue-lt);
+  border-left: 3px solid var(--blue);
+  border-radius: 0 10px 10px 0;
 }
 
-/* 카테고리 그리드 */
-.vibe-categories {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+/* 피드 스타일 카테고리 */
+.vibe-feed {
+  display: flex; flex-direction: column; gap: 0;
 }
-.vibe-category-item {
-  background: var(--bg);
-  border-radius: 10px;
-  padding: 12px;
+.vibe-feed-item {
+  display: flex; gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
 }
-.vibe-category-label {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 12px; font-weight: 700; color: var(--text2);
-  margin-bottom: 6px;
+.vibe-feed-item:last-child { border-bottom: none; }
+.vibe-feed-label {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  min-width: 36px;
+  font-size: 11px; font-weight: 700; color: var(--text2);
+  padding-top: 2px;
 }
-.vibe-cat-dot {
-  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
-  display: inline-block;
+.vibe-feed-icon { font-size: 18px; line-height: 1; }
+.vibe-feed-lines {
+  flex: 1; display: flex; flex-direction: column; gap: 6px;
 }
-.dot-blue   { background: #2563eb; }
-.dot-green  { background: #16a34a; }
-.dot-orange { background: #ea580c; }
-.dot-red    { background: #dc2626; }
-.vibe-category-lines { display: flex; flex-direction: column; gap: 4px; }
-.vibe-category-lines span {
-  font-size: 12px; color: var(--text); line-height: 1.6;
+.vibe-feed-line {
+  margin: 0;
+  font-size: 14px; color: var(--text); line-height: 1.65;
 }
-.vibe-category-lines span::before {
-  content: '·'; color: var(--blue); font-weight: 700; margin-right: 4px;
+.vibe-feed-line::before {
+  content: '"'; color: var(--blue); font-weight: 900; margin-right: 2px;
+}
+.vibe-feed-line::after {
+  content: '"'; color: var(--blue); font-weight: 900; margin-left: 2px;
 }
 
 .vibe-loading {
