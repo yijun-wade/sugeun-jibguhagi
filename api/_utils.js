@@ -4,6 +4,7 @@
 const ALLOWED_ORIGINS = [
   'https://www.suzip.kr',
   'https://suzip.kr',
+  'https://soozip-toss.vercel.app',
   'http://localhost:5173',
   'http://localhost:5174',
 ]
