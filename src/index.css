@@ -872,6 +872,9 @@ header { text-align: center; padding: 4px 0 2px; }
   line-height: 1.6;
 }
 
+/* ─── 광고 단위 ─── */
+.ad-unit { width: 100%; overflow: hidden; border-radius: 8px; }
+
 /* ─── 내 주변 아파트 ─── */
 .nearby-section { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 

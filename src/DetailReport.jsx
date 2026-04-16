@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { fP, fR, getYM, formatDealDate, nameSim } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM, SQM_TO_PYEONG, KR_LAT, KR_LON } from './constants.js'
+import { track } from './analytics.js'
 
 function isValidUrl(url) {
   try { const { protocol } = new URL(url); return protocol === 'http:' || protocol === 'https:' }
@@ -50,7 +51,7 @@ export default function DetailReport({ apt, onBack }) {
           <div className="detail-apt-name">{apt.aptNm}</div>
           <div className="detail-apt-loc">{apt.dong} · {apt.regionName}</div>
         </div>
-        <button className="collect-btn" aria-label="수집하기" onClick={handleCollect}>
+        <button className="collect-btn" aria-label="수집하기" onClick={() => { track('collect_click', { apt_name: apt.aptNm }); handleCollect() }}>
           📌 수집하기
         </button>
       </div>
@@ -61,7 +62,7 @@ export default function DetailReport({ apt, onBack }) {
             key={t}
             className={`detail-tab${tab === t ? ' on' : ''}`}
             aria-pressed={tab === t}
-            onClick={() => setTab(t)}
+            onClick={() => { track('tab_switch', { tab_name: t, apt_name: apt.aptNm }); setTab(t) }}
           >
             {t}
           </button>
@@ -161,8 +162,8 @@ function PriceTab({ apt }) {
         <div className="listing-deeplinks">
           <div className="listing-deeplinks-label">실매물 보기</div>
           <div className="listing-deeplinks-btns">
-            <a className="listing-btn naver" href={`https://search.naver.com/search.naver?query=${encodeURIComponent(apt.aptNm + ' 아파트 매물')}`} target="_blank" rel="noopener noreferrer">네이버 매물검색</a>
-            <a className="listing-btn hogang" href={`https://hogangnono.com/?q=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer">호갱노노</a>
+            <a className="listing-btn naver" href={`https://search.naver.com/search.naver?query=${encodeURIComponent(apt.aptNm + ' 아파트 매물')}`} target="_blank" rel="noopener noreferrer" onClick={() => track('listing_link_click', { apt_name: apt.aptNm, service: 'naver' })}>네이버 매물검색</a>
+            <a className="listing-btn hogang" href={`https://hogangnono.com/?q=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer" onClick={() => track('listing_link_click', { apt_name: apt.aptNm, service: 'hogangnono' })}>호갱노노</a>
           </div>
         </div>
       </div>
@@ -176,7 +177,7 @@ function PriceTab({ apt }) {
       <div className="price-hero">
         <div className="price-tab-months">
           {[3, 6, 12].map(m => (
-            <button key={m} className={`months-btn${months === m ? ' on' : ''}`} onClick={() => setMonths(m)}>
+            <button key={m} className={`months-btn${months === m ? ' on' : ''}`} onClick={() => { track('price_months_change', { months: m, apt_name: apt.aptNm }); setMonths(m) }}>
               {m}개월
             </button>
           ))}
@@ -245,8 +246,8 @@ function PriceTab({ apt }) {
           <div className="listing-deeplinks">
             <div className="listing-deeplinks-label">실매물 보기</div>
             <div className="listing-deeplinks-btns">
-              <a className="listing-btn naver" href={`https://search.naver.com/search.naver?query=${encodeURIComponent(apt.aptNm + ' 아파트 매물')}`} target="_blank" rel="noopener noreferrer">네이버 매물검색</a>
-              <a className="listing-btn hogang" href={`https://hogangnono.com/?q=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer">호갱노노</a>
+              <a className="listing-btn naver" href={`https://search.naver.com/search.naver?query=${encodeURIComponent(apt.aptNm + ' 아파트 매물')}`} target="_blank" rel="noopener noreferrer" onClick={() => track('listing_link_click', { apt_name: apt.aptNm, service: 'naver' })}>네이버 매물검색</a>
+              <a className="listing-btn hogang" href={`https://hogangnono.com/?q=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer" onClick={() => track('listing_link_click', { apt_name: apt.aptNm, service: 'hogangnono' })}>호갱노노</a>
             </div>
           </div>
           <p className="data-disclaimer">국토교통부 실거래가 공개시스템에서 직접 조회한 실제 거래 데이터예요.</p>
@@ -423,8 +424,8 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
       <KakaoMap aptNm={aptNm} addr={addr} />
       <div className="map-deeplinks">
         {(() => { const q = encodeURIComponent(addr ? `${aptNm} ${addr.split(' ').slice(0, 3).join(' ')}` : aptNm); return (<>
-          <a className="map-deeplink-btn" href={`https://map.kakao.com/link/search/${q}`} target="_blank" rel="noopener noreferrer">카카오지도</a>
-          <a className="map-deeplink-btn" href={`https://map.naver.com/p/search/${q}`} target="_blank" rel="noopener noreferrer">네이버지도</a>
+          <a className="map-deeplink-btn" href={`https://map.kakao.com/link/search/${q}`} target="_blank" rel="noopener noreferrer" onClick={() => track('map_deeplink_click', { apt_name: aptNm, service: 'kakao' })}>카카오지도</a>
+          <a className="map-deeplink-btn" href={`https://map.naver.com/p/search/${q}`} target="_blank" rel="noopener noreferrer" onClick={() => track('map_deeplink_click', { apt_name: aptNm, service: 'naver' })}>네이버지도</a>
         </>)})()}
       </div>
 
@@ -439,7 +440,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
             {stories
               .filter(s => s.link && isValidUrl(s.link))
               .map((s, i) => (
-              <a key={i} className="story-card" href={s.link} target="_blank" rel="noopener noreferrer">
+              <a key={i} className="story-card" href={s.link} target="_blank" rel="noopener noreferrer" onClick={() => track('story_link_click', { apt_name: aptNm, source: s.source })}>
                 <div className="story-card-title">{s.title}</div>
                 {s.description && <div className="story-card-desc">{s.description}</div>}
                 <div className="story-card-meta">{s.source}{s.date ? ` · ${s.date}` : ''}</div>

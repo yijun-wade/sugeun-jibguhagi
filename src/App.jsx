@@ -5,6 +5,8 @@ import { getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim, buildPr
 import { FETCH_TIMEOUT, MIN_AREA_SQM } from './constants.js'
 import EvalCard from './EvalCard.jsx'
 import DetailReport from './DetailReport.jsx'
+import { track } from './analytics.js'
+import AdUnit from './AdUnit.jsx'
 
 async function buildEvalData(apt) {
   const bjdCode = apt.bjdCode || null
@@ -156,6 +158,7 @@ export default function App() {
       if (list.length === 0) {
         setError(`'${q}' 검색 결과가 없습니다. 아파트명이나 동네명으로 다시 검색해보세요.\n예: 반포자이, 망원동, 강남구`)
         setErrorType('no-results')
+        track('search_no_results', { query: q })
         return
       }
       const results = await Promise.all(list.map(apt => buildEvalData(apt).catch(() => null)))
@@ -163,14 +166,17 @@ export default function App() {
       if (filtered.length === 0) {
         setError('아파트 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.')
         setErrorType('load-fail')
+        track('search_error', { query: q, error_type: 'load_fail' })
         return
       }
       setSearchedQuery(q)
       setCards(filtered)
       setTotalCount(total)
+      track('search', { query: q, result_count: total })
     } catch {
       setError('데이터를 불러오지 못했습니다. 네트워크를 확인하거나 잠시 후 다시 시도해주세요.')
       setErrorType('network')
+      track('search_error', { query: q, error_type: 'network' })
     } finally {
       clearInterval(loadingMsgRef.current)
       setLoading(false)
@@ -389,7 +395,7 @@ export default function App() {
         <>
           <div className="hint-searches">
             {HINT_SEARCHES.map(h => (
-              <button key={h} className="hint-chip" onClick={() => { setQuery(h); handleSearch(h) }}>
+              <button key={h} className="hint-chip" onClick={() => { track('hint_click', { hint_text: h }); setQuery(h); handleSearch(h) }}>
                 {h}
               </button>
             ))}
@@ -397,7 +403,7 @@ export default function App() {
 
           <div className="nearby-section">
             {nearbyState === 'idle' && (
-              <button className="nearby-btn" onClick={handleNearby}>
+              <button className="nearby-btn" onClick={() => { track('nearby_click'); handleNearby() }}>
                 📍 내 주변 아파트 보기
               </button>
             )}
@@ -455,7 +461,7 @@ export default function App() {
           {errorType === 'no-results' && (
             <div className="hint-searches hint-searches--error">
               {HINT_SEARCHES.map(h => (
-                <button key={h} className="hint-chip" onClick={() => { setQuery(h); handleSearch(h) }}>
+                <button key={h} className="hint-chip" onClick={() => { track('hint_click', { hint_text: h }); setQuery(h); handleSearch(h) }}>
                   {h}
                 </button>
               ))}
@@ -482,8 +488,13 @@ export default function App() {
             </div>
           )}
           <div className="card-list">
-            {cards.map((apt) => (
-              <EvalCard key={apt.kaptCode} apt={apt} onDetail={() => setDetailApt(apt)} />
+            {cards.map((apt, i) => (
+              <>
+                <EvalCard key={apt.kaptCode} apt={apt} onDetail={() => { track('apt_view', { apt_name: apt.aptNm, region: apt.regionName }); setDetailApt(apt) }} />
+                {i === 1 && cards.length > 2 && (
+                  <AdUnit key="ad-mid" adSlot={import.meta.env.VITE_ADSENSE_SLOT_RESULTS} style={{ margin: '8px 0' }} />
+                )}
+              </>
             ))}
           </div>
           <p className="data-disclaimer">실거래 데이터는 국토교통부 실거래가 공개시스템 기준이에요. 분위기·뉴스·커뮤니티 요약은 AI가 웹에서 수집한 정보예요.</p>
