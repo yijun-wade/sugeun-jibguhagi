@@ -1,10 +1,12 @@
 // src/App.jsx
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { Routes, Route, useNavigate, useSearchParams } from 'react-router-dom'
 import { DONG, HINT_SEARCHES } from './data.js'
 import { getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim, buildPriceJudgment } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM } from './constants.js'
 import EvalCard from './EvalCard.jsx'
 import DetailReport from './DetailReport.jsx'
+import AptDetailPage from './AptDetailPage.jsx'
 import { track } from './analytics.js'
 import AdUnit from './AdUnit.jsx'
 import { getCollection } from './collection.js'
@@ -109,7 +111,18 @@ async function buildEvalData(apt) {
 }
 
 export default function App() {
-  const [query, setQuery]         = useState('')
+  return (
+    <Routes>
+      <Route path="/apt/:kaptCode" element={<AptDetailPage />} />
+      <Route path="*" element={<SearchApp />} />
+    </Routes>
+  )
+}
+
+function SearchApp() {
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const [query, setQuery]         = useState(() => searchParams.get('q') || '')
   const [searchedQuery, setSearchedQuery] = useState('')
   const [cards, setCards]         = useState([])
   const [totalCount, setTotalCount] = useState(0)
@@ -117,13 +130,23 @@ export default function App() {
   const [loadingMsg, setLoadingMsg] = useState('')
   const [error, setError]         = useState(null)
   const [errorType, setErrorType] = useState(null) // 'no-results' | 'load-fail' | 'network' | null
-  const [detailApt, setDetailApt] = useState(null)
   const [nearbyState, setNearbyState] = useState('idle') // 'idle' | 'loading' | 'done' | 'error' | 'denied'
   const [nearbyApts, setNearbyApts] = useState([])
   const [collection, setCollection] = useState(() => getCollection())
+  const [resultTab, setResultTab] = useState('search') // 'search' | 'collection'
   const [compareMode, setCompareMode] = useState(false)
   const [compareSelected, setCompareSelected] = useState([])
   const [compareOpen, setCompareOpen] = useState(false)
+
+  // URL ?q= 파라미터로 진입 시 자동 검색
+  useEffect(() => {
+    const q = searchParams.get('q')
+    if (q) {
+      setQuery(q)
+      handleSearch(q)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   function toggleCompareSelect(apt) {
     setCompareSelected(prev =>
@@ -151,6 +174,8 @@ export default function App() {
       return
     }
     clearTimeout(emptyQueryTimerRef.current)
+    // URL 업데이트 (검색 히스토리 생성)
+    navigate(`/search?q=${encodeURIComponent(q)}`, { replace: false })
     setLoading(true)
     setLoadingMsg(LOADING_MSGS[0])
     let msgIdx = 1
@@ -163,7 +188,6 @@ export default function App() {
     setCards([])
     setSearchedQuery('')
     setTotalCount(0)
-    setDetailApt(null)
 
     try {
       const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`).then(r => r.json())
@@ -195,17 +219,17 @@ export default function App() {
       clearInterval(loadingMsgRef.current)
       setLoading(false)
     }
-  }, [])
+  }, [navigate])
 
   const goHome = useCallback(() => {
-    setDetailApt(null)
     setCards([])
     setQuery('')
     setSearchedQuery('')
     setError(null)
     setErrorType(null)
     setTotalCount(0)
-  }, [])
+    navigate('/')
+  }, [navigate])
 
   const handleNearby = useCallback(() => {
     if (!navigator.geolocation) {
@@ -276,20 +300,6 @@ export default function App() {
     clearInterval(loadingMsgRef.current)
     suggAbortRef.current?.abort()
   }, [])
-
-  if (detailApt) {
-    return (
-      <div className="app">
-        <header onClick={goHome} style={{ cursor: 'pointer' }}>
-          <div className="brand">
-            <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
-          </div>
-          <div className="brand-en">SuZip · 수집</div>
-        </header>
-        <DetailReport apt={detailApt} onBack={() => setDetailApt(null)} />
-      </div>
-    )
-  }
 
   // #36: 이전 요청 abort 후 새 요청 시작
   const handleQueryChange = (e) => {
@@ -545,32 +555,89 @@ export default function App() {
 
       {cards.length > 0 && (
         <div className="result-section">
-          <div className="search-result-header">
-            <span className="search-result-title">
-              '{searchedQuery}' 검색 결과
-            </span>
-            <span className="search-result-count">
-              {totalCount <= cards.length
-                ? `${cards.length}개`
-                : `${cards.length}개 표시 / 전체 ${totalCount}개`}
-            </span>
+          {/* 탭: 검색결과 / 수집 */}
+          <div className="result-tabs">
+            <button className={`result-tab${resultTab === 'search' ? ' active' : ''}`} onClick={() => setResultTab('search')}>
+              검색결과
+            </button>
+            <button className={`result-tab${resultTab === 'collection' ? ' active' : ''}`} onClick={() => { setResultTab('collection'); setCompareMode(false); setCompareSelected([]) }}>
+              수집 {collection.length > 0 ? `${collection.length}개` : ''}
+            </button>
           </div>
-          {totalCount > cards.length && (
-            <div className="search-more-hint">
-              검색 결과가 더 있어요. 아파트명이나 도로명을 함께 입력하면 더 정확하게 찾을 수 있어요.
+
+          {resultTab === 'search' ? (
+            <>
+              <div className="search-result-header">
+                <span className="search-result-title">'{searchedQuery}' 검색 결과</span>
+                <span className="search-result-count">
+                  {totalCount <= cards.length ? `${cards.length}개` : `${cards.length}개 / 전체 ${totalCount}개`}
+                </span>
+              </div>
+              {totalCount > cards.length && (
+                <div className="search-more-hint">
+                  검색 결과가 더 있어요. 아파트명이나 도로명을 함께 입력하면 더 정확하게 찾을 수 있어요.
+                </div>
+              )}
+              <div className="card-list">
+                {cards.map((apt, i) => (
+                  <>
+                    <EvalCard key={apt.kaptCode} apt={apt} onDetail={() => { track('apt_view', { apt_name: apt.aptNm, region: apt.regionName }); navigate(`/apt/${apt.kaptCode}`, { state: { evalData: apt } }) }} onCollectionChange={setCollection} />
+                    {i === 1 && cards.length > 2 && (
+                      <AdUnit key="ad-mid" adSlot={import.meta.env.VITE_ADSENSE_SLOT_RESULTS} style={{ margin: '8px 0' }} />
+                    )}
+                  </>
+                ))}
+              </div>
+              <p className="data-disclaimer">실거래 데이터는 국토교통부 실거래가 공개시스템 기준이에요. 분위기·뉴스·커뮤니티 요약은 AI가 웹에서 수집한 정보예요.</p>
+            </>
+          ) : (
+            <div className="collection-tab-body">
+              {collection.length === 0 ? (
+                <div className="collection-empty">아직 수집한 단지가 없어요.<br/>검색 결과에서 <strong>수집</strong> 버튼을 눌러보세요.</div>
+              ) : (
+                <>
+                  <div className="collection-header">
+                    <span className="collection-title">★ 내가 수집한 단지</span>
+                    <div className="collection-header-actions">
+                      <span className="collection-count">{collection.length}개</span>
+                      {collection.length >= 2 && (
+                        <button className="compare-toggle-btn" onClick={() => { setCompareMode(m => !m); setCompareSelected([]) }}>
+                          {compareMode ? '취소' : '비교'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  {compareMode && (
+                    <div className="compare-guide">
+                      비교할 단지를 선택하세요 (최대 3개)
+                      {compareSelected.length >= 2 && (
+                        <button className="compare-start-btn" onClick={() => { track('compare_open', { count: compareSelected.length, apts: compareSelected.map(a => a.aptNm).join(',') }); setCompareOpen(true) }}>
+                          {compareSelected.length}개 비교 보기
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  <div className="collection-list">
+                    {collection.map(apt => {
+                      const isSelected = compareSelected.find(a => a.kaptCode === apt.kaptCode)
+                      return compareMode ? (
+                        <button key={apt.kaptCode} className={`collection-item${isSelected ? ' compare-selected' : ''}`} onClick={() => toggleCompareSelect(apt)}>
+                          <span className="compare-check">{isSelected ? '✓' : ''}</span>
+                          <span className="collection-item-name">{apt.aptNm}</span>
+                          <span className="collection-item-loc">{apt.dong} · {apt.regionName}</span>
+                        </button>
+                      ) : (
+                        <button key={apt.kaptCode} className="collection-item" onClick={() => { setQuery(apt.aptNm); handleSearch(apt.aptNm) }}>
+                          <span className="collection-item-name">{apt.aptNm}</span>
+                          <span className="collection-item-loc">{apt.dong} · {apt.regionName}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </>
+              )}
             </div>
           )}
-          <div className="card-list">
-            {cards.map((apt, i) => (
-              <>
-                <EvalCard key={apt.kaptCode} apt={apt} onDetail={() => { track('apt_view', { apt_name: apt.aptNm, region: apt.regionName }); setDetailApt(apt) }} onCollectionChange={setCollection} />
-                {i === 1 && cards.length > 2 && (
-                  <AdUnit key="ad-mid" adSlot={import.meta.env.VITE_ADSENSE_SLOT_RESULTS} style={{ margin: '8px 0' }} />
-                )}
-              </>
-            ))}
-          </div>
-          <p className="data-disclaimer">실거래 데이터는 국토교통부 실거래가 공개시스템 기준이에요. 분위기·뉴스·커뮤니티 요약은 AI가 웹에서 수집한 정보예요.</p>
         </div>
       )}
 

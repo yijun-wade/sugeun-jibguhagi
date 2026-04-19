@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { fP, fR, getYM, formatDealDate, nameSim } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM, SQM_TO_PYEONG, KR_LAT, KR_LON } from './constants.js'
 import { track } from './analytics.js'
+import { isCollected, toggleCollection } from './collection.js'
 
 function isValidUrl(url) {
   try { const { protocol } = new URL(url); return protocol === 'http:' || protocol === 'https:' }
@@ -11,21 +12,22 @@ function isValidUrl(url) {
 
 const TABS = ['동네·이야기', '시세']
 
-export default function DetailReport({ apt, onBack }) {
+export default function DetailReport({ apt, onBack, onCollectionChange }) {
   const [tab, setTab] = useState('동네·이야기')
-  const [toast, setToast] = useState(false)
+  const [toast, setToast] = useState(null) // 'share' | 'collect' | 'uncollect' | null
+  const [collected, setCollected] = useState(() => isCollected(apt.kaptCode))
+
   useEffect(() => {
     if (!toast) return
-    const id = setTimeout(() => setToast(false), 2800)
+    const id = setTimeout(() => setToast(null), 2800)
     return () => clearTimeout(id)
   }, [toast])
 
-  const handleCollect = useCallback(() => {
+  const handleShare = useCallback(() => {
     const url = `${window.location.origin}/?q=${encodeURIComponent(apt.aptNm)}`
     navigator.clipboard.writeText(url).then(() => {
-      setToast(true)
+      setToast('share')
     }).catch(() => {
-      // clipboard API 미지원 fallback
       const el = document.createElement('textarea')
       el.value = url
       el.style.position = 'fixed'
@@ -34,16 +36,29 @@ export default function DetailReport({ apt, onBack }) {
       el.select()
       document.execCommand('copy')
       document.body.removeChild(el)
-      setToast(true)
+      setToast('share')
     })
   }, [apt.aptNm])
 
+  const handleCollect = useCallback(() => {
+    const next = toggleCollection(apt)
+    const saving = !collected
+    setCollected(saving)
+    track(saving ? 'collect_save' : 'collect_remove', { apt_name: apt.aptNm, region: apt.regionName })
+    onCollectionChange?.(next)
+    setToast(saving ? 'collect' : 'uncollect')
+  }, [apt, collected, onCollectionChange])
+
   return (
     <div className="detail-report">
-      {toast && (
-        <div className="collect-toast">
-          주소 복사가 완료되었어요. 원하는 곳에 수집하세요.
-        </div>
+      {toast === 'share' && (
+        <div className="collect-toast">링크 복사 완료! 원하는 곳에 공유하세요.</div>
+      )}
+      {toast === 'collect' && (
+        <div className="collect-toast">수집 목록에 추가했어요 ★</div>
+      )}
+      {toast === 'uncollect' && (
+        <div className="collect-toast">수집 목록에서 제거했어요</div>
       )}
       <div className="detail-header">
         <button className="detail-back" aria-label="목록으로 돌아가기" onClick={onBack}>← 뒤로</button>
@@ -51,9 +66,14 @@ export default function DetailReport({ apt, onBack }) {
           <div className="detail-apt-name">{apt.aptNm}</div>
           <div className="detail-apt-loc">{apt.dong} · {apt.regionName}</div>
         </div>
-        <button className="collect-btn" aria-label="수집하기" onClick={() => { track('collect_click', { apt_name: apt.aptNm }); handleCollect() }}>
-          📌 수집하기
-        </button>
+        <div className="detail-header-actions">
+          <button className={`collect-btn${collected ? ' collected' : ''}`} aria-label={collected ? '수집 취소' : '수집하기'} onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm }); handleCollect() }}>
+            {collected ? '수집됨' : '수집하기'}
+          </button>
+          <button className="share-btn" aria-label="공유하기" onClick={() => { track('share_click', { apt_name: apt.aptNm }); handleShare() }}>
+            🔗 공유하기
+          </button>
+        </div>
       </div>
 
       <div className="detail-tabs">
@@ -321,9 +341,20 @@ function AptInfoCard({ apt }) {
 
   const walkMin = subway?.distM ? Math.round(subway.distM / 67) : null  // 도보 67m/분
 
-  const 세대수 = kapt?.세대수 || building?.세대수_건축
+  const 세대수 = kapt?.세대수 || building?.세대수_건축 || apt?.kaptdaCnt
+  const 동수 = apt?.kaptDongCnt
+  const 사용승인일 = (() => {
+    const d = apt?.useAprDay
+    if (!d || d.length < 6) return null
+    const y = d.slice(0, 4)
+    const m = parseInt(d.slice(4, 6), 10)
+    return m ? `${y}년 ${m}월` : `${y}년`
+  })()
+
   const items = [
     세대수         && { label: '세대수',  value: `${parseInt(세대수).toLocaleString()}세대` },
+    동수           && { label: '동 수',   value: `${동수}개 동` },
+    사용승인일     && { label: '사용승인', value: 사용승인일 },
     kapt?.난방방식  && { label: '난방',    value: kapt.난방방식 },
     building?.용적률 && { label: '용적률', value: `${building.용적률}%` },
     building?.주차대수 && { label: '주차', value: `${building.주차대수.toLocaleString()}대` },

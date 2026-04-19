@@ -36,8 +36,8 @@ export default function EvalCard({ apt, onDetail, onCollectionChange }) {
           <div className="eval-name">{apt.aptNm}</div>
           <div className="eval-loc">{apt.dong} · {apt.regionName} · {apt.buildYear}년식</div>
         </div>
-        <button className={`collect-btn${collected ? ' collected' : ''}`} onClick={handleCollect} aria-label={collected ? '수집 취소' : '수집하기'}>
-          {collected ? '★' : '☆'}
+        <button className={`eval-collect-btn${collected ? ' collected' : ''}`} onClick={handleCollect} aria-label={collected ? '수집 취소' : '수집하기'}>
+          {collected ? '수집됨' : '수집'}
         </button>
       </div>
 
