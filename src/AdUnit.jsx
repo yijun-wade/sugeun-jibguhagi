@@ -7,6 +7,9 @@ export default function AdUnit({ adSlot, style }) {
   const adRef = useRef(null)
   const pushed = useRef(false)
 
+  // adSlot 또는 client ID 없으면 렌더링 안 함 (빈 공간 방지)
+  if (!adSlot || !import.meta.env.VITE_ADSENSE_CLIENT_ID) return null
+
   useEffect(() => {
     if (pushed.current) return
     if (!window.adsbygoogle) return

@@ -583,23 +583,27 @@ function SearchApp() {
       {/* floating 비교 바 — compareSelected 있을 때 항상 노출 */}
       {compareSelected.length > 0 && (
         <div className="compare-bar">
-          <span className="compare-bar-label">
-            <strong>{compareSelected.length}</strong>개 선택
-            {compareSelected.length < 2 && <span className="compare-bar-hint"> · 1개 더 선택하면 비교해요</span>}
-          </span>
-          <div className="compare-bar-right">
-            <button className="compare-bar-clear" onClick={() => setCompareSelected([])}>선택 해제</button>
-            <button
-              className={`compare-bar-go${compareSelected.length < 2 ? ' disabled' : ''}`}
-              onClick={() => {
-                if (compareSelected.length < 2) return
-                track('compare_open', { count: compareSelected.length, apts: compareSelected.map(a => a.aptNm).join(',') })
-                setCompareOpen(true)
-              }}
-            >
-              비교하기 →
-            </button>
+          <div className="compare-bar-chips">
+            {compareSelected.map(apt => (
+              <span key={apt.kaptCode} className="compare-bar-chip">
+                <span className="compare-bar-chip-name">{apt.aptNm}</span>
+                <button className="compare-bar-chip-remove" onClick={() => toggleCompareSelect(apt)}>×</button>
+              </span>
+            ))}
+            {compareSelected.length === 1 && (
+              <span className="compare-bar-hint">1개 더 선택해요</span>
+            )}
           </div>
+          <button
+            className={`compare-bar-go${compareSelected.length < 2 ? ' disabled' : ''}`}
+            onClick={() => {
+              if (compareSelected.length < 2) return
+              track('compare_open', { count: compareSelected.length, apts: compareSelected.map(a => a.aptNm).join(',') })
+              setCompareOpen(true)
+            }}
+          >
+            비교하기 →
+          </button>
         </div>
       )}
 
