@@ -7,6 +7,7 @@ import EvalCard from './EvalCard.jsx'
 import DetailReport from './DetailReport.jsx'
 import { track } from './analytics.js'
 import AdUnit from './AdUnit.jsx'
+import { getCollection } from './collection.js'
 
 async function buildEvalData(apt) {
   const bjdCode = apt.bjdCode || null
@@ -118,6 +119,7 @@ export default function App() {
   const [detailApt, setDetailApt] = useState(null)
   const [nearbyState, setNearbyState] = useState('idle') // 'idle' | 'loading' | 'done' | 'error' | 'denied'
   const [nearbyApts, setNearbyApts] = useState([])
+  const [collection, setCollection] = useState(() => getCollection())
 
   const LOADING_MSGS = [
     '아파트 매매 실거래가 조회 중...',
@@ -404,6 +406,23 @@ export default function App() {
             ))}
           </div>
 
+          {collection.length > 0 && (
+            <div className="collection-section">
+              <div className="collection-header">
+                <span className="collection-title">★ 내가 수집한 단지</span>
+                <span className="collection-count">{collection.length}개</span>
+              </div>
+              <div className="collection-list">
+                {collection.map(apt => (
+                  <button key={apt.kaptCode} className="collection-item" onClick={() => { setQuery(apt.aptNm); handleSearch(apt.aptNm) }}>
+                    <span className="collection-item-name">{apt.aptNm}</span>
+                    <span className="collection-item-loc">{apt.dong} · {apt.regionName}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="nearby-section">
             {nearbyState === 'idle' && (
               <button className="nearby-btn" onClick={() => { track('nearby_click'); handleNearby() }}>
@@ -493,7 +512,7 @@ export default function App() {
           <div className="card-list">
             {cards.map((apt, i) => (
               <>
-                <EvalCard key={apt.kaptCode} apt={apt} onDetail={() => { track('apt_view', { apt_name: apt.aptNm, region: apt.regionName }); setDetailApt(apt) }} />
+                <EvalCard key={apt.kaptCode} apt={apt} onDetail={() => { track('apt_view', { apt_name: apt.aptNm, region: apt.regionName }); setDetailApt(apt) }} onCollectionChange={setCollection} />
                 {i === 1 && cards.length > 2 && (
                   <AdUnit key="ad-mid" adSlot={import.meta.env.VITE_ADSENSE_SLOT_RESULTS} style={{ margin: '8px 0' }} />
                 )}

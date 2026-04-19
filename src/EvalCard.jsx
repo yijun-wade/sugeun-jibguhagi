@@ -1,5 +1,7 @@
 // src/EvalCard.jsx
 import { fP, snippetText } from './utils.js'
+import { isCollected, toggleCollection } from './collection.js'
+import { useState } from 'react'
 
 function isValidUrl(url) {
   try { const { protocol } = new URL(url); return protocol === 'http:' || protocol === 'https:' }
@@ -12,8 +14,16 @@ const DIRECTION_COLOR = {
   '↓ 하락세': '#2563eb',
 }
 
-export default function EvalCard({ apt, onDetail }) {
-  const dirColor   = DIRECTION_COLOR[apt.direction] || '#6b7280'
+export default function EvalCard({ apt, onDetail, onCollectionChange }) {
+  const [collected, setCollected] = useState(() => isCollected(apt.kaptCode))
+  const dirColor = DIRECTION_COLOR[apt.direction] || '#6b7280'
+
+  function handleCollect(e) {
+    e.stopPropagation()
+    const next = toggleCollection(apt)
+    setCollected(!collected)
+    onCollectionChange?.(next)
+  }
 
   return (
     <div className="eval-card">
@@ -23,6 +33,9 @@ export default function EvalCard({ apt, onDetail }) {
           <div className="eval-name">{apt.aptNm}</div>
           <div className="eval-loc">{apt.dong} · {apt.regionName} · {apt.buildYear}년식</div>
         </div>
+        <button className={`collect-btn${collected ? ' collected' : ''}`} onClick={handleCollect} aria-label={collected ? '수집 취소' : '수집하기'}>
+          {collected ? '★' : '☆'}
+        </button>
       </div>
 
       {/* 한줄 판단 */}
