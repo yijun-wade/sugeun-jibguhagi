@@ -786,8 +786,6 @@ header { text-align: center; padding: 4px 0 2px; }
 .listing-btn { flex: 1; text-align: center; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1.5px solid transparent; }
 .listing-btn.naver { background: #03C75A; color: #fff; }
 .listing-btn.naver:hover { background: #02a84c; }
-.listing-btn.hogang { background: #6B48FF; color: #fff; }
-.listing-btn.hogang:hover { background: #5a3de0; }
 
 /* 단지 인포 카드 */
 .apt-info-card {

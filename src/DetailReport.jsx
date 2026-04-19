@@ -183,7 +183,6 @@ function PriceTab({ apt }) {
           <div className="listing-deeplinks-label">실매물 보기</div>
           <div className="listing-deeplinks-btns">
             <a className="listing-btn naver" href={`https://search.naver.com/search.naver?query=${encodeURIComponent(apt.aptNm + ' 아파트 매물')}`} target="_blank" rel="noopener noreferrer" onClick={() => track('listing_link_click', { apt_name: apt.aptNm, service: 'naver' })}>네이버 매물검색</a>
-            <a className="listing-btn hogang" href={`https://hogangnono.com/?q=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer" onClick={() => track('listing_link_click', { apt_name: apt.aptNm, service: 'hogangnono' })}>호갱노노</a>
           </div>
         </div>
       </div>
@@ -267,7 +266,6 @@ function PriceTab({ apt }) {
             <div className="listing-deeplinks-label">실매물 보기</div>
             <div className="listing-deeplinks-btns">
               <a className="listing-btn naver" href={`https://search.naver.com/search.naver?query=${encodeURIComponent(apt.aptNm + ' 아파트 매물')}`} target="_blank" rel="noopener noreferrer" onClick={() => track('listing_link_click', { apt_name: apt.aptNm, service: 'naver' })}>네이버 매물검색</a>
-              <a className="listing-btn hogang" href={`https://hogangnono.com/?q=${encodeURIComponent(apt.aptNm)}`} target="_blank" rel="noopener noreferrer" onClick={() => track('listing_link_click', { apt_name: apt.aptNm, service: 'hogangnono' })}>호갱노노</a>
             </div>
           </div>
           <p className="data-disclaimer">국토교통부 실거래가 공개시스템에서 직접 조회한 실제 거래 데이터예요.</p>
