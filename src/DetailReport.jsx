@@ -355,21 +355,21 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
   const [vibe, setVibe] = useState(null)
   const [vibeSummary, setVibeSummary] = useState(null)
   const [vibeLoading, setVibeLoading] = useState(true)
+  // stories 비노출 중 — API 호출도 중단 (복구 시 아래 주석 해제 + 위 UI 주석도 해제)
   const [stories, setStories] = useState([])
-  const [storiesLoading, setStoriesLoading] = useState(true)
+  const [storiesLoading, setStoriesLoading] = useState(false)
   useEffect(() => {
     const controller = new AbortController()
     const { signal } = controller
     setVibe(null); setVibeSummary(null); setVibeLoading(true)
-    setStories([]); setStoriesLoading(true)
     fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
       .then(r => r.json())
       .then(data => { setVibe(data?.categories || []); setVibeSummary(data?.summary || null); setVibeLoading(false) })
       .catch(e => { if (e.name !== 'AbortError') { setVibe([]); setVibeLoading(false) } })
-    fetch(`/api/stories?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
-      .then(r => r.json())
-      .then(data => { setStories(Array.isArray(data) ? data : []); setStoriesLoading(false) })
-      .catch(e => { if (e.name !== 'AbortError') { setStories([]); setStoriesLoading(false) } })
+    // fetch(`/api/stories?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
+    //   .then(r => r.json())
+    //   .then(data => { setStories(Array.isArray(data) ? data : []); setStoriesLoading(false) })
+    //   .catch(e => { if (e.name !== 'AbortError') { setStories([]); setStoriesLoading(false) } })
     return () => controller.abort()
   }, [aptNm, dong])
 
@@ -427,8 +427,8 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
         </>)})()}
       </div>
 
-      {/* 블로그 후기 — 아코디언 (기본 닫힘) */}
-      <Accordion label="블로그 · 카페 후기" count={storiesLoading ? null : stories.length}>
+      {/* 블로그 후기 — 클릭률 낮아 임시 비노출 (SHOW_STORIES=true 로 복구) */}
+      {/* <Accordion label="블로그 · 카페 후기" count={storiesLoading ? null : stories.length}>
         {storiesLoading ? (
           <div className="detail-loading">후기 불러오는 중...</div>
         ) : !stories || stories.length === 0 ? (
@@ -446,7 +446,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
             ))}
           </div>
         )}
-      </Accordion>
+      </Accordion> */}
 
       <p className="data-disclaimer">실거래 데이터는 국토교통부 실거래가 공개시스템 기준이에요. 동네 분위기·후기 요약은 AI가 웹에서 수집한 정보예요.</p>
     </div>
