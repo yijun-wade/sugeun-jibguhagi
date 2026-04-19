@@ -8,6 +8,7 @@ import DetailReport from './DetailReport.jsx'
 import { track } from './analytics.js'
 import AdUnit from './AdUnit.jsx'
 import { getCollection } from './collection.js'
+import CompareView from './CompareView.jsx'
 
 async function buildEvalData(apt) {
   const bjdCode = apt.bjdCode || null
@@ -120,6 +121,17 @@ export default function App() {
   const [nearbyState, setNearbyState] = useState('idle') // 'idle' | 'loading' | 'done' | 'error' | 'denied'
   const [nearbyApts, setNearbyApts] = useState([])
   const [collection, setCollection] = useState(() => getCollection())
+  const [compareMode, setCompareMode] = useState(false)
+  const [compareSelected, setCompareSelected] = useState([])
+  const [compareOpen, setCompareOpen] = useState(false)
+
+  function toggleCompareSelect(apt) {
+    setCompareSelected(prev =>
+      prev.find(a => a.kaptCode === apt.kaptCode)
+        ? prev.filter(a => a.kaptCode !== apt.kaptCode)
+        : prev.length < 3 ? [...prev, apt] : prev
+    )
+  }
 
   const LOADING_MSGS = [
     '아파트 매매 실거래가 조회 중...',
@@ -410,17 +422,56 @@ export default function App() {
             <div className="collection-section">
               <div className="collection-header">
                 <span className="collection-title">★ 내가 수집한 단지</span>
-                <span className="collection-count">{collection.length}개</span>
+                <div className="collection-header-actions">
+                  <span className="collection-count">{collection.length}개</span>
+                  {collection.length >= 2 && (
+                    <button className="compare-toggle-btn" onClick={() => { setCompareMode(m => !m); setCompareSelected([]) }}>
+                      {compareMode ? '취소' : '비교'}
+                    </button>
+                  )}
+                </div>
               </div>
+
+              {compareMode && (
+                <div className="compare-guide">
+                  비교할 단지를 선택하세요 (최대 3개)
+                  {compareSelected.length >= 2 && (
+                    <button className="compare-start-btn" onClick={() => setCompareOpen(true)}>
+                      {compareSelected.length}개 비교 보기
+                    </button>
+                  )}
+                </div>
+              )}
+
               <div className="collection-list">
-                {collection.map(apt => (
-                  <button key={apt.kaptCode} className="collection-item" onClick={() => { setQuery(apt.aptNm); handleSearch(apt.aptNm) }}>
-                    <span className="collection-item-name">{apt.aptNm}</span>
-                    <span className="collection-item-loc">{apt.dong} · {apt.regionName}</span>
-                  </button>
-                ))}
+                {collection.map(apt => {
+                  const isSelected = compareSelected.find(a => a.kaptCode === apt.kaptCode)
+                  return compareMode ? (
+                    <button
+                      key={apt.kaptCode}
+                      className={`collection-item${isSelected ? ' compare-selected' : ''}`}
+                      onClick={() => toggleCompareSelect(apt)}
+                    >
+                      <span className="compare-check">{isSelected ? '✓' : ''}</span>
+                      <span className="collection-item-name">{apt.aptNm}</span>
+                      <span className="collection-item-loc">{apt.dong} · {apt.regionName}</span>
+                    </button>
+                  ) : (
+                    <button key={apt.kaptCode} className="collection-item" onClick={() => { setQuery(apt.aptNm); handleSearch(apt.aptNm) }}>
+                      <span className="collection-item-name">{apt.aptNm}</span>
+                      <span className="collection-item-loc">{apt.dong} · {apt.regionName}</span>
+                    </button>
+                  )
+                })}
               </div>
             </div>
+          )}
+
+          {compareOpen && (
+            <CompareView
+              apts={compareSelected}
+              onClose={() => { setCompareOpen(false); setCompareMode(false); setCompareSelected([]) }}
+            />
           )}
 
           <div className="nearby-section">

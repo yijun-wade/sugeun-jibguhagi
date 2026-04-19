@@ -442,6 +442,86 @@ header { text-align: center; padding: 4px 0 2px; }
 .collection-item-name { font-size: 14px; font-weight: 600; color: var(--text); }
 .collection-item-loc  { font-size: 12px; color: var(--muted); }
 
+.collection-header-actions { display: flex; align-items: center; gap: 8px; }
+.compare-toggle-btn {
+  font-size: 12px; font-weight: 600; font-family: inherit;
+  padding: 3px 10px; border-radius: 20px; cursor: pointer;
+  background: var(--blue); color: #fff; border: none;
+}
+
+.compare-guide {
+  font-size: 12px; color: var(--text2);
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px; gap: 8px;
+}
+.compare-start-btn {
+  font-size: 12px; font-weight: 700; font-family: inherit;
+  padding: 5px 14px; border-radius: 20px; cursor: pointer;
+  background: #F59E0B; color: #fff; border: none; white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.collection-item.compare-selected {
+  background: #FEF3C7; border: 1.5px solid #F59E0B;
+}
+.compare-check {
+  font-size: 13px; font-weight: 700; color: #F59E0B;
+  width: 16px; flex-shrink: 0;
+}
+
+/* ─── 비교 오버레이 ─── */
+.compare-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: flex-end; justify-content: center;
+  z-index: 200;
+}
+.compare-sheet {
+  width: 100%; max-width: 480px;
+  background: var(--card);
+  border-radius: 20px 20px 0 0;
+  padding: 20px 0 40px;
+  max-height: 80vh;
+  display: flex; flex-direction: column;
+}
+.compare-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.compare-top-title { font-size: 16px; font-weight: 700; }
+.compare-close {
+  background: none; border: none; font-size: 18px;
+  color: var(--muted); cursor: pointer; padding: 4px;
+}
+
+.compare-table-wrap {
+  overflow-x: auto; flex: 1;
+  padding: 16px 20px;
+}
+.compare-table {
+  width: 100%; border-collapse: collapse;
+  table-layout: fixed;
+}
+.compare-label-col { width: 52px; }
+.compare-apt-col   { width: 120px; padding: 0 8px 12px; vertical-align: top; }
+.compare-apt-name  { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.35; word-break: keep-all; }
+.compare-apt-loc   { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.compare-row-label {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  padding: 10px 0; vertical-align: middle; white-space: nowrap;
+  border-top: 1px solid var(--border);
+}
+.compare-row-val {
+  font-size: 13px; color: var(--text);
+  padding: 10px 8px; vertical-align: middle; word-break: keep-all;
+  border-top: 1px solid var(--border);
+}
+.compare-disclaimer {
+  font-size: 11px; color: var(--muted);
+  text-align: center; padding: 0 20px;
+}
+
 .eval-verdict {
   font-size: 14px; font-weight: 600; color: var(--text2);
   background: var(--blue-lt); border-radius: 10px; padding: 10px 14px;
