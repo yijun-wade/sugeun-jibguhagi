@@ -7,6 +7,7 @@ import { setCors } from './_utils.js'
 export const config = { regions: ['icn1'] }
 
 let aptList = null
+let enrichMap = null  // kaptCode → { kaptdaCnt, useAprDay }
 
 function loadAptList() {
   if (aptList) return aptList
@@ -17,6 +18,18 @@ function loadAptList() {
     aptList = []
   }
   return aptList
+}
+
+function loadEnrichMap() {
+  if (enrichMap) return enrichMap
+  try {
+    const filePath = join(process.cwd(), 'public', 'seoul-apt-enriched.json')
+    const data = JSON.parse(readFileSync(filePath, 'utf-8'))
+    enrichMap = new Map(data.map(a => [a.kaptCode, { kaptdaCnt: a.kaptdaCnt, useAprDay: a.useAprDay }]))
+  } catch {
+    enrichMap = new Map()
+  }
+  return enrichMap
 }
 
 // 브랜드명 오타 보정 (예: 프루지오 → 푸르지오)
@@ -52,8 +65,8 @@ export default function handler(req, res) {
   if (!q || q.trim().length < 1) return res.json([])
 
   const list = loadAptList()
+  const enrich = loadEnrichMap()
   const rawQuery = q.trim()
-  // 브랜드 오타 보정 후 검색
   const query = normalizeQuery(rawQuery)
   const normalQ = query.replace(/\s+/g, '')
 
@@ -72,22 +85,14 @@ export default function handler(req, res) {
         score = 3  // 아파트명 공백제거 포함
       } else {
         const units = extractAdminUnits(addr)
-        // 시/구/동 이름이 쿼리로 시작하면 강한 지역 매칭 (예: "광명" → "광명시")
         const strongUnitMatch = query.length >= 2 && units.some(unit => unit.startsWith(query))
-        // 부분 지역 매칭 (예: "망원동" ↔ "망원")
         const weakUnitMatch = query.length >= 2 && units.some(unit =>
           unit.includes(query) || query.includes(unit)
         )
-
-        if (strongUnitMatch) {
-          score = 3.5  // 지역명 시작 매칭 — 아파트명 매칭과 동급에 가깝게
-        } else if (weakUnitMatch) {
-          score = 2.5
-        } else if (addr.includes(query)) {
-          score = 2  // 주소 전체 포함
-        } else if (addr.replace(/\s+/g, '').includes(normalQ)) {
-          score = 1  // 주소 공백제거 포함
-        }
+        if (strongUnitMatch) score = 3.5
+        else if (weakUnitMatch) score = 2.5
+        else if (addr.includes(query)) score = 2
+        else if (addr.replace(/\s+/g, '').includes(normalQ)) score = 1
       }
 
       return score > 0 ? { apt: i, score } : null
@@ -95,9 +100,17 @@ export default function handler(req, res) {
     .filter(Boolean)
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score  // 1차: 점수 내림차순
-      return (a.apt.kaptName || '').localeCompare(b.apt.kaptName || '', 'ko')  // 2차: 가나다 오름차순
+      // 2차: 세대수 내림차순 (서울 아파트에 enrichMap 있을 때)
+      const aCnt = enrich.get(a.apt.kaptCode)?.kaptdaCnt || 0
+      const bCnt = enrich.get(b.apt.kaptCode)?.kaptdaCnt || 0
+      if (bCnt !== aCnt) return bCnt - aCnt
+      return (a.apt.kaptName || '').localeCompare(b.apt.kaptName || '', 'ko')  // 3차: 가나다
     })
-    .map(m => m.apt)
+    .map(m => {
+      const extra = enrich.get(m.apt.kaptCode)
+      if (!extra) return m.apt
+      return { ...m.apt, kaptdaCnt: extra.kaptdaCnt, useAprDay: extra.useAprDay }
+    })
     .slice(0, 20)
 
   return res.json(results)

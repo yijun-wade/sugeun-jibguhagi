@@ -384,7 +384,10 @@ export default function App() {
                 onPointerDown={(e) => { e.preventDefault(); pickSuggestion(apt) }}
               >
                 <span className="sugg-name">{apt.kaptName}</span>
-                <span className="sugg-addr">{apt.addr?.split(' ').slice(1, 4).join(' ')}</span>
+                <span className="sugg-meta">
+                  <span className="sugg-addr">{apt.addr?.split(' ').slice(1, 4).join(' ')}</span>
+                  {apt.kaptdaCnt && <span className="sugg-cnt">{apt.kaptdaCnt.toLocaleString()}세대</span>}
+                </span>
               </li>
             ))}
           </ul>
