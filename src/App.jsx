@@ -1,6 +1,6 @@
 // src/App.jsx
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { Routes, Route, useNavigate, useSearchParams } from 'react-router-dom'
+import { Routes, Route, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { DONG, HINT_SEARCHES } from './data.js'
 import { getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim, buildPriceJudgment } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM } from './constants.js'
@@ -121,6 +121,7 @@ export default function App() {
 
 function SearchApp() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchParams] = useSearchParams()
   const [query, setQuery]         = useState(() => searchParams.get('q') || '')
   const [searchedQuery, setSearchedQuery] = useState('')
@@ -137,6 +138,13 @@ function SearchApp() {
   const [compareSelected, setCompareSelected] = useState([])
   const [compareOpen, setCompareOpen] = useState(false)
 
+  // 라우트 변경 시 page_view 이벤트
+  useEffect(() => {
+    const path = location.pathname
+    const pageType = path === '/' ? 'home' : path.startsWith('/search') ? 'search' : path.startsWith('/apt') ? 'apt_detail' : 'other'
+    track('page_view', { page_path: path, page_type: pageType, search_query: searchParams.get('q') || undefined })
+  }, [location.pathname])
+
   // URL ?q= 파라미터로 진입 시 자동 검색
   useEffect(() => {
     const q = searchParams.get('q')
@@ -148,18 +156,23 @@ function SearchApp() {
   }, [])
 
   function toggleCompareSelect(apt) {
-    setCompareSelected(prev =>
-      prev.find(a => a.kaptCode === apt.kaptCode)
-        ? prev.filter(a => a.kaptCode !== apt.kaptCode)
-        : prev.length < 3 ? [...prev, apt] : prev
-    )
+    setCompareSelected(prev => {
+      const exists = prev.find(a => a.kaptCode === apt.kaptCode)
+      if (exists) {
+        track('compare_deselect', { apt_name: apt.aptNm, region: apt.regionName })
+        return prev.filter(a => a.kaptCode !== apt.kaptCode)
+      }
+      if (prev.length >= 3) return prev
+      track('compare_select', { apt_name: apt.aptNm, region: apt.regionName, total_selected: prev.length + 1 })
+      return [...prev, apt]
+    })
   }
 
   function handleRemoveFromCollection(apt) {
     const next = toggleCollection(apt)
     setCollection(next)
     setCompareSelected(prev => prev.filter(a => a.kaptCode !== apt.kaptCode))
-    track('collect_remove', { apt_name: apt.aptNm, region: apt.regionName })
+    track('collect_delete', { apt_name: apt.aptNm, region: apt.regionName })
   }
 
   const LOADING_MSGS = [
@@ -329,6 +342,7 @@ function SearchApp() {
   }
 
   const pickSuggestion = (apt) => {
+    track('suggestion_click', { apt_name: apt.kaptName, addr: apt.addr?.split(' ').slice(1, 3).join(' ') })
     setQuery(apt.kaptName)
     setSuggestions([])
     setShowSugg(false)
@@ -475,7 +489,7 @@ function SearchApp() {
                   <button
                     key={apt.kaptCode}
                     className="nearby-apt-item"
-                    onClick={() => { setQuery(apt.kaptName); handleSearch(apt.kaptName) }}
+                    onClick={() => { track('nearby_result_click', { apt_name: apt.kaptName }); setQuery(apt.kaptName); handleSearch(apt.kaptName) }}
                   >
                     <span className="nearby-apt-name">{apt.kaptName}</span>
                     <span className="nearby-apt-addr">{apt.addr?.split(' ').slice(1, 4).join(' ')}</span>
@@ -523,10 +537,10 @@ function SearchApp() {
         <div className="result-section">
           {/* 탭: 검색결과 / 수집 */}
           <div className="result-tabs">
-            <button className={`result-tab${resultTab === 'search' ? ' active' : ''}`} onClick={() => setResultTab('search')}>
+            <button className={`result-tab${resultTab === 'search' ? ' active' : ''}`} onClick={() => { setResultTab('search'); track('result_tab_switch', { tab: 'search' }) }}>
               검색결과
             </button>
-            <button className={`result-tab${resultTab === 'collection' ? ' active' : ''}`} onClick={() => setResultTab('collection')}>
+            <button className={`result-tab${resultTab === 'collection' ? ' active' : ''}`} onClick={() => { setResultTab('collection'); track('result_tab_switch', { tab: 'collection', collection_count: collection.length }) }}>
               수집 {collection.length > 0 ? `${collection.length}개` : ''}
             </button>
           </div>
