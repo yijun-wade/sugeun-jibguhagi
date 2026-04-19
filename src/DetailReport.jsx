@@ -375,10 +375,10 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
 
   return (
     <div className="neighborhood-tab">
-      {/* 수근수근 — 동네 이야기 */}
+      {/* 수군수군 — 동네 이야기 */}
       <div className="vibe-card">
         <div className="vibe-card-header">
-          <span className="vibe-card-badge">수근수근</span>
+          <span className="vibe-card-badge">수군수군</span>
           <span className="vibe-card-sub">인터넷에 떠도는 이야기를 AI가 모아봤어요</span>
         </div>
         {vibeLoading ? (

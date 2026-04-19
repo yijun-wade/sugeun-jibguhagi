@@ -59,7 +59,7 @@ export default function handler() {
                 fontSize: '68px', fontWeight: 900, color: 'white',
                 letterSpacing: '-2px', display: 'flex', marginBottom: '20px',
               },
-              children: '수근수근 우리집',
+              children: '수군수군 우리집',
             },
           },
           // 태그라인
@@ -84,7 +84,7 @@ export default function handler() {
               children: '동네 분위기 · 실거주 후기 · 실거래가',
             },
           },
-          // SooZip 배지
+          // SuZip 배지
           {
             type: 'div',
             props: {
@@ -94,7 +94,7 @@ export default function handler() {
                 color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em',
                 display: 'flex',
               },
-              children: 'SooZip · 수집',
+              children: 'SuZip · 수집',
             },
           },
         ],

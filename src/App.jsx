@@ -282,9 +282,9 @@ export default function App() {
       <div className="app">
         <header onClick={goHome} style={{ cursor: 'pointer' }}>
           <div className="brand">
-            <span className="logo-accent">수</span>근수근 우리<span className="logo-accent">집</span>
+            <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
           </div>
-          <div className="brand-en">SooZip · 수집</div>
+          <div className="brand-en">SuZip · 수집</div>
         </header>
         <DetailReport apt={detailApt} onBack={() => setDetailApt(null)} />
       </div>
@@ -352,9 +352,9 @@ export default function App() {
               </svg>
             </div>
             <div className="hero-logo">
-              <span className="logo-accent">수</span>근수근 우리<span className="logo-accent">집</span>
+              <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
             </div>
-            <div className="hero-logo-en">SooZip · 수집</div>
+            <div className="hero-logo-en">SuZip · 수집</div>
           </div>
           <div className="hero-sub">
             마음에 둔 아파트를 <em>수집</em>하세요<br />
@@ -367,9 +367,9 @@ export default function App() {
       {!isHome && (
         <header onClick={goHome} style={{ cursor: 'pointer' }}>
           <div className="brand">
-            <span className="logo-accent">수</span>근수근 우리<span className="logo-accent">집</span>
+            <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
           </div>
-          <div className="brand-en">SooZip · 수집</div>
+          <div className="brand-en">SuZip · 수집</div>
         </header>
       )}
 
@@ -436,7 +436,7 @@ export default function App() {
                 <div className="compare-guide">
                   비교할 단지를 선택하세요 (최대 3개)
                   {compareSelected.length >= 2 && (
-                    <button className="compare-start-btn" onClick={() => setCompareOpen(true)}>
+                    <button className="compare-start-btn" onClick={() => { track('compare_open', { count: compareSelected.length, apts: compareSelected.map(a => a.aptNm).join(',') }); setCompareOpen(true) }}>
                       {compareSelected.length}개 비교 보기
                     </button>
                   )}

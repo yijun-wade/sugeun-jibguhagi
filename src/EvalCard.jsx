@@ -1,6 +1,7 @@
 // src/EvalCard.jsx
 import { fP, snippetText } from './utils.js'
 import { isCollected, toggleCollection } from './collection.js'
+import { track } from './analytics.js'
 import { useState } from 'react'
 
 function isValidUrl(url) {
@@ -21,7 +22,9 @@ export default function EvalCard({ apt, onDetail, onCollectionChange }) {
   function handleCollect(e) {
     e.stopPropagation()
     const next = toggleCollection(apt)
-    setCollected(!collected)
+    const saving = !collected
+    setCollected(saving)
+    track(saving ? 'collect_save' : 'collect_remove', { apt_name: apt.aptNm, region: apt.regionName })
     onCollectionChange?.(next)
   }
 
