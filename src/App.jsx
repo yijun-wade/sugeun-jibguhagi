@@ -573,6 +573,16 @@ export default function App() {
           <p className="data-disclaimer">실거래 데이터는 국토교통부 실거래가 공개시스템 기준이에요. 분위기·뉴스·커뮤니티 요약은 AI가 웹에서 수집한 정보예요.</p>
         </div>
       )}
+
+      <footer className="site-footer">
+        <p className="site-footer-copy">© 2026 수군수군 우리집 · SuZip</p>
+        <p className="site-footer-ai">이 서비스는 인터넷 글을 AI가 자동 수집·요약해요. 실제 사실과 다를 수 있으며 투자·거래 참고 자료로 활용할 수 없어요.</p>
+        <div className="site-footer-links">
+          <a href="/terms.html" target="_blank" rel="noopener noreferrer">이용약관</a>
+          <span>·</span>
+          <a href="mailto:fiveio27@gmail.com">문의하기</a>
+        </div>
+      </footer>
     </div>
   )
 }

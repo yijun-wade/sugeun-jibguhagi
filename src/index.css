@@ -984,6 +984,41 @@ header { text-align: center; padding: 4px 0 2px; }
   line-height: 1.6;
 }
 
+/* ─── 사이트 푸터 ─── */
+.site-footer {
+  margin-top: auto;
+  padding: 28px 24px 40px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.site-footer-copy {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+}
+.site-footer-ai {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 300px;
+}
+.site-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.site-footer-links a {
+  color: var(--text2);
+  text-decoration: none;
+}
+.site-footer-links a:hover { text-decoration: underline; }
+
 /* ─── 광고 단위 ─── */
 .ad-unit { width: 100%; overflow: hidden; border-radius: 8px; }
 
