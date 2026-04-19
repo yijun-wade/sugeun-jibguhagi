@@ -9,7 +9,7 @@ import DetailReport from './DetailReport.jsx'
 import AptDetailPage from './AptDetailPage.jsx'
 import { track } from './analytics.js'
 import AdUnit from './AdUnit.jsx'
-import { getCollection } from './collection.js'
+import { getCollection, toggleCollection } from './collection.js'
 import CompareView from './CompareView.jsx'
 
 async function buildEvalData(apt) {
@@ -134,7 +134,6 @@ function SearchApp() {
   const [nearbyApts, setNearbyApts] = useState([])
   const [collection, setCollection] = useState(() => getCollection())
   const [resultTab, setResultTab] = useState('search') // 'search' | 'collection'
-  const [compareMode, setCompareMode] = useState(false)
   const [compareSelected, setCompareSelected] = useState([])
   const [compareOpen, setCompareOpen] = useState(false)
 
@@ -154,6 +153,13 @@ function SearchApp() {
         ? prev.filter(a => a.kaptCode !== apt.kaptCode)
         : prev.length < 3 ? [...prev, apt] : prev
     )
+  }
+
+  function handleRemoveFromCollection(apt) {
+    const next = toggleCollection(apt)
+    setCollection(next)
+    setCompareSelected(prev => prev.filter(a => a.kaptCode !== apt.kaptCode))
+    track('collect_remove', { apt_name: apt.aptNm, region: apt.regionName })
   }
 
   const LOADING_MSGS = [
@@ -432,56 +438,16 @@ function SearchApp() {
             <div className="collection-section">
               <div className="collection-header">
                 <span className="collection-title">★ 내가 수집한 단지</span>
-                <div className="collection-header-actions">
-                  <span className="collection-count">{collection.length}개</span>
-                  {collection.length >= 2 && (
-                    <button className="compare-toggle-btn" onClick={() => { setCompareMode(m => !m); setCompareSelected([]) }}>
-                      {compareMode ? '취소' : '비교'}
-                    </button>
-                  )}
-                </div>
+                <span className="collection-count">{collection.length}개</span>
               </div>
-
-              {compareMode && (
-                <div className="compare-guide">
-                  비교할 단지를 선택하세요 (최대 3개)
-                  {compareSelected.length >= 2 && (
-                    <button className="compare-start-btn" onClick={() => { track('compare_open', { count: compareSelected.length, apts: compareSelected.map(a => a.aptNm).join(',') }); setCompareOpen(true) }}>
-                      {compareSelected.length}개 비교 보기
-                    </button>
-                  )}
-                </div>
-              )}
-
-              <div className="collection-list">
-                {collection.map(apt => {
-                  const isSelected = compareSelected.find(a => a.kaptCode === apt.kaptCode)
-                  return compareMode ? (
-                    <button
-                      key={apt.kaptCode}
-                      className={`collection-item${isSelected ? ' compare-selected' : ''}`}
-                      onClick={() => toggleCompareSelect(apt)}
-                    >
-                      <span className="compare-check">{isSelected ? '✓' : ''}</span>
-                      <span className="collection-item-name">{apt.aptNm}</span>
-                      <span className="collection-item-loc">{apt.dong} · {apt.regionName}</span>
-                    </button>
-                  ) : (
-                    <button key={apt.kaptCode} className="collection-item" onClick={() => { setQuery(apt.aptNm); handleSearch(apt.aptNm) }}>
-                      <span className="collection-item-name">{apt.aptNm}</span>
-                      <span className="collection-item-loc">{apt.dong} · {apt.regionName}</span>
-                    </button>
-                  )
-                })}
-              </div>
+              <CollectionList
+                collection={collection}
+                compareSelected={compareSelected}
+                onSearch={(apt) => { setQuery(apt.aptNm); handleSearch(apt.aptNm) }}
+                onToggleCompare={toggleCompareSelect}
+                onDelete={handleRemoveFromCollection}
+              />
             </div>
-          )}
-
-          {compareOpen && (
-            <CompareView
-              apts={compareSelected}
-              onClose={() => { setCompareOpen(false); setCompareMode(false); setCompareSelected([]) }}
-            />
           )}
 
           <div className="nearby-section">
@@ -560,7 +526,7 @@ function SearchApp() {
             <button className={`result-tab${resultTab === 'search' ? ' active' : ''}`} onClick={() => setResultTab('search')}>
               검색결과
             </button>
-            <button className={`result-tab${resultTab === 'collection' ? ' active' : ''}`} onClick={() => { setResultTab('collection'); setCompareMode(false); setCompareSelected([]) }}>
+            <button className={`result-tab${resultTab === 'collection' ? ' active' : ''}`} onClick={() => setResultTab('collection')}>
               수집 {collection.length > 0 ? `${collection.length}개` : ''}
             </button>
           </div>
@@ -598,47 +564,50 @@ function SearchApp() {
                 <>
                   <div className="collection-header">
                     <span className="collection-title">★ 내가 수집한 단지</span>
-                    <div className="collection-header-actions">
-                      <span className="collection-count">{collection.length}개</span>
-                      {collection.length >= 2 && (
-                        <button className="compare-toggle-btn" onClick={() => { setCompareMode(m => !m); setCompareSelected([]) }}>
-                          {compareMode ? '취소' : '비교'}
-                        </button>
-                      )}
-                    </div>
+                    <span className="collection-count">{collection.length}개</span>
                   </div>
-                  {compareMode && (
-                    <div className="compare-guide">
-                      비교할 단지를 선택하세요 (최대 3개)
-                      {compareSelected.length >= 2 && (
-                        <button className="compare-start-btn" onClick={() => { track('compare_open', { count: compareSelected.length, apts: compareSelected.map(a => a.aptNm).join(',') }); setCompareOpen(true) }}>
-                          {compareSelected.length}개 비교 보기
-                        </button>
-                      )}
-                    </div>
-                  )}
-                  <div className="collection-list">
-                    {collection.map(apt => {
-                      const isSelected = compareSelected.find(a => a.kaptCode === apt.kaptCode)
-                      return compareMode ? (
-                        <button key={apt.kaptCode} className={`collection-item${isSelected ? ' compare-selected' : ''}`} onClick={() => toggleCompareSelect(apt)}>
-                          <span className="compare-check">{isSelected ? '✓' : ''}</span>
-                          <span className="collection-item-name">{apt.aptNm}</span>
-                          <span className="collection-item-loc">{apt.dong} · {apt.regionName}</span>
-                        </button>
-                      ) : (
-                        <button key={apt.kaptCode} className="collection-item" onClick={() => { setQuery(apt.aptNm); handleSearch(apt.aptNm) }}>
-                          <span className="collection-item-name">{apt.aptNm}</span>
-                          <span className="collection-item-loc">{apt.dong} · {apt.regionName}</span>
-                        </button>
-                      )
-                    })}
-                  </div>
+                  <CollectionList
+                    collection={collection}
+                    compareSelected={compareSelected}
+                    onSearch={(apt) => { setQuery(apt.aptNm); handleSearch(apt.aptNm) }}
+                    onToggleCompare={toggleCompareSelect}
+                    onDelete={handleRemoveFromCollection}
+                  />
                 </>
               )}
             </div>
           )}
         </div>
+      )}
+
+      {/* floating 비교 바 — compareSelected 있을 때 항상 노출 */}
+      {compareSelected.length > 0 && (
+        <div className="compare-bar">
+          <span className="compare-bar-label">
+            <strong>{compareSelected.length}</strong>개 선택
+            {compareSelected.length < 2 && <span className="compare-bar-hint"> · 1개 더 선택하면 비교해요</span>}
+          </span>
+          <div className="compare-bar-right">
+            <button className="compare-bar-clear" onClick={() => setCompareSelected([])}>선택 해제</button>
+            <button
+              className={`compare-bar-go${compareSelected.length < 2 ? ' disabled' : ''}`}
+              onClick={() => {
+                if (compareSelected.length < 2) return
+                track('compare_open', { count: compareSelected.length, apts: compareSelected.map(a => a.aptNm).join(',') })
+                setCompareOpen(true)
+              }}
+            >
+              비교하기 →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {compareOpen && (
+        <CompareView
+          apts={compareSelected}
+          onClose={() => { setCompareOpen(false); setCompareSelected([]) }}
+        />
       )}
 
       <footer className="site-footer">
@@ -650,6 +619,36 @@ function SearchApp() {
           <a href="mailto:fiveio27@gmail.com">문의하기</a>
         </div>
       </footer>
+    </div>
+  )
+}
+
+/* ── 수집 목록 공통 컴포넌트 ─── */
+function CollectionList({ collection, compareSelected, onSearch, onToggleCompare, onDelete }) {
+  return (
+    <div className="collection-list">
+      {collection.map(apt => {
+        const inCompare = !!compareSelected.find(a => a.kaptCode === apt.kaptCode)
+        const compareMaxed = !inCompare && compareSelected.length >= 3
+        return (
+          <div key={apt.kaptCode} className={`collection-item${inCompare ? ' in-compare' : ''}`}>
+            <button className="collection-item-body" onClick={() => onSearch(apt)}>
+              <span className="collection-item-name">{apt.aptNm}</span>
+              <span className="collection-item-loc">{apt.dong} · {apt.regionName}</span>
+            </button>
+            <div className="collection-item-actions">
+              <button
+                className={`collection-compare-btn${inCompare ? ' active' : ''}${compareMaxed ? ' maxed' : ''}`}
+                onClick={() => onToggleCompare(apt)}
+                title={compareMaxed ? '최대 3개까지 선택 가능해요' : ''}
+              >
+                {inCompare ? '✓비교' : '+비교'}
+              </button>
+              <button className="collection-delete-btn" onClick={() => onDelete(apt)} aria-label="수집 삭제">×</button>
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
