@@ -100,11 +100,16 @@ export default function handler(req, res) {
     .filter(Boolean)
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score  // 1차: 점수 내림차순
-      // 2차: 세대수 내림차순 (서울 아파트에 enrichMap 있을 때)
+      // 2차: 서울/경기 우선
+      const isMetro = addr => /^(서울|경기)/.test(addr || '')
+      const aMetro = isMetro(a.apt.addr) ? 1 : 0
+      const bMetro = isMetro(b.apt.addr) ? 1 : 0
+      if (bMetro !== aMetro) return bMetro - aMetro
+      // 3차: 세대수 내림차순
       const aCnt = enrich.get(a.apt.kaptCode)?.kaptdaCnt || 0
       const bCnt = enrich.get(b.apt.kaptCode)?.kaptdaCnt || 0
       if (bCnt !== aCnt) return bCnt - aCnt
-      return (a.apt.kaptName || '').localeCompare(b.apt.kaptName || '', 'ko')  // 3차: 가나다
+      return (a.apt.kaptName || '').localeCompare(b.apt.kaptName || '', 'ko')  // 4차: 가나다
     })
     .map(m => {
       const extra = enrich.get(m.apt.kaptCode)
