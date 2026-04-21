@@ -25,7 +25,7 @@ function loadEnrichMap() {
   try {
     const filePath = join(process.cwd(), 'public', 'seoul-apt-enriched.json')
     const data = JSON.parse(readFileSync(filePath, 'utf-8'))
-    enrichMap = new Map(data.map(a => [a.kaptCode, { kaptdaCnt: a.kaptdaCnt, useAprDay: a.useAprDay }]))
+    enrichMap = new Map(data.map(a => [a.kaptCode, { kaptdaCnt: a.kaptdaCnt, useAprDay: a.useAprDay, summary: a.summary }]))
   } catch {
     enrichMap = new Map()
   }
@@ -111,7 +111,7 @@ export default function handler(req, res) {
     .map(m => {
       const extra = enrich.get(m.apt.kaptCode)
       if (!extra) return m.apt
-      return { ...m.apt, kaptdaCnt: extra.kaptdaCnt, useAprDay: extra.useAprDay }
+      return { ...m.apt, kaptdaCnt: extra.kaptdaCnt, useAprDay: extra.useAprDay, summary: extra.summary }
     })
     .slice(0, 20)
 

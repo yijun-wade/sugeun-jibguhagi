@@ -38,7 +38,7 @@ async function buildEvalData(apt) {
       aptNm: apt.kaptName,
       dong,
       regionName,
-      buildYear: apt.kaptBuldYy || '-',
+      buildYear: apt.useAprDay ? apt.useAprDay.slice(0, 4) : (apt.kaptBuldYy || '-'),
       bjdCode: null,
       addr: apt.addr,
       recentAvg: 0,
@@ -46,7 +46,7 @@ async function buildEvalData(apt) {
       direction: '-',
       priceJudgment: { level: null, trend: null, sentence: null },
       lifeConditions: getLifeConditions(dong),
-      verdict: '실거래 데이터 없음',
+      verdict: apt.summary || '실거래 데이터 없음',
       voice,
     }
   }
@@ -97,7 +97,7 @@ async function buildEvalData(apt) {
     aptNm: apt.kaptName,
     dong,
     regionName,
-    buildYear: apt.kaptBuldYy || '-',
+    buildYear: apt.useAprDay ? apt.useAprDay.slice(0, 4) : (apt.kaptBuldYy || '-'),
     bjdCode,
     addr: apt.addr,
     recentAvg,
@@ -105,7 +105,7 @@ async function buildEvalData(apt) {
     direction,
     priceJudgment,
     lifeConditions: getLifeConditions(dong),
-    verdict: getVerdict(tag, dong),
+    verdict: apt.summary || getVerdict(tag, dong),
     voice,
   }
 }
