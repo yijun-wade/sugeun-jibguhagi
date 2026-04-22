@@ -1,6 +1,21 @@
-// GA4 이벤트 트래킹 헬퍼
-// window.gtag가 없으면 조용히 무시 (로컬 개발 환경 등)
+import * as amplitude from '@amplitude/analytics-browser'
+
+const AMP_KEY = import.meta.env.VITE_AMPLITUDE_API_KEY
+
+if (AMP_KEY) {
+  amplitude.init(AMP_KEY, {
+    defaultTracking: false, // page_view 등 자동 트래킹 off (수동으로 통일)
+    autocapture: false,
+  })
+}
+
 export function track(eventName, params = {}) {
-  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return
-  window.gtag('event', eventName, params)
+  // GA4
+  if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+    window.gtag('event', eventName, params)
+  }
+  // Amplitude
+  if (AMP_KEY) {
+    amplitude.track(eventName, params)
+  }
 }

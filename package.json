@@ -10,6 +10,7 @@
     "deploy": "ait deploy"
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.41.0",
     "@apps-in-toss/web-framework": "^2.0.5",
     "@vercel/analytics": "^2.0.1",
     "@vercel/og": "^0.11.1",
