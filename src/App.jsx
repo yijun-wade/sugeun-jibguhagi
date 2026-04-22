@@ -1,5 +1,6 @@
 // src/App.jsx
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { Routes, Route, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { DONG, HINT_SEARCHES } from './data.js'
 import { getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim, buildPriceJudgment } from './utils.js'
@@ -365,9 +366,20 @@ function SearchApp() {
   }
 
   const isHome = !cards.length && !loading && !error
+  const metaTitle = searchedQuery
+    ? `'${searchedQuery}' 검색 결과 · 수군수군 우리집`
+    : '수군수군 우리집 · SuZip — 아파트 실거주 후기 & 동네 분위기'
+  const metaDesc = searchedQuery
+    ? `${searchedQuery} 아파트 실거주 후기, 동네 분위기, 실거래가를 확인하세요.`
+    : '마음에 둔 아파트를 수집하세요. 실거주자 이야기를 AI로 요약해 동네 분위기, 실거래가까지 한번에.'
 
   return (
     <div className={`app${isHome ? ' app-home' : ''}`}>
+      <Helmet>
+        <title>{metaTitle}</title>
+        <meta name="description" content={metaDesc} />
+        {searchedQuery && <meta name="robots" content="noindex, follow" />}
+      </Helmet>
 
       {/* 홈: 구글식 히어로 */}
       {isHome && (
