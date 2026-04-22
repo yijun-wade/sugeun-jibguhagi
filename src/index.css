@@ -1321,3 +1321,44 @@ header { text-align: center; padding: 4px 0 2px; }
   font-weight: 600;
   cursor: pointer;
 }
+.top-nav {
+  display: flex;
+  gap: 4px;
+  padding: 8px 16px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+.top-nav-link {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-sub);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.top-nav-link:hover { background: var(--bg); }
+.top-nav-active {
+  background: var(--blue);
+  color: #fff;
+}
+.top-nav-active:hover { background: var(--blue); }
+.briefing-archive { margin-top: 32px; }
+.briefing-archive-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.briefing-archive-link {
+  display: block;
+  padding: 10px 14px;
+  background: var(--bg);
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 14px;
+}
+.briefing-archive-link:hover { background: var(--border); }

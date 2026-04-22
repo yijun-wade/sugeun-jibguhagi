@@ -1,15 +1,27 @@
 // 사이트맵 생성 — 아파트 상세 페이지 URL 포함
 // 사용법: node scripts/generate-sitemap.mjs
 
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { join } from 'path'
 
 const BASE_URL = 'https://www.suzip.kr'
 const aptList = JSON.parse(readFileSync(join(process.cwd(), 'public', 'seoul-apt-enriched.json'), 'utf-8'))
 
+const briefingIndexPath = join(process.cwd(), 'public', 'briefings', 'index.json')
+const briefingDates = existsSync(briefingIndexPath)
+  ? JSON.parse(readFileSync(briefingIndexPath, 'utf-8'))
+  : []
+
 const staticUrls = [
   { loc: `${BASE_URL}/`, changefreq: 'daily', priority: '1.0' },
+  { loc: `${BASE_URL}/briefing`, changefreq: 'daily', priority: '0.9' },
 ]
+
+const briefingUrls = briefingDates.map(item => ({
+  loc: `${BASE_URL}/briefing/${item.date}`,
+  changefreq: 'never',
+  priority: '0.7',
+}))
 
 const aptUrls = aptList.map(apt => ({
   loc: `${BASE_URL}/apt/${apt.kaptCode}`,
@@ -17,7 +29,7 @@ const aptUrls = aptList.map(apt => ({
   priority: '0.8',
 }))
 
-const allUrls = [...staticUrls, ...aptUrls]
+const allUrls = [...staticUrls, ...briefingUrls, ...aptUrls]
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
