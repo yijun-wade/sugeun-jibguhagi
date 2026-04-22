@@ -76,14 +76,13 @@ export default function BriefingPage() {
         .then(d => { setData(d); setLoading(false) })
         .catch(() => { setError(true); setLoading(false) })
     } else {
-      Promise.all([
-        fetch('/api/briefing').then(r => r.json()).catch(() => null),
-        fetch('/briefings/index.json').then(r => r.json()).catch(() => []),
-      ]).then(([today, idx]) => {
-        setData(today)
-        setList(Array.isArray(idx) ? idx : [])
-        setLoading(false)
-      })
+      // index.json은 static이라 빠르게 먼저 로드
+      fetch('/briefings/index.json').then(r => r.json()).catch(() => [])
+        .then(idx => setList(Array.isArray(idx) ? idx : []))
+
+      // 오늘 브리핑은 API라 별도로
+      fetch('/api/briefing').then(r => r.json()).catch(() => null)
+        .then(today => { setData(today); setLoading(false) })
     }
   }, [date, isDetail])
 
@@ -119,14 +118,6 @@ export default function BriefingPage() {
           <p className="briefing-sub">오늘 부동산 뉴스, 내 입장에서 어떤 의미인지 풀어드려요</p>
         </div>
 
-        {loading && <div className="loading-msg">브리핑 준비 중이에요...</div>}
-        {error && <div className="error-msg">브리핑을 불러오지 못했어요. 잠시 후 다시 시도해주세요.</div>}
-
-        {!loading && !error && data && (
-          <BriefingDetail date={isDetail ? date : canonicalDate} data={data} />
-        )}
-
-
         {!isDetail && list && list.length > 0 && (
           <section className="briefing-archive">
             <h2 className="briefing-section-title">지난 브리핑</h2>
@@ -141,6 +132,13 @@ export default function BriefingPage() {
               ))}
             </ul>
           </section>
+        )}
+
+        {loading && <div className="loading-msg">오늘 브리핑 준비 중이에요...</div>}
+        {error && <div className="error-msg">브리핑을 불러오지 못했어요. 잠시 후 다시 시도해주세요.</div>}
+
+        {!loading && !error && data && (
+          <BriefingDetail date={isDetail ? date : canonicalDate} data={data} />
         )}
 
         <button className="briefing-back-btn" onClick={() => navigate('/')}>
