@@ -1404,6 +1404,26 @@ header { text-align: center; padding: 4px 0 2px; }
   margin: 4px 0 20px;
   line-height: 1.4;
 }
+.policy-list { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+.policy-item {
+  padding: 14px 16px;
+  background: var(--bg);
+  border-radius: 10px;
+  border-left: 3px solid var(--blue);
+}
+.policy-item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.policy-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.policy-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+.policy-status-active { background: #dcfce7; color: #16a34a; }
+.policy-status-pending { background: #fef9c3; color: #ca8a04; }
+.policy-status-relaxed { background: #f1f5f9; color: #64748b; }
+.policy-summary { font-size: 13px; font-weight: 500; color: var(--text); margin: 2px 0 6px; }
+.policy-detail { font-size: 13px; color: var(--text-sub); line-height: 1.6; margin: 0; }
 .briefing-archive { margin-top: 32px; }
 .briefing-archive-list {
   list-style: none;

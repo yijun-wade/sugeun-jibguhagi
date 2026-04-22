@@ -59,6 +59,7 @@ export default function BriefingPage() {
 
   const [data, setData] = useState(null)
   const [list, setList] = useState(null)
+  const [policies, setPolicies] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
@@ -70,14 +71,14 @@ export default function BriefingPage() {
     setData(null)
     setList(null)
 
+    fetch('/policies.json').then(r => r.json()).then(d => setPolicies(d.policies || [])).catch(() => {})
+
     if (isDetail) {
-      // 특정 날짜 JSON 파일 직접 로드
       fetch(`/briefings/${date}.json`)
         .then(r => { if (!r.ok) throw new Error(); return r.json() })
         .then(d => { setData(d); setLoading(false) })
         .catch(() => { setError(true); setLoading(false) })
     } else {
-      // 오늘 브리핑은 API에서, 목록은 /briefings/ 인덱스
       Promise.all([
         fetch('/api/briefing').then(r => r.json()).catch(() => null),
         fetch('/briefings/index.json').then(r => r.json()).catch(() => []),
@@ -124,6 +125,24 @@ export default function BriefingPage() {
 
         {!loading && !error && data && (
           <BriefingDetail date={isDetail ? date : canonicalDate} data={data} />
+        )}
+
+        {policies.length > 0 && (
+          <section className="briefing-section policy-section">
+            <h2 className="briefing-section-title">현재 주요 부동산 정책</h2>
+            <div className="policy-list">
+              {policies.map((p, i) => (
+                <div key={i} className="policy-item">
+                  <div className="policy-item-header">
+                    <span className="policy-name">{p.name}</span>
+                    <span className={`policy-status policy-status-${p.status === '시행중' ? 'active' : p.status === '예정' ? 'pending' : 'relaxed'}`}>{p.status}</span>
+                  </div>
+                  <p className="policy-summary">{p.summary}</p>
+                  <p className="policy-detail">{p.detail}</p>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
 
         {!isDetail && list && list.length > 0 && (
