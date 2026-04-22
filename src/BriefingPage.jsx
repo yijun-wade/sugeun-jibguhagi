@@ -111,6 +111,7 @@ export default function BriefingPage() {
         <nav className="site-header-nav">
           <Link to="/" className="site-nav-link">아파트 검색</Link>
           <Link to="/briefing" className="site-nav-link site-nav-active">부동산 브리핑</Link>
+          <Link to="/glossary" className="site-nav-link">용어사전</Link>
         </nav>
       </header>
 

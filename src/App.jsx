@@ -9,6 +9,7 @@ import EvalCard from './EvalCard.jsx'
 import DetailReport from './DetailReport.jsx'
 import AptDetailPage from './AptDetailPage.jsx'
 import BriefingPage from './BriefingPage.jsx'
+import GlossaryPage from './GlossaryPage.jsx'
 import { track } from './analytics.js'
 import AdUnit from './AdUnit.jsx'
 import { getCollection, toggleCollection } from './collection.js'
@@ -118,6 +119,7 @@ export default function App() {
       <Route path="/apt/:kaptCode" element={<AptDetailPage />} />
       <Route path="/briefing" element={<BriefingPage />} />
       <Route path="/briefing/:date" element={<BriefingPage />} />
+      <Route path="/glossary" element={<GlossaryPage />} />
       <Route path="*" element={<SearchApp />} />
     </Routes>
   )
@@ -392,6 +394,7 @@ function SearchApp() {
         <nav className="site-header-nav">
           <a href="/" className="site-nav-link site-nav-active">아파트 검색</a>
           <a href="/briefing" className="site-nav-link">부동산 브리핑</a>
+          <a href="/glossary" className="site-nav-link">용어사전</a>
         </nav>
       </header>
 

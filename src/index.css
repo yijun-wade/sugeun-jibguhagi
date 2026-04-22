@@ -1404,6 +1404,71 @@ header { text-align: center; padding: 4px 0 2px; }
   margin: 4px 0 20px;
   line-height: 1.4;
 }
+.glossary-search {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+.glossary-search:focus { border-color: var(--blue); }
+.glossary-cats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.glossary-cat-btn {
+  padding: 5px 13px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 13px;
+  color: var(--text-sub);
+  cursor: pointer;
+}
+.glossary-cat-active { background: var(--blue); color: #fff; border-color: var(--blue); }
+.glossary-list { display: flex; flex-direction: column; gap: 8px; }
+.glossary-item {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.glossary-item:hover { border-color: var(--blue); }
+.glossary-item-open { border-color: var(--blue); }
+.glossary-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+}
+.glossary-item-left { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.glossary-term { font-size: 15px; font-weight: 700; color: var(--text); }
+.glossary-cat-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  background: rgba(37,99,235,0.1);
+  color: var(--blue);
+  font-weight: 600;
+}
+.glossary-definition { font-size: 13px; color: var(--text-sub); flex: 1; }
+.glossary-chevron { font-size: 12px; color: var(--text-sub); flex-shrink: 0; }
+.glossary-item-body {
+  padding: 0 14px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.glossary-explain { font-size: 14px; color: var(--text); line-height: 1.7; margin: 12px 0 8px; }
+.glossary-example {
+  font-size: 13px;
+  color: var(--blue);
+  background: rgba(37,99,235,0.06);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin: 0;
+}
+.glossary-empty { text-align: center; color: var(--text-sub); padding: 40px 0; font-size: 14px; }
 .policy-list { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
 .policy-item {
   padding: 14px 16px;
