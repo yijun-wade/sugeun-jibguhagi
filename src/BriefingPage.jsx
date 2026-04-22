@@ -5,6 +5,34 @@ import { track } from './analytics.js'
 
 const TODAY = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
 
+function BriefingNav({ date, list }) {
+  const idx = list.findIndex(item => item.date === date)
+  if (idx === -1 || list.length < 2) return null
+  const newer = idx > 0 ? list[idx - 1] : null          // index 작을수록 최신
+  const older = idx < list.length - 1 ? list[idx + 1] : null
+
+  return (
+    <nav className="briefing-nav">
+      {older ? (
+        <Link to={`/briefing/${older.date}`} className="briefing-nav-card briefing-nav-older"
+          onClick={() => track('briefing_nav_click', { from: date, to: older.date, direction: 'older' })}>
+          <span className="briefing-nav-label">← 이전</span>
+          <span className="briefing-nav-date">{older.date}</span>
+          {older.title && <span className="briefing-nav-title">{older.title}</span>}
+        </Link>
+      ) : <div />}
+      {newer ? (
+        <Link to={`/briefing/${newer.date}`} className="briefing-nav-card briefing-nav-newer"
+          onClick={() => track('briefing_nav_click', { from: date, to: newer.date, direction: 'newer' })}>
+          <span className="briefing-nav-label">다음 →</span>
+          <span className="briefing-nav-date">{newer.date}</span>
+          {newer.title && <span className="briefing-nav-title">{newer.title}</span>}
+        </Link>
+      ) : <div />}
+    </nav>
+  )
+}
+
 function BriefingSkeleton() {
   return (
     <div className="briefing-skeleton">
@@ -174,7 +202,12 @@ export default function BriefingPage() {
           <BriefingDetail isToday={!isDetail} data={data} />
         )}
 
-        {/* 지난 브리핑 아래 */}
+        {/* 상세 페이지: 이전/다음 날짜 이동 */}
+        {isDetail && list && list.length > 1 && (
+          <BriefingNav date={date} list={list} />
+        )}
+
+        {/* 목록 페이지: 지난 브리핑 아래 */}
         {!isDetail && filteredList.length > 0 && (
           <section className="briefing-archive">
             <h2 className="briefing-archive-title-row">지난 브리핑</h2>
