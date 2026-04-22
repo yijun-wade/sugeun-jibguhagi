@@ -36,16 +36,16 @@ export default function GlossaryPage() {
           <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
         </a>
         <nav className="site-header-nav">
-          <a href="/" className="site-nav-link">아파트 검색</a>
-          <a href="/briefing" className="site-nav-link">부동산 브리핑</a>
+          <a href="/" className="site-nav-link">동네임장</a>
+          <a href="/briefing" className="site-nav-link">뉴스 해석과 체감</a>
           <a href="/policy" className="site-nav-link">요즘 정책</a>
-          <a href="/glossary" className="site-nav-link site-nav-active">용어사전</a>
+          <a href="/glossary" className="site-nav-link site-nav-active"><span className="nav-bubble">진짜 쉬운</span> 용어사전</a>
         </nav>
       </header>
 
       <div className="briefing-wrap">
         <div className="briefing-header">
-          <h1 className="briefing-title">부동산 용어사전</h1>
+          <h1 className="briefing-title">진짜 쉬운 용어사전</h1>
           <p className="briefing-sub">매매·전세·월세, 처음이라도 괜찮아요</p>
         </div>
 

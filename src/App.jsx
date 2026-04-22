@@ -394,10 +394,10 @@ function SearchApp() {
           <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
         </a>
         <nav className="site-header-nav">
-          <a href="/" className="site-nav-link site-nav-active">아파트 검색</a>
-          <a href="/briefing" className="site-nav-link">부동산 브리핑</a>
+          <a href="/" className="site-nav-link site-nav-active">동네임장</a>
+          <a href="/briefing" className="site-nav-link">뉴스 해석과 체감</a>
           <a href="/policy" className="site-nav-link">요즘 정책</a>
-          <a href="/glossary" className="site-nav-link">용어사전</a>
+          <a href="/glossary" className="site-nav-link"><span className="nav-bubble">진짜 쉬운</span> 용어사전</a>
         </nav>
       </header>
 
@@ -655,7 +655,7 @@ function SearchApp() {
         <p className="site-footer-copy">© 2026 수군수군 우리집 · SuZip</p>
         <p className="site-footer-ai">이 서비스는 인터넷 글을 AI가 자동 수집·요약해요. 실제 사실과 다를 수 있으며 투자·거래 참고 자료로 활용할 수 없어요.</p>
         <div className="site-footer-links">
-          <a href="/briefing">오늘의 부동산 브리핑</a>
+          <a href="/briefing">뉴스 해석과 체감</a>
           <span>·</span>
           <a href="/terms.html" target="_blank" rel="noopener noreferrer">이용약관</a>
           <span>·</span>

@@ -1354,6 +1354,18 @@ header { text-align: center; padding: 4px 0 2px; }
   transition: background 0.15s;
 }
 .site-nav-link:hover { background: var(--bg); }
+.nav-bubble {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: #f97316;
+  padding: 1px 5px;
+  border-radius: 6px;
+  margin-right: 2px;
+  vertical-align: middle;
+  line-height: 1.5;
+}
 .site-nav-active {
   background: var(--blue);
   color: #fff;

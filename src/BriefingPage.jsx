@@ -106,17 +106,17 @@ export default function BriefingPage() {
           <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
         </Link>
         <nav className="site-header-nav">
-          <Link to="/" className="site-nav-link">아파트 검색</Link>
-          <Link to="/briefing" className="site-nav-link site-nav-active">부동산 브리핑</Link>
+          <Link to="/" className="site-nav-link">동네임장</Link>
+          <Link to="/briefing" className="site-nav-link site-nav-active">뉴스 해석과 체감</Link>
           <Link to="/policy" className="site-nav-link">요즘 정책</Link>
-          <Link to="/glossary" className="site-nav-link">용어사전</Link>
+          <Link to="/glossary" className="site-nav-link"><span className="nav-bubble">진짜 쉬운</span> 용어사전</Link>
         </nav>
       </header>
 
       <div className="briefing-wrap">
         <div className="briefing-header">
-          <h1 className="briefing-title">부동산 브리핑</h1>
-          <p className="briefing-sub">실수요자 관점으로 읽는 오늘의 부동산 뉴스</p>
+          <h1 className="briefing-title">뉴스 해석과 체감</h1>
+          <p className="briefing-sub">오늘 부동산 뉴스, 내 입장에서 어떤 의미인지 풀어드려요</p>
         </div>
 
         {loading && <div className="loading-msg">브리핑 준비 중이에요...</div>}
