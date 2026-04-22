@@ -68,10 +68,10 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
         </div>
         <div className="detail-header-actions">
           <button className={`collect-btn${collected ? ' collected' : ''}`} aria-label={collected ? '수집 취소' : '수집하기'} onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm }); handleCollect() }}>
-            {collected ? '수집됨' : '수집하기'}
+            {collected ? '✓ 수집됨' : '★ 수집하기'}
           </button>
           <button className="share-btn" aria-label="공유하기" onClick={() => { track('share_click', { apt_name: apt.aptNm }); handleShare() }}>
-            🔗 공유하기
+            🔗 공유
           </button>
         </div>
       </div>
