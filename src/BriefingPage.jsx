@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
+import { track } from './analytics.js'
 
 const TODAY = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
 
@@ -87,13 +88,21 @@ export default function BriefingPage() {
 
     fetch(`/briefings/${targetDate}.json`)
       .then(r => r.ok ? r.json() : Promise.reject())
-      .then(d => { setData(d); setLoading(false) })
+      .then(d => {
+        setData(d)
+        setLoading(false)
+        track('briefing_view', { date: targetDate, is_today: !isDetail, source: 'static' })
+      })
       .catch(() => {
         if (isDetail) {
           setError(true); setLoading(false)
         } else {
           fetch('/api/briefing').then(r => r.json()).catch(() => null)
-            .then(d => { setData(d); setLoading(false) })
+            .then(d => {
+              setData(d)
+              setLoading(false)
+              if (d) track('briefing_view', { date: targetDate, is_today: true, source: 'api' })
+            })
         }
       })
   }, [date, isDetail])
@@ -156,6 +165,7 @@ export default function BriefingPage() {
                   key={item.date}
                   to={`/briefing/${item.date}`}
                   className="briefing-archive-tab"
+                  onClick={() => track('briefing_archive_click', { date: item.date, title: item.title || '' })}
                 >
                   <span className="briefing-archive-tab-date">{formatDate(item.date)}</span>
                   {item.title && <span className="briefing-archive-tab-title">{item.title}</span>}
@@ -165,7 +175,7 @@ export default function BriefingPage() {
           </section>
         )}
 
-        <button className="briefing-back-btn" onClick={() => navigate('/')}>
+        <button className="briefing-back-btn" onClick={() => { track('briefing_cta_click', { from: isDetail ? date : 'today' }); navigate('/') }}>
           아파트 검색하러 가기
         </button>
       </div>

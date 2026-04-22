@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
+import { track } from './analytics.js'
 
 const CATEGORIES = ['전체', '계약', '대출', '세금', '시장', '기타']
 
@@ -10,6 +11,7 @@ export default function GlossaryPage() {
   const [category, setCategory] = useState('전체')
   const [query, setQuery] = useState('')
   const [expanded, setExpanded] = useState(null)
+  const searchTimer = useRef(null)
 
   useEffect(() => {
     fetch('/glossary.json').then(r => r.json()).then(setTerms).catch(() => {})
@@ -53,7 +55,16 @@ export default function GlossaryPage() {
           className="glossary-search"
           placeholder="용어 검색..."
           value={query}
-          onChange={e => setQuery(e.target.value)}
+          onChange={e => {
+            const q = e.target.value
+            setQuery(q)
+            clearTimeout(searchTimer.current)
+            if (q.length >= 2) {
+              searchTimer.current = setTimeout(() => {
+                track('glossary_search', { query: q })
+              }, 800)
+            }
+          }}
         />
 
         <div className="glossary-cats">
@@ -61,7 +72,7 @@ export default function GlossaryPage() {
             <button
               key={c}
               className={`glossary-cat-btn${category === c ? ' glossary-cat-active' : ''}`}
-              onClick={() => setCategory(c)}
+              onClick={() => { setCategory(c); track('glossary_category_filter', { category: c }) }}
             >{c}</button>
           ))}
         </div>
@@ -71,7 +82,11 @@ export default function GlossaryPage() {
             <div
               key={t.term}
               className={`glossary-item${expanded === i ? ' glossary-item-open' : ''}`}
-              onClick={() => setExpanded(expanded === i ? null : i)}
+              onClick={() => {
+                const next = expanded === i ? null : i
+                setExpanded(next)
+                if (next !== null) track('glossary_term_expand', { term: t.term, category: t.category })
+              }}
             >
               <div className="glossary-item-header">
                 <div className="glossary-item-left">

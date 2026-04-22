@@ -149,7 +149,13 @@ function SearchApp() {
   // 라우트 변경 시 page_view 이벤트
   useEffect(() => {
     const path = location.pathname
-    const pageType = path === '/' ? 'home' : path.startsWith('/search') ? 'search' : path.startsWith('/apt') ? 'apt_detail' : 'other'
+    const pageType = path === '/' ? 'home'
+      : path.startsWith('/apt') ? 'apt_detail'
+      : path.startsWith('/briefing') ? 'briefing'
+      : path === '/policy' ? 'policy'
+      : path === '/glossary' ? 'glossary'
+      : path.startsWith('/search') ? 'search'
+      : 'other'
     track('page_view', { page_path: path, page_type: pageType, search_query: searchParams.get('q') || undefined })
   }, [location.pathname])
 
