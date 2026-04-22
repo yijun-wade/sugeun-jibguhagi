@@ -1325,7 +1325,7 @@ header { text-align: center; padding: 4px 0 2px; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 20px;
   height: 52px;
   background: #fff;
   border-bottom: 1px solid var(--border);
@@ -1339,19 +1339,21 @@ header { text-align: center; padding: 4px 0 2px; }
   color: var(--text);
   text-decoration: none;
   letter-spacing: -0.3px;
+  flex-shrink: 0;
 }
 .site-header-nav {
   display: flex;
-  gap: 4px;
+  gap: 2px;
 }
 .site-nav-link {
-  padding: 6px 14px;
+  padding: 6px 12px;
   border-radius: 20px;
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-sub);
+  color: var(--text2);
   text-decoration: none;
   transition: background 0.15s;
+  white-space: nowrap;
 }
 .site-nav-link:hover { background: var(--bg); }
 .nav-bubble {
@@ -1371,6 +1373,37 @@ header { text-align: center; padding: 4px 0 2px; }
   color: #fff;
 }
 .site-nav-active:hover { background: var(--blue); }
+
+@media (max-width: 600px) {
+  .site-header {
+    height: auto;
+    padding: 10px 16px 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+  .site-header-logo {
+    font-size: 15px;
+    padding-bottom: 6px;
+  }
+  .site-header-nav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 6px 0 8px;
+    gap: 4px;
+  }
+  .site-header-nav::-webkit-scrollbar { display: none; }
+  .site-nav-link {
+    font-size: 12px;
+    padding: 5px 10px;
+    flex-shrink: 0;
+  }
+  .nav-bubble {
+    font-size: 9px;
+    padding: 1px 4px;
+  }
+}
 .hero-nav {
   margin-top: 20px;
   display: flex;
