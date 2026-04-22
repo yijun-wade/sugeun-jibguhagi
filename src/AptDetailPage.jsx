@@ -1,5 +1,6 @@
 // src/AptDetailPage.jsx — /apt/:kaptCode 라우트
 import { useState, useEffect, useCallback } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim, buildPriceJudgment } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM } from './constants.js'
@@ -162,14 +163,43 @@ export default function AptDetailPage() {
     )
   }
 
+  const pageTitle = `${evalData.aptNm} 실거주 후기 · 수군수군 우리집`
+  const pageDesc = `${evalData.aptNm}(${evalData.dong}) 실거주자 이야기, 동네 분위기, 실거래가를 한번에 확인하세요. ${evalData.verdict || ''}`
+  const pageUrl = `https://www.suzip.kr/apt/${kaptCode}`
+
   return (
     <div className="app">
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDesc} />
+        <link rel="canonical" href={pageUrl} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDesc} />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:type" content="website" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Residence",
+          "name": evalData.aptNm,
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": evalData.dong,
+            "addressRegion": evalData.regionName,
+            "addressCountry": "KR"
+          },
+          "description": pageDesc,
+          "url": pageUrl
+        })}</script>
+      </Helmet>
       <header onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
         <div className="brand">
           <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
         </div>
         <div className="brand-en">SuZip · 수집</div>
       </header>
+      <h1 style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>
+        {evalData.aptNm} {evalData.dong} 실거주 후기 및 동네 분위기
+      </h1>
       <DetailReport apt={evalData} onBack={goBack} onCollectionChange={setCollection} />
     </div>
   )

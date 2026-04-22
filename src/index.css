@@ -60,7 +60,7 @@ body {
 }
 .hero-sub {
   font-size: 15px; color: var(--text2); line-height: 1.8;
-  margin-bottom: 4px;
+  margin-bottom: 4px; font-weight: 400;
 }
 .hero-sub em {
   font-style: normal; font-weight: 800; color: var(--blue);

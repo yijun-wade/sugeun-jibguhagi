@@ -386,10 +386,10 @@ function SearchApp() {
             </div>
             <div className="hero-logo-en">SuZip · 수집</div>
           </div>
-          <div className="hero-sub">
+          <h1 className="hero-sub">
             마음에 둔 아파트를 <em>수집</em>하세요<br />
             동네 분위기 · 실거주 후기 · 실거래가까지
-          </div>
+          </h1>
         </div>
       )}
 
