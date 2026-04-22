@@ -422,7 +422,6 @@ function SearchApp() {
             <div className="hero-logo">
               <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
             </div>
-            <div className="hero-logo-en">SuZip · 수집</div>
           </div>
           <h1 className="hero-sub">
             퇴근 후 이불 속에서 하는 <em>임장</em>
