@@ -1321,6 +1321,44 @@ header { text-align: center; padding: 4px 0 2px; }
   font-weight: 600;
   cursor: pointer;
 }
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 52px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.site-header-logo {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: -0.3px;
+}
+.site-header-nav {
+  display: flex;
+  gap: 4px;
+}
+.site-nav-link {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-sub);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.site-nav-link:hover { background: var(--bg); }
+.site-nav-active {
+  background: var(--blue);
+  color: #fff;
+}
+.site-nav-active:hover { background: var(--blue); }
 .hero-nav {
   margin-top: 20px;
   display: flex;

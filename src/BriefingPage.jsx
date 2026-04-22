@@ -101,17 +101,15 @@ export default function BriefingPage() {
         <meta property="og:description" content="실수요자를 위한 오늘의 부동산 뉴스 요약" />
       </Helmet>
 
-      <header onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
-        <div className="brand">
+      <header className="site-header">
+        <Link to="/" className="site-header-logo">
           <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
-        </div>
-        <div className="brand-en">SuZip · 수집</div>
+        </Link>
+        <nav className="site-header-nav">
+          <Link to="/" className="site-nav-link">아파트 검색</Link>
+          <Link to="/briefing" className="site-nav-link site-nav-active">부동산 브리핑</Link>
+        </nav>
       </header>
-
-      <nav className="top-nav">
-        <Link to="/" className="top-nav-link">아파트 검색</Link>
-        <Link to="/briefing" className="top-nav-link top-nav-active">부동산 브리핑</Link>
-      </nav>
 
       <div className="briefing-wrap">
         <div className="briefing-header">

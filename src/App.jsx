@@ -384,13 +384,18 @@ function SearchApp() {
         {searchedQuery && <meta name="robots" content="noindex, follow" />}
       </Helmet>
 
-      {/* 항상 표시되는 상단 탭 네비게이션 */}
-      <nav className="top-nav">
-        <a href="/" className="top-nav-link top-nav-active">아파트 검색</a>
-        <a href="/briefing" className="top-nav-link">부동산 브리핑</a>
-      </nav>
+      {/* 항상 표시되는 통합 헤더 */}
+      <header className="site-header">
+        <a href="/" className="site-header-logo">
+          <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
+        </a>
+        <nav className="site-header-nav">
+          <a href="/" className="site-nav-link site-nav-active">아파트 검색</a>
+          <a href="/briefing" className="site-nav-link">부동산 브리핑</a>
+        </nav>
+      </header>
 
-      {/* 홈: 구글식 히어로 */}
+      {/* 홈: 히어로 */}
       {isHome && (
         <div className="hero">
           <div className="hero-brand" onClick={goHome} style={{ cursor: 'pointer' }}>
@@ -414,15 +419,6 @@ function SearchApp() {
         </div>
       )}
 
-      {/* 결과 있을 때만 상단 헤더 */}
-      {!isHome && (
-        <header onClick={goHome} style={{ cursor: 'pointer' }}>
-          <div className="brand">
-            <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
-          </div>
-          <div className="brand-en">SuZip · 수집</div>
-        </header>
-      )}
 
       <div className="search-wrap" ref={searchRef}>
         <div className="search-box">
