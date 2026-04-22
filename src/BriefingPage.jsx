@@ -2,11 +2,19 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 
-function BriefingDetail({ date, data }) {
-  const label = data.date || date
+const TODAY = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
+
+function formatDate(dateStr) {
+  if (!dateStr) return ''
+  const [, m, d] = dateStr.split('-')
+  return `${parseInt(m)}/${parseInt(d)}`
+}
+
+function BriefingDetail({ isToday, data }) {
   return (
     <div className="briefing-body">
-      <div className="briefing-date">{label}</div>
+      {isToday && <span className="briefing-today-badge">오늘</span>}
+      <div className="briefing-date">{data.date || TODAY}</div>
       {data.title && <h2 className="briefing-headline">{data.title}</h2>}
 
       <section className="briefing-section">
@@ -56,46 +64,56 @@ function BriefingDetail({ date, data }) {
 export default function BriefingPage() {
   const navigate = useNavigate()
   const { date } = useParams()
+  const isDetail = !!date
 
   const [data, setData] = useState(null)
   const [list, setList] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  const isDetail = !!date
+  // 아카이브 목록: index.json (정적, 빠름)
+  useEffect(() => {
+    fetch('/briefings/index.json').then(r => r.json()).catch(() => [])
+      .then(idx => setList(Array.isArray(idx) ? idx : []))
+  }, [])
 
+  // 본문: 정적 파일 먼저 시도 → API fallback
   useEffect(() => {
     setLoading(true)
     setError(false)
     setData(null)
-    setList(null)
 
-    if (isDetail) {
-      fetch(`/briefings/${date}.json`)
-        .then(r => { if (!r.ok) throw new Error(); return r.json() })
-        .then(d => { setData(d); setLoading(false) })
-        .catch(() => { setError(true); setLoading(false) })
-    } else {
-      // index.json은 static이라 빠르게 먼저 로드
-      fetch('/briefings/index.json').then(r => r.json()).catch(() => [])
-        .then(idx => setList(Array.isArray(idx) ? idx : []))
+    const targetDate = isDetail ? date : TODAY
 
-      // 오늘 브리핑은 API라 별도로
-      fetch('/api/briefing').then(r => r.json()).catch(() => null)
-        .then(today => { setData(today); setLoading(false) })
-    }
+    fetch(`/briefings/${targetDate}.json`)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(d => { setData(d); setLoading(false) })
+      .catch(() => {
+        if (isDetail) {
+          setError(true); setLoading(false)
+        } else {
+          fetch('/api/briefing').then(r => r.json()).catch(() => null)
+            .then(d => { setData(d); setLoading(false) })
+        }
+      })
   }, [date, isDetail])
 
-  const canonicalDate = isDetail ? date : new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
-  const pageTitle = data?.title ? `${data.title} · 수군수군 우리집` : `${isDetail ? date : '오늘'} 부동산 브리핑 · 수군수군 우리집`
-  const pageDesc = data?.title ? `${data.title} — 실수요자 관점으로 읽는 부동산 뉴스 요약` : '부동산 뉴스를 실수요자 관점으로 요약합니다.'
+  const canonicalDate = isDetail ? date : TODAY
+  const pageTitle = data?.title
+    ? `${data.title} · 수군수군 우리집`
+    : `부동산 브리핑 ${canonicalDate} · 수군수군 우리집`
+  const pageDesc = data?.title
+    ? `${data.title} — 실수요자 관점으로 읽는 부동산 뉴스 요약`
+    : '부동산 뉴스를 실수요자 관점으로 요약합니다.'
+
+  const filteredList = list?.filter(item => item.date !== canonicalDate) || []
 
   return (
     <div className="app">
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDesc} />
-        <link rel="canonical" href={`https://www.suzip.kr/briefing${isDetail ? `/${date}` : ''}`} />
+        <link rel="canonical" href={`https://www.suzip.kr/briefing/${canonicalDate}`} />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDesc} />
       </Helmet>
@@ -114,31 +132,37 @@ export default function BriefingPage() {
 
       <div className="briefing-wrap">
         <div className="briefing-header">
+          {isDetail && (
+            <button className="briefing-back" onClick={() => navigate('/briefing')}>← 브리핑 목록</button>
+          )}
           <h1 className="briefing-title">뉴스 해석과 체감</h1>
           <p className="briefing-sub">오늘 부동산 뉴스, 내 입장에서 어떤 의미인지 풀어드려요</p>
         </div>
 
-        {!isDetail && list && list.length > 0 && (
-          <section className="briefing-archive">
-            <h2 className="briefing-section-title">지난 브리핑</h2>
-            <ul className="briefing-archive-list">
-              {list.map(item => (
-                <li key={item.date}>
-                  <Link to={`/briefing/${item.date}`} className="briefing-archive-link">
-                    <span className="briefing-archive-date">{item.date}</span>
-                    {item.title && <span className="briefing-archive-title">{item.title}</span>}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
+        {/* 본문 먼저 */}
+        {loading && <div className="briefing-loading">브리핑 불러오는 중...</div>}
+        {error && <div className="error-msg">브리핑을 불러오지 못했어요. 잠시 후 다시 시도해주세요.</div>}
+        {!loading && !error && data && (
+          <BriefingDetail isToday={!isDetail} data={data} />
         )}
 
-        {loading && <div className="loading-msg">오늘 브리핑 준비 중이에요...</div>}
-        {error && <div className="error-msg">브리핑을 불러오지 못했어요. 잠시 후 다시 시도해주세요.</div>}
-
-        {!loading && !error && data && (
-          <BriefingDetail date={isDetail ? date : canonicalDate} data={data} />
+        {/* 지난 브리핑 아래 */}
+        {!isDetail && filteredList.length > 0 && (
+          <section className="briefing-archive">
+            <h2 className="briefing-archive-title-row">지난 브리핑</h2>
+            <div className="briefing-archive-tabs">
+              {filteredList.map(item => (
+                <Link
+                  key={item.date}
+                  to={`/briefing/${item.date}`}
+                  className="briefing-archive-tab"
+                >
+                  <span className="briefing-archive-tab-date">{formatDate(item.date)}</span>
+                  {item.title && <span className="briefing-archive-tab-title">{item.title}</span>}
+                </Link>
+              ))}
+            </div>
+          </section>
         )}
 
         <button className="briefing-back-btn" onClick={() => navigate('/')}>
