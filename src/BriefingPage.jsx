@@ -5,6 +5,25 @@ import { track } from './analytics.js'
 
 const TODAY = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
 
+function BriefingSkeleton() {
+  return (
+    <div className="briefing-skeleton">
+      <div className="bsk-badge" />
+      <div className="bsk-date" />
+      <div className="bsk-headline" />
+      <div className="bsk-headline bsk-headline--short" />
+      {[1,2,3].map(i => (
+        <div key={i} className="bsk-section">
+          <div className="bsk-section-title" />
+          <div className="bsk-line" />
+          <div className="bsk-line bsk-line--short" />
+          <div className="bsk-line" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function formatDate(dateStr) {
   if (!dateStr) return ''
   const [, m, d] = dateStr.split('-')
@@ -149,7 +168,7 @@ export default function BriefingPage() {
         </div>
 
         {/* 본문 먼저 */}
-        {loading && <div className="briefing-loading">브리핑 불러오는 중...</div>}
+        {loading && <BriefingSkeleton />}
         {error && <div className="error-msg">브리핑을 불러오지 못했어요. 잠시 후 다시 시도해주세요.</div>}
         {!loading && !error && data && (
           <BriefingDetail isToday={!isDetail} data={data} />

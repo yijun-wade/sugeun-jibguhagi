@@ -1449,6 +1449,42 @@ header { text-align: center; padding: 4px 0 2px; }
   color: #fff;
 }
 .top-nav-active:hover { background: var(--blue); }
+/* ─── 브리핑 스켈레톤 ─── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.briefing-skeleton { display: flex; flex-direction: column; gap: 10px; }
+.briefing-skeleton > * {
+  background: linear-gradient(90deg, #e8edf5 25%, #f2f5fb 50%, #e8edf5 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 8px;
+}
+.bsk-badge  { height: 22px; width: 48px; border-radius: 20px; }
+.bsk-date   { height: 16px; width: 100px; margin-top: 4px; }
+.bsk-headline { height: 28px; width: 90%; margin: 8px 0 4px; border-radius: 6px; }
+.bsk-headline--short { width: 60%; margin-top: 0; }
+.bsk-section {
+  background: none !important; animation: none !important;
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px; margin-top: 8px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.bsk-section-title {
+  height: 14px; width: 80px; border-radius: 6px;
+  background: linear-gradient(90deg, #e8edf5 25%, #f2f5fb 50%, #e8edf5 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+.bsk-line {
+  height: 14px; width: 100%; border-radius: 6px;
+  background: linear-gradient(90deg, #e8edf5 25%, #f2f5fb 50%, #e8edf5 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+.bsk-line--short { width: 70%; }
+
 .briefing-today-badge {
   display: inline-block;
   font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
