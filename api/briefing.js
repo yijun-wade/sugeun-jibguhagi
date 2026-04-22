@@ -52,7 +52,7 @@ export default async function handler(req, res) {
       timeZone: 'Asia/Seoul', year: 'numeric', month: 'long', day: 'numeric'
     })
 
-    const prompt = `오늘(${dateStr}) 부동산 관련 뉴스입니다:\n\n${newsText}\n\n위 뉴스를 바탕으로 아파트 매매나 전월세를 고민하는 실수요자를 위한 브리핑을 작성해줘.\n\n반드시 아래 형식으로만 출력해:\n\n[오늘의 핵심 뉴스]\n뉴스1: (한 줄 요약)\n뉴스2: (한 줄 요약)\n뉴스3: (한 줄 요약)\n\n[정부 의도]\n(정부가 이 정책을 꺼낸 이유와 목적을 2~3문장으로. 쉽게)\n\n[시장 변화]\n(이 정책으로 인해 부동산 시장이 어떻게 달라질지 2~3문장으로)\n\n[실수요자 체감]\n매매: (집 살 사람은 어떻게 느껴지나 한 문장)\n전세: (전세 구하는 사람은 어떻게 느껴지나 한 문장)\n월세: (월세 사는 사람은 어떻게 느껴지나 한 문장)\n\n말투 규칙:\n- 어렵지 않게, 친구한테 설명하듯\n- 전문용어 쓸 때는 바로 풀어서 설명\n- 이모지 금지\n- 다른 설명 없이 위 형식만 출력`
+    const prompt = `오늘(${dateStr}) 부동산 관련 뉴스입니다:\n\n${newsText}\n\n위 뉴스를 바탕으로 아파트 매매나 전월세를 고민하는 실수요자를 위한 브리핑을 작성해줘.\n\n반드시 아래 형식으로만 출력해:\n\n[제목]\n(오늘 부동산 뉴스를 한 줄로 압축한 제목. 핵심 키워드 포함. 20자 이내)\n\n[오늘의 핵심 뉴스]\n뉴스1: (한 줄 요약)\n뉴스2: (한 줄 요약)\n뉴스3: (한 줄 요약)\n\n[정부 의도]\n(정부가 이 정책을 꺼낸 이유와 목적을 2~3문장으로. 쉽게)\n\n[시장 변화]\n(이 정책으로 인해 부동산 시장이 어떻게 달라질지 2~3문장으로)\n\n[실수요자 체감]\n매매: (집 살 사람은 어떻게 느껴지나 한 문장)\n전세: (전세 구하는 사람은 어떻게 느껴지나 한 문장)\n월세: (월세 사는 사람은 어떻게 느껴지나 한 문장)\n\n말투 규칙:\n- 어렵지 않게, 친구한테 설명하듯\n- 전문용어 쓸 때는 바로 풀어서 설명\n- 이모지 금지\n- 다른 설명 없이 위 형식만 출력`
 
     const claude = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -85,6 +85,7 @@ export default async function handler(req, res) {
 
     const result = {
       date: dateStr,
+      title: parse('제목'),
       news: newsSection,
       intent: parse('정부 의도'),
       market: parse('시장 변화'),

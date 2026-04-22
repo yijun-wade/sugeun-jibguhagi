@@ -1397,6 +1397,13 @@ header { text-align: center; padding: 4px 0 2px; }
   color: #fff;
 }
 .top-nav-active:hover { background: var(--blue); }
+.briefing-headline {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 4px 0 20px;
+  line-height: 1.4;
+}
 .briefing-archive { margin-top: 32px; }
 .briefing-archive-list {
   list-style: none;
@@ -1407,7 +1414,9 @@ header { text-align: center; padding: 4px 0 2px; }
   gap: 6px;
 }
 .briefing-archive-link {
-  display: block;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
   padding: 10px 14px;
   background: var(--bg);
   border-radius: 8px;
@@ -1416,3 +1425,10 @@ header { text-align: center; padding: 4px 0 2px; }
   font-size: 14px;
 }
 .briefing-archive-link:hover { background: var(--border); }
+.briefing-archive-date {
+  font-size: 12px;
+  color: var(--text-sub);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.briefing-archive-title { font-weight: 500; }

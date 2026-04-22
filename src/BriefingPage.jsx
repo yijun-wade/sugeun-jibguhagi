@@ -7,6 +7,7 @@ function BriefingDetail({ date, data }) {
   return (
     <div className="briefing-body">
       <div className="briefing-date">{label}</div>
+      {data.title && <h2 className="briefing-headline">{data.title}</h2>}
 
       <section className="briefing-section">
         <h2 className="briefing-section-title">오늘의 핵심 뉴스</h2>
@@ -89,16 +90,17 @@ export default function BriefingPage() {
   }, [date, isDetail])
 
   const canonicalDate = isDetail ? date : new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
-  const titleDate = isDetail ? date : '오늘'
+  const pageTitle = data?.title ? `${data.title} · 수군수군 우리집` : `${isDetail ? date : '오늘'} 부동산 브리핑 · 수군수군 우리집`
+  const pageDesc = data?.title ? `${data.title} — 실수요자 관점으로 읽는 부동산 뉴스 요약` : '부동산 뉴스를 실수요자 관점으로 요약합니다.'
 
   return (
     <div className="app">
       <Helmet>
-        <title>{titleDate} 부동산 브리핑 · 수군수군 우리집</title>
-        <meta name="description" content={`${titleDate} 부동산 뉴스를 실수요자 관점으로 요약합니다. 정부 정책 의도, 시장 변화, 매매·전세·월세 체감.`} />
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDesc} />
         <link rel="canonical" href={`https://www.suzip.kr/briefing${isDetail ? `/${date}` : ''}`} />
-        <meta property="og:title" content={`${titleDate} 부동산 브리핑 · 수군수군 우리집`} />
-        <meta property="og:description" content="실수요자를 위한 오늘의 부동산 뉴스 요약" />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDesc} />
       </Helmet>
 
       <header className="site-header">
@@ -131,7 +133,8 @@ export default function BriefingPage() {
               {list.map(item => (
                 <li key={item.date}>
                   <Link to={`/briefing/${item.date}`} className="briefing-archive-link">
-                    {item.date}
+                    <span className="briefing-archive-date">{item.date}</span>
+                    {item.title && <span className="briefing-archive-title">{item.title}</span>}
                   </Link>
                 </li>
               ))}
