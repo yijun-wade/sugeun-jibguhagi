@@ -405,6 +405,9 @@ function SearchApp() {
             마음에 둔 아파트를 <em>수집</em>하세요<br />
             동네 분위기 · 실거주 후기 · 실거래가까지
           </h1>
+          <nav className="hero-nav">
+            <a href="/briefing" className="hero-nav-link">오늘의 부동산 브리핑</a>
+          </nav>
         </div>
       )}
 

@@ -1321,6 +1321,22 @@ header { text-align: center; padding: 4px 0 2px; }
   font-weight: 600;
   cursor: pointer;
 }
+.hero-nav {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+.hero-nav-link {
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--blue);
+  background: rgba(37,99,235,0.08);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.hero-nav-link:hover { background: rgba(37,99,235,0.15); }
 .top-nav {
   display: flex;
   gap: 4px;
