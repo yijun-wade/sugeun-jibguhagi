@@ -384,7 +384,7 @@ function SearchApp() {
     : '수군수군 우리집 · SuZip — 아파트 실거주 후기 & 동네 분위기'
   const metaDesc = searchedQuery
     ? `${searchedQuery} 아파트 실거주 후기, 동네 분위기, 실거래가를 확인하세요.`
-    : '마음에 둔 아파트를 수집하세요. 실거주자 이야기를 AI로 요약해 동네 분위기, 실거래가까지 한번에.'
+    : '퇴근 후 이불 속에서 하는 임장. 발품 팔기 전에 수군수군 먼저 — 동네 분위기, 실거주 후기, 실거래가까지.'
 
   return (
     <div className={`app${isHome ? ' app-home' : ''}`}>
@@ -425,9 +425,12 @@ function SearchApp() {
             <div className="hero-logo-en">SuZip · 수집</div>
           </div>
           <h1 className="hero-sub">
-            마음에 둔 아파트를 <em>수집</em>하세요<br />
-            동네 분위기 · 실거주 후기 · 실거래가까지
+            퇴근 후 이불 속에서 하는 <em>임장</em>
           </h1>
+          <p className="hero-sub2">
+            발품 팔기 전에 수군수군 먼저<br />
+            동네 분위기 · 실거주 후기 · 실거래가까지
+          </p>
         </div>
       )}
 

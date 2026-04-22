@@ -66,6 +66,10 @@ body {
   font-style: normal; font-weight: 800; color: var(--blue);
   background: var(--blue-lt); padding: 1px 6px; border-radius: 6px;
 }
+.hero-sub2 {
+  font-size: 14px; color: var(--text2); line-height: 1.8;
+  margin-top: 6px; font-weight: 400;
+}
 
 /* ─── HEADER (결과/상세 화면) ─── */
 header { text-align: center; padding: 4px 0 2px; }
