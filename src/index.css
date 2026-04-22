@@ -1222,3 +1222,102 @@ header { text-align: center; padding: 4px 0 2px; }
   .nearby-apt-item { padding: 10px 14px; }
   .nearby-apt-name { font-size: 14px; }
 }
+
+/* ── 브리핑 페이지 ── */
+.briefing-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+.briefing-header {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--blue);
+}
+.briefing-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.briefing-sub {
+  font-size: 14px;
+  color: var(--text2);
+  margin-bottom: 8px;
+}
+.briefing-date {
+  font-size: 12px;
+  color: var(--blue);
+  font-weight: 600;
+}
+.briefing-body { display: flex; flex-direction: column; gap: 24px; }
+.briefing-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+.briefing-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--blue);
+  margin-bottom: 12px;
+}
+.briefing-news-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.briefing-news-item {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.6;
+  padding-left: 14px;
+  position: relative;
+}
+.briefing-news-item::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--blue);
+  font-weight: 700;
+}
+.briefing-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.8;
+}
+.briefing-demand { display: flex; flex-direction: column; gap: 12px; }
+.briefing-demand-row { display: flex; gap: 12px; align-items: flex-start; }
+.briefing-demand-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--blue);
+  background: var(--blue-lt);
+  padding: 2px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.briefing-demand-text { font-size: 14px; color: var(--text); line-height: 1.7; }
+.briefing-disclaimer {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.6;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: 8px;
+}
+.briefing-back-btn {
+  margin-top: 28px;
+  width: 100%;
+  height: 48px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
