@@ -24,9 +24,11 @@ async function naverSearch(endpoint, query, display = 5) {
 }
 
 async function main() {
-  const today = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })
+  const targetDate = process.argv[2] // YYYY-MM-DD 형식으로 인자 받기
+  const dateObj = targetDate ? new Date(targetDate + 'T09:00:00+09:00') : new Date()
+  const today = dateObj.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })
     .replace(/\. /g, '-').replace('.', '')
-  const isoDate = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
+  const isoDate = targetDate || dateObj.toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
 
   const outDir = join(process.cwd(), 'public', 'briefings')
   if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true })
