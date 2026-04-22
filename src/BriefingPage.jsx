@@ -59,7 +59,6 @@ export default function BriefingPage() {
 
   const [data, setData] = useState(null)
   const [list, setList] = useState(null)
-  const [policies, setPolicies] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
@@ -70,8 +69,6 @@ export default function BriefingPage() {
     setError(false)
     setData(null)
     setList(null)
-
-    fetch('/policies.json').then(r => r.json()).then(d => setPolicies(d.policies || [])).catch(() => {})
 
     if (isDetail) {
       fetch(`/briefings/${date}.json`)
@@ -111,6 +108,7 @@ export default function BriefingPage() {
         <nav className="site-header-nav">
           <Link to="/" className="site-nav-link">아파트 검색</Link>
           <Link to="/briefing" className="site-nav-link site-nav-active">부동산 브리핑</Link>
+          <Link to="/policy" className="site-nav-link">요즘 정책</Link>
           <Link to="/glossary" className="site-nav-link">용어사전</Link>
         </nav>
       </header>
@@ -128,23 +126,6 @@ export default function BriefingPage() {
           <BriefingDetail date={isDetail ? date : canonicalDate} data={data} />
         )}
 
-        {policies.length > 0 && (
-          <section className="briefing-section policy-section">
-            <h2 className="briefing-section-title">현재 주요 부동산 정책</h2>
-            <div className="policy-list">
-              {policies.map((p, i) => (
-                <div key={i} className="policy-item">
-                  <div className="policy-item-header">
-                    <span className="policy-name">{p.name}</span>
-                    <span className={`policy-status policy-status-${p.status === '시행중' ? 'active' : p.status === '예정' ? 'pending' : 'relaxed'}`}>{p.status}</span>
-                  </div>
-                  <p className="policy-summary">{p.summary}</p>
-                  <p className="policy-detail">{p.detail}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
 
         {!isDetail && list && list.length > 0 && (
           <section className="briefing-archive">

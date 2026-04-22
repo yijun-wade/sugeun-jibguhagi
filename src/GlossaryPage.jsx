@@ -38,6 +38,7 @@ export default function GlossaryPage() {
         <nav className="site-header-nav">
           <a href="/" className="site-nav-link">아파트 검색</a>
           <a href="/briefing" className="site-nav-link">부동산 브리핑</a>
+          <a href="/policy" className="site-nav-link">요즘 정책</a>
           <a href="/glossary" className="site-nav-link site-nav-active">용어사전</a>
         </nav>
       </header>
