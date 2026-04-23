@@ -27,10 +27,13 @@ jobs:
       - name: Regenerate sitemap
         run: node scripts/generate-sitemap.mjs
 
+      - name: Regenerate RSS
+        run: node scripts/generate-rss.mjs
+
       - name: Commit if new briefing
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/briefings/ public/sitemap.xml
+          git add public/briefings/ public/sitemap.xml public/rss.xml
           git diff --cached --quiet || git commit -m "chore: daily briefing $(date -u +'%Y-%m-%d')"
           git push
