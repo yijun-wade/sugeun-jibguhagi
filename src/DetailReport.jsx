@@ -1,5 +1,5 @@
 // src/DetailReport.jsx
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { fP, fR, getYM, formatDealDate, nameSim } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM, SQM_TO_PYEONG, KR_LAT, KR_LON } from './constants.js'
 import { track } from './analytics.js'
@@ -112,6 +112,79 @@ function Accordion({ label, count, children, defaultOpen = false }) {
 }
 
 /* ── 시세 탭 ─────────────────────────────── */
+function PriceTrendChart({ data }) {
+  if (!data || data.length < 2) return null
+  const W = 300, H = 120
+  const PAD = { t: 12, r: 16, b: 26, l: 44 }
+  const plotW = W - PAD.l - PAD.r
+  const plotH = H - PAD.t - PAD.b
+  const n = data.length
+
+  const vals = data.map(d => d.avg)
+  const minV = Math.min(...vals)
+  const maxV = Math.max(...vals)
+  const range = maxV - minV || 1
+
+  const toX = i => PAD.l + (i / (n - 1)) * plotW
+  const toY = v => PAD.t + plotH - ((v - minV) / range) * plotH
+
+  const points = data.map((d, i) => `${toX(i)},${toY(d.avg)}`).join(' ')
+
+  const fAmt = v => {
+    const uk = v / 10000
+    return uk >= 1 ? `${uk.toFixed(uk % 1 === 0 ? 0 : 1)}억` : `${Math.round(v / 1000)}천`
+  }
+
+  const monthLabel = ym => {
+    const parts = ym.split('.')
+    return `${parseInt(parts[1])}월`
+  }
+
+  return (
+    <div className="price-trend-wrap">
+      <div className="price-trend-label">월별 평균 실거래가 추이</div>
+      <svg viewBox={`0 0 ${W} ${H}`} className="price-trend-svg">
+        {/* 수평 가이드라인 */}
+        {[minV, (minV + maxV) / 2, maxV].map((v, i) => (
+          <g key={i}>
+            <line x1={PAD.l} y1={toY(v)} x2={W - PAD.r} y2={toY(v)}
+              stroke="#e4eaf4" strokeWidth="1" />
+            <text x={PAD.l - 4} y={toY(v) + 4}
+              textAnchor="end" fontSize="9" fill="#9ca3af">{fAmt(v)}</text>
+          </g>
+        ))}
+        {/* 라인 */}
+        <polyline points={points}
+          fill="none" stroke="#2563eb" strokeWidth="2"
+          strokeLinejoin="round" strokeLinecap="round" />
+        {/* 면적 채우기 */}
+        <polygon
+          points={`${toX(0)},${PAD.t + plotH} ${points} ${toX(n - 1)},${PAD.t + plotH}`}
+          fill="url(#priceGrad)" opacity="0.15" />
+        <defs>
+          <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#2563eb" />
+            <stop offset="100%" stopColor="#2563eb" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        {/* 도트 + X축 레이블 */}
+        {data.map((d, i) => (
+          <g key={i}>
+            <circle cx={toX(i)} cy={toY(d.avg)} r="3"
+              fill="#fff" stroke="#2563eb" strokeWidth="2" />
+            {(i === 0 || i === n - 1 || n <= 6) && (
+              <text x={toX(i)} y={H - 4}
+                textAnchor="middle" fontSize="9" fill="#9ca3af">
+                {monthLabel(d.ym)}
+              </text>
+            )}
+          </g>
+        ))}
+      </svg>
+    </div>
+  )
+}
+
 function PriceTab({ apt }) {
   const [trades, setTrades] = useState(null)
   const [months, setMonths] = useState(6)
@@ -167,6 +240,22 @@ function PriceTab({ apt }) {
 
   const avgAmt   = trades?.length ? Math.round(trades.reduce((s, t) => s + t.amt,   0) / trades.length) : 0
   const avgPerPy = trades?.length ? Math.round(trades.reduce((s, t) => s + t.perPy, 0) / trades.length) : 0
+
+  const monthlyData = useMemo(() => {
+    if (!trades || trades.length === 0) return []
+    const byMonth = {}
+    trades.forEach(t => {
+      const ym = t.date.slice(0, 7) // "2026.04"
+      if (!byMonth[ym]) byMonth[ym] = []
+      byMonth[ym].push(t.amt)
+    })
+    return Object.entries(byMonth)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([ym, amts]) => ({
+        ym,
+        avg: Math.round(amts.reduce((s, v) => s + v, 0) / amts.length),
+      }))
+  }, [trades])
 
   const changePct = apt.olderAvg > 0
     ? Math.round((apt.recentAvg - apt.olderAvg) / apt.olderAvg * 100)
@@ -230,6 +319,11 @@ function PriceTab({ apt }) {
             <div className="price-interpret-basis">서울·수도권 실거래 기준</div>
           )}
         </div>
+      )}
+
+      {/* 가격 추이 차트 */}
+      {!loading && monthlyData.length >= 2 && (
+        <PriceTrendChart data={monthlyData} />
       )}
 
       {/* 하단: 근거 */}
