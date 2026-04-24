@@ -121,8 +121,10 @@ function PriceTrendChart({ data }) {
   const n = data.length
 
   const vals = data.map(d => d.avg)
-  const minV = Math.min(...vals)
-  const maxV = Math.max(...vals)
+  const mean = vals.reduce((s, v) => s + v, 0) / vals.length
+  const pad  = mean * 0.12  // 평균의 ±12% 여백 — 작은 변동이 극적으로 보이는 것 방지
+  const minV = Math.min(...vals, mean - pad)
+  const maxV = Math.max(...vals, mean + pad)
   const range = maxV - minV || 1
 
   const toX = i => PAD.l + (i / (n - 1)) * plotW
@@ -169,7 +171,7 @@ function PriceTrendChart({ data }) {
           <g key={i}>
             <circle cx={toX(i)} cy={toY(d.avg)} r="3"
               fill="#fff" stroke="#2563eb" strokeWidth="2" />
-            {(i === 0 || i === n - 1 || n <= 6) && (
+            {(i === 0 || i === n - 1 || (n <= 8 ? true : i % Math.ceil(n / 6) === 0)) && (
               <text x={toX(i)} y={H - 4}
                 textAnchor="middle" fontSize="9" fill="#9ca3af">
                 {monthLabel(d.ym)}
@@ -184,7 +186,7 @@ function PriceTrendChart({ data }) {
 
 function PriceTab({ apt }) {
   const [trades, setTrades] = useState(null)
-  const [months, setMonths] = useState(6)
+  const [months, setMonths] = useState(12)
   const [loading, setLoading] = useState(false)
   const [tradeError, setTradeError] = useState(false)
 
@@ -289,7 +291,7 @@ function PriceTab({ apt }) {
       {/* 상단: 가격 요약 Hero */}
       <div className="price-hero">
         <div className="price-tab-months">
-          {[3, 6, 12].map(m => (
+          {[6, 12, 24].map(m => (
             <button key={m} className={`months-btn${months === m ? ' on' : ''}`} onClick={() => { track('price_months_change', { months: m, apt_name: apt.aptNm }); setMonths(m) }}>
               {m}개월
             </button>
