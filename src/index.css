@@ -977,6 +977,18 @@ header { text-align: center; padding: 4px 0 2px; }
 /* 평형 분포 */
 .area-breakdown { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
 .area-bucket { flex: 1 1 80px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; text-align: center; }
+.area-bucket-btn {
+  cursor: pointer; font-family: inherit;
+  transition: border-color 0.15s, background 0.15s;
+}
+.area-bucket-btn:hover { border-color: var(--blue); background: var(--blue-lt); }
+.area-bucket-active {
+  border-color: var(--blue) !important;
+  background: var(--blue-md) !important;
+}
+.area-bucket-active .area-bucket-label,
+.area-bucket-active .area-bucket-avg,
+.area-bucket-active .area-bucket-count { color: #1d4ed8; }
 .area-bucket-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
 .area-bucket-avg { font-size: 14px; font-weight: 700; color: var(--text); }
 .area-bucket-count { font-size: 11px; color: var(--muted); margin-top: 2px; }

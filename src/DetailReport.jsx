@@ -135,10 +135,7 @@ function PriceTrendChart({ data }) {
     return uk >= 1 ? `${uk.toFixed(uk % 1 === 0 ? 0 : 1)}억` : `${Math.round(v / 1000)}천`
   }
 
-  const monthLabel = ym => {
-    const parts = ym.split('.')
-    return `${parseInt(parts[1])}월`
-  }
+  const monthLabel = ym => `${parseInt(ym.slice(5))}월`
 
   return (
     <div className="price-trend-wrap">
@@ -238,14 +235,22 @@ function PriceTab({ apt }) {
     return () => { controller.abort(); clearTimeout(timer) }
   }, [apt?.bjdCode, apt?.aptNm, months])
 
-  const avgAmt   = trades?.length ? Math.round(trades.reduce((s, t) => s + t.amt,   0) / trades.length) : 0
-  const avgPerPy = trades?.length ? Math.round(trades.reduce((s, t) => s + t.perPy, 0) / trades.length) : 0
+  const [areaFilter, setAreaFilter] = useState(null) // null = 전체, "30평형대" 등
+
+  const filteredTrades = useMemo(() => {
+    if (!trades) return trades
+    if (!areaFilter) return trades
+    return trades.filter(t => `${Math.floor(t.pyeong / 10) * 10}평형대` === areaFilter)
+  }, [trades, areaFilter])
+
+  const avgAmt   = filteredTrades?.length ? Math.round(filteredTrades.reduce((s, t) => s + t.amt,   0) / filteredTrades.length) : 0
+  const avgPerPy = filteredTrades?.length ? Math.round(filteredTrades.reduce((s, t) => s + t.perPy, 0) / filteredTrades.length) : 0
 
   const monthlyData = useMemo(() => {
-    if (!trades || trades.length === 0) return []
+    if (!filteredTrades || filteredTrades.length === 0) return []
     const byMonth = {}
-    trades.forEach(t => {
-      const ym = t.date.slice(0, 7) // "2026.04"
+    filteredTrades.forEach(t => {
+      const ym = t.date.slice(0, 7)
       if (!byMonth[ym]) byMonth[ym] = []
       byMonth[ym].push(t.amt)
     })
@@ -255,7 +260,7 @@ function PriceTab({ apt }) {
         ym,
         avg: Math.round(amts.reduce((s, v) => s + v, 0) / amts.length),
       }))
-  }, [trades])
+  }, [filteredTrades])
 
   const changePct = apt.olderAvg > 0
     ? Math.round((apt.recentAvg - apt.olderAvg) / apt.olderAvg * 100)
@@ -339,11 +344,11 @@ function PriceTab({ apt }) {
             <div className="price-sparse-warn">거래 건수가 적어 참고용으로만 확인하세요</div>
           )}
 
-          <AreaBreakdown trades={trades} />
+          <AreaBreakdown trades={trades} selected={areaFilter} onSelect={b => setAreaFilter(b === areaFilter ? null : b)} />
 
-          <Accordion label="실거래 내역" count={trades.length} defaultOpen={trades.length <= 10}>
+          <Accordion label={`실거래 내역 ${areaFilter ? `(${areaFilter})` : ''}`} count={filteredTrades.length} defaultOpen={filteredTrades.length <= 10}>
             <div className="trade-list">
-              {trades.map((t, i) => (
+              {filteredTrades.map((t, i) => (
                 <div key={i} className="trade-row">
                   <div className="trade-date">{t.date}</div>
                   <div className="trade-col-right">
@@ -577,8 +582,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
 }
 
 /* ── 평형 분포 ───────────────────────────── */
-function AreaBreakdown({ trades }) {
-  // 평수별 그룹핑 (10평 단위)
+function AreaBreakdown({ trades, selected, onSelect }) {
   const groups = {}
   trades.forEach(t => {
     const bucket = `${Math.floor(t.pyeong / 10) * 10}평형대`
@@ -596,11 +600,15 @@ function AreaBreakdown({ trades }) {
   return (
     <div className="area-breakdown">
       {sorted.map(([bucket, { count, totalPerPy }]) => (
-        <div key={bucket} className="area-bucket">
+        <button
+          key={bucket}
+          className={`area-bucket area-bucket-btn${selected === bucket ? ' area-bucket-active' : ''}`}
+          onClick={() => onSelect(bucket)}
+        >
           <div className="area-bucket-label">{bucket}</div>
           <div className="area-bucket-avg">{fP(Math.round(totalPerPy / count))}<span className="area-bucket-unit">/평</span></div>
           <div className="area-bucket-count">{count}건</div>
-        </div>
+        </button>
       ))}
     </div>
   )
