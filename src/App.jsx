@@ -426,6 +426,18 @@ function SearchApp() {
         </nav>
       </header>
 
+      {/* 홈 서브탭 — 헤더 바로 아래 */}
+      {isHome && (
+        <div className="home-sub-tabs">
+          <button className={`home-sub-tab${searchMode === 'name' ? ' on' : ''}`} onClick={() => setSearchMode('name')}>
+            이름으로 검색
+          </button>
+          <button className={`home-sub-tab${searchMode === 'discover' ? ' on' : ''}`} onClick={() => setSearchMode('discover')}>
+            동네·가격으로 탐색
+          </button>
+        </div>
+      )}
+
       {/* 홈: OG 이미지 히어로 */}
       {isHome && (
         <img
@@ -435,17 +447,6 @@ function SearchApp() {
         />
       )}
 
-      {/* 모드 탭 */}
-      {isHome && (
-        <div className="mode-tabs">
-          <button className={`mode-tab${searchMode === 'name' ? ' on' : ''}`} onClick={() => setSearchMode('name')}>
-            이름으로 검색
-          </button>
-          <button className={`mode-tab${searchMode === 'discover' ? ' on' : ''}`} onClick={() => setSearchMode('discover')}>
-            동네·가격으로 탐색
-          </button>
-        </div>
-      )}
 
       {/* Discovery 모드 */}
       {isHome && searchMode === 'discover' && (
@@ -689,6 +690,8 @@ function SearchApp() {
         <p className="site-footer-copy">© 2026 수군수군 우리집 · SuZip</p>
         <p className="site-footer-ai">이 서비스는 인터넷 글을 AI가 자동 수집·요약해요. 실제 사실과 다를 수 있으며 투자·거래 참고 자료로 활용할 수 없어요.</p>
         <div className="site-footer-links">
+          <a href="https://blog.naver.com/kaimex" target="_blank" rel="noopener noreferrer">블로그</a>
+          <span>·</span>
           <a href="/briefing">이불 속 뉴스</a>
           <span>·</span>
           <a href="/terms.html" target="_blank" rel="noopener noreferrer">이용약관</a>

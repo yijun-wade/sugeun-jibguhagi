@@ -1809,6 +1809,28 @@ header { text-align: center; padding: 4px 0 2px; }
   line-height: 1.4;
 }
 
+/* ─── 홈 서브탭 ─── */
+.home-sub-tabs {
+  display: flex;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  margin: 0 -16px;
+  padding: 0 16px;
+  position: sticky;
+  top: 52px;
+  z-index: 90;
+}
+.home-sub-tab {
+  flex: 1; padding: 10px 0;
+  border: none; background: none;
+  font-size: 14px; font-weight: 600; color: var(--muted);
+  cursor: pointer; font-family: inherit;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+.home-sub-tab:hover { color: var(--blue); }
+.home-sub-tab.on { color: var(--blue); border-bottom-color: var(--blue); }
+
 /* ─── DISCOVERY ─── */
 .discovery-wrap { display: flex; flex-direction: column; gap: 16px; }
 .discovery-section { display: flex; flex-direction: column; gap: 10px; }
