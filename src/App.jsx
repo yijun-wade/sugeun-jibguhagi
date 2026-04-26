@@ -422,24 +422,59 @@ function SearchApp() {
           <div className="hero-split-left">
             <div className="hero-brand" onClick={goHome} style={{ cursor: 'pointer' }}>
               <div className="hero-logo-mark">
-                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="56" height="56" rx="14" fill="#2563eb"/>
+                <svg width="48" height="48" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="56" height="56" rx="14" fill="rgba(255,255,255,0.15)"/>
                   <path d="M28 10 L48 26 L8 26 Z" fill="white"/>
                   <rect x="12" y="26" width="32" height="22" rx="2" fill="white"/>
                   <rect x="22" y="33" width="12" height="15" rx="3" fill="#2563eb"/>
                 </svg>
               </div>
-              <div className="hero-logo">
-                <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
+              <div className="hero-logo hero-logo-white">
+                수군수군 우리집
               </div>
             </div>
-            <h1 className="hero-sub">
+            <h1 className="hero-sub hero-sub-white">
               퇴근 후 이불 속에서 하는 <em>임장</em>
             </h1>
-            <p className="hero-sub2">
+            <p className="hero-sub2 hero-sub2-white">
               발품 팔기 전에 수군수군 먼저<br />
               동네 분위기 · 실거주 후기 · 실거래가까지
             </p>
+            {/* 검색창 히어로 안으로 */}
+            <div className="hero-search-wrap" ref={searchRef}>
+              <div className="search-box">
+                <input
+                  ref={inputRef}
+                  className="search-input hero-search-input"
+                  type="text"
+                  aria-label="아파트 이름으로 검색"
+                  placeholder="아파트 이름으로 검색 (예: 반포자이)"
+                  value={query}
+                  onChange={handleQueryChange}
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => suggestions.length > 0 && setShowSugg(true)}
+                  autoComplete="off"
+                />
+                <button className="search-btn" onClick={() => { setShowSugg(false); handleSearch(query) }}>검색</button>
+              </div>
+              {showSugg && suggestions.length > 0 && (
+                <ul className="sugg-list" ref={suggRef}>
+                  {suggestions.map((apt, i) => (
+                    <li
+                      key={apt.kaptCode}
+                      className={`sugg-item${i === activeSugg ? ' active' : ''}`}
+                      onPointerDown={(e) => { e.preventDefault(); pickSuggestion(apt) }}
+                    >
+                      <span className="sugg-name">{apt.kaptName}</span>
+                      <span className="sugg-meta">
+                        <span className="sugg-addr">{apt.addr?.split(' ').slice(1, 4).join(' ')}</span>
+                        {apt.kaptdaCnt && <span className="sugg-cnt">{apt.kaptdaCnt.toLocaleString()}세대</span>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
           <div className="hero-split-right">
             {heroImages.map((src, i) => (
@@ -454,7 +489,7 @@ function SearchApp() {
         </div>
       )}
 
-      <div className="search-wrap" ref={searchRef}>
+      <div className="search-wrap" ref={!isHome ? searchRef : null}>
         <div className="search-box">
           <input
             ref={inputRef}
