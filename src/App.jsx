@@ -145,6 +145,14 @@ function SearchApp() {
   const [resultTab, setResultTab] = useState('search') // 'search' | 'collection'
   const [compareSelected, setCompareSelected] = useState([])
   const [compareOpen, setCompareOpen] = useState(false)
+  const [heroIdx, setHeroIdx] = useState(0)
+  const heroImages = ['/hero-1.png', '/hero-2.png', '/hero-3.png']
+
+  useEffect(() => {
+    if (!isHome) return
+    const timer = setInterval(() => setHeroIdx(i => (i + 1) % 3), 4500)
+    return () => clearInterval(timer)
+  }, [isHome])
 
   // 라우트 변경 시 page_view 이벤트
   useEffect(() => {
@@ -407,32 +415,43 @@ function SearchApp() {
         </nav>
       </header>
 
-      {/* 홈: 히어로 */}
+      {/* 홈: 히어로 좌우 분할 */}
       {isHome && (
-        <div className="hero">
-          <div className="hero-brand" onClick={goHome} style={{ cursor: 'pointer' }}>
-            <div className="hero-logo-mark">
-              <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="56" height="56" rx="14" fill="#2563eb"/>
-                <path d="M28 10 L48 26 L8 26 Z" fill="white"/>
-                <rect x="12" y="26" width="32" height="22" rx="2" fill="white"/>
-                <rect x="22" y="33" width="12" height="15" rx="3" fill="#2563eb"/>
-              </svg>
+        <div className="hero-split">
+          <div className="hero-split-left">
+            <div className="hero-brand" onClick={goHome} style={{ cursor: 'pointer' }}>
+              <div className="hero-logo-mark">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="56" height="56" rx="14" fill="#2563eb"/>
+                  <path d="M28 10 L48 26 L8 26 Z" fill="white"/>
+                  <rect x="12" y="26" width="32" height="22" rx="2" fill="white"/>
+                  <rect x="22" y="33" width="12" height="15" rx="3" fill="#2563eb"/>
+                </svg>
+              </div>
+              <div className="hero-logo">
+                <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
+              </div>
             </div>
-            <div className="hero-logo">
-              <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
-            </div>
+            <h1 className="hero-sub">
+              퇴근 후 이불 속에서 하는 <em>임장</em>
+            </h1>
+            <p className="hero-sub2">
+              발품 팔기 전에 수군수군 먼저<br />
+              동네 분위기 · 실거주 후기 · 실거래가까지
+            </p>
           </div>
-          <h1 className="hero-sub">
-            퇴근 후 이불 속에서 하는 <em>임장</em>
-          </h1>
-          <p className="hero-sub2">
-            발품 팔기 전에 수군수군 먼저<br />
-            동네 분위기 · 실거주 후기 · 실거래가까지
-          </p>
+          <div className="hero-split-right">
+            {heroImages.map((src, i) => (
+              <img
+                key={src}
+                src={src}
+                alt="이불 속 임장"
+                className={`hero-img${heroIdx === i ? ' hero-img-active' : ''}`}
+              />
+            ))}
+          </div>
         </div>
       )}
-
 
       <div className="search-wrap" ref={searchRef}>
         <div className="search-box">
