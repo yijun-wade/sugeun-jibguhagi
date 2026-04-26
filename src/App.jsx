@@ -429,10 +429,10 @@ function SearchApp() {
       {/* 홈 서브탭 — 헤더 바로 아래 */}
       {isHome && (
         <div className="home-sub-tabs">
-          <button className={`home-sub-tab${searchMode === 'name' ? ' on' : ''}`} onClick={() => setSearchMode('name')}>
+          <button className={`home-sub-tab${searchMode === 'name' ? ' on' : ''}`} onClick={() => { setSearchMode('name'); track('search_mode_switch', { mode: 'name' }) }}>
             이름으로 검색
           </button>
-          <button className={`home-sub-tab${searchMode === 'discover' ? ' on' : ''}`} onClick={() => setSearchMode('discover')}>
+          <button className={`home-sub-tab${searchMode === 'discover' ? ' on' : ''}`} onClick={() => { setSearchMode('discover'); track('search_mode_switch', { mode: 'discover' }) }}>
             동네·가격으로 탐색
           </button>
         </div>
@@ -456,7 +456,10 @@ function SearchApp() {
           setSelectedGu={setSelectedGu}
           selectedPrice={selectedPrice}
           setSelectedPrice={setSelectedPrice}
-          onSelect={(apt) => { setSearchMode('name'); setQuery(apt.name); handleSearch(apt.name) }}
+          onSelect={(apt) => {
+            track('discover_apt_click', { apt_name: apt.name, gu: apt.gu, avg: apt.avg, from: 'discover' })
+            setSearchMode('name'); setQuery(apt.name); handleSearch(apt.name)
+          }}
         />
       )}
 
@@ -769,7 +772,11 @@ function DiscoveryPanel({ data, selectedGu, setSelectedGu, selectedPrice, setSel
             <button
               key={gu}
               className={`discovery-gu-btn${selectedGu === gu ? ' on' : ''}`}
-              onClick={() => setSelectedGu(selectedGu === gu ? null : gu)}
+              onClick={() => {
+                const next = selectedGu === gu ? null : gu
+                setSelectedGu(next)
+                if (next) track('discover_gu_select', { gu: next })
+              }}
             >{gu.replace('구','')}</button>
           ))}
         </div>
@@ -783,7 +790,11 @@ function DiscoveryPanel({ data, selectedGu, setSelectedGu, selectedPrice, setSel
             <button
               key={r.label}
               className={`discovery-price-btn${selectedPrice?.label === r.label ? ' on' : ''}`}
-              onClick={() => setSelectedPrice(selectedPrice?.label === r.label ? null : r)}
+              onClick={() => {
+                const next = selectedPrice?.label === r.label ? null : r
+                setSelectedPrice(next)
+                if (next) track('discover_price_select', { range: next.label })
+              }}
             >{r.label}</button>
           ))}
         </div>
