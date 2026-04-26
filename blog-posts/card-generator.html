@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>수군수군 우리집 — 카드뉴스 생성기</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: #1e293b;
+    color: #fff;
+    min-height: 100vh;
+  }
+
+  /* ── 컨트롤 패널 ── */
+  .panel {
+    background: #0f172a;
+    padding: 24px 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid #334155;
+  }
+  .panel h1 { font-size: 18px; font-weight: 700; color: #fff; }
+  .panel .brand { color: #60a5fa; }
+  .file-btn {
+    padding: 10px 20px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .file-btn:hover { background: #1d4ed8; }
+  #fileInput { display: none; }
+  .status {
+    font-size: 13px;
+    color: #94a3b8;
+    flex: 1;
+  }
+  .dl-all {
+    padding: 10px 24px;
+    background: #f97316;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .dl-all:hover { background: #ea580c; }
+
+  /* ── 카드 그리드 ── */
+  .cards-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding: 40px;
+  }
+  .card-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .dl-btn {
+    padding: 10px 28px;
+    background: #334155;
+    color: #e2e8f0;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+  .dl-btn:hover { background: #2563eb; color: #fff; }
+
+  /* ══════════════════════════════
+     카드 스타일 (1080×1080)
+  ══════════════════════════════ */
+  .card {
+    width: 1080px;
+    height: 1080px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* 카드 1 */
+  .card-1 {
+    background: #1e3a8a;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px;
+  }
+  .c1-tag {
+    display: inline-block;
+    background: #f97316;
+    color: #fff;
+    font-size: 28px;
+    font-weight: 700;
+    padding: 10px 28px;
+    border-radius: 40px;
+    margin-bottom: 48px;
+    width: fit-content;
+  }
+  .c1-date { font-size: 28px; color: #93c5fd; margin-bottom: 20px; letter-spacing: 0.05em; }
+  .c1-title { font-size: 72px; font-weight: 900; color: #fff; line-height: 1.25; letter-spacing: -2px; margin-bottom: 40px; }
+  .c1-sub { font-size: 32px; color: #93c5fd; line-height: 1.6; }
+  .c1-brand { position: absolute; bottom: 60px; right: 80px; font-size: 28px; font-weight: 700; color: rgba(255,255,255,0.4); }
+  .c1-house { position: absolute; right: -40px; bottom: -40px; font-size: 380px; opacity: 0.06; line-height: 1; }
+
+  /* 공통 카드 레이아웃 */
+  .card-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 80px;
+  }
+  .card-header { display: flex; align-items: center; gap: 20px; margin-bottom: 48px; }
+  .card-num {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: #2563eb; color: #fff;
+    font-size: 28px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .card-label { font-size: 36px; font-weight: 900; color: #1e3a8a; letter-spacing: -0.5px; }
+  .accent-bar { width: 80px; height: 8px; background: #2563eb; border-radius: 4px; margin-bottom: 40px; }
+  .card-big { font-size: 54px; font-weight: 800; color: #111827; line-height: 1.35; letter-spacing: -1.5px; margin-bottom: 36px; }
+  .card-big em { font-style: normal; color: #2563eb; }
+  .card-desc { font-size: 33px; color: #6b7280; line-height: 1.75; letter-spacing: -0.5px; }
+  .card-foot { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 36px; border-top: 2px solid #f3f4f6; }
+  .foot-brand { font-size: 26px; font-weight: 700; color: #2563eb; }
+  .foot-page { font-size: 24px; color: #d1d5db; }
+
+  /* 카드 4 실수요자 */
+  .demand-row { display: flex; align-items: flex-start; gap: 24px; padding: 34px 0; border-bottom: 1px solid #f3f4f6; }
+  .demand-row:last-child { border-bottom: none; }
+  .d-badge { flex-shrink: 0; padding: 8px 20px; border-radius: 20px; font-size: 26px; font-weight: 700; min-width: 100px; text-align: center; }
+  .d-blue { background: #dbeafe; color: #1d4ed8; }
+  .d-red { background: #fee2e2; color: #dc2626; }
+  .d-orange { background: #ffedd5; color: #ea580c; }
+  .d-text { font-size: 32px; color: #374151; line-height: 1.65; letter-spacing: -0.5px; }
+
+  /* 카드 5 */
+  .card-5 {
+    background: linear-gradient(145deg, #1e3a8a 0%, #2563eb 100%);
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 80px; text-align: center;
+  }
+  .c5-label { font-size: 28px; font-weight: 700; color: #93c5fd; letter-spacing: 0.1em; margin-bottom: 32px; }
+  .c5-summary { font-size: 54px; font-weight: 900; color: #fff; line-height: 1.4; letter-spacing: -1.5px; margin-bottom: 56px; }
+  .c5-divider { width: 60px; height: 4px; background: #f97316; border-radius: 2px; margin: 0 auto 56px; }
+  .c5-cta-text { font-size: 32px; color: rgba(255,255,255,0.75); margin-bottom: 32px; line-height: 1.6; }
+  .c5-btn { display: inline-block; background: #fff; color: #2563eb; font-size: 34px; font-weight: 900; padding: 24px 60px; border-radius: 50px; }
+</style>
+</head>
+<body>
+
+<div class="panel">
+  <h1><span class="brand">수군수군 우리집</span> 카드뉴스 생성기</h1>
+  <button class="file-btn" onclick="document.getElementById('fileInput').click()">📂 JSON 파일 불러오기</button>
+  <input type="file" id="fileInput" accept=".json">
+  <span class="status" id="status">브리핑 JSON 파일을 불러오세요</span>
+  <button class="dl-all" onclick="downloadAll()">전체 다운로드</button>
+</div>
+
+<div class="cards-wrap" id="cardsWrap">
+  <p style="color:#64748b;font-size:16px;margin-top:80px;">JSON 파일을 불러오면 카드가 생성됩니다.</p>
+</div>
+
+<script>
+  document.getElementById('fileInput').addEventListener('change', function(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = function(ev) {
+      try {
+        const data = JSON.parse(ev.target.result)
+        renderCards(data)
+        document.getElementById('status').textContent = `✅ ${file.name} 로드 완료`
+      } catch {
+        document.getElementById('status').textContent = '❌ JSON 파싱 오류'
+      }
+    }
+    reader.readAsText(file)
+  })
+
+  function formatDate(dateStr) {
+    if (!dateStr) return ''
+    const parts = dateStr.split('-')
+    return `${parts[0]}. ${parseInt(parts[1])}. ${parseInt(parts[2])}`
+  }
+
+  function renderCards(d) {
+    const wrap = document.getElementById('cardsWrap')
+    wrap.innerHTML = ''
+
+    const cards = [
+      { id: 'card1', label: '① 타이틀', html: `
+        <div class="card card-1" id="card1">
+          <div class="c1-house">🏠</div>
+          <span class="c1-tag">부동산 브리핑</span>
+          <div class="c1-date">${formatDate(d.date)}</div>
+          <div class="c1-title">${(d.title||'').replace(/,\s*/g, ',<br>')}</div>
+          <div class="c1-sub">오늘 뉴스, 내 입장에서<br>어떤 의미인지 풀어드려요</div>
+          <div class="c1-brand">suzip.kr</div>
+        </div>`
+      },
+      { id: 'card2', label: '② 정부 입장', html: `
+        <div class="card" id="card2" style="background:#fff;">
+          <div class="card-inner">
+            <div class="card-header">
+              <div class="card-num">1</div>
+              <div class="card-label">정부 입장</div>
+            </div>
+            <div class="accent-bar"></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+              <div class="card-big">투기는 잡되,<br>실수요자는 <em>보호</em>하겠다는 뜻</div>
+              <div class="card-desc">${d.intent||''}</div>
+            </div>
+            <div class="card-foot">
+              <div class="foot-brand">수군수군 우리집</div>
+              <div class="foot-page">2 / 5</div>
+            </div>
+          </div>
+        </div>`
+      },
+      { id: 'card3', label: '③ 시장 변화', html: `
+        <div class="card" id="card3" style="background:#eff6ff;">
+          <div class="card-inner">
+            <div class="card-header">
+              <div class="card-num" style="background:#1e40af;">2</div>
+              <div class="card-label" style="color:#1e40af;">시장 변화</div>
+            </div>
+            <div class="accent-bar" style="background:#1e40af;"></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+              <div class="card-big" style="color:#0f172a;">급매는 끝났다.<br>가격은 <em style="color:#dc2626;">다시 오르는 중</em></div>
+              <div class="card-desc">${d.market||''}</div>
+            </div>
+            <div class="card-foot" style="border-top-color:#bfdbfe;">
+              <div class="foot-brand" style="color:#1e40af;">수군수군 우리집</div>
+              <div class="foot-page">3 / 5</div>
+            </div>
+          </div>
+        </div>`
+      },
+      { id: 'card4', label: '④ 실수요자 체감', html: `
+        <div class="card" id="card4" style="background:#fff;">
+          <div class="card-inner">
+            <div class="card-header">
+              <div class="card-num" style="background:#f97316;">3</div>
+              <div class="card-label" style="color:#ea580c;">실수요자 체감</div>
+            </div>
+            <div class="accent-bar" style="background:#f97316;"></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:0;">
+              <div class="demand-row">
+                <div class="d-badge d-red">매매</div>
+                <div class="d-text">${d.demand?.buy||''}</div>
+              </div>
+              <div class="demand-row">
+                <div class="d-badge d-blue">전세</div>
+                <div class="d-text">${d.demand?.lease||''}</div>
+              </div>
+              <div class="demand-row">
+                <div class="d-badge d-orange">월세</div>
+                <div class="d-text">${d.demand?.rent||''}</div>
+              </div>
+            </div>
+            <div class="card-foot">
+              <div class="foot-brand">수군수군 우리집</div>
+              <div class="foot-page">4 / 5</div>
+            </div>
+          </div>
+        </div>`
+      },
+      { id: 'card5', label: '⑤ 마무리 CTA', html: `
+        <div class="card card-5" id="card5">
+          <div class="c5-label">오늘의 한줄 정리</div>
+          <div class="c5-summary">${(d.title||'').replace(/,\s*/g, ',<br>')}</div>
+          <div class="c5-divider"></div>
+          <div class="c5-cta-text">내가 보는 단지 가격,<br>지금 어떻게 움직이고 있을까?</div>
+          <div class="c5-btn">suzip.kr 바로가기</div>
+        </div>`
+      }
+    ]
+
+    cards.forEach(c => {
+      const item = document.createElement('div')
+      item.className = 'card-item'
+      item.innerHTML = c.html
+      const btn = document.createElement('button')
+      btn.className = 'dl-btn'
+      btn.textContent = `${c.label} 다운로드 PNG`
+      btn.onclick = () => downloadCard(c.id, c.label)
+      item.appendChild(btn)
+      wrap.appendChild(item)
+    })
+  }
+
+  async function downloadCard(cardId, label) {
+    const el = document.getElementById(cardId)
+    const canvas = await html2canvas(el, { scale: 1, useCORS: true, backgroundColor: null })
+    const link = document.createElement('a')
+    link.download = `수군수군_${label.replace(/[①②③④⑤]\s*/,'')}_${new Date().toISOString().slice(0,10)}.png`
+    link.href = canvas.toDataURL('image/png')
+    link.click()
+  }
+
+  async function downloadAll() {
+    const ids = ['card1','card2','card3','card4','card5']
+    const labels = ['타이틀','정부입장','시장변화','실수요자','CTA']
+    for (let i = 0; i < ids.length; i++) {
+      const el = document.getElementById(ids[i])
+      if (!el) continue
+      const canvas = await html2canvas(el, { scale: 1, useCORS: true, backgroundColor: null })
+      const link = document.createElement('a')
+      link.download = `수군수군_카드${i+1}_${labels[i]}_${new Date().toISOString().slice(0,10)}.png`
+      link.href = canvas.toDataURL('image/png')
+      link.click()
+      await new Promise(r => setTimeout(r, 300))
+    }
+  }
+</script>
+</body>
+</html>
