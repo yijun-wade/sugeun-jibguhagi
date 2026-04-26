@@ -148,12 +148,6 @@ function SearchApp() {
   const [heroIdx, setHeroIdx] = useState(0)
   const heroImages = ['/hero-1.jpg', '/hero-2.jpg', '/hero-3.jpg']
 
-  useEffect(() => {
-    if (!isHome) return
-    const timer = setInterval(() => setHeroIdx(i => (i + 1) % 3), 4500)
-    return () => clearInterval(timer)
-  }, [isHome])
-
   // 라우트 변경 시 page_view 이벤트
   useEffect(() => {
     const path = location.pathname
@@ -387,6 +381,13 @@ function SearchApp() {
   }
 
   const isHome = !cards.length && !loading && !error
+
+  useEffect(() => {
+    if (!isHome) return
+    const timer = setInterval(() => setHeroIdx(i => (i + 1) % 3), 4500)
+    return () => clearInterval(timer)
+  }, [isHome])
+
   const metaTitle = searchedQuery
     ? `'${searchedQuery}' 검색 결과 · 수군수군 우리집`
     : '수군수군 우리집 · SuZip — 아파트 실거주 후기 & 동네 분위기'
