@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { track } from './analytics.js'
+import AdFitBanner from './AdFitBanner.jsx'
 
 const TODAY = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
 
@@ -226,6 +227,8 @@ export default function BriefingPage() {
             </div>
           </section>
         )}
+
+        <AdFitBanner />
 
         <button className="briefing-back-btn" onClick={() => { track('briefing_cta_click', { from: isDetail ? date : 'today' }); navigate('/') }}>
           아파트 검색하러 가기

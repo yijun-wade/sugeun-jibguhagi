@@ -13,6 +13,7 @@ import GlossaryPage from './GlossaryPage.jsx'
 import PolicyPage from './PolicyPage.jsx'
 import { track } from './analytics.js'
 import AdUnit from './AdUnit.jsx'
+import AdFitBanner from './AdFitBanner.jsx'
 import { getCollection, toggleCollection } from './collection.js'
 import CompareView from './CompareView.jsx'
 
@@ -688,6 +689,8 @@ function SearchApp() {
           onClose={() => { setCompareOpen(false); setCompareSelected([]) }}
         />
       )}
+
+      {isHome && <AdFitBanner />}
 
       <footer className="site-footer">
         <p className="site-footer-copy">© 2026 수군수군 우리집 · SuZip</p>
