@@ -34,10 +34,10 @@ export default function PolicyPage() {
           <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
         </a>
         <nav className="site-header-nav">
-          <a href="/" className="site-nav-link">동네임장</a>
-          <a href="/briefing" className="site-nav-link">뉴스 해석과 체감</a>
-          <a href="/policy" className="site-nav-link site-nav-active">요즘 정책</a>
-          <a href="/glossary" className="site-nav-link"><span className="nav-bubble">진짜 쉬운</span> 용어사전</a>
+          <a href="/" className="site-nav-link">이불 속 임장</a>
+          <a href="/briefing" className="site-nav-link">이불 속 뉴스</a>
+          <a href="/policy" className="site-nav-link site-nav-active">이불 속 정책</a>
+          <a href="/glossary" className="site-nav-link"><span className="nav-bubble">이불 속</span> 사전</a>
         </nav>
       </header>
 
