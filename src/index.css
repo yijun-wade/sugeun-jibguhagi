@@ -31,6 +31,13 @@ body {
 .app { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
 .app-home { justify-content: center; min-height: 80vh; padding-top: 0; gap: 20px; }
 
+/* ─── HERO OG 이미지 ─── */
+.hero-og-img {
+  width: 100%;
+  border-radius: 16px;
+  display: block;
+}
+
 /* ─── HERO SPLIT (홈) ─── */
 .hero-split {
   display: grid;
