@@ -1808,3 +1808,42 @@ header { text-align: center; padding: 4px 0 2px; }
   font-size: 14px; font-weight: 500; color: var(--text);
   line-height: 1.4;
 }
+
+/* ─── DISCOVERY ─── */
+.discovery-wrap { display: flex; flex-direction: column; gap: 16px; }
+.discovery-section { display: flex; flex-direction: column; gap: 10px; }
+.discovery-label { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.04em; }
+.discovery-gu-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.discovery-gu-btn {
+  padding: 6px 12px; border-radius: 20px; border: 1.5px solid var(--border);
+  background: var(--card); color: var(--text2); font-size: 13px; font-weight: 500;
+  cursor: pointer; font-family: inherit; transition: all 0.13s;
+}
+.discovery-gu-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-lt); }
+.discovery-gu-btn.on { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 700; }
+.discovery-price-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.discovery-price-btn {
+  padding: 7px 14px; border-radius: 20px; border: 1.5px solid var(--border);
+  background: var(--card); color: var(--text2); font-size: 13px; font-weight: 500;
+  cursor: pointer; font-family: inherit; transition: all 0.13s;
+}
+.discovery-price-btn:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-lt); }
+.discovery-price-btn.on { background: var(--orange); border-color: var(--orange); color: #fff; font-weight: 700; }
+.discovery-results { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+.discovery-loading, .discovery-empty {
+  text-align: center; color: var(--muted); font-size: 14px; padding: 32px 0; line-height: 1.8;
+}
+.discovery-apt-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; cursor: pointer; text-align: left; width: 100%;
+  transition: all 0.13s; font-family: inherit;
+}
+.discovery-apt-row:hover { border-color: var(--blue); background: var(--blue-lt); }
+.discovery-apt-left { display: flex; flex-direction: column; gap: 3px; }
+.discovery-apt-name { font-size: 15px; font-weight: 700; color: var(--text); }
+.discovery-apt-meta { font-size: 12px; color: var(--muted); }
+.discovery-apt-right { text-align: right; flex-shrink: 0; }
+.discovery-apt-price { font-size: 15px; font-weight: 800; color: var(--orange); }
+.discovery-apt-perpy { font-size: 11px; color: var(--muted); }
+.discovery-more { text-align: center; font-size: 12px; color: var(--muted); padding: 8px; }

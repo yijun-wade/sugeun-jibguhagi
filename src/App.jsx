@@ -147,6 +147,16 @@ function SearchApp() {
   const [compareOpen, setCompareOpen] = useState(false)
   const [heroIdx, setHeroIdx] = useState(0)
   const heroImages = ['/hero-1.jpg', '/hero-2.jpg', '/hero-3.jpg']
+  const [searchMode, setSearchMode] = useState('name') // 'name' | 'discover'
+  const [discoverData, setDiscoverData] = useState(null)
+  const [selectedGu, setSelectedGu] = useState(null)
+  const [selectedPrice, setSelectedPrice] = useState(null)
+
+  useEffect(() => {
+    if (searchMode === 'discover' && !discoverData) {
+      fetch('/apt-discovery.json').then(r => r.json()).then(setDiscoverData).catch(() => {})
+    }
+  }, [searchMode, discoverData])
 
   // 라우트 변경 시 page_view 이벤트
   useEffect(() => {
@@ -425,8 +435,32 @@ function SearchApp() {
         />
       )}
 
-      {/* 검색창 */}
-      <div className="search-wrap" ref={searchRef}>
+      {/* 모드 탭 */}
+      {isHome && (
+        <div className="mode-tabs">
+          <button className={`mode-tab${searchMode === 'name' ? ' on' : ''}`} onClick={() => setSearchMode('name')}>
+            이름으로 검색
+          </button>
+          <button className={`mode-tab${searchMode === 'discover' ? ' on' : ''}`} onClick={() => setSearchMode('discover')}>
+            동네·가격으로 탐색
+          </button>
+        </div>
+      )}
+
+      {/* Discovery 모드 */}
+      {isHome && searchMode === 'discover' && (
+        <DiscoveryPanel
+          data={discoverData}
+          selectedGu={selectedGu}
+          setSelectedGu={setSelectedGu}
+          selectedPrice={selectedPrice}
+          setSelectedPrice={setSelectedPrice}
+          onSelect={(apt) => { setSearchMode('name'); setQuery(apt.name); handleSearch(apt.name) }}
+        />
+      )}
+
+      {/* 검색창 (이름 검색 모드에서만) */}
+      <div className="search-wrap" ref={searchRef} style={isHome && searchMode === 'discover' ? { display: 'none' } : {}}>
         <div className="search-box">
           <input
             ref={inputRef}
@@ -692,6 +726,92 @@ function CollectionList({ collection, compareSelected, onSearch, onToggleCompare
           </div>
         )
       })}
+    </div>
+  )
+}
+
+const GU_LIST = ['강남구','서초구','송파구','강동구','용산구','성동구','마포구','영등포구','동작구','관악구','강서구','양천구','구로구','광진구','동대문구','성북구','노원구','은평구','서대문구','강북구','도봉구','중랑구','금천구','종로구','중구']
+
+const PRICE_RANGES = [
+  { label: '5억 이하', min: 0, max: 50000 },
+  { label: '5~7억', min: 50000, max: 70000 },
+  { label: '7~10억', min: 70000, max: 100000 },
+  { label: '10~15억', min: 100000, max: 150000 },
+  { label: '15억 이상', min: 150000, max: Infinity },
+]
+
+function fP(v) {
+  if (!v) return '-'
+  const uk = Math.round(v / 10000)
+  const man = Math.round((v % 10000) / 1000) * 1000
+  if (uk > 0 && man > 0) return `${uk}억 ${(man/1000)}천`
+  if (uk > 0) return `${uk}억`
+  return `${Math.round(v/1000)}천`
+}
+
+function DiscoveryPanel({ data, selectedGu, setSelectedGu, selectedPrice, setSelectedPrice, onSelect }) {
+  const filtered = (data || []).filter(a => {
+    const matchGu = !selectedGu || a.gu === selectedGu
+    const matchPrice = !selectedPrice || (a.avg >= selectedPrice.min && a.avg < selectedPrice.max)
+    return matchGu && matchPrice
+  }).slice(0, 30)
+
+  return (
+    <div className="discovery-wrap">
+      {/* 구 선택 */}
+      <div className="discovery-section">
+        <div className="discovery-label">동네 선택</div>
+        <div className="discovery-gu-grid">
+          {GU_LIST.map(gu => (
+            <button
+              key={gu}
+              className={`discovery-gu-btn${selectedGu === gu ? ' on' : ''}`}
+              onClick={() => setSelectedGu(selectedGu === gu ? null : gu)}
+            >{gu.replace('구','')}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* 가격대 선택 */}
+      <div className="discovery-section">
+        <div className="discovery-label">가격대 (매매 평균)</div>
+        <div className="discovery-price-row">
+          {PRICE_RANGES.map(r => (
+            <button
+              key={r.label}
+              className={`discovery-price-btn${selectedPrice?.label === r.label ? ' on' : ''}`}
+              onClick={() => setSelectedPrice(selectedPrice?.label === r.label ? null : r)}
+            >{r.label}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* 결과 */}
+      {(selectedGu || selectedPrice) && (
+        <div className="discovery-results">
+          {!data && <div className="discovery-loading">데이터 불러오는 중...</div>}
+          {data && filtered.length === 0 && (
+            <div className="discovery-empty">조건에 맞는 단지가 없어요.<br/>다른 조건으로 찾아보세요.</div>
+          )}
+          {data && filtered.map(apt => (
+            <button key={apt.code} className="discovery-apt-row" onClick={() => onSelect(apt)}>
+              <div className="discovery-apt-left">
+                <div className="discovery-apt-name">{apt.name}</div>
+                <div className="discovery-apt-meta">
+                  {apt.dong} · {apt.year ? apt.year + '년' : '-'} · {apt.units ? apt.units.toLocaleString() + '세대' : '-'}
+                </div>
+              </div>
+              <div className="discovery-apt-right">
+                <div className="discovery-apt-price">{fP(apt.avg)}</div>
+                <div className="discovery-apt-perpy">{fP(apt.perPy)}/평</div>
+              </div>
+            </button>
+          ))}
+          {data && filtered.length >= 30 && (
+            <div className="discovery-more">상위 30개 표시 중 — 조건을 좁혀보세요</div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
