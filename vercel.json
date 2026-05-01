@@ -9,9 +9,11 @@
     "api/search.js":   { "regions": ["icn1"] },
     "api/geocode.js":  { "regions": ["icn1"] },
     "api/stories.js":  { "regions": ["icn1"] },
-    "api/vibe.js":     { "regions": ["icn1"], "maxDuration": 30 }
+    "api/vibe.js":     { "regions": ["icn1"], "maxDuration": 30 },
+    "api/saju.js":         { "regions": ["icn1"], "maxDuration": 60 },
+    "api/saju-confirm.js": { "regions": ["icn1"], "maxDuration": 60 }
   },
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }

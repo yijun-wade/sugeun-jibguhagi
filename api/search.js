@@ -44,6 +44,8 @@ const BRAND_ALIASES = {
 
 function normalizeQuery(q) {
   let result = q
+  // 불필요한 접미사 제거 ("아파트", "단지", "빌라", "주상복합" 등)
+  result = result.replace(/\s*(아파트|단지|빌라|주상복합|오피스텔|아파트먼트)\s*$/g, '').trim()
   for (const [wrong, right] of Object.entries(BRAND_ALIASES)) {
     if (result.includes(wrong)) result = result.replaceAll(wrong, right)
   }

@@ -11,6 +11,7 @@ import AptDetailPage from './AptDetailPage.jsx'
 import BriefingPage from './BriefingPage.jsx'
 import GlossaryPage from './GlossaryPage.jsx'
 import PolicyPage from './PolicyPage.jsx'
+import SajuPage from './SajuPage.jsx'
 import { track } from './analytics.js'
 import AdUnit from './AdUnit.jsx'
 import AdFitBanner from './AdFitBanner.jsx'
@@ -124,6 +125,9 @@ export default function App() {
       <Route path="/briefing/:date" element={<BriefingPage />} />
       <Route path="/glossary" element={<GlossaryPage />} />
       <Route path="/policy" element={<PolicyPage />} />
+      <Route path="/saju" element={<SajuPage />} />
+      <Route path="/saju/success" element={<SajuPage />} />
+      <Route path="/saju/fail" element={<SajuPage />} />
       <Route path="*" element={<SearchApp />} />
     </Routes>
   )
@@ -169,6 +173,7 @@ function SearchApp() {
       : path === '/policy' ? 'policy'
       : path === '/glossary' ? 'glossary'
       : path.startsWith('/search') ? 'search'
+      : path === '/saju' ? 'saju'
       : 'other'
     track('page_view', { page_path: path, page_type: pageType, search_query: searchParams.get('q') || undefined })
   }, [location.pathname])
@@ -415,10 +420,18 @@ function SearchApp() {
         {searchedQuery && <meta name="robots" content="noindex, follow" />}
       </Helmet>
 
+      {/* 5월 프로모션 — 네비 위 얇은 배너 */}
+      <a href="/saju" className="saju-top-banner">
+        <span className="saju-top-badge">5월 무료</span>
+        <span className="saju-top-text">🔮 이불 속 터잡기 — 내 사주로 찾는 동네 기운</span>
+        <span className="saju-top-arrow">›</span>
+      </a>
+
       {/* 항상 표시되는 통합 헤더 */}
       <header className="site-header">
         <a href="/" className="site-header-logo">
           <span className="logo-accent">수</span>군수군 우리<span className="logo-accent">집</span>
+          <span className="logo-beta">Beta</span>
         </a>
         <nav className="site-header-nav">
           <a href="/" className="site-nav-link site-nav-active">이불 속 임장</a>
@@ -448,6 +461,7 @@ function SearchApp() {
           className="hero-og-img"
         />
       )}
+
 
 
       {/* Discovery 모드 */}
@@ -510,6 +524,7 @@ function SearchApp() {
               </button>
             ))}
           </div>
+          <p className="beta-notice">현재 서울 아파트 중심으로 운영되는 베타 서비스예요</p>
 
           {collection.length > 0 && (
             <div className="collection-section">
@@ -692,7 +707,6 @@ function SearchApp() {
       )}
 
       {isHome && <AdFitBanner />}
-      {isHome && <CoupangBanner />}
 
       <footer className="site-footer">
         <p className="site-footer-copy">© 2026 수군수군 우리집 · SuZip</p>
@@ -705,6 +719,11 @@ function SearchApp() {
           <a href="/terms.html" target="_blank" rel="noopener noreferrer">이용약관</a>
           <span>·</span>
           <a href="mailto:fiveio27@gmail.com">문의하기</a>
+        </div>
+        <div className="site-footer-biz">
+          상호: 준준팩토리 · 대표: 전이준 · 사업자등록번호: 895-24-01970<br/>
+          서울특별시 용산구 이촌로 100-8, 103동 1004호 · 통신판매업 신고: 준비 중<br/>
+          고객센터: <a href="mailto:fiveio27@gmail.com">fiveio27@gmail.com</a>
         </div>
       </footer>
     </div>

@@ -230,7 +230,6 @@ export default function BriefingPage() {
         )}
 
         <AdFitBanner />
-        <CoupangBanner />
 
         <button className="briefing-back-btn" onClick={() => { track('briefing_cta_click', { from: isDetail ? date : 'today' }); navigate('/') }}>
           아파트 검색하러 가기

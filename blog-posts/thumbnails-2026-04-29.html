@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    padding: 48px;
+  }
+  .wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .label { font-size: 13px; color: #374151; font-weight: 600; }
+  canvas { display: block; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+  button {
+    padding: 10px 28px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button:active { opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="label">① 부동산 브리핑 — 1200×630px</div>
+  <canvas id="c1" width="1200" height="630" style="width:700px;height:367px"></canvas>
+  <button onclick="dl('c1','thumb-브리핑-20260429.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">② 마포구 임장 가이드 — 1200×630px</div>
+  <canvas id="c2" width="1200" height="630" style="width:700px;height:367px"></canvas>
+  <button onclick="dl('c2','thumb-마포구임장-20260429.png')">다운로드</button>
+</div>
+
+<script>
+// ── 공통 드로잉 함수 ─────────────────────────────────────
+function drawThumbnail({ id, badge, title1, title2, subtitle, drawRight }) {
+  const c = document.getElementById(id)
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 630
+
+  // 배경 그라데이션
+  const bg = ctx.createLinearGradient(0, 0, W, H)
+  bg.addColorStop(0, '#1e3a8a')
+  bg.addColorStop(1, '#0f172a')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  // 우측 일러스트
+  drawRight(ctx, W, H)
+
+  // 좌측 텍스트 영역
+  const PX = 80
+
+  // 뱃지
+  ctx.fillStyle = '#2563eb'
+  ctx.beginPath()
+  ctx.roundRect(PX, 72, measureText(ctx, badge, 'bold 28px') + 48, 52, 8)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 28px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText(badge, PX + 24, 98)
+
+  // 타이틀 1줄
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 96px "Apple SD Gothic Neo", sans-serif'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText(title1, PX, 270)
+
+  // 타이틀 2줄
+  ctx.fillText(title2, PX, 390)
+
+  // 서브타이틀
+  ctx.fillStyle = '#93c5fd'
+  ctx.font = '36px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText(subtitle, PX, 470)
+
+  // 하단 구분선
+  ctx.fillStyle = 'rgba(255,255,255,0.12)'
+  ctx.fillRect(PX, 530, W - PX * 2, 1)
+
+  // suzip.kr
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = 'bold 28px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.fillText('suzip.kr', W - PX, 578)
+}
+
+function measureText(ctx, text, font) {
+  ctx.save()
+  ctx.font = font + ' "Apple SD Gothic Neo", sans-serif'
+  const w = ctx.measureText(text).width
+  ctx.restore()
+  return w
+}
+
+// ── 우측 일러스트: 그래프 (브리핑용) ────────────────────
+function drawBriefingRight(ctx, W, H) {
+  const cx = W - 240, cy = H / 2
+  ctx.save()
+  ctx.globalAlpha = 0.07
+
+  // 큰 원 배경
+  ctx.fillStyle = '#60a5fa'
+  ctx.beginPath()
+  ctx.arc(cx + 60, cy - 20, 260, 0, Math.PI * 2)
+  ctx.fill()
+
+  ctx.globalAlpha = 0.12
+
+  // 상승 후 꺾이는 그래프 라인
+  ctx.strokeStyle = '#ffffff'
+  ctx.lineWidth = 16
+  ctx.lineCap = 'round'
+  ctx.lineJoin = 'round'
+  ctx.beginPath()
+  ctx.moveTo(W - 560, H - 160)
+  ctx.lineTo(W - 440, H - 260)
+  ctx.lineTo(W - 320, H - 380)
+  ctx.lineTo(W - 200, H - 460)
+  ctx.lineTo(W - 100, H - 400)  // 꺾임
+  ctx.stroke()
+
+  // 꺾임 포인트 강조
+  ctx.globalAlpha = 0.2
+  ctx.fillStyle = '#f97316'
+  ctx.beginPath()
+  ctx.arc(W - 200, H - 460, 24, 0, Math.PI * 2)
+  ctx.fill()
+
+  // 하락 화살표 느낌
+  ctx.globalAlpha = 0.15
+  ctx.strokeStyle = '#fca5a5'
+  ctx.lineWidth = 12
+  ctx.beginPath()
+  ctx.moveTo(W - 200, H - 460)
+  ctx.lineTo(W - 100, H - 400)
+  ctx.stroke()
+
+  ctx.restore()
+}
+
+// ── 우측 일러스트: 마포구 지도 윤곽 (임장 가이드용) ──────
+function drawMapoRight(ctx, W, H) {
+  ctx.save()
+  ctx.globalAlpha = 0.08
+
+  // 배경 원
+  ctx.fillStyle = '#93c5fd'
+  ctx.beginPath()
+  ctx.arc(W - 220, H / 2, 280, 0, Math.PI * 2)
+  ctx.fill()
+
+  ctx.globalAlpha = 0.14
+  ctx.strokeStyle = '#ffffff'
+  ctx.lineWidth = 10
+  ctx.lineCap = 'round'
+  ctx.lineJoin = 'round'
+
+  // 마포구 대략적 윤곽선 (단순화)
+  const ox = W - 450, oy = H / 2 - 180
+  ctx.beginPath()
+  ctx.moveTo(ox + 80,  oy + 0)
+  ctx.lineTo(ox + 200, oy + 20)
+  ctx.lineTo(ox + 300, oy + 80)
+  ctx.lineTo(ox + 340, oy + 180)
+  ctx.lineTo(ox + 300, oy + 280)
+  ctx.lineTo(ox + 240, oy + 340)
+  ctx.lineTo(ox + 120, oy + 360)
+  ctx.lineTo(ox + 20,  oy + 300)
+  ctx.lineTo(ox + 0,   oy + 180)
+  ctx.lineTo(ox + 40,  oy + 80)
+  ctx.closePath()
+  ctx.stroke()
+
+  // 주요 역 점
+  const dots = [
+    [ox + 180, oy + 100],  // 공덕
+    [ox + 120, oy + 160],  // 마포
+    [ox + 80,  oy + 240],  // 합정
+    [ox + 60,  oy + 290],  // 망원
+    [ox + 260, oy + 200],  // 아현
+    [ox + 200, oy + 280],  // 신수
+  ]
+  ctx.globalAlpha = 0.2
+  ctx.fillStyle = '#ffffff'
+  dots.forEach(([x, y]) => {
+    ctx.beginPath()
+    ctx.arc(x, y, 10, 0, Math.PI * 2)
+    ctx.fill()
+  })
+
+  // 한강 라인 (마포구 남쪽)
+  ctx.globalAlpha = 0.18
+  ctx.strokeStyle = '#93c5fd'
+  ctx.lineWidth = 20
+  ctx.lineCap = 'round'
+  ctx.beginPath()
+  ctx.moveTo(ox - 20, oy + 340)
+  ctx.quadraticCurveTo(ox + 160, oy + 420, ox + 360, oy + 360)
+  ctx.stroke()
+
+  ctx.restore()
+}
+
+// ── 썸네일 1: 브리핑 ────────────────────────────────────
+drawThumbnail({
+  id: 'c1',
+  badge: '부동산 브리핑',
+  title1: '오르긴 오르는데,',
+  title2: '속도가 꺾였다',
+  subtitle: '4월 서울 아파트 시장 정리 · 강남은 2개월째 하락',
+  drawRight: drawBriefingRight,
+})
+
+// ── 썸네일 2: 마포구 임장 가이드 ────────────────────────
+drawThumbnail({
+  id: 'c2',
+  badge: '동네 임장 가이드',
+  title1: '마포구 동네별',
+  title2: '임장 가이드',
+  subtitle: '공덕부터 망원까지, 예산별로 어디 봐야 하나',
+  drawRight: drawMapoRight,
+})
+
+// ── 다운로드 ─────────────────────────────────────────────
+function dl(id, filename) {
+  const a = document.createElement('a')
+  a.download = filename
+  a.href = document.getElementById(id).toDataURL('image/png')
+  a.click()
+}
+</script>
+</body>
+</html>
