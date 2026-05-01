@@ -20,30 +20,42 @@ function SajuInput({ onPreview }) {
   const [year, setYear]     = useState('')
   const [month, setMonth]   = useState('')
   const [day, setDay]       = useState('')
-  const [hour, setHour]     = useState('')
+  const [si, setSi]         = useState('')   // 자/축/인... 전통 시주
   const [gender, setGender] = useState('male')
+
+  const SI_LIST = [
+    { value: '자', label: '자시 (23:00~01:00)' },
+    { value: '축', label: '축시 (01:00~03:00)' },
+    { value: '인', label: '인시 (03:00~05:00)' },
+    { value: '묘', label: '묘시 (05:00~07:00)' },
+    { value: '진', label: '진시 (07:00~09:00)' },
+    { value: '사', label: '사시 (09:00~11:00)' },
+    { value: '오', label: '오시 (11:00~13:00)' },
+    { value: '미', label: '미시 (13:00~15:00)' },
+    { value: '신', label: '신시 (15:00~17:00)' },
+    { value: '유', label: '유시 (17:00~19:00)' },
+    { value: '술', label: '술시 (19:00~21:00)' },
+    { value: '해', label: '해시 (21:00~23:00)' },
+  ]
 
   const years  = Array.from({ length: 80 }, (_, i) => currentYear - 15 - i)
   const months = Array.from({ length: 12 }, (_, i) => i + 1)
   const days   = Array.from({ length: 31 }, (_, i) => i + 1)
-  const hours  = Array.from({ length: 24 }, (_, i) => i)
   const canGo  = year && month && day
 
   function handleSubmit() {
     if (!canGo) return
-    track('saju_start', { year, month, day, has_hour: !!hour, gender })
-    onPreview({ year, month, day, hour, gender,
-      yearGan: getYearGan(Number(year)),
-      yearJi:  getYearJi(Number(year)) })
+    track('saju_start', { year, month, day, has_si: !!si, gender })
+    onPreview({ year, month, day, si, gender })
   }
 
   return (
     <div className="saju-wrap">
       <Helmet>
-        <title>이불 속 터잡기 — 내 사주로 찾는 동네 기운 | 수군수군 우리집</title>
-        <meta name="description" content="생년월일 입력하면 용신 오행으로 나와 맞는 서울 동네를 찾아드려요. 5월 무료." />
-        <meta property="og:title" content="이불 속 터잡기 — 내 사주로 찾는 동네 기운" />
-        <meta property="og:description" content="용신 오행으로 읽는 지역 터. 내 기운과 맞는 서울 동네를 찾아드려요." />
+        <title>이사하면 개운할 동네 — 내 사주로 찾는 지역 기운 궁합 | 수군수군 우리집</title>
+        <meta name="description" content="생년월일 입력하면 내 사주 용신 오행으로 나와 맞는 서울 동네를 찾아드려요. 5월 무료." />
+        <meta property="og:title" content="이사하면 개운할 동네 — 내 사주로 찾는 지역 기운 궁합" />
+        <meta property="og:description" content="내 사주로 찾는 지역 기운 궁합. 이사하면 개운할 서울 동네를 찾아드려요." />
         <meta property="og:image" content="https://www.suzip.kr/saju-og.png" />
         <meta property="og:url" content="https://www.suzip.kr/saju" />
       </Helmet>
@@ -56,8 +68,8 @@ function SajuInput({ onPreview }) {
       </div>
 
       <div style={{ fontSize: 13, color: '#2563eb', fontWeight: 700, marginBottom: 8 }}>이불 속 터잡기</div>
-      <h1 className="saju-title" style={{ fontSize: 28 }}>내 사주로 찾는<br/>동네 기운</h1>
-      <p className="saju-desc">용신 오행으로 읽는 지역 터 — 내 기운과 맞는 서울 동네를 찾아드려요</p>
+      <h1 className="saju-title" style={{ fontSize: 28 }}>이사하면 개운할 동네</h1>
+      <p className="saju-desc">내 사주로 찾는 지역 기운 궁합</p>
 
       <div className="saju-form">
         <div className="saju-field">
@@ -79,10 +91,10 @@ function SajuInput({ onPreview }) {
         </div>
 
         <div className="saju-field">
-          <label>태어난 시간 <span style={{ color: '#9CA3AF', fontWeight: 400 }}>(모르면 건너뛰어요)</span></label>
-          <select style={{ width: '100%' }} value={hour} onChange={e => setHour(e.target.value)}>
-            <option value="">시간 모름</option>
-            {hours.map(h => <option key={h} value={h}>{h}시</option>)}
+          <label>태어난 시 <span style={{ color: '#9CA3AF', fontWeight: 400 }}>(모르면 건너뛰어요)</span></label>
+          <select style={{ width: '100%' }} value={si} onChange={e => setSi(e.target.value)}>
+            <option value="">시 모름</option>
+            {SI_LIST.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
         </div>
 
@@ -224,8 +236,8 @@ function SajuLoading({ birthData, onResult, onError }) {
   const doneRef = useRef(false)
 
   useEffect(() => {
-    const { year, month, day, hour, gender } = birthData
-    fetch(`/api/saju?year=${year}&month=${month}&day=${day}&hour=${hour}&gender=${gender}`)
+    const { year, month, day, si, gender } = birthData
+    fetch(`/api/saju?year=${year}&month=${month}&day=${day}&si=${si || ''}&gender=${gender}`)
       .then(r => r.json())
       .then(data => {
         if (doneRef.current) return
@@ -391,8 +403,30 @@ function SajuResult({ result, onBack }) {
         </div>
       </div>
 
+      {result.fourPillars && (
+        <section className="saju-section">
+          <div className="saju-section-title">사주 원국 (만세력 계산)</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 4 }}>
+            {[
+              ['년주', result.fourPillars.year],
+              ['월주', result.fourPillars.month],
+              ['일주', result.fourPillars.day],
+              ['시주', result.fourPillars.hour || '—'],
+            ].map(([label, val]) => (
+              <div key={label} style={{ background: '#F3F4F6', borderRadius: 10, padding: '10px 8px', textAlign: 'center' }}>
+                <div style={{ fontSize: 11, color: '#6B7280', marginBottom: 4 }}>{label}</div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: '#1e3a8a', letterSpacing: 1 }}>
+                  {val?.split(' ')[0]}
+                </div>
+                <div style={{ fontSize: 11, color: '#9CA3AF' }}>{val?.match(/\(([^)]+)\)/)?.[1] || ''}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="saju-section">
-        <div className="saju-section-title">사주 원국 분석</div>
+        <div className="saju-section-title">사주 분석</div>
         {[
           ['오행 분포', s.ohaengDist],
           ['신강·신약', s.sinkang],
