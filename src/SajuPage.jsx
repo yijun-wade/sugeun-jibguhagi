@@ -465,6 +465,19 @@ function SajuResult({ result, onBack }) {
                 ))}
               </div>
             )}
+            <a
+              href={`/?tab=discover&gu=${encodeURIComponent(region.gu)}`}
+              onClick={() => track('saju_discover_click', { gu: region.gu, rank: i + 1 })}
+              style={{
+                display: 'block', marginTop: 14, padding: '10px 0',
+                background: i === 0 ? '#2563eb' : '#F3F4F6',
+                color: i === 0 ? '#fff' : '#374151',
+                borderRadius: 10, textAlign: 'center',
+                fontSize: 14, fontWeight: 700, textDecoration: 'none',
+              }}
+            >
+              {region.gu} 아파트 탐색하기 →
+            </a>
           </section>
         )
       })}
@@ -497,7 +510,6 @@ function SajuResult({ result, onBack }) {
         <AdFitBanner />
       </div>
 
-      <a href="/" className="saju-btn-home">suzip.kr에서 단지 상세 보기 →</a>
       <p className="saju-disclaimer">AI 기반 사주 분석 참고 자료예요. 실제 부동산 결정은 전문가 상담을 병행하세요.</p>
       </div>{/* /resultRef */}
 

@@ -158,6 +158,17 @@ function SearchApp() {
   const [selectedGu, setSelectedGu] = useState(null)
   const [selectedPrice, setSelectedPrice] = useState(null)
 
+  // 사주 결과에서 ?tab=discover&gu=마포구 로 진입 시 자동 세팅
+  useEffect(() => {
+    if (location.pathname !== '/') return
+    const tab = searchParams.get('tab')
+    const gu  = searchParams.get('gu')
+    if (tab === 'discover') {
+      setSearchMode('discover')
+      if (gu) setSelectedGu(gu)
+    }
+  }, [])
+
   useEffect(() => {
     if (searchMode === 'discover' && !discoverData) {
       fetch('/apt-discovery.json').then(r => r.json()).then(setDiscoverData).catch(() => {})
