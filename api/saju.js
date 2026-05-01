@@ -182,7 +182,7 @@ ${pillarsInfo}
         },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 3000,
+          max_tokens: 4096,
           messages: [{ role: 'user', content: prompt }],
         }),
       })
@@ -195,11 +195,17 @@ ${pillarsInfo}
     if (!resp.ok) return res.status(500).json({ error: 'AI 분석 실패' })
 
     const data = await resp.json()
-    const raw  = data?.content?.[0]?.text || ''
+    const raw        = data?.content?.[0]?.text || ''
+    const stopReason = data?.stop_reason
+
+    // 응답이 잘린 경우
+    if (stopReason === 'max_tokens') {
+      return res.status(500).json({ error: '분석 응답이 너무 길어요. 다시 시도해주세요.' })
+    }
 
     const start = raw.indexOf('{')
     const end   = raw.lastIndexOf('}')
-    if (start === -1 || end === -1) return res.status(500).json({ error: '결과 파싱 실패' })
+    if (start === -1 || end === -1) return res.status(500).json({ error: '분석 결과를 읽지 못했어요. 다시 시도해주세요.' })
 
     const cleaned = sanitizeJson(raw.slice(start, end + 1))
 
@@ -207,7 +213,18 @@ ${pillarsInfo}
     try {
       result = JSON.parse(cleaned)
     } catch {
-      return res.status(500).json({ error: 'JSON 파싱 실패 — 다시 시도해주세요' })
+      // JSON 파싱 실패 시 마지막 완전한 지역까지만 사용 시도
+      try {
+        const lastRegionEnd = cleaned.lastIndexOf('},"regionComparison"')
+        if (lastRegionEnd > 0) {
+          const partial = cleaned.slice(0, lastRegionEnd) + '}],"regionComparison":"","warning":{"year":"","reason":"","action":""},"summary":"","finalVerdict":""}'
+          result = JSON.parse(sanitizeJson(partial))
+        } else {
+          return res.status(500).json({ error: '분석 결과를 읽지 못했어요. 다시 시도해주세요.' })
+        }
+      } catch {
+        return res.status(500).json({ error: '분석 결과를 읽지 못했어요. 다시 시도해주세요.' })
+      }
     }
 
     // 아파트 데이터 주입
