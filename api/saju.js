@@ -4,7 +4,78 @@ export const config = { maxDuration: 60, regions: ['icn1'] }
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { setCors } from './_utils.js'
-import { calculateFourPillars } from 'manseryeok'
+
+// ── 만세력 계산 (manseryeok 인라인) ──────────────────────
+const HEAVENLY_STEMS   = ['갑','을','병','정','무','기','경','신','임','계']
+const HEAVENLY_STEMS_H = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸']
+const EARTHLY_BRANCHES   = ['자','축','인','묘','진','사','오','미','신','유','술','해']
+const EARTHLY_BRANCHES_H = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥']
+const OHAENG_STEM   = ['목','목','화','화','토','토','금','금','수','수']
+const OHAENG_BRANCH = ['수','토','목','목','토','화','화','토','금','금','토','수']
+
+const SOLAR_TERM_BASE = [
+  5.4055,20.12,3.87,18.73,5.63,20.646,4.81,20.1,5.52,21.04,5.678,21.37,
+  7.108,22.83,7.5,23.13,7.646,23.042,8.318,23.438,7.438,22.36,7.18,21.94,
+]
+const MONTH_BRANCHES = {1:'인',2:'묘',3:'진',4:'사',5:'오',6:'미',7:'신',8:'유',9:'술',10:'해',11:'자',12:'축'}
+
+function getSolarTermDate(year, idx) {
+  const c = Math.floor(year / 100), y = year % 100
+  const day = Math.floor(SOLAR_TERM_BASE[idx] + 0.2422 * y + Math.floor(y/4) - Math.floor(c/4))
+  return new Date(year, Math.floor(idx / 2), day)
+}
+
+function getYearPillar(year) {
+  return { stem: HEAVENLY_STEMS[(year-4)%10], branch: EARTHLY_BRANCHES[(year-4)%12] }
+}
+
+function getMonthPillar(year, month, day) {
+  const date = new Date(year, month-1, day)
+  let adjYear = year
+  if (date < getSolarTermDate(year, 2)) adjYear = year - 1
+  let solarMonth = 0
+  for (let i = 0; i < 24; i += 2) {
+    if (date >= getSolarTermDate(adjYear, i)) solarMonth = Math.floor(i/2) + 1
+    else break
+  }
+  const yStemMod5 = ((adjYear-4) % 10) % 5
+  const stemIdx = (yStemMod5 * 2 + solarMonth + 1) % 10
+  return { stem: HEAVENLY_STEMS[stemIdx], branch: MONTH_BRANCHES[solarMonth] || '인' }
+}
+
+function getDayPillar(year, month, day) {
+  const BASE = new Date(1992, 9, 24), BASE_NUM = 9
+  const diff = Math.floor((new Date(year, month-1, day) - BASE) / 86400000)
+  const num  = (((BASE_NUM + diff) % 60) + 60) % 60
+  return { stem: HEAVENLY_STEMS[num % 10], branch: EARTHLY_BRANCHES[num % 12] }
+}
+
+function getHourPillar(dayStem, si) {
+  // si: 자/축/인/묘/진/사/오/미/신/유/술/해
+  const branchIdx = EARTHLY_BRANCHES.indexOf(si)
+  if (branchIdx === -1) return null
+  const dayStemIdx = HEAVENLY_STEMS.indexOf(dayStem)
+  const hourStemIdx = ((dayStemIdx % 5) * 2 + branchIdx) % 10
+  return { stem: HEAVENLY_STEMS[hourStemIdx], branch: si }
+}
+
+function hanja(stem, branch) {
+  return HEAVENLY_STEMS_H[HEAVENLY_STEMS.indexOf(stem)] + EARTHLY_BRANCHES_H[EARTHLY_BRANCHES.indexOf(branch)]
+}
+
+function calcFourPillars(year, month, day, si) {
+  const yr = getYearPillar(year)
+  const mo = getMonthPillar(year, month, day)
+  const da = getDayPillar(year, month, day)
+  const hr = si ? getHourPillar(da.stem, si) : null
+  return {
+    year:  { kor: yr.stem + yr.branch, han: hanja(yr.stem, yr.branch), ohaeng: `천간 ${OHAENG_STEM[HEAVENLY_STEMS.indexOf(yr.stem)]} 지지 ${OHAENG_BRANCH[EARTHLY_BRANCHES.indexOf(yr.branch)]}` },
+    month: { kor: mo.stem + mo.branch, han: hanja(mo.stem, mo.branch), ohaeng: `천간 ${OHAENG_STEM[HEAVENLY_STEMS.indexOf(mo.stem)]} 지지 ${OHAENG_BRANCH[EARTHLY_BRANCHES.indexOf(mo.branch)]}` },
+    day:   { kor: da.stem + da.branch, han: hanja(da.stem, da.branch), ohaeng: `천간 ${OHAENG_STEM[HEAVENLY_STEMS.indexOf(da.stem)]} 지지 ${OHAENG_BRANCH[EARTHLY_BRANCHES.indexOf(da.branch)]}` },
+    hour:  hr ? { kor: hr.stem + hr.branch, han: hanja(hr.stem, hr.branch), ohaeng: `천간 ${OHAENG_STEM[HEAVENLY_STEMS.indexOf(hr.stem)]} 지지 ${OHAENG_BRANCH[EARTHLY_BRANCHES.indexOf(hr.branch)]}` } : null,
+    ilgan: da.stem,
+  }
+}
 
 const YONGSHIN_GU = {
   水: ['마포구', '용산구', '영등포구', '노원구', '도봉구'],
@@ -14,11 +85,6 @@ const YONGSHIN_GU = {
   土: ['중구', '종로구', '은평구', '성북구', '강북구'],
 }
 
-// 시주 한자 → 시간 범위 (자시는 23~01)
-const SI_TO_HOUR = {
-  '자': 0, '축': 2, '인': 4, '묘': 6, '진': 8, '사': 10,
-  '오': 12, '미': 14, '신': 16, '유': 18, '술': 20, '해': 22,
-}
 
 let aptCache = null
 function loadApts() {
@@ -56,44 +122,24 @@ function sanitizeJson(str) {
 
 export default async function handler(req, res) {
   if (setCors(req, res)) return
-  const { year, month, day, hour, si, gender } = req.query
+  const { year, month, day, si, gender } = req.query
   if (!year || !month || !day) return res.status(400).json({ error: '생년월일이 필요해요' })
   if (!process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: 'API 키 없음' })
 
-  // 시주 결정: si(자/축/인...) 우선, 없으면 hour(0~23) 사용
-  let hourNum = null
-  if (si && SI_TO_HOUR[si] !== undefined) {
-    hourNum = SI_TO_HOUR[si]
-  } else if (hour !== undefined && hour !== '') {
-    hourNum = Number(hour)
-  }
-
   // 만세력으로 4주 8자 계산
-  let fourPillars
+  let fp
   try {
-    fourPillars = calculateFourPillars({
-      year: Number(year),
-      month: Number(month),
-      day: Number(day),
-      hour: hourNum ?? 12,
-      minute: 0,
-    })
+    fp = calcFourPillars(Number(year), Number(month), Number(day), si || null)
   } catch (e) {
     return res.status(400).json({ error: '생년월일 계산 오류: ' + e.message })
   }
 
-  const {
-    yearString, monthString, dayString, hourString,
-    yearHanja, monthHanja, dayHanja, hourHanja,
-    yearElement, monthElement, dayElement, hourElement,
-  } = fourPillars
-
   const pillarsInfo = `
 사주 원국 (만세력 계산값 — 이대로 사용하세요):
-- 년주: ${yearString} (${yearHanja}) — 오행: 천간 ${yearElement?.stem}, 지지 ${yearElement?.branch}
-- 월주: ${monthString} (${monthHanja}) — 오행: 천간 ${monthElement?.stem}, 지지 ${monthElement?.branch}
-- 일주: ${dayString} (${dayHanja}) — 오행: 천간 ${dayElement?.stem}, 지지 ${dayElement?.branch}
-- 시주: ${hourNum !== null ? `${hourString} (${hourHanja}) — 오행: 천간 ${hourElement?.stem}, 지지 ${hourElement?.branch}` : '미입력'}
+- 년주: ${fp.year.kor} (${fp.year.han}) — 오행: ${fp.year.ohaeng}
+- 월주: ${fp.month.kor} (${fp.month.han}) — 오행: ${fp.month.ohaeng}
+- 일주: ${fp.day.kor} (${fp.day.han}) — 오행: ${fp.day.ohaeng}
+- 시주: ${fp.hour ? `${fp.hour.kor} (${fp.hour.han}) — 오행: ${fp.hour.ohaeng}` : '미입력'}
 `.trim()
 
   const aptData = {}
@@ -174,10 +220,10 @@ ${pillarsInfo}
 
     // 만세력 원국 추가 (프론트에서 표시용)
     result.fourPillars = {
-      year: `${yearString} (${yearHanja})`,
-      month: `${monthString} (${monthHanja})`,
-      day: `${dayString} (${dayHanja})`,
-      hour: hourNum !== null ? `${hourString} (${hourHanja})` : null,
+      year:  `${fp.year.kor} (${fp.year.han})`,
+      month: `${fp.month.kor} (${fp.month.han})`,
+      day:   `${fp.day.kor} (${fp.day.han})`,
+      hour:  fp.hour ? `${fp.hour.kor} (${fp.hour.han})` : null,
     }
 
     return res.json(result)
