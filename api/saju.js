@@ -197,38 +197,25 @@ ${pillarsInfo}
   }
 
   try {
-    // 최대 3번 시도
-    let raw = null
+    // 최대 3번 시도 — JSON 파싱 성공할 때까지
+    let result = null
     for (let attempt = 0; attempt < 3; attempt++) {
-      raw = await callAI()
-      if (raw && raw.includes('{')) break
-    }
+      const raw = await callAI()
+      if (!raw || !raw.includes('{')) continue
 
-    if (!raw) return res.status(504).json({ error: '분석 시간이 초과됐어요. 다시 시도해주세요.' })
+      const start = raw.indexOf('{')
+      const end   = raw.lastIndexOf('}')
+      if (start === -1 || end === -1) continue
 
-    const start = raw.indexOf('{')
-    const end   = raw.lastIndexOf('}')
-    if (start === -1 || end === -1) return res.status(500).json({ error: '분석 결과를 읽지 못했어요. 다시 시도해주세요.' })
-
-    const cleaned = sanitizeJson(raw.slice(start, end + 1))
-
-    let result
-    try {
-      result = JSON.parse(cleaned)
-    } catch {
-      // JSON 파싱 실패 시 마지막 완전한 지역까지만 사용 시도
       try {
-        const lastRegionEnd = cleaned.lastIndexOf('},"regionComparison"')
-        if (lastRegionEnd > 0) {
-          const partial = cleaned.slice(0, lastRegionEnd) + '}],"regionComparison":"","warning":{"year":"","reason":"","action":""},"summary":"","finalVerdict":""}'
-          result = JSON.parse(sanitizeJson(partial))
-        } else {
-          return res.status(500).json({ error: '분석 결과를 읽지 못했어요. 다시 시도해주세요.' })
-        }
+        result = JSON.parse(sanitizeJson(raw.slice(start, end + 1)))
+        break
       } catch {
-        return res.status(500).json({ error: '분석 결과를 읽지 못했어요. 다시 시도해주세요.' })
+        continue
       }
     }
+
+    if (!result) return res.status(500).json({ error: '분석 결과를 읽지 못했어요. 다시 시도해주세요.' })
 
     // 아파트 데이터 주입
     if (result.regions) {
