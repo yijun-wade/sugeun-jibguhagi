@@ -182,7 +182,7 @@ export default function BriefingPage() {
         </Link>
         <nav className="site-header-nav">
           <Link to="/" className="site-nav-link">이불 속 임장</Link>
-          <Link to="/briefing" className="site-nav-link site-nav-active">이불 속 뉴스</Link>
+          <Link to="/briefing" className="site-nav-link site-nav-active">속닥속닥 뉴스</Link>
           <Link to="/policy" className="site-nav-link">이불 속 정책</Link>
           <Link to="/glossary" className="site-nav-link"><span className="nav-bubble">이불 속</span> 사전</Link>
         </nav>
@@ -193,7 +193,7 @@ export default function BriefingPage() {
           {isDetail && (
             <button className="briefing-back" onClick={() => navigate('/briefing')}>← 브리핑 목록</button>
           )}
-          <h1 className="briefing-title">이불 속 뉴스</h1>
+          <h1 className="briefing-title">속닥속닥 뉴스</h1>
           <p className="briefing-sub">오늘 부동산 뉴스, 내 입장에서 어떤 의미인지 풀어드려요</p>
         </div>
 

@@ -446,7 +446,7 @@ function SearchApp() {
         </a>
         <nav className="site-header-nav">
           <a href="/" className="site-nav-link site-nav-active">이불 속 임장</a>
-          <a href="/briefing" className="site-nav-link">이불 속 뉴스</a>
+          <a href="/briefing" className="site-nav-link">속닥속닥 뉴스</a>
           <a href="/policy" className="site-nav-link">이불 속 정책</a>
           <a href="/glossary" className="site-nav-link"><span className="nav-bubble">이불 속</span> 사전</a>
         </nav>
@@ -725,7 +725,7 @@ function SearchApp() {
         <div className="site-footer-links">
           <a href="https://blog.naver.com/kaimex" target="_blank" rel="noopener noreferrer">블로그</a>
           <span>·</span>
-          <a href="/briefing">이불 속 뉴스</a>
+          <a href="/briefing">속닥속닥 뉴스</a>
           <span>·</span>
           <a href="/terms.html" target="_blank" rel="noopener noreferrer">이용약관</a>
           <span>·</span>
