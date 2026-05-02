@@ -181,13 +181,17 @@ ${pillarsInfo}
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 4096,
-          messages: [{ role: 'user', content: prompt }],
+          messages: [
+            { role: 'user', content: prompt },
+            { role: 'assistant', content: '{"ilgan":"' },
+          ],
         }),
       })
       clearTimeout(tid)
       if (!resp.ok) return null
       const data = await resp.json()
-      const raw  = data?.content?.[0]?.text || ''
+      // pre-fill로 시작 부분이 잘려있으니 복원
+      const raw  = '{"ilgan":"' + (data?.content?.[0]?.text || '')
       if (data?.stop_reason === 'max_tokens') return null
       return raw
     } catch {
