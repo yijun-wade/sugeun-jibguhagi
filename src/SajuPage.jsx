@@ -51,6 +51,12 @@ function SajuInput({ onPreview }) {
 
   return (
     <div className="saju-wrap">
+      <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 24, textDecoration: 'none' }}>
+        <span style={{ fontSize: 18, fontWeight: 900, color: '#111827', letterSpacing: -0.5 }}>
+          <span style={{ color: '#2563eb' }}>수</span>군수군 우리<span style={{ color: '#2563eb' }}>집</span>
+        </span>
+        <span style={{ fontSize: 10, fontWeight: 700, background: '#2563eb', color: '#fff', padding: '2px 6px', borderRadius: 6 }}>Beta</span>
+      </a>
       <Helmet>
         <title>이사하면 개운할 동네 — 내 사주로 찾는 지역 기운 궁합 | 수군수군 우리집</title>
         <meta name="description" content="생년월일 입력하면 내 사주 용신 오행으로 나와 맞는 서울 동네를 찾아드려요. 5월 무료." />
@@ -392,6 +398,12 @@ function SajuResult({ result, onBack }) {
 
   return (
     <div className="saju-wrap saju-result">
+      <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20, textDecoration: 'none' }}>
+        <span style={{ fontSize: 18, fontWeight: 900, color: '#111827', letterSpacing: -0.5 }}>
+          <span style={{ color: '#2563eb' }}>수</span>군수군 우리<span style={{ color: '#2563eb' }}>집</span>
+        </span>
+        <span style={{ fontSize: 10, fontWeight: 700, background: '#2563eb', color: '#fff', padding: '2px 6px', borderRadius: 6 }}>Beta</span>
+      </a>
       <div ref={resultRef}>
       <div className="saju-result-hero">
         <div style={{ fontSize: 48, fontWeight: 900, color: '#fff' }}>{result.ilgan}</div>
