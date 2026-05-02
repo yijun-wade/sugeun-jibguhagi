@@ -166,13 +166,11 @@ ${pillarsInfo}
 아래 JSON만 출력 (줄바꿈 없이):
 {"ilgan":"甲木","saju":{"ohaengDist":"木 과다 水 부족","sinkang":"신강","yongshin":"水","yongShinReason":"신강 甲木은 水로 설기해야 균형","daewon":"癸巳 대운(2020-2030)","sewon":"丙午년 식신"},"timing":{"isGoodYear":true,"timingScore":88,"reason":"대운이 용신 보충","bestMonths":"봄 3-4월"},"regions":[{"gu":"마포구","rank":1,"score":95,"scoreBreakdown":{"ohaengMatch":{"score":24,"reason":"한강 水 기운"},"jimingOhaeng":{"score":23,"reason":"浦자 水변"},"landscape":{"score":24,"reason":"배산임수"},"lifeEnergy":{"score":24,"reason":"교통 허브"}},"jiming":"麻浦 — 浦자에 水변","whyThisGu":"이유","dailyLife":"일상 에너지"},{"gu":"용산구","rank":2,"score":85,"scoreBreakdown":{"ohaengMatch":{"score":22,"reason":"한강"},"jimingOhaeng":{"score":19,"reason":"龍 水기운"},"landscape":{"score":23,"reason":"배산임수"},"lifeEnergy":{"score":21,"reason":"한남 에너지"}},"jiming":"龍山 — 용의 땅","whyThisGu":"이유","dailyLife":"일상"},{"gu":"영등포구","rank":3,"score":76,"scoreBreakdown":{"ohaengMatch":{"score":22,"reason":"여의도 한강"},"jimingOhaeng":{"score":15,"reason":"水 약함"},"landscape":{"score":20,"reason":"업무지형"},"lifeEnergy":{"score":19,"reason":"긴장 지속"}},"jiming":"永登浦","whyThisGu":"이유","dailyLife":"일상"}],"regionComparison":"비교","warning":{"year":"2028년","reason":"주의","action":"대비"},"summary":"한 줄 요약","finalVerdict":"최종 판단"}`
 
-  try {
+  async function callAI() {
     const ctrl = new AbortController()
-    const tid  = setTimeout(() => ctrl.abort(), 40000)
-
-    let resp
+    const tid  = setTimeout(() => ctrl.abort(), 38000)
     try {
-      resp = await fetch('https://api.anthropic.com/v1/messages', {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         signal: ctrl.signal,
         headers: {
@@ -186,22 +184,27 @@ ${pillarsInfo}
           messages: [{ role: 'user', content: prompt }],
         }),
       })
+      clearTimeout(tid)
+      if (!resp.ok) return null
+      const data = await resp.json()
+      const raw  = data?.content?.[0]?.text || ''
+      if (data?.stop_reason === 'max_tokens') return null
+      return raw
     } catch {
       clearTimeout(tid)
-      return res.status(504).json({ error: '분석 시간이 초과됐어요. 다시 시도해주세요.' })
+      return null
     }
-    clearTimeout(tid)
+  }
 
-    if (!resp.ok) return res.status(500).json({ error: 'AI 분석 실패' })
-
-    const data = await resp.json()
-    const raw        = data?.content?.[0]?.text || ''
-    const stopReason = data?.stop_reason
-
-    // 응답이 잘린 경우
-    if (stopReason === 'max_tokens') {
-      return res.status(500).json({ error: '분석 응답이 너무 길어요. 다시 시도해주세요.' })
+  try {
+    // 최대 3번 시도
+    let raw = null
+    for (let attempt = 0; attempt < 3; attempt++) {
+      raw = await callAI()
+      if (raw && raw.includes('{')) break
     }
+
+    if (!raw) return res.status(504).json({ error: '분석 시간이 초과됐어요. 다시 시도해주세요.' })
 
     const start = raw.indexOf('{')
     const end   = raw.lastIndexOf('}')
