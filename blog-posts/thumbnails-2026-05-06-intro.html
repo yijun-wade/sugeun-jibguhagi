@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>서비스 소개 이미지 세트</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    padding: 48px;
+  }
+  h1 { font-size: 22px; color: #111827; margin-bottom: 8px; }
+  .meta { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+  .wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .label { font-size: 13px; color: #374151; font-weight: 600; }
+  canvas { display: block; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+  button {
+    padding: 10px 28px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button:active { opacity: 0.85; }
+  .all-btn {
+    background: #f97316;
+    padding: 14px 36px;
+    font-size: 15px;
+  }
+</style>
+</head>
+<body>
+
+<div>
+  <h1>서비스 소개 이미지 세트 (공지사항용)</h1>
+  <div class="meta">썸네일 1장 + 메뉴 안내 1장 + 시나리오 1장 + CTA 1장 = 총 4장</div>
+</div>
+
+<button class="all-btn" onclick="downloadAll()">📦 전체 한 번에 다운로드</button>
+
+<div class="wrap">
+  <div class="label">① 메인 썸네일 — 1200×630px (네이버 OG/대표)</div>
+  <canvas id="c1" width="1200" height="630" style="width:700px;height:367px"></canvas>
+  <button onclick="dl('c1','thumb-소개-1-메인.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">② 메뉴 6개 안내 인포그래픽 — 1200×800px</div>
+  <canvas id="c2" width="1200" height="800" style="width:700px;height:467px"></canvas>
+  <button onclick="dl('c2','thumb-소개-2-메뉴.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">③ 시나리오 3가지 — 1200×700px</div>
+  <canvas id="c3" width="1200" height="700" style="width:700px;height:408px"></canvas>
+  <button onclick="dl('c3','thumb-소개-3-시나리오.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">④ 시작하기 CTA — 1200×630px</div>
+  <canvas id="c4" width="1200" height="630" style="width:700px;height:367px"></canvas>
+  <button onclick="dl('c4','thumb-소개-4-CTA.png')">다운로드</button>
+</div>
+
+<script>
+function measureText(ctx, text, font) {
+  ctx.save()
+  ctx.font = font + ' "Apple SD Gothic Neo", sans-serif'
+  const w = ctx.measureText(text).width
+  ctx.restore()
+  return w
+}
+
+// ── ① 메인 썸네일 ────────────────────────────
+function drawMain() {
+  const c = document.getElementById('c1')
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 630
+
+  // 따뜻한 그라데이션 (브랜드 블루 + 라이트)
+  const bg = ctx.createLinearGradient(0, 0, W, H)
+  bg.addColorStop(0, '#2563eb')
+  bg.addColorStop(1, '#1e3a8a')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  // 부드러운 원 (배경 데코)
+  ctx.save()
+  ctx.globalAlpha = 0.08
+  ctx.fillStyle = '#fbbf24'
+  ctx.beginPath()
+  ctx.arc(W - 180, 120, 200, 0, Math.PI*2)
+  ctx.fill()
+
+  ctx.fillStyle = '#60a5fa'
+  ctx.beginPath()
+  ctx.arc(W - 280, H - 100, 280, 0, Math.PI*2)
+  ctx.fill()
+  ctx.restore()
+
+  // 우측 — 이불 속 일러스트 (간단 표현)
+  const cx = W - 290, cy = H/2
+
+  // 침대
+  ctx.save()
+  ctx.globalAlpha = 0.15
+  ctx.fillStyle = '#ffffff'
+  ctx.beginPath()
+  ctx.roundRect(cx - 180, cy + 20, 360, 140, 12)
+  ctx.fill()
+  ctx.restore()
+
+  // 이불 (큰 곡선)
+  ctx.save()
+  ctx.globalAlpha = 0.25
+  ctx.fillStyle = '#fbbf24'
+  ctx.beginPath()
+  ctx.moveTo(cx - 180, cy + 60)
+  ctx.bezierCurveTo(cx - 100, cy - 40, cx + 100, cy - 40, cx + 180, cy + 60)
+  ctx.lineTo(cx + 180, cy + 160)
+  ctx.lineTo(cx - 180, cy + 160)
+  ctx.closePath()
+  ctx.fill()
+  ctx.restore()
+
+  // 핸드폰 (이불 안에서 보는 화면)
+  ctx.save()
+  ctx.globalAlpha = 0.85
+  // 핸드폰 외곽
+  ctx.fillStyle = '#0f172a'
+  ctx.beginPath()
+  ctx.roundRect(cx - 60, cy - 20, 120, 200, 16)
+  ctx.fill()
+  // 화면
+  ctx.fillStyle = '#ffffff'
+  ctx.beginPath()
+  ctx.roundRect(cx - 52, cy - 12, 104, 184, 10)
+  ctx.fill()
+  // 화면 안 컨텐츠 (suzip.kr 검색 화면 추상화)
+  ctx.fillStyle = '#2563eb'
+  ctx.fillRect(cx - 44, cy - 4, 88, 8)
+  ctx.fillStyle = '#e5e7eb'
+  ctx.fillRect(cx - 44, cy + 16, 88, 22)
+  ctx.fillRect(cx - 44, cy + 46, 88, 22)
+  ctx.fillRect(cx - 44, cy + 76, 88, 22)
+  ctx.fillRect(cx - 44, cy + 106, 88, 22)
+  ctx.fillRect(cx - 44, cy + 136, 88, 22)
+
+  ctx.fillStyle = '#fbbf24'
+  ctx.fillRect(cx - 44, cy + 16, 88, 22)
+  ctx.restore()
+
+  // 좌측 텍스트
+  const PX = 80
+
+  // 뱃지
+  ctx.fillStyle = '#fbbf24'
+  ctx.beginPath()
+  ctx.roundRect(PX, 72, measureText(ctx, '공지사항', 'bold 26px') + 44, 48, 8)
+  ctx.fill()
+  ctx.fillStyle = '#1e3a8a'
+  ctx.font = 'bold 26px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('공지사항', PX + 22, 96)
+
+  // 메인
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 78px "Apple SD Gothic Neo", sans-serif'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('수군수군 우리집', PX, 240)
+  ctx.fillText('이렇게 쓰시면 돼요', PX, 330)
+
+  // 서브
+  ctx.fillStyle = '#fcd34d'
+  ctx.font = '28px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('퇴근 후 이불 속에서 하는 임장', PX, 390)
+
+  // 부연
+  ctx.fillStyle = 'rgba(255,255,255,0.7)'
+  ctx.font = '22px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('서비스 소개 + 메뉴별 사용법', PX, 440)
+
+  // 무료·회원가입X 칩들
+  const chips = ['💸 100% 무료', '📝 회원가입 불필요', '📱 모바일 최적화']
+  let chipX = PX
+  chips.forEach((chip) => {
+    const w = measureText(ctx, chip, 'bold 18px') + 28
+    ctx.fillStyle = 'rgba(255,255,255,0.12)'
+    ctx.beginPath()
+    ctx.roundRect(chipX, 470, w, 36, 18)
+    ctx.fill()
+    ctx.fillStyle = '#ffffff'
+    ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(chip, chipX + 14, 488)
+    ctx.textBaseline = 'alphabetic'
+    chipX += w + 10
+  })
+
+  // 구분선
+  ctx.fillStyle = 'rgba(255,255,255,0.12)'
+  ctx.fillRect(PX, 540, W - PX*2, 1)
+
+  // suzip.kr
+  ctx.fillStyle = 'rgba(255,255,255,0.5)'
+  ctx.font = 'bold 28px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.fillText('suzip.kr', W - PX, 588)
+}
+
+// ── ② 메뉴 6개 인포그래픽 ─────────────────
+function drawMenu() {
+  const c = document.getElementById('c2')
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 800
+
+  // 배경
+  ctx.fillStyle = '#f8fafc'
+  ctx.fillRect(0, 0, W, H)
+
+  // 헤더
+  ctx.fillStyle = '#2563eb'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('메뉴 한눈에 보기', 80, 70)
+
+  ctx.fillStyle = '#0f172a'
+  ctx.font = 'bold 44px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('이불 속에서 다 끝내세요', 80, 130)
+  ctx.fillStyle = '#64748b'
+  ctx.font = '22px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('아파트 검색부터 사주까지, 한 사이트에서', 80, 165)
+
+  // 6개 메뉴 카드 (3×2 그리드)
+  const menus = [
+    { icon: '🏠', title: '이불 속 임장', desc: '아파트 검색 + 동네·가격 탐색', color: '#2563eb' },
+    { icon: '📰', title: '속닥속닥 뉴스', desc: '매일 아침 7시 부동산 브리핑', color: '#f97316' },
+    { icon: '📋', title: '이불 속 정책', desc: '요즘 정책 한눈에 정리', color: '#10b981' },
+    { icon: '📖', title: '이불 속 사전', desc: '부동산 용어 25개 쉽게 풀이', color: '#8b5cf6' },
+    { icon: '🔮', title: '이불 속 터잡기', desc: '내 사주로 찾는 동네 (5월 무료)', color: '#ec4899' },
+    { icon: '⭐', title: '수집하기', desc: '관심 단지 모아서 한번에 비교', color: '#fbbf24' },
+  ]
+
+  const cardW = 340
+  const cardH = 200
+  const gapX = 20
+  const gapY = 20
+  const startX = 80
+  const startY = 220
+
+  menus.forEach((m, i) => {
+    const col = i % 3
+    const row = Math.floor(i / 3)
+    const x = startX + col * (cardW + gapX)
+    const y = startY + row * (cardH + gapY)
+
+    // 카드
+    ctx.fillStyle = '#ffffff'
+    ctx.beginPath()
+    ctx.roundRect(x, y, cardW, cardH, 16)
+    ctx.fill()
+    ctx.strokeStyle = '#e2e8f0'
+    ctx.lineWidth = 1
+    ctx.stroke()
+
+    // 좌측 컬러 바
+    ctx.fillStyle = m.color
+    ctx.beginPath()
+    ctx.roundRect(x, y, 6, cardH, 3)
+    ctx.fill()
+
+    // 아이콘 원
+    ctx.fillStyle = m.color + '20'
+    ctx.beginPath()
+    ctx.arc(x + 60, y + 60, 36, 0, Math.PI*2)
+    ctx.fill()
+
+    // 아이콘
+    ctx.fillStyle = '#0f172a'
+    ctx.font = '36px sans-serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(m.icon, x + 60, y + 60)
+
+    // 타이틀
+    ctx.fillStyle = '#0f172a'
+    ctx.font = 'bold 26px "Apple SD Gothic Neo", sans-serif'
+    ctx.textAlign = 'left'
+    ctx.textBaseline = 'alphabetic'
+    ctx.fillText(m.title, x + 30, y + 130)
+
+    // 설명
+    ctx.fillStyle = '#64748b'
+    ctx.font = '17px "Apple SD Gothic Neo", sans-serif'
+    ctx.fillText(m.desc, x + 30, y + 162)
+  })
+
+  // 푸터
+  ctx.fillStyle = '#cbd5e1'
+  ctx.fillRect(80, H - 60, W - 160, 1)
+
+  ctx.fillStyle = '#94a3b8'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.fillText('suzip.kr', W - 80, H - 28)
+}
+
+// ── ③ 시나리오 3가지 ───────────────────────
+function drawScenarios() {
+  const c = document.getElementById('c3')
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 700
+
+  // 배경
+  ctx.fillStyle = '#0f172a'
+  ctx.fillRect(0, 0, W, H)
+
+  // 헤더
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('이런 분들에게 추천드려요', 80, 70)
+
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 44px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('이렇게 쓰시면 돼요', 80, 130)
+
+  // 3개 시나리오
+  const scenes = [
+    {
+      title: '신혼집 알아보고 있어요',
+      icon: '💑',
+      steps: ['예산·구 선택', '단지 후기 확인', '비교 후 임장'],
+      color: '#ec4899'
+    },
+    {
+      title: '뉴스에 휘둘리지 않고 싶어요',
+      icon: '📰',
+      steps: ['매일 30초 브리핑', '용어 쉽게 검색', '정책 흐름 파악'],
+      color: '#f97316'
+    },
+    {
+      title: '단지 후보 좁혔는데 결정이 어려워요',
+      icon: '🤔',
+      steps: ['후보 모두 수집', '동네 후기 비교', '사주로 마지막 보조'],
+      color: '#a855f7'
+    }
+  ]
+
+  const cardW = 340
+  const cardH = 380
+  const gap = 20
+  const startX = 80
+  const startY = 200
+
+  scenes.forEach((s, i) => {
+    const x = startX + i * (cardW + gap)
+
+    // 카드
+    ctx.fillStyle = 'rgba(255,255,255,0.04)'
+    ctx.beginPath()
+    ctx.roundRect(x, startY, cardW, cardH, 20)
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)'
+    ctx.stroke()
+
+    // 아이콘 원
+    ctx.fillStyle = s.color + '30'
+    ctx.beginPath()
+    ctx.arc(x + cardW/2, startY + 70, 44, 0, Math.PI*2)
+    ctx.fill()
+
+    ctx.fillStyle = '#ffffff'
+    ctx.font = '40px sans-serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(s.icon, x + cardW/2, startY + 70)
+
+    // 타이틀
+    ctx.fillStyle = '#ffffff'
+    ctx.font = 'bold 22px "Apple SD Gothic Neo", sans-serif'
+    ctx.textBaseline = 'alphabetic'
+    ctx.fillText(s.title, x + cardW/2, startY + 175)
+
+    // 단계 (1, 2, 3)
+    s.steps.forEach((step, idx) => {
+      const sy = startY + 220 + idx * 50
+
+      // 번호 원
+      ctx.fillStyle = s.color
+      ctx.beginPath()
+      ctx.arc(x + 50, sy + 6, 16, 0, Math.PI*2)
+      ctx.fill()
+      ctx.fillStyle = '#ffffff'
+      ctx.font = 'bold 16px "Apple SD Gothic Neo", sans-serif'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(idx + 1, x + 50, sy + 6)
+
+      // 단계 텍스트
+      ctx.fillStyle = 'rgba(255,255,255,0.85)'
+      ctx.font = '17px "Apple SD Gothic Neo", sans-serif'
+      ctx.textAlign = 'left'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(step, x + 80, sy + 6)
+    })
+  })
+
+  // 푸터
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('suzip.kr', W - 80, H - 30)
+}
+
+// ── ④ CTA ────────────────────────────────
+function drawCTA() {
+  const c = document.getElementById('c4')
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 630
+
+  // 배경 (오렌지+블루 조합)
+  const bg = ctx.createLinearGradient(0, 0, W, H)
+  bg.addColorStop(0, '#1e3a8a')
+  bg.addColorStop(1, '#0f172a')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  // 배경 데코 - 큰 화살표
+  ctx.save()
+  ctx.globalAlpha = 0.06
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 580px sans-serif'
+  ctx.textAlign = 'right'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('→', W - 60, H/2)
+  ctx.restore()
+
+  // 좌측 텍스트
+  const PX = 80
+
+  // 뱃지
+  ctx.fillStyle = '#f97316'
+  ctx.beginPath()
+  ctx.roundRect(PX, 80, measureText(ctx, '바로 시작', 'bold 26px') + 44, 48, 8)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 26px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('바로 시작', PX + 22, 104)
+
+  // 메인
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 92px "Apple SD Gothic Neo", sans-serif'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('지금 검색해보세요', PX, 280)
+
+  // 서브
+  ctx.fillStyle = '#fcd34d'
+  ctx.font = '32px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('회원가입 없이, 1분이면 충분해요', PX, 340)
+
+  // 체크리스트
+  const checks = ['관심 단지 검색', '동네 후기 한눈에', '실거래가까지']
+  checks.forEach((check, i) => {
+    const y = 410 + i * 38
+    // 체크 원
+    ctx.fillStyle = '#10b981'
+    ctx.beginPath()
+    ctx.arc(PX + 12, y - 6, 14, 0, Math.PI*2)
+    ctx.fill()
+    // 체크 마크
+    ctx.strokeStyle = '#ffffff'
+    ctx.lineWidth = 3
+    ctx.lineCap = 'round'
+    ctx.beginPath()
+    ctx.moveTo(PX + 6, y - 6)
+    ctx.lineTo(PX + 11, y - 1)
+    ctx.lineTo(PX + 18, y - 11)
+    ctx.stroke()
+
+    // 텍스트
+    ctx.fillStyle = '#ffffff'
+    ctx.font = '24px "Apple SD Gothic Neo", sans-serif'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(check, PX + 40, y - 6)
+  })
+
+  // 구분선
+  ctx.fillStyle = 'rgba(255,255,255,0.12)'
+  ctx.fillRect(PX, 555, W - PX*2, 1)
+
+  // suzip.kr
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 32px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('suzip.kr', W - PX, 600)
+}
+
+// ── 그리기 실행 ────────────────────────────
+drawMain()
+drawMenu()
+drawScenarios()
+drawCTA()
+
+// ── 다운로드 ────────────────────────────
+function dl(id, filename) {
+  const a = document.createElement('a')
+  a.download = filename
+  a.href = document.getElementById(id).toDataURL('image/png')
+  a.click()
+}
+
+function downloadAll() {
+  const list = [
+    ['c1', 'thumb-소개-1-메인.png'],
+    ['c2', 'thumb-소개-2-메뉴.png'],
+    ['c3', 'thumb-소개-3-시나리오.png'],
+    ['c4', 'thumb-소개-4-CTA.png'],
+  ]
+  list.forEach(([id, name], i) => {
+    setTimeout(() => dl(id, name), i * 350)
+  })
+}
+</script>
+</body>
+</html>

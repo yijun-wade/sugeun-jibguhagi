@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>중랑구 임장 가이드 이미지 세트</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    padding: 48px;
+  }
+  h1 { font-size: 22px; color: #111827; margin-bottom: 8px; }
+  .meta { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+  .wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .label { font-size: 13px; color: #374151; font-weight: 600; }
+  canvas { display: block; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+  button {
+    padding: 10px 28px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button:active { opacity: 0.85; }
+  .all-btn {
+    background: #f97316;
+    padding: 14px 36px;
+    font-size: 15px;
+  }
+</style>
+</head>
+<body>
+
+<div>
+  <h1>중랑구 임장 가이드 이미지 세트 (5/5 발행용)</h1>
+  <div class="meta">썸네일 1장 + 섹션 4장 + 가격 요약 1장 = 총 6장</div>
+</div>
+
+<button class="all-btn" onclick="downloadAll()">📦 전체 한 번에 다운로드</button>
+
+<div class="wrap">
+  <div class="label">① 메인 썸네일 — 1200×630px (네이버 OG/대표)</div>
+  <canvas id="c1" width="1200" height="630" style="width:700px;height:367px"></canvas>
+  <button onclick="dl('c1','thumb-중랑구-메인.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">② 섹션 1: 상봉·중화 — 1200×600px</div>
+  <canvas id="c2" width="1200" height="600" style="width:700px;height:350px"></canvas>
+  <button onclick="dl('c2','thumb-중랑구-상봉.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">③ 섹션 2: 면목·사가정 — 1200×600px</div>
+  <canvas id="c3" width="1200" height="600" style="width:700px;height:350px"></canvas>
+  <button onclick="dl('c3','thumb-중랑구-사가정.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">④ 섹션 3: 묵동·태릉 — 1200×600px</div>
+  <canvas id="c4" width="1200" height="600" style="width:700px;height:350px"></canvas>
+  <button onclick="dl('c4','thumb-중랑구-묵동.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">⑤ 섹션 4: 망우·신내·양원 — 1200×600px</div>
+  <canvas id="c5" width="1200" height="600" style="width:700px;height:350px"></canvas>
+  <button onclick="dl('c5','thumb-중랑구-신내.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">⑥ 가격 요약 인포그래픽 — 1200×750px</div>
+  <canvas id="c6" width="1200" height="750" style="width:700px;height:438px"></canvas>
+  <button onclick="dl('c6','thumb-중랑구-가격요약.png')">다운로드</button>
+</div>
+
+<script>
+// ── 공통 헬퍼 ──────────────────────────────────────
+function measureText(ctx, text, font) {
+  ctx.save()
+  ctx.font = font + ' "Apple SD Gothic Neo", sans-serif'
+  const w = ctx.measureText(text).width
+  ctx.restore()
+  return w
+}
+
+// ── ① 메인 썸네일 ─────────────────────────────────────
+function drawMain() {
+  const c = document.getElementById('c1')
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 630
+
+  const bg = ctx.createLinearGradient(0, 0, W, H)
+  bg.addColorStop(0, '#1e3a8a')
+  bg.addColorStop(1, '#0f172a')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  // 우측 일러스트: 7호선 라인 + 환승 표시
+  ctx.save()
+  ctx.globalAlpha = 0.08
+  ctx.fillStyle = '#60a5fa'
+  ctx.beginPath()
+  ctx.arc(W - 230, H/2, 270, 0, Math.PI*2)
+  ctx.fill()
+
+  // 지하철 노선 라인
+  ctx.globalAlpha = 0.18
+  ctx.strokeStyle = '#fbbf24'
+  ctx.lineWidth = 12
+  ctx.lineCap = 'round'
+  ctx.beginPath()
+  ctx.moveTo(W - 460, 200)
+  ctx.lineTo(W - 380, 260)
+  ctx.lineTo(W - 280, 290)
+  ctx.lineTo(W - 180, 320)
+  ctx.lineTo(W - 80, 380)
+  ctx.stroke()
+
+  // 환승역 점
+  const stations = [
+    [W - 460, 200],
+    [W - 380, 260],
+    [W - 280, 290],
+    [W - 180, 320],
+    [W - 80, 380],
+  ]
+  ctx.globalAlpha = 0.3
+  ctx.fillStyle = '#ffffff'
+  stations.forEach(([x, y]) => {
+    ctx.beginPath()
+    ctx.arc(x, y, 14, 0, Math.PI*2)
+    ctx.fill()
+  })
+
+  // 가격 표시
+  ctx.globalAlpha = 0.22
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 56px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('7~14억', W - 230, H - 130)
+  ctx.restore()
+
+  // 좌측 텍스트
+  const PX = 80
+
+  // 뱃지
+  ctx.fillStyle = '#2563eb'
+  ctx.beginPath()
+  ctx.roundRect(PX, 72, measureText(ctx, '동네 임장 가이드', 'bold 28px') + 48, 52, 8)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 28px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('동네 임장 가이드', PX + 24, 98)
+
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 110px "Apple SD Gothic Neo", sans-serif'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('중랑구 동네별', PX, 280)
+  ctx.fillText('임장 가이드', PX, 410)
+
+  ctx.fillStyle = '#93c5fd'
+  ctx.font = '32px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('사가정·상봉부터 신내·양원까지', PX, 470)
+
+  ctx.fillStyle = 'rgba(255,255,255,0.12)'
+  ctx.fillRect(PX, 530, W - PX*2, 1)
+
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = 'bold 28px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.fillText('suzip.kr', W - PX, 578)
+}
+
+// ── 섹션 공통 카드 ─────────────────────────────────
+function drawSection({ id, badge, title, subtitle, price, accentColor, drawDecor }) {
+  const c = document.getElementById(id)
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 600
+
+  // 배경 (밝은 톤)
+  ctx.fillStyle = '#f8fafc'
+  ctx.fillRect(0, 0, W, H)
+
+  // 좌측 컬러 패널
+  const panel = ctx.createLinearGradient(0, 0, 480, H)
+  panel.addColorStop(0, accentColor.dark)
+  panel.addColorStop(1, accentColor.light)
+  ctx.fillStyle = panel
+  ctx.fillRect(0, 0, 480, H)
+
+  // 우측 데코
+  if (drawDecor) drawDecor(ctx, W, H, accentColor)
+
+  // 좌측 — 뱃지
+  const PX = 56
+  ctx.fillStyle = 'rgba(255,255,255,0.2)'
+  ctx.beginPath()
+  ctx.roundRect(PX, 56, measureText(ctx, badge, 'bold 22px') + 36, 42, 8)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 22px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText(badge, PX + 18, 77)
+
+  // 타이틀
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 64px "Apple SD Gothic Neo", sans-serif'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText(title, PX, 220)
+
+  // 서브타이틀
+  ctx.fillStyle = 'rgba(255,255,255,0.85)'
+  ctx.font = '24px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText(subtitle, PX, 268)
+
+  // 가격 (대표값)
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 96px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText(price.value, PX, 440)
+  ctx.fillStyle = 'rgba(255,255,255,0.7)'
+  ctx.font = '22px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText(price.label, PX, 480)
+
+  // suzip.kr
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('suzip.kr', PX, 552)
+}
+
+// ── 우측 일러스트들 ──────────────────────────────────
+function drawTrainStations(ctx, W, H, color) {
+  // 환승역 4개 노선
+  ctx.save()
+  const cx = 800, cy = H/2
+  const radius = 180
+
+  ctx.globalAlpha = 0.08
+  ctx.fillStyle = color.dark
+  ctx.beginPath()
+  ctx.arc(cx, cy, radius + 80, 0, Math.PI*2)
+  ctx.fill()
+
+  // 4개 라인 X자로
+  ctx.globalAlpha = 0.5
+  ctx.lineWidth = 8
+  ctx.lineCap = 'round'
+
+  const lines = [
+    { color: '#43b3ad', angle: 0 },      // 7호선
+    { color: '#9b9b9b', angle: Math.PI/4 }, // 6호선
+    { color: '#0099d4', angle: Math.PI/2 }, // 경의중앙
+    { color: '#0db14b', angle: 3*Math.PI/4 } // 경춘선
+  ]
+  lines.forEach(({ color: lc, angle }) => {
+    ctx.strokeStyle = lc
+    ctx.beginPath()
+    ctx.moveTo(cx - Math.cos(angle)*radius, cy - Math.sin(angle)*radius)
+    ctx.lineTo(cx + Math.cos(angle)*radius, cy + Math.sin(angle)*radius)
+    ctx.stroke()
+  })
+
+  // 중앙 환승 점
+  ctx.globalAlpha = 0.9
+  ctx.fillStyle = '#ffffff'
+  ctx.beginPath()
+  ctx.arc(cx, cy, 28, 0, Math.PI*2)
+  ctx.fill()
+  ctx.fillStyle = color.dark
+  ctx.beginPath()
+  ctx.arc(cx, cy, 18, 0, Math.PI*2)
+  ctx.fill()
+
+  // 라벨
+  ctx.fillStyle = '#475569'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('7호선 · 6호선', cx, cy + radius + 50)
+  ctx.fillText('경의중앙 · 경춘선', cx, cy + radius + 78)
+  ctx.restore()
+}
+
+function drawNewBuildings(ctx, W, H, color) {
+  // 신축 빌딩 실루엣
+  ctx.save()
+  const baseX = 560
+  const baseY = H - 80
+
+  ctx.globalAlpha = 0.08
+  ctx.fillStyle = color.dark
+  ctx.fillRect(baseX, 100, 580, H - 100)
+
+  // 빌딩 5개
+  const buildings = [
+    { x: baseX + 40,  w: 90, h: 320 },
+    { x: baseX + 150, w: 110, h: 380 },
+    { x: baseX + 280, w: 100, h: 280 },
+    { x: baseX + 400, w: 120, h: 420 },
+    { x: baseX + 540, w: 80,  h: 240 }
+  ]
+  ctx.globalAlpha = 0.6
+  buildings.forEach(({ x, w, h }) => {
+    ctx.fillStyle = color.light
+    ctx.fillRect(x, baseY - h, w, h)
+
+    // 창문
+    ctx.fillStyle = '#fbbf24'
+    ctx.globalAlpha = 0.4
+    for (let row = 0; row < Math.floor(h / 40); row++) {
+      for (let col = 0; col < Math.floor(w / 30); col++) {
+        if (Math.random() > 0.3) {
+          ctx.fillRect(x + 8 + col*30, baseY - h + 12 + row*40, 14, 18)
+        }
+      }
+    }
+    ctx.globalAlpha = 0.6
+  })
+
+  // 라벨
+  ctx.globalAlpha = 0.7
+  ctx.fillStyle = '#475569'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('신축 라인업', baseX + 290, baseY + 32)
+  ctx.restore()
+}
+
+function drawValueChart(ctx, W, H, color) {
+  // 가성비 차트 — 막대 그래프
+  ctx.save()
+  const baseX = 600
+  const baseY = H - 130
+  const barW = 70
+  const gap = 30
+
+  ctx.globalAlpha = 0.08
+  ctx.fillStyle = color.dark
+  ctx.beginPath()
+  ctx.arc(800, H/2, 240, 0, Math.PI*2)
+  ctx.fill()
+
+  // 막대 5개 (가격대 비교)
+  const bars = [
+    { label: '강남', h: 280, color: '#94a3b8' },
+    { label: '마포', h: 200, color: '#94a3b8' },
+    { label: '동대문', h: 130, color: '#94a3b8' },
+    { label: '중랑', h: 100, color: '#fbbf24' },
+    { label: '경기', h: 80,  color: '#94a3b8' }
+  ]
+  ctx.globalAlpha = 0.85
+  bars.forEach((b, i) => {
+    const x = baseX + i * (barW + gap)
+    ctx.fillStyle = b.color
+    ctx.fillRect(x, baseY - b.h, barW, b.h)
+
+    ctx.fillStyle = '#475569'
+    ctx.font = 'bold 16px "Apple SD Gothic Neo", sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(b.label, x + barW/2, baseY + 28)
+  })
+
+  ctx.fillStyle = '#475569'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('비슷한 출퇴근, 절반 가격', baseX + 250, baseY + 70)
+  ctx.restore()
+}
+
+function drawEntryPoint(ctx, W, H, color) {
+  // 진입점 — 7억 강조 + 새 건물
+  ctx.save()
+  ctx.globalAlpha = 0.08
+  ctx.fillStyle = color.dark
+  ctx.beginPath()
+  ctx.arc(800, H/2, 240, 0, Math.PI*2)
+  ctx.fill()
+
+  // 7억 큰 숫자
+  ctx.globalAlpha = 0.18
+  ctx.fillStyle = color.dark
+  ctx.font = 'bold 220px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('7억', 800, H/2 + 60)
+
+  // 화살표 ↓
+  ctx.globalAlpha = 0.5
+  ctx.strokeStyle = '#16a34a'
+  ctx.lineWidth = 16
+  ctx.lineCap = 'round'
+  ctx.beginPath()
+  ctx.moveTo(620, 130)
+  ctx.lineTo(620, 260)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.moveTo(600, 240)
+  ctx.lineTo(620, 260)
+  ctx.lineTo(640, 240)
+  ctx.stroke()
+
+  ctx.globalAlpha = 0.7
+  ctx.fillStyle = '#16a34a'
+  ctx.font = 'bold 22px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('서울 안에서', 620, 100)
+  ctx.fillText('가장 합리적', 620, 300)
+  ctx.restore()
+}
+
+// ── ⑥ 가격 요약 인포그래픽 ────────────────────────
+function drawPriceSummary() {
+  const c = document.getElementById('c6')
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 750
+
+  // 배경
+  ctx.fillStyle = '#0f172a'
+  ctx.fillRect(0, 0, W, H)
+
+  // 헤더
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 22px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('중랑구 예산별 진입 가능 동네', 80, 80)
+
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 56px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('얼마면 어디 갈 수 있나', 80, 150)
+
+  ctx.fillStyle = 'rgba(255,255,255,0.5)'
+  ctx.font = '20px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('2026년 2~4월 국토부 실거래 평균가 기준', 80, 188)
+
+  // 4개 가격대 카드
+  const cards = [
+    { range: '7~8억',  area: '신내·양원·망우 신축', samples: '신내진로, 양원역 금호어울림, 우디안3단지', color: '#10b981' },
+    { range: '8~10억', area: '묵동·면목 신축급, 상봉 구축', samples: 'e편한세상화랑대, 묵동자이2단지, 한일써너스빌', color: '#3b82f6' },
+    { range: '10~12억',area: '면목·사가정 메인 신축',     samples: '한양수자인, 면목 라온, 쌍용더플래티넘', color: '#8b5cf6' },
+    { range: '12억 이상', area: '중랑구 대장 단지',        samples: '상봉듀오트리스, 사가정 센트럴 아이파크', color: '#f97316' }
+  ]
+
+  const startY = 230
+  const cardH = 115
+  const gap = 12
+
+  cards.forEach((card, i) => {
+    const y = startY + i * (cardH + gap)
+
+    // 카드 배경
+    ctx.fillStyle = 'rgba(255,255,255,0.04)'
+    ctx.beginPath()
+    ctx.roundRect(80, y, W - 160, cardH, 12)
+    ctx.fill()
+
+    // 좌측 컬러 바
+    ctx.fillStyle = card.color
+    ctx.beginPath()
+    ctx.roundRect(80, y, 6, cardH, 3)
+    ctx.fill()
+
+    // 가격대
+    ctx.fillStyle = card.color
+    ctx.font = 'bold 36px "Apple SD Gothic Neo", sans-serif'
+    ctx.textAlign = 'left'
+    ctx.fillText(card.range, 120, y + 50)
+
+    // 동네
+    ctx.fillStyle = '#ffffff'
+    ctx.font = 'bold 24px "Apple SD Gothic Neo", sans-serif'
+    ctx.fillText(card.area, 320, y + 50)
+
+    // 대표 단지
+    ctx.fillStyle = 'rgba(255,255,255,0.6)'
+    ctx.font = '18px "Apple SD Gothic Neo", sans-serif'
+    ctx.fillText(card.samples, 320, y + 82)
+  })
+
+  // 푸터
+  ctx.fillStyle = 'rgba(255,255,255,0.12)'
+  ctx.fillRect(80, H - 60, W - 160, 1)
+
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.fillText('suzip.kr · 동네·가격으로 탐색', W - 80, H - 28)
+}
+
+// ── 그리기 실행 ───────────────────────────────────
+drawMain()
+
+drawSection({
+  id: 'c2',
+  badge: '환승의 핵심',
+  title: '상봉·중화',
+  subtitle: '7호선·6호선·경의중앙·경춘선',
+  price: { value: '14.4억', label: '대표 — 상봉듀오트리스' },
+  accentColor: { dark: '#1e3a8a', light: '#3b82f6' },
+  drawDecor: drawTrainStations
+})
+
+drawSection({
+  id: 'c3',
+  badge: '7호선 신축 라인',
+  title: '면목·사가정',
+  subtitle: '용마산 인근 신축이 가장 많은 동네',
+  price: { value: '13.6억', label: '대표 — 사가정 센트럴 아이파크' },
+  accentColor: { dark: '#7c2d12', light: '#ea580c' },
+  drawDecor: drawNewBuildings
+})
+
+drawSection({
+  id: 'c4',
+  badge: '가성비 동네',
+  title: '묵동·태릉',
+  subtitle: '6호선·경춘선, 노원구 인접',
+  price: { value: '10.3억', label: '대표 — e편한세상화랑대' },
+  accentColor: { dark: '#14532d', light: '#16a34a' },
+  drawDecor: drawValueChart
+})
+
+drawSection({
+  id: 'c5',
+  badge: '합리적 진입점',
+  title: '망우·신내·양원',
+  subtitle: '서울 안에서 7억대 신축급 가능',
+  price: { value: '7.2억', label: '대표 — 신내새한' },
+  accentColor: { dark: '#581c87', light: '#a855f7' },
+  drawDecor: drawEntryPoint
+})
+
+drawPriceSummary()
+
+// ── 다운로드 ──────────────────────────────────────
+function dl(id, filename) {
+  const a = document.createElement('a')
+  a.download = filename
+  a.href = document.getElementById(id).toDataURL('image/png')
+  a.click()
+}
+
+function downloadAll() {
+  const list = [
+    ['c1', 'thumb-중랑구-1-메인.png'],
+    ['c2', 'thumb-중랑구-2-상봉.png'],
+    ['c3', 'thumb-중랑구-3-사가정.png'],
+    ['c4', 'thumb-중랑구-4-묵동.png'],
+    ['c5', 'thumb-중랑구-5-신내.png'],
+    ['c6', 'thumb-중랑구-6-가격요약.png'],
+  ]
+  list.forEach(([id, name], i) => {
+    setTimeout(() => dl(id, name), i * 350)
+  })
+}
+</script>
+</body>
+</html>

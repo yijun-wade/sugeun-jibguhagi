@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>사주 광고 크리에이티브 (1080×1080)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    padding: 48px;
+  }
+  h1 { font-size: 22px; color: #111827; margin-bottom: 8px; }
+  .meta { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .label { font-size: 13px; color: #374151; font-weight: 600; }
+  canvas { display: block; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+  button {
+    padding: 10px 28px;
+    background: #6d28d9;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .all-btn { background: #f97316; padding: 14px 36px; font-size: 15px; }
+</style>
+</head>
+<body>
+
+<div>
+  <h1>메타 광고 크리에이티브 (Instagram Feed 1080×1080)</h1>
+  <div class="meta">A안 / B안 / C안 + 9:16 스토리/Reels 1장 = 4장</div>
+</div>
+
+<button class="all-btn" onclick="downloadAll()">📦 전체 한 번에 다운로드</button>
+
+<div class="grid">
+  <div class="wrap">
+    <div class="label">A안 — 공감 진입 (메인 추천)</div>
+    <canvas id="cA" width="1080" height="1080" style="width:480px;height:480px"></canvas>
+    <button onclick="dl('cA','ad-사주-A-공감.png')">다운로드</button>
+  </div>
+
+  <div class="wrap">
+    <div class="label">B안 — 신혼집 특정 타겟</div>
+    <canvas id="cB" width="1080" height="1080" style="width:480px;height:480px"></canvas>
+    <button onclick="dl('cB','ad-사주-B-신혼.png')">다운로드</button>
+  </div>
+
+  <div class="wrap">
+    <div class="label">C안 — 호기심 자극 (짧음)</div>
+    <canvas id="cC" width="1080" height="1080" style="width:480px;height:480px"></canvas>
+    <button onclick="dl('cC','ad-사주-C-호기심.png')">다운로드</button>
+  </div>
+
+  <div class="wrap">
+    <div class="label">스토리/Reels용 — 1080×1920 (9:16)</div>
+    <canvas id="cS" width="1080" height="1920" style="width:270px;height:480px"></canvas>
+    <button onclick="dl('cS','ad-사주-스토리.png')">다운로드</button>
+  </div>
+</div>
+
+<script>
+function measureText(ctx, text, font) {
+  ctx.save()
+  ctx.font = font + ' "Apple SD Gothic Neo", sans-serif'
+  const w = ctx.measureText(text).width
+  ctx.restore()
+  return w
+}
+
+function drawStars(ctx, W, H, count = 60) {
+  ctx.save()
+  for (let i = 0; i < count; i++) {
+    const x = Math.random() * W
+    const y = Math.random() * H
+    const r = Math.random() * 1.5 + 0.3
+    const a = Math.random() * 0.5 + 0.2
+    ctx.globalAlpha = a
+    ctx.fillStyle = '#ffffff'
+    ctx.beginPath()
+    ctx.arc(x, y, r, 0, Math.PI*2)
+    ctx.fill()
+  }
+  ctx.restore()
+}
+
+const ELEMENT_COLOR = {
+  '水': '#3b82f6', '木': '#16a34a', '火': '#ef4444',
+  '土': '#a16207', '金': '#94a3b8',
+}
+
+// ── A안: 공감 진입 ─────────────────────────────
+function drawA() {
+  const c = document.getElementById('cA')
+  const ctx = c.getContext('2d')
+  const W = 1080, H = 1080
+
+  const bg = ctx.createLinearGradient(0, 0, W, H)
+  bg.addColorStop(0, '#312e81')
+  bg.addColorStop(1, '#1e1b4b')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+  drawStars(ctx, W, H, 80)
+
+  // 상단 뱃지
+  const PX = 80
+  ctx.fillStyle = '#f97316'
+  ctx.beginPath()
+  ctx.roundRect(PX, 80, measureText(ctx, '5월 한정 무료', 'bold 32px') + 56, 60, 10)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 32px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('5월 한정 무료', PX + 28, 110)
+
+  // 인용 부호
+  ctx.fillStyle = 'rgba(252, 211, 77, 0.4)'
+  ctx.font = 'bold 180px serif'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('"', PX, 320)
+
+  // 메인 카피
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 64px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('이사 갈 때', PX, 410)
+  ctx.fillText('사주 한번 보고', PX, 490)
+  ctx.fillText('싶긴 한데...', PX, 570)
+
+  ctx.fillStyle = '#fcd34d'
+  ctx.font = '34px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('점집 가긴 부담스러우셨다면', PX, 640)
+
+  // 중앙 박스
+  ctx.fillStyle = 'rgba(255,255,255,0.08)'
+  ctx.beginPath()
+  ctx.roundRect(PX, 700, W - PX*2, 200, 24)
+  ctx.fill()
+  ctx.strokeStyle = 'rgba(252,211,77,0.3)'
+  ctx.lineWidth = 2
+  ctx.stroke()
+
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 48px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('생년월일만 입력 → 1초', W/2, 780)
+
+  ctx.fillStyle = '#fcd34d'
+  ctx.font = 'bold 30px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('내 사주에 맞는 동네 추천', W/2, 830)
+
+  // 하단 — CTA + 브랜드
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 36px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('suzip.kr/saju', W/2, 990)
+}
+
+// ── B안: 신혼집 ─────────────────────────────
+function drawB() {
+  const c = document.getElementById('cB')
+  const ctx = c.getContext('2d')
+  const W = 1080, H = 1080
+
+  const bg = ctx.createLinearGradient(0, 0, 0, H)
+  bg.addColorStop(0, '#831843')
+  bg.addColorStop(1, '#1e1b4b')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+  drawStars(ctx, W, H, 60)
+
+  // 상단 뱃지
+  const PX = 80
+  ctx.fillStyle = '#f97316'
+  ctx.beginPath()
+  ctx.roundRect(PX, 80, measureText(ctx, '신혼집 정하시는 분', 'bold 30px') + 56, 60, 10)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 30px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('신혼집 정하시는 분', PX + 28, 110)
+
+  // 메인 카피
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 76px "Apple SD Gothic Neo", sans-serif'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('두 분 사주에 맞는', PX, 320)
+  ctx.fillText('동네 기운', PX, 410)
+
+  ctx.fillStyle = '#fcd34d'
+  ctx.font = '32px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('1초만에 찾아드려요', PX, 470)
+
+  // 중앙 — 두 결과 비교
+  const mid = 600
+  // 카드 1
+  ctx.fillStyle = 'rgba(59,130,246,0.18)'
+  ctx.beginPath()
+  ctx.roundRect(PX, mid - 40, 380, 220, 20)
+  ctx.fill()
+  ctx.strokeStyle = 'rgba(59,130,246,0.4)'
+  ctx.stroke()
+  ctx.fillStyle = '#93c5fd'
+  ctx.font = '20px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('남편', PX + 30, mid)
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 70px serif'
+  ctx.fillText('甲木', PX + 30, mid + 80)
+  ctx.fillStyle = '#bfdbfe'
+  ctx.font = 'bold 22px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('용신 水 · 한강변', PX + 30, mid + 130)
+
+  // 카드 2
+  ctx.fillStyle = 'rgba(236,72,153,0.18)'
+  ctx.beginPath()
+  ctx.roundRect(W - PX - 380, mid - 40, 380, 220, 20)
+  ctx.fill()
+  ctx.strokeStyle = 'rgba(236,72,153,0.4)'
+  ctx.stroke()
+  ctx.fillStyle = '#fbcfe8'
+  ctx.font = '20px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('아내', W - PX - 350, mid)
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 70px serif'
+  ctx.fillText('丙火', W - PX - 350, mid + 80)
+  ctx.fillStyle = '#fbcfe8'
+  ctx.font = 'bold 22px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('용신 木 · 공원근처', W - PX - 350, mid + 130)
+
+  // 화살표
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 56px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('↓', W/2, 870)
+
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 36px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('두 사주 모두 맞는 동네 추천', W/2, 925)
+
+  // 하단
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 30px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('suzip.kr/saju · 5월 무료', W/2, 1000)
+}
+
+// ── C안: 호기심 ─────────────────────────────
+function drawC() {
+  const c = document.getElementById('cC')
+  const ctx = c.getContext('2d')
+  const W = 1080, H = 1080
+
+  ctx.fillStyle = '#0f172a'
+  ctx.fillRect(0, 0, W, H)
+  drawStars(ctx, W, H, 100)
+
+  // 큰 오행 배치 (중앙)
+  const cx = W/2, cy = H/2 - 80
+  const elements = ['水', '木', '火', '土', '金']
+  const radius = 240
+
+  ctx.save()
+  // 5각형 외곽
+  ctx.globalAlpha = 0.15
+  ctx.strokeStyle = '#fbbf24'
+  ctx.lineWidth = 3
+  ctx.beginPath()
+  elements.forEach((el, i) => {
+    const angle = -Math.PI/2 + (i * 2 * Math.PI / 5)
+    const x = cx + Math.cos(angle) * radius
+    const y = cy + Math.sin(angle) * radius
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y)
+  })
+  ctx.closePath()
+  ctx.stroke()
+
+  elements.forEach((el, i) => {
+    const angle = -Math.PI/2 + (i * 2 * Math.PI / 5)
+    const x = cx + Math.cos(angle) * radius
+    const y = cy + Math.sin(angle) * radius
+
+    ctx.globalAlpha = 0.4
+    ctx.fillStyle = ELEMENT_COLOR[el]
+    ctx.beginPath()
+    ctx.arc(x, y, 60, 0, Math.PI*2)
+    ctx.fill()
+
+    ctx.globalAlpha = 1
+    ctx.fillStyle = '#ffffff'
+    ctx.font = 'bold 56px serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(el, x, y)
+  })
+
+  // 중앙 물음표
+  ctx.globalAlpha = 0.3
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 200px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('?', cx, cy + 30)
+  ctx.restore()
+
+  // 상단 카피
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 24px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('5월 무료 진단', W/2, 110)
+
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 76px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('내 사주에 맞는', W/2, 200)
+  ctx.fillText('서울 동네는?', W/2, 290)
+
+  // 하단 카피
+  ctx.fillStyle = '#fcd34d'
+  ctx.font = 'bold 38px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('1초만에 결과 확인', W/2, 920)
+
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 30px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('suzip.kr/saju', W/2, 990)
+}
+
+// ── 스토리/Reels 9:16 ─────────────────────────
+function drawStory() {
+  const c = document.getElementById('cS')
+  const ctx = c.getContext('2d')
+  const W = 1080, H = 1920
+
+  const bg = ctx.createLinearGradient(0, 0, 0, H)
+  bg.addColorStop(0, '#312e81')
+  bg.addColorStop(0.6, '#4c1d95')
+  bg.addColorStop(1, '#0f172a')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+  drawStars(ctx, W, H, 120)
+
+  // 상단 뱃지
+  const PX = 80
+  ctx.fillStyle = '#f97316'
+  ctx.beginPath()
+  ctx.roundRect(PX, 200, measureText(ctx, '5월 한정 이벤트', 'bold 36px') + 64, 70, 12)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 36px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('5월 한정 이벤트', PX + 32, 235)
+
+  // 메인 카피
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 92px "Apple SD Gothic Neo", sans-serif'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('이사하면', PX, 480)
+  ctx.fillText('개운할 동네', PX, 590)
+
+  ctx.fillStyle = '#fcd34d'
+  ctx.font = '40px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('내 사주로 찾는', PX, 670)
+  ctx.fillText('지역 기운 궁합', PX, 720)
+
+  // 중앙 — 오행 5각형 (작게)
+  const cx = W/2, cy = H/2 + 150
+  const elements = ['水', '木', '火', '土', '金']
+  const radius = 220
+
+  ctx.save()
+  ctx.globalAlpha = 0.2
+  ctx.strokeStyle = '#fbbf24'
+  ctx.lineWidth = 3
+  ctx.beginPath()
+  elements.forEach((el, i) => {
+    const angle = -Math.PI/2 + (i * 2 * Math.PI / 5)
+    const x = cx + Math.cos(angle) * radius
+    const y = cy + Math.sin(angle) * radius
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y)
+  })
+  ctx.closePath()
+  ctx.stroke()
+
+  elements.forEach((el, i) => {
+    const angle = -Math.PI/2 + (i * 2 * Math.PI / 5)
+    const x = cx + Math.cos(angle) * radius
+    const y = cy + Math.sin(angle) * radius
+
+    ctx.globalAlpha = 0.4
+    ctx.fillStyle = ELEMENT_COLOR[el]
+    ctx.beginPath()
+    ctx.arc(x, y, 56, 0, Math.PI*2)
+    ctx.fill()
+
+    ctx.globalAlpha = 1
+    ctx.fillStyle = '#ffffff'
+    ctx.font = 'bold 50px serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(el, x, y)
+  })
+  ctx.restore()
+
+  // 하단 — 가격 + CTA
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = 'bold 32px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('1,900원', W/2 - 130, 1700)
+  // 취소선
+  ctx.strokeStyle = '#f97316'
+  ctx.lineWidth = 4
+  ctx.beginPath()
+  ctx.moveTo(W/2 - 220, 1690)
+  ctx.lineTo(W/2 - 40, 1690)
+  ctx.stroke()
+
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 56px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('→ 무료', W/2 + 60, 1700)
+
+  // 메인 CTA
+  ctx.fillStyle = '#f97316'
+  ctx.beginPath()
+  ctx.roundRect(PX, 1750, W - PX*2, 100, 50)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 44px "Apple SD Gothic Neo", sans-serif'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('지금 무료로 확인 →', W/2, 1800)
+}
+
+drawA()
+drawB()
+drawC()
+drawStory()
+
+function dl(id, filename) {
+  const a = document.createElement('a')
+  a.download = filename
+  a.href = document.getElementById(id).toDataURL('image/png')
+  a.click()
+}
+
+function downloadAll() {
+  const list = [
+    ['cA', 'ad-사주-A-공감.png'],
+    ['cB', 'ad-사주-B-신혼.png'],
+    ['cC', 'ad-사주-C-호기심.png'],
+    ['cS', 'ad-사주-스토리.png'],
+  ]
+  list.forEach(([id, name], i) => {
+    setTimeout(() => dl(id, name), i * 350)
+  })
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>사주 프로모션 이미지 세트</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    padding: 48px;
+  }
+  h1 { font-size: 22px; color: #111827; margin-bottom: 8px; }
+  .meta { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+  .wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .label { font-size: 13px; color: #374151; font-weight: 600; }
+  canvas { display: block; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+  button {
+    padding: 10px 28px;
+    background: #6d28d9;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button:active { opacity: 0.85; }
+  .all-btn {
+    background: #f97316;
+    padding: 14px 36px;
+    font-size: 15px;
+  }
+</style>
+</head>
+<body>
+
+<div>
+  <h1>사주 프로모션 이미지 세트 (5/4 발행용)</h1>
+  <div class="meta">썸네일 1장 + 섹션 3장 + CTA 1장 = 총 5장</div>
+</div>
+
+<button class="all-btn" onclick="downloadAll()">📦 전체 한 번에 다운로드</button>
+
+<div class="wrap">
+  <div class="label">① 메인 썸네일 — 1200×630px (네이버 OG/대표)</div>
+  <canvas id="c1" width="1200" height="630" style="width:700px;height:367px"></canvas>
+  <button onclick="dl('c1','thumb-사주-1-메인.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">② 섹션: 결과 예시 (甲木 · 용신 水) — 1200×600px</div>
+  <canvas id="c2" width="1200" height="600" style="width:700px;height:350px"></canvas>
+  <button onclick="dl('c2','thumb-사주-2-결과예시.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">③ 섹션: 오행과 동네 매핑 — 1200×600px</div>
+  <canvas id="c3" width="1200" height="600" style="width:700px;height:350px"></canvas>
+  <button onclick="dl('c3','thumb-사주-3-오행.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">④ 섹션: 보조 도구 강조 — 1200×600px</div>
+  <canvas id="c4" width="1200" height="600" style="width:700px;height:350px"></canvas>
+  <button onclick="dl('c4','thumb-사주-4-보조도구.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">⑤ CTA: 5월 무료 — 1200×630px</div>
+  <canvas id="c5" width="1200" height="630" style="width:700px;height:367px"></canvas>
+  <button onclick="dl('c5','thumb-사주-5-무료CTA.png')">다운로드</button>
+</div>
+
+<script>
+function measureText(ctx, text, font) {
+  ctx.save()
+  ctx.font = font + ' "Apple SD Gothic Neo", sans-serif'
+  const w = ctx.measureText(text).width
+  ctx.restore()
+  return w
+}
+
+// ── 별 배경 (미스틱) ────────────────────────────
+function drawStars(ctx, W, H, count = 60) {
+  ctx.save()
+  for (let i = 0; i < count; i++) {
+    const x = Math.random() * W
+    const y = Math.random() * H
+    const r = Math.random() * 1.5 + 0.3
+    const a = Math.random() * 0.5 + 0.2
+    ctx.globalAlpha = a
+    ctx.fillStyle = '#ffffff'
+    ctx.beginPath()
+    ctx.arc(x, y, r, 0, Math.PI*2)
+    ctx.fill()
+  }
+  ctx.restore()
+}
+
+// ── 오행 색상 ───────────────────────────────────
+const ELEMENT_COLOR = {
+  '水': '#3b82f6',  // 파랑
+  '木': '#16a34a',  // 초록
+  '火': '#ef4444',  // 빨강
+  '土': '#a16207',  // 갈색
+  '金': '#94a3b8',  // 회색
+}
+
+// ── ① 메인 썸네일 ────────────────────────────
+function drawMain() {
+  const c = document.getElementById('c1')
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 630
+
+  // 배경 그라데이션 (미스틱 퍼플)
+  const bg = ctx.createLinearGradient(0, 0, W, H)
+  bg.addColorStop(0, '#312e81')
+  bg.addColorStop(0.5, '#4c1d95')
+  bg.addColorStop(1, '#1e1b4b')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  drawStars(ctx, W, H, 80)
+
+  // 우측 일러스트: 오행 원형 배치
+  const cx = W - 240, cy = H/2
+
+  // 큰 원 배경
+  ctx.save()
+  ctx.globalAlpha = 0.06
+  const grad = ctx.createRadialGradient(cx, cy, 50, cx, cy, 260)
+  grad.addColorStop(0, '#fbbf24')
+  grad.addColorStop(1, 'rgba(251,191,36,0)')
+  ctx.fillStyle = grad
+  ctx.beginPath()
+  ctx.arc(cx, cy, 260, 0, Math.PI*2)
+  ctx.fill()
+  ctx.restore()
+
+  // 오행 5각형 배치
+  const elements = ['水', '木', '火', '土', '金']
+  const radius = 160
+  ctx.save()
+  elements.forEach((el, i) => {
+    const angle = -Math.PI/2 + (i * 2 * Math.PI / 5)
+    const x = cx + Math.cos(angle) * radius
+    const y = cy + Math.sin(angle) * radius
+
+    // 원
+    ctx.globalAlpha = 0.3
+    ctx.fillStyle = ELEMENT_COLOR[el]
+    ctx.beginPath()
+    ctx.arc(x, y, 38, 0, Math.PI*2)
+    ctx.fill()
+
+    // 글자
+    ctx.globalAlpha = 0.9
+    ctx.fillStyle = '#ffffff'
+    ctx.font = 'bold 36px "Apple SD Gothic Neo", serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(el, x, y)
+  })
+
+  // 5각형 연결선
+  ctx.globalAlpha = 0.2
+  ctx.strokeStyle = '#fbbf24'
+  ctx.lineWidth = 2
+  ctx.beginPath()
+  elements.forEach((el, i) => {
+    const angle = -Math.PI/2 + (i * 2 * Math.PI / 5)
+    const x = cx + Math.cos(angle) * radius
+    const y = cy + Math.sin(angle) * radius
+    if (i === 0) ctx.moveTo(x, y)
+    else ctx.lineTo(x, y)
+  })
+  ctx.closePath()
+  ctx.stroke()
+  ctx.restore()
+
+  // 좌측 텍스트
+  const PX = 80
+
+  // 뱃지 (5월 무료)
+  ctx.fillStyle = '#f97316'
+  ctx.beginPath()
+  ctx.roundRect(PX, 72, measureText(ctx, '5월 오픈 무료', 'bold 26px') + 44, 48, 8)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 26px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('5월 오픈 무료', PX + 22, 96)
+
+  // 메인 카피
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 92px "Apple SD Gothic Neo", sans-serif'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('이사하면', PX, 260)
+  ctx.fillText('개운할 동네', PX, 360)
+
+  // 서브
+  ctx.fillStyle = '#fcd34d'
+  ctx.font = '32px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('내 사주로 찾는 지역 기운 궁합', PX, 420)
+
+  // 부연
+  ctx.fillStyle = 'rgba(255,255,255,0.7)'
+  ctx.font = '22px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('생년월일 입력 → 1초 결과', PX, 470)
+
+  // 구분선
+  ctx.fillStyle = 'rgba(255,255,255,0.12)'
+  ctx.fillRect(PX, 530, W - PX*2, 1)
+
+  // suzip.kr
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = 'bold 28px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.fillText('suzip.kr/saju', W - PX, 578)
+}
+
+// ── ② 결과 예시 (甲木 · 용신 水) ─────────────────
+function drawResultExample() {
+  const c = document.getElementById('c2')
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 600
+
+  // 배경
+  const bg = ctx.createLinearGradient(0, 0, 0, H)
+  bg.addColorStop(0, '#1e293b')
+  bg.addColorStop(1, '#0f172a')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  drawStars(ctx, W, H, 30)
+
+  // 헤더 — 결과 카드 라벨
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('실제 이런 결과가 나와요', 80, 70)
+
+  // 카드 1: 일간 + 신강
+  ctx.fillStyle = 'rgba(99,102,241,0.15)'
+  ctx.beginPath()
+  ctx.roundRect(80, 110, 320, 200, 16)
+  ctx.fill()
+  ctx.strokeStyle = 'rgba(99,102,241,0.4)'
+  ctx.lineWidth = 1
+  ctx.stroke()
+
+  ctx.fillStyle = '#a5b4fc'
+  ctx.font = '16px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('내 일간', 110, 150)
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 88px serif'
+  ctx.fillText('甲木', 110, 240)
+  ctx.fillStyle = '#fcd34d'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('신강 사주', 110, 280)
+
+  // 카드 2: 용신
+  ctx.fillStyle = 'rgba(59,130,246,0.18)'
+  ctx.beginPath()
+  ctx.roundRect(420, 110, 320, 200, 16)
+  ctx.fill()
+  ctx.strokeStyle = 'rgba(59,130,246,0.5)'
+  ctx.stroke()
+
+  ctx.fillStyle = '#93c5fd'
+  ctx.font = '16px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('필요한 오행', 450, 150)
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 88px serif'
+  ctx.fillText('水', 450, 240)
+  ctx.fillStyle = '#bfdbfe'
+  ctx.font = 'bold 16px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('木 과다 → 水로 흘려보내기', 450, 280)
+
+  // 카드 3: 이사 타이밍 점수
+  ctx.fillStyle = 'rgba(251,191,36,0.18)'
+  ctx.beginPath()
+  ctx.roundRect(760, 110, 360, 200, 16)
+  ctx.fill()
+  ctx.strokeStyle = 'rgba(251,191,36,0.5)'
+  ctx.stroke()
+
+  ctx.fillStyle = '#fcd34d'
+  ctx.font = '16px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('이사 타이밍', 790, 150)
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 88px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('88점', 790, 240)
+  ctx.fillStyle = '#fde68a'
+  ctx.font = 'bold 16px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('지금이 적기', 790, 280)
+
+  // 추천 동네 박스
+  ctx.fillStyle = 'rgba(255,255,255,0.04)'
+  ctx.beginPath()
+  ctx.roundRect(80, 360, W - 160, 160, 16)
+  ctx.fill()
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)'
+  ctx.stroke()
+
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = '16px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('추천 동네 (용신 水 · 한강변)', 110, 400)
+
+  const recos = [
+    { name: '마포', score: 92, color: '#3b82f6' },
+    { name: '용산', score: 89, color: '#3b82f6' },
+    { name: '성동', score: 85, color: '#3b82f6' },
+  ]
+  recos.forEach((r, i) => {
+    const x = 110 + i * 360
+    ctx.fillStyle = r.color
+    ctx.globalAlpha = 0.25
+    ctx.beginPath()
+    ctx.roundRect(x, 420, 320, 70, 12)
+    ctx.fill()
+    ctx.globalAlpha = 1
+    ctx.fillStyle = '#ffffff'
+    ctx.font = 'bold 30px "Apple SD Gothic Neo", sans-serif'
+    ctx.fillText(r.name, x + 24, 465)
+    ctx.fillStyle = '#fbbf24'
+    ctx.font = 'bold 30px "Apple SD Gothic Neo", sans-serif'
+    ctx.textAlign = 'right'
+    ctx.fillText(r.score + '점', x + 296, 465)
+    ctx.textAlign = 'left'
+  })
+
+  // suzip.kr
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.fillText('suzip.kr/saju', W - 80, H - 30)
+}
+
+// ── ③ 오행과 동네 매핑 ────────────────────────
+function drawElementMap() {
+  const c = document.getElementById('c3')
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 600
+
+  // 배경
+  ctx.fillStyle = '#0f172a'
+  ctx.fillRect(0, 0, W, H)
+
+  drawStars(ctx, W, H, 40)
+
+  // 헤더
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('오행에 맞는 동네 유형', 80, 60)
+
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 36px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('어떤 기운이 부족한지에 따라', 80, 110)
+  ctx.fillStyle = 'rgba(255,255,255,0.6)'
+  ctx.font = '22px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('잘 맞는 동네 유형이 달라져요', 80, 145)
+
+  // 5개 카드
+  const items = [
+    { el: '水', label: '한강변', desc: '마포·용산·성동' },
+    { el: '木', label: '공원·녹지', desc: '서대문·은평·성북' },
+    { el: '火', label: '번화가', desc: '강남·홍대·종로' },
+    { el: '土', label: '평지·구도심', desc: '동작·관악·동대문' },
+    { el: '金', label: '고지대·신축', desc: '광진·서초·송파' },
+  ]
+
+  const startY = 200
+  const cardW = 215
+  const cardH = 280
+  const gap = 13
+
+  items.forEach((item, i) => {
+    const x = 80 + i * (cardW + gap)
+
+    // 카드
+    ctx.fillStyle = 'rgba(255,255,255,0.04)'
+    ctx.beginPath()
+    ctx.roundRect(x, startY, cardW, cardH, 16)
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)'
+    ctx.lineWidth = 1
+    ctx.stroke()
+
+    // 오행 원
+    const color = ELEMENT_COLOR[item.el]
+    ctx.globalAlpha = 0.3
+    ctx.fillStyle = color
+    ctx.beginPath()
+    ctx.arc(x + cardW/2, startY + 80, 50, 0, Math.PI*2)
+    ctx.fill()
+    ctx.globalAlpha = 1
+
+    // 한자
+    ctx.fillStyle = '#ffffff'
+    ctx.font = 'bold 56px serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(item.el, x + cardW/2, startY + 80)
+
+    // 라벨
+    ctx.fillStyle = '#fbbf24'
+    ctx.font = 'bold 24px "Apple SD Gothic Neo", sans-serif'
+    ctx.textBaseline = 'alphabetic'
+    ctx.fillText(item.label, x + cardW/2, startY + 195)
+
+    // 동네
+    ctx.fillStyle = 'rgba(255,255,255,0.7)'
+    ctx.font = '18px "Apple SD Gothic Neo", sans-serif'
+    ctx.fillText(item.desc, x + cardW/2, startY + 230)
+  })
+
+  // 푸터
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.fillText('suzip.kr/saju', W - 80, H - 30)
+}
+
+// ── ④ 보조 도구 강조 ─────────────────────────
+function drawSupportTool() {
+  const c = document.getElementById('c4')
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 600
+
+  // 배경
+  const bg = ctx.createLinearGradient(0, 0, W, H)
+  bg.addColorStop(0, '#1e293b')
+  bg.addColorStop(1, '#0f172a')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  // 좌측: 결정 요소들
+  const PX = 80
+
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('집을 결정하는 진짜 요소들', PX, 70)
+
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 42px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('정답은 아니에요', PX, 130)
+  ctx.fillStyle = 'rgba(255,255,255,0.6)'
+  ctx.font = '22px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('사주는 보조 도구로 쓰는 게 맞아요', PX, 165)
+
+  // 4개 요소 카드
+  const factors = [
+    { label: '가격', icon: '💰', y: 220 },
+    { label: '출퇴근', icon: '🚇', y: 290 },
+    { label: '학군', icon: '📚', y: 360 },
+    { label: '동네 분위기', icon: '🏘️', y: 430 },
+  ]
+
+  factors.forEach(f => {
+    ctx.fillStyle = 'rgba(255,255,255,0.06)'
+    ctx.beginPath()
+    ctx.roundRect(PX, f.y, 460, 56, 12)
+    ctx.fill()
+
+    ctx.fillStyle = '#ffffff'
+    ctx.font = '32px sans-serif'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(f.icon, PX + 24, f.y + 28)
+
+    ctx.fillStyle = '#ffffff'
+    ctx.font = 'bold 24px "Apple SD Gothic Neo", sans-serif'
+    ctx.fillText(f.label, PX + 80, f.y + 28)
+  })
+
+  // 우측: 사주 카드 (작게, 보조)
+  const sajuX = 660
+  const sajuY = 180
+
+  ctx.fillStyle = 'rgba(167,139,250,0.15)'
+  ctx.beginPath()
+  ctx.roundRect(sajuX, sajuY, 460, 320, 20)
+  ctx.fill()
+  ctx.strokeStyle = 'rgba(167,139,250,0.4)'
+  ctx.lineWidth = 2
+  ctx.setLineDash([8, 6])
+  ctx.stroke()
+  ctx.setLineDash([])
+
+  ctx.fillStyle = '#a78bfa'
+  ctx.font = 'bold 16px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('보조 도구', sajuX + 230, sajuY + 50)
+
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 42px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('사주', sajuX + 230, sajuY + 110)
+
+  // 시각: 비슷한 두 단지 → 사주 추천
+  ctx.fillStyle = 'rgba(255,255,255,0.7)'
+  ctx.font = '18px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('"비슷한 단지 두 곳 중'           , sajuX + 230, sajuY + 165)
+  ctx.fillText('사주에서 추천하는 쪽으로 가볼까?"' , sajuX + 230, sajuY + 195)
+
+  // 화살표
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 36px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('↓', sajuX + 230, sajuY + 245)
+
+  ctx.fillStyle = '#fcd34d'
+  ctx.font = 'bold 22px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('이런 정도로 활용하기 충분', sajuX + 230, sajuY + 285)
+
+  // 푸터
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.fillText('suzip.kr/saju', W - 80, H - 30)
+}
+
+// ── ⑤ 5월 무료 CTA ─────────────────────────
+function drawCTA() {
+  const c = document.getElementById('c5')
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 630
+
+  // 배경 (오렌지 그라데이션)
+  const bg = ctx.createLinearGradient(0, 0, W, H)
+  bg.addColorStop(0, '#7c2d12')
+  bg.addColorStop(1, '#1c1917')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  drawStars(ctx, W, H, 40)
+
+  // 큰 FREE 배경
+  ctx.save()
+  ctx.globalAlpha = 0.05
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 480px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('FREE', W - 60, H/2 + 40)
+  ctx.restore()
+
+  // 좌측 텍스트
+  const PX = 80
+
+  // 뱃지 — 5월 한정
+  ctx.fillStyle = '#fbbf24'
+  ctx.beginPath()
+  ctx.roundRect(PX, 80, measureText(ctx, '5월 한정 이벤트', 'bold 26px') + 44, 48, 8)
+  ctx.fill()
+  ctx.fillStyle = '#7c2d12'
+  ctx.font = 'bold 26px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('5월 한정 이벤트', PX + 22, 104)
+
+  // 메인
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 96px "Apple SD Gothic Neo", sans-serif'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('이번 달은', PX, 280)
+  ctx.fillText('전부 무료', PX, 380)
+
+  // 가격 비교
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = '32px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('원가', PX, 440)
+
+  // 1,900원 취소선
+  ctx.save()
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = 'bold 36px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('1,900원', PX + 80, 440)
+  // 취소선
+  ctx.strokeStyle = '#f97316'
+  ctx.lineWidth = 4
+  ctx.beginPath()
+  ctx.moveTo(PX + 80, 428)
+  ctx.lineTo(PX + 80 + measureText(ctx, '1,900원', 'bold 36px'), 428)
+  ctx.stroke()
+  ctx.restore()
+
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 36px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('→ 0원', PX + 280, 440)
+
+  // 한 줄 설명
+  ctx.fillStyle = 'rgba(255,255,255,0.7)'
+  ctx.font = '24px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('생년월일 입력만으로 1초 결과', PX, 490)
+
+  // 구분선
+  ctx.fillStyle = 'rgba(255,255,255,0.12)'
+  ctx.fillRect(PX, 540, W - PX*2, 1)
+
+  // suzip.kr
+  ctx.fillStyle = 'rgba(255,255,255,0.6)'
+  ctx.font = 'bold 28px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.fillText('suzip.kr/saju', W - PX, 588)
+}
+
+// ── 그리기 실행 ────────────────────────────
+drawMain()
+drawResultExample()
+drawElementMap()
+drawSupportTool()
+drawCTA()
+
+// ── 다운로드 ──────────────────────────────
+function dl(id, filename) {
+  const a = document.createElement('a')
+  a.download = filename
+  a.href = document.getElementById(id).toDataURL('image/png')
+  a.click()
+}
+
+function downloadAll() {
+  const list = [
+    ['c1', 'thumb-사주-1-메인.png'],
+    ['c2', 'thumb-사주-2-결과예시.png'],
+    ['c3', 'thumb-사주-3-오행.png'],
+    ['c4', 'thumb-사주-4-보조도구.png'],
+    ['c5', 'thumb-사주-5-무료CTA.png'],
+  ]
+  list.forEach(([id, name], i) => {
+    setTimeout(() => dl(id, name), i * 350)
+  })
+}
+</script>
+</body>
+</html>
