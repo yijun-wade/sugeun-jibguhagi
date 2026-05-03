@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    padding: 48px;
+  }
+  .wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .label { font-size: 13px; color: #374151; font-weight: 600; }
+  canvas { display: block; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+  button {
+    padding: 10px 28px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button:active { opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="label">부동산 브리핑 — 1200×630px (네이버 블로그 썸네일)</div>
+  <canvas id="c1" width="1200" height="630" style="width:700px;height:367px"></canvas>
+  <button onclick="dl('c1','thumb-브리핑-20260503.png')">다운로드</button>
+</div>
+
+<script>
+function drawThumbnail({ id, badge, title1, title2, subtitle, drawRight }) {
+  const c = document.getElementById(id)
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 630
+
+  // 배경 그라데이션
+  const bg = ctx.createLinearGradient(0, 0, W, H)
+  bg.addColorStop(0, '#1e3a8a')
+  bg.addColorStop(1, '#0f172a')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  drawRight(ctx, W, H)
+
+  const PX = 80
+
+  // 뱃지
+  ctx.fillStyle = '#2563eb'
+  ctx.beginPath()
+  ctx.roundRect(PX, 72, measureText(ctx, badge, 'bold 28px') + 48, 52, 8)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 28px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText(badge, PX + 24, 98)
+
+  // 타이틀
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 96px "Apple SD Gothic Neo", sans-serif'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText(title1, PX, 270)
+  ctx.fillText(title2, PX, 390)
+
+  // 서브타이틀
+  ctx.fillStyle = '#93c5fd'
+  ctx.font = '36px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText(subtitle, PX, 470)
+
+  // 하단 구분선
+  ctx.fillStyle = 'rgba(255,255,255,0.12)'
+  ctx.fillRect(PX, 530, W - PX * 2, 1)
+
+  // suzip.kr
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = 'bold 28px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.fillText('suzip.kr', W - PX, 578)
+}
+
+function measureText(ctx, text, font) {
+  ctx.save()
+  ctx.font = font + ' "Apple SD Gothic Neo", sans-serif'
+  const w = ctx.measureText(text).width
+  ctx.restore()
+  return w
+}
+
+// ── 우측 일러스트: 사라지는 전세 / 규제 화살표 ─────────
+function drawRegulationRight(ctx, W, H) {
+  ctx.save()
+  ctx.globalAlpha = 0.07
+
+  // 큰 원 배경
+  ctx.fillStyle = '#fca5a5'
+  ctx.beginPath()
+  ctx.arc(W - 240, H / 2 - 20, 280, 0, Math.PI * 2)
+  ctx.fill()
+
+  // 중앙 선
+  ctx.globalAlpha = 0.12
+  ctx.strokeStyle = '#ffffff'
+  ctx.lineWidth = 8
+  ctx.lineCap = 'round'
+
+  // 화살표들 (규제가 누르는 느낌)
+  const arrows = [
+    { x: W - 380, y: 170, len: 80 },
+    { x: W - 280, y: 220, len: 100 },
+    { x: W - 180, y: 180, len: 90 },
+    { x: W - 380, y: 380, len: 80 },
+    { x: W - 280, y: 430, len: 100 },
+    { x: W - 180, y: 390, len: 90 },
+  ]
+
+  ctx.globalAlpha = 0.15
+  arrows.forEach(({ x, y, len }) => {
+    ctx.beginPath()
+    ctx.moveTo(x, y)
+    ctx.lineTo(x, y + len)
+    ctx.stroke()
+
+    // 화살표 머리
+    ctx.beginPath()
+    ctx.moveTo(x - 12, y + len - 14)
+    ctx.lineTo(x, y + len)
+    ctx.lineTo(x + 12, y + len - 14)
+    ctx.stroke()
+  })
+
+  // 중앙 X 표시 (전세 사라짐 상징)
+  ctx.globalAlpha = 0.18
+  ctx.strokeStyle = '#f97316'
+  ctx.lineWidth = 16
+  ctx.lineCap = 'round'
+  const cx = W - 280, cy = H / 2
+  ctx.beginPath()
+  ctx.moveTo(cx - 50, cy - 50)
+  ctx.lineTo(cx + 50, cy + 50)
+  ctx.moveTo(cx + 50, cy - 50)
+  ctx.lineTo(cx - 50, cy + 50)
+  ctx.stroke()
+
+  ctx.restore()
+}
+
+// ── 썸네일: 5/3 브리핑 ────────────────────────────────
+drawThumbnail({
+  id: 'c1',
+  badge: '부동산 브리핑',
+  title1: '증여로 넘기고,',
+  title2: '전세는 사라지고',
+  subtitle: '규제가 만드는 역설 · 5월 부동산 브리핑',
+  drawRight: drawRegulationRight,
+})
+
+function dl(id, filename) {
+  const a = document.createElement('a')
+  a.download = filename
+  a.href = document.getElementById(id).toDataURL('image/png')
+  a.click()
+}
+</script>
+</body>
+</html>
