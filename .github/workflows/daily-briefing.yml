@@ -24,6 +24,11 @@ jobs:
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
         run: node scripts/generate-briefing.mjs
 
+      - name: Generate blog post draft
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/generate-blog-post.mjs
+
       - name: Regenerate sitemap
         run: node scripts/generate-sitemap.mjs
 
@@ -34,6 +39,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/briefings/ public/sitemap.xml public/rss.xml
+          git add public/briefings/ public/sitemap.xml public/rss.xml blog-posts/
           git diff --cached --quiet || git commit -m "chore: daily briefing $(date -u +'%Y-%m-%d')"
           git push
