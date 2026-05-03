@@ -177,7 +177,7 @@ ${pillarsInfo}
 
   async function callAI() {
     const ctrl = new AbortController()
-    const tid  = setTimeout(() => ctrl.abort(), 38000)
+    const tid  = setTimeout(() => ctrl.abort(), 25000)
     try {
       const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -210,9 +210,9 @@ ${pillarsInfo}
   }
 
   try {
-    // 최대 3번 시도 — JSON 파싱 성공할 때까지
+    // 최대 2번 시도 — JSON 파싱 성공할 때까지 (Vercel 60s · 프론트 55s 한도 안에 맞춤)
     let result = null
-    for (let attempt = 0; attempt < 3; attempt++) {
+    for (let attempt = 0; attempt < 2; attempt++) {
       const raw = await callAI()
       if (!raw || !raw.includes('{')) continue
 

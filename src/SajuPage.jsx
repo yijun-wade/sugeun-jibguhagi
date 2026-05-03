@@ -236,16 +236,19 @@ const LOADING_STEPS = [
 
 // ── 분석 중 + 광고 화면 ───────────────────────────────────
 function SajuLoading({ birthData, onResult, onError }) {
-  const [seconds, setSeconds]   = useState(40)
+  const [seconds, setSeconds]   = useState(55)
   const [stepIdx, setStepIdx]   = useState(0)
   const [fadeIn, setFadeIn]     = useState(true)
   const doneRef = useRef(false)
 
   useEffect(() => {
     const { year, month, day, si, gender } = birthData
-    fetch(`/api/saju?year=${year}&month=${month}&day=${day}&si=${si || ''}&gender=${gender}`)
+    const ctrl = new AbortController()
+    const tid  = setTimeout(() => ctrl.abort(), 55000)
+    fetch(`/api/saju?year=${year}&month=${month}&day=${day}&si=${si || ''}&gender=${gender}`, { signal: ctrl.signal })
       .then(r => r.json())
       .then(data => {
+        clearTimeout(tid)
         if (doneRef.current) return
         doneRef.current = true
         if (data.error) {
@@ -262,8 +265,14 @@ function SajuLoading({ birthData, onResult, onError }) {
           onResult(data)
         }
       })
-      .catch(() => {
-        if (!doneRef.current) { doneRef.current = true; onError('분석 중 오류가 발생했어요. 다시 시도해주세요.') }
+      .catch(e => {
+        clearTimeout(tid)
+        if (doneRef.current) return
+        doneRef.current = true
+        const msg = e?.name === 'AbortError'
+          ? '서버가 잠시 바빠요. 잠시 후 다시 시도해주세요.'
+          : '분석 중 오류가 발생했어요. 다시 시도해주세요.'
+        onError(msg)
       })
 
     // 카운트다운
