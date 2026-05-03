@@ -158,13 +158,22 @@ ${pillarsInfo}
 성별: ${gender === 'female' ? '여성' : '남성'}
 현재: ${currentYear}년
 
+[용신 오행별 서울 구 매핑 — 반드시 이 목록에서 선택]
+水 용신: 마포구·용산구·영등포구·노원구·도봉구
+木 용신: 성동구·광진구·동대문구·중랑구·강동구
+火 용신: 강남구·서초구·송파구·동작구·관악구
+金 용신: 강서구·양천구·구로구·서대문구·금천구
+土 용신: 중구·종로구·은평구·성북구·강북구
+
 [분석 지시]
 - 일주(日柱) 천간이 일간(日干)입니다. 위 계산값을 그대로 쓰세요.
-- 오행 분포, 신강/신약, 용신을 위 8자 기반으로 분석하세요.
-- 용신 오행에 맞는 서울 구 TOP 3을 선정하세요 (지명 오행, 지형, 생활 에너지 근거 포함).
+- 오행 분포와 8자를 꼼꼼히 분석해 신강/신약과 용신을 정확히 판단하세요.
+- 용신 오행 매핑에서 TOP 3 구를 선정하세요. 단, 아래 조건을 지키세요:
+  · 사주마다 다른 구가 나와야 합니다 (같은 오행 내에서도 순위는 8자 특성에 따라 달라집니다)
+  · 점수 차이가 나는 이유를 지명 오행·지형·생활 에너지 세 가지로 구체적으로 설명하세요
 
 아래 JSON만 출력 (줄바꿈 없이):
-{"ilgan":"甲木","saju":{"ohaengDist":"木 과다 水 부족","sinkang":"신강","yongshin":"水","yongShinReason":"신강 甲木은 水로 설기해야 균형","daewon":"癸巳 대운(2020-2030)","sewon":"丙午년 식신"},"timing":{"isGoodYear":true,"timingScore":88,"reason":"대운이 용신 보충","bestMonths":"봄 3-4월"},"regions":[{"gu":"마포구","rank":1,"score":95,"scoreBreakdown":{"ohaengMatch":{"score":24,"reason":"한강 水 기운"},"jimingOhaeng":{"score":23,"reason":"浦자 水변"},"landscape":{"score":24,"reason":"배산임수"},"lifeEnergy":{"score":24,"reason":"교통 허브"}},"jiming":"麻浦 — 浦자에 水변","whyThisGu":"이유","dailyLife":"일상 에너지"},{"gu":"용산구","rank":2,"score":85,"scoreBreakdown":{"ohaengMatch":{"score":22,"reason":"한강"},"jimingOhaeng":{"score":19,"reason":"龍 水기운"},"landscape":{"score":23,"reason":"배산임수"},"lifeEnergy":{"score":21,"reason":"한남 에너지"}},"jiming":"龍山 — 용의 땅","whyThisGu":"이유","dailyLife":"일상"},{"gu":"영등포구","rank":3,"score":76,"scoreBreakdown":{"ohaengMatch":{"score":22,"reason":"여의도 한강"},"jimingOhaeng":{"score":15,"reason":"水 약함"},"landscape":{"score":20,"reason":"업무지형"},"lifeEnergy":{"score":19,"reason":"긴장 지속"}},"jiming":"永登浦","whyThisGu":"이유","dailyLife":"일상"}],"regionComparison":"비교","warning":{"year":"2028년","reason":"주의","action":"대비"},"summary":"한 줄 요약","finalVerdict":"최종 판단"}`
+{"ilgan":"丙火","saju":{"ohaengDist":"火 과다 木 약","sinkang":"신강","yongshin":"金","yongShinReason":"신강 丙火는 金으로 설기해야 균형","daewon":"庚申 대운(2022-2032)","sewon":"丙午년 비겁"},"timing":{"isGoodYear":false,"timingScore":62,"reason":"비겁운으로 경쟁·충돌 주의","bestMonths":"가을 9-10월"},"regions":[{"gu":"강서구","rank":1,"score":91,"scoreBreakdown":{"ohaengMatch":{"score":25,"reason":"江西의 西는 金 방위, 서쪽 기운"},"jimingOhaeng":{"score":22,"reason":"강서의 西자 金 오행 직결"},"landscape":{"score":22,"reason":"한강 北岸 평지, 金 기운 안정"},"lifeEnergy":{"score":22,"reason":"김포공항·마곡 신산업 金 에너지"}},"jiming":"江西(강서) — 西자에 金 방위","whyThisGu":"이유","dailyLife":"일상 에너지"},{"gu":"양천구","rank":2,"score":83,"scoreBreakdown":{"ohaengMatch":{"score":22,"reason":"서쪽 위치, 金 방위"},"jimingOhaeng":{"score":18,"reason":"陽川, 직접 금 오행 약함"},"landscape":{"score":22,"reason":"목동 정주 에너지 안정"},"lifeEnergy":{"score":21,"reason":"학군·가족 중심 생활"}},"jiming":"陽川(양천) — 서쪽 금 방위 지역","whyThisGu":"이유","dailyLife":"일상"},{"gu":"서대문구","rank":3,"score":74,"scoreBreakdown":{"ohaengMatch":{"score":20,"reason":"서쪽 金 방위 약하게 해당"},"jimingOhaeng":{"score":16,"reason":"西大門의 西자 金 방위"},"landscape":{"score":19,"reason":"인왕산 金 기운, 북쪽 지형"},"lifeEnergy":{"score":19,"reason":"대학가 지식 에너지"}},"jiming":"西大門(서대문) — 西자 金 방위","whyThisGu":"이유","dailyLife":"일상"}],"regionComparison":"비교","warning":{"year":"2029년","reason":"주의","action":"대비"},"summary":"한 줄 요약","finalVerdict":"최종 판단"}`
 
   async function callAI() {
     const ctrl = new AbortController()
