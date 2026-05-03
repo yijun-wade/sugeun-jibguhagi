@@ -1932,6 +1932,11 @@ header { text-align: center; padding: 4px 0 2px; }
 .saju-sample-more { padding: 10px 16px; background: #F9FAFB; font-size: 11px; color: var(--muted); text-align: center; }
 .saju-result { padding-bottom: 60px; }
 .saju-result-hero { background: url(/saju-hero-bg.png) center/cover, linear-gradient(135deg, #1e3a8a, #2563eb); padding: 32px 24px; text-align: center; border-radius: 20px; margin-bottom: 20px; }
+.saju-result-hero.saju-hero-su   { background: url(/saju-hero-su.png) center/cover,   linear-gradient(135deg, #0a1940, #1e40af); }
+.saju-result-hero.saju-hero-mok  { background: url(/saju-hero-mok.png) center/cover,  linear-gradient(135deg, #0c2a1c, #166534); }
+.saju-result-hero.saju-hero-hwa  { background: url(/saju-hero-hwa.png) center/cover,  linear-gradient(135deg, #3b0a0a, #b91c1c); }
+.saju-result-hero.saju-hero-to   { background: url(/saju-hero-to.png) center/cover,   linear-gradient(135deg, #3b2a0a, #92400e); }
+.saju-result-hero.saju-hero-geum { background: url(/saju-hero-geum.png) center/cover, linear-gradient(135deg, #28261a, #866d1f); }
 .saju-section { border: 1.5px solid #E5E7EB; border-radius: 14px; padding: 18px; margin-bottom: 14px; }
 .saju-section-title { font-size: 13px; font-weight: 800; color: var(--muted); margin-bottom: 12px; letter-spacing: 0.03em; }
 .saju-info-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #F3F4F6; gap: 12px; }
