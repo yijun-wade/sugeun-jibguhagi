@@ -423,13 +423,37 @@ function SajuResult({ result, onBack }) {
       <div ref={resultRef}>
       <div className={`saju-result-hero saju-hero-${heroKey(result.ilgan)}`}>
         <div style={{ fontSize: 48, fontWeight: 900, color: '#fff' }}>{result.ilgan}</div>
-        <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.8)', marginTop: 4 }}>
+        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', marginTop: 4 }}>
           {s.sinkang} · 용신 {s.yongshin}
         </div>
-        <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', marginTop: 12, lineHeight: 1.7, background: 'rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px' }}>
-          {result.summary}
-        </div>
+        {/* 일반인 친화 요약 (plainSummary) — 가장 크게 */}
+        {(result.plainSummary || result.summary) && (
+          <div style={{ fontSize: 16, fontWeight: 600, color: '#fff', marginTop: 14, lineHeight: 1.65, background: 'rgba(255,255,255,0.12)', borderRadius: 12, padding: '14px 16px' }}>
+            {result.plainSummary || result.summary}
+          </div>
+        )}
+        {/* 사주 전문 요약 — plainSummary 있으면 보조적으로 작게 */}
+        {result.plainSummary && result.summary && (
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginTop: 8, lineHeight: 1.6, fontStyle: 'italic' }}>
+            {result.summary}
+          </div>
+        )}
       </div>
+
+      {/* 사주 용어 설명 — 처음 본 사람을 위한 가이드 */}
+      <details className="saju-glossary">
+        <summary>ℹ️ 사주 용어가 어렵나요?</summary>
+        <dl>
+          <dt>일간 (日干)</dt>
+          <dd>당신 사주의 핵심 글자. 타고난 본질적 성향을 나타내요.</dd>
+          <dt>신강·신약</dt>
+          <dd>기운이 센 편(신강) / 약한 편(신약). 강하면 발산이, 약하면 보충이 필요해요.</dd>
+          <dt>용신 (用神)</dt>
+          <dd>당신에게 가장 좋은 기운. 균형을 맞춰주는 오행이에요.</dd>
+          <dt>오행 (五行)</dt>
+          <dd>木(나무)·火(불)·土(흙)·金(쇠)·水(물). 우주를 구성하는 5가지 기운이에요.</dd>
+        </dl>
+      </details>
 
       {result.fourPillars && (
         <section className="saju-section">
