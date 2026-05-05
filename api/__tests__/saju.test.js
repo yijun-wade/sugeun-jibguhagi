@@ -254,4 +254,16 @@ describe('SAJU_TOOL schema 무결성', () => {
       assert.equal(sb[key].properties.score.maximum, 25, `${key}.maximum`)
     }
   })
+
+  test('주요 string 필드에 maxLength — 응답 시간 단축용', () => {
+    const sb = s.properties.regions.items.properties.scoreBreakdown.properties
+    for (const key of ['ohaengMatch','jimingOhaeng','landscape','lifeEnergy']) {
+      assert.ok(sb[key].properties.reason.maxLength > 0, `scoreBreakdown.${key}.reason.maxLength`)
+      assert.ok(sb[key].properties.reason.maxLength <= 80, `scoreBreakdown.${key}.reason 너무 길지 않음`)
+    }
+    assert.ok(s.properties.regions.items.properties.whyThisGu.maxLength > 0, 'whyThisGu.maxLength')
+    assert.ok(s.properties.regions.items.properties.dailyLife.maxLength > 0, 'dailyLife.maxLength')
+    assert.ok(s.properties.plainSummary.maxLength > 0, 'plainSummary.maxLength')
+    assert.ok(s.properties.finalVerdict.maxLength > 0, 'finalVerdict.maxLength')
+  })
 })

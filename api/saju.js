@@ -107,9 +107,15 @@ function getAptSamples(gu, count = 2) {
 }
 
 // ── Anthropic Tool Schema — 모델이 반드시 이 구조로 응답 ─────
+//   모든 string 필드에 maxLength 강제 → 출력 토큰 ↓ → 응답 시간 ↓
+//   (Anthropic Haiku tool-use가 28s 안에 안 끝나는 케이스 회피)
+const REASON_MAX = 60     // scoreBreakdown 4축 reason
+const SHORT_MAX  = 80     // jiming, dailyLife, summary 등
+const MED_MAX    = 150    // whyThisGu, regionComparison, finalVerdict
+
 export const SAJU_TOOL = {
   name: 'submit_saju_report',
-  description: '사주 분석 결과를 정해진 구조로 제출합니다. 모든 필드를 빠짐없이 채우세요.',
+  description: '사주 분석 결과를 정해진 구조로 제출합니다. 모든 필드는 정해진 maxLength 안에서 간결하게 작성하세요.',
   input_schema: {
     type: 'object',
     properties: {
@@ -120,17 +126,18 @@ export const SAJU_TOOL = {
       },
       plainSummary: {
         type: 'string',
+        maxLength: 100,
         description: '사주 모르는 일반인용 2~3문장. 한자/전문용어(일간·용신·신강·신약·오행·설기 등) 절대 금지. 형식: "당신은 [성격] 사주예요. [어떤 동네]가 잘 맞아요."',
       },
       saju: {
         type: 'object',
         properties: {
-          ohaengDist:     { type: 'string', description: '오행 분포 한 줄 (예: "火 과다 木 약")' },
+          ohaengDist:     { type: 'string', maxLength: 50, description: '오행 분포 한 줄 (예: "火 과다 木 약")' },
           sinkang:        { type: 'string', enum: ['신강','신약','중화'] },
           yongshin:       { type: 'string', enum: ['水','木','火','金','土'] },
-          yongShinReason: { type: 'string' },
-          daewon:         { type: 'string', description: '현재 대운 (예: "庚申 대운(2022-2032)")' },
-          sewon:          { type: 'string', description: '올해 세운 한 줄 (예: "丙午년 비겁")' },
+          yongShinReason: { type: 'string', maxLength: 80, description: '용신 선정 이유 (한 문장)' },
+          daewon:         { type: 'string', maxLength: 50, description: '현재 대운 (예: "庚申 대운(2022-2032)")' },
+          sewon:          { type: 'string', maxLength: 50, description: '올해 세운 한 줄 (예: "丙午년 비겁")' },
         },
         required: ['ohaengDist','sinkang','yongshin','yongShinReason','daewon','sewon'],
       },
@@ -139,8 +146,8 @@ export const SAJU_TOOL = {
         properties: {
           isGoodYear:  { type: 'boolean' },
           timingScore: { type: 'integer', minimum: 0, maximum: 100 },
-          reason:      { type: 'string' },
-          bestMonths:  { type: 'string' },
+          reason:      { type: 'string', maxLength: 100 },
+          bestMonths:  { type: 'string', maxLength: 50 },
         },
         required: ['isGoodYear','timingScore','reason','bestMonths'],
       },
@@ -152,38 +159,38 @@ export const SAJU_TOOL = {
         items: {
           type: 'object',
           properties: {
-            gu:    { type: 'string', description: '서울 자치구 이름 (예: "마포구")' },
+            gu:    { type: 'string', maxLength: 10, description: '서울 자치구 이름 (예: "마포구")' },
             rank:  { type: 'integer', minimum: 1, maximum: 3 },
             score: { type: 'integer', minimum: 0, maximum: 100 },
             scoreBreakdown: {
               type: 'object',
               properties: {
-                ohaengMatch:   { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string' } }, required: ['score','reason'] },
-                jimingOhaeng:  { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string' } }, required: ['score','reason'] },
-                landscape:     { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string' } }, required: ['score','reason'] },
-                lifeEnergy:    { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string' } }, required: ['score','reason'] },
+                ohaengMatch:   { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX } }, required: ['score','reason'] },
+                jimingOhaeng:  { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX } }, required: ['score','reason'] },
+                landscape:     { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX } }, required: ['score','reason'] },
+                lifeEnergy:    { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX } }, required: ['score','reason'] },
               },
               required: ['ohaengMatch','jimingOhaeng','landscape','lifeEnergy'],
             },
-            jiming:    { type: 'string', description: '지명 풀이 (예: "麻浦(마포) — 浦자에 水변, 한강 포구")' },
-            whyThisGu: { type: 'string', description: '이 구를 추천하는 이유 (사주와 연결, 구체적으로)' },
-            dailyLife: { type: 'string', description: '일상 생활 에너지 한 줄' },
+            jiming:    { type: 'string', maxLength: SHORT_MAX, description: '지명 풀이 (예: "麻浦(마포) — 浦자에 水변, 한강 포구")' },
+            whyThisGu: { type: 'string', maxLength: MED_MAX,   description: '이 구를 추천하는 이유 (사주와 연결, 1~2문장)' },
+            dailyLife: { type: 'string', maxLength: SHORT_MAX, description: '일상 생활 에너지 한 줄' },
           },
           required: ['gu','rank','score','scoreBreakdown','jiming','whyThisGu','dailyLife'],
         },
       },
-      regionComparison: { type: 'string', description: '3개 구의 비교 한 줄' },
+      regionComparison: { type: 'string', maxLength: MED_MAX,   description: '3개 구의 비교 한 줄' },
       warning: {
         type: 'object',
         properties: {
-          year:   { type: 'string', description: '주의 세운 연도' },
-          reason: { type: 'string' },
-          action: { type: 'string' },
+          year:   { type: 'string', maxLength: 20,  description: '주의 세운 연도' },
+          reason: { type: 'string', maxLength: 100 },
+          action: { type: 'string', maxLength: 100 },
         },
         required: ['year','reason','action'],
       },
-      summary:      { type: 'string', description: '한 줄 요약' },
-      finalVerdict: { type: 'string', description: '최종 판단 (1~2문장)' },
+      summary:      { type: 'string', maxLength: SHORT_MAX, description: '한 줄 요약' },
+      finalVerdict: { type: 'string', maxLength: MED_MAX,   description: '최종 판단 (1~2문장)' },
     },
     required: ['ilgan','plainSummary','saju','timing','regions','regionComparison','warning','summary','finalVerdict'],
   },
@@ -255,18 +262,28 @@ ${pillarsInfo}
 - 오행 분포와 8자를 꼼꼼히 분석해 신강/신약과 용신을 정확히 판단하세요.
 - 용신 오행 매핑에서 TOP 3 구를 선정하세요. 단, 아래 조건을 지키세요:
   · 사주마다 다른 구가 나와야 합니다 (같은 오행 내에서도 순위는 8자 특성에 따라 달라집니다)
-  · 점수 차이의 근거를 지명 오행·지형·생활 에너지 세 가지로 구체적으로 설명하세요
+  · 점수 차이의 근거를 지명 오행·지형·생활 에너지 세 가지로 설명하세요
   · scoreBreakdown 4개 항목 점수 합이 score와 일치하도록 분배하세요
+
+[글자수 제한 — 응답 시간 단축]
+- 각 reason은 한 문장 60자 이내로 압축하세요
+- whyThisGu / regionComparison / finalVerdict 는 1~2문장 150자 이내
+- 핵심만 담고 부연·중복 표현은 제거하세요
 
 분석 결과는 반드시 submit_saju_report 도구로 제출하세요.`
 
   // ── 진단 로깅 — 모든 시도 결과 추적 ───────────────────────
   const diag = { startedAt: Date.now(), attempts: [] }
 
+  // 비대칭 timeout: 첫 시도 cold start + 풀 응답 흡수, 재시도는 transient 회복용
+  // 38s + 1s wait + 18s = 57s (Vercel 60s 한도 안)
+  const TIMEOUTS = [38000, 18000]
+
   async function callAI(attempt) {
     const t0 = Date.now()
     const ctrl = new AbortController()
-    const tid  = setTimeout(() => ctrl.abort(), 28000)
+    const timeoutMs = TIMEOUTS[attempt] || 18000
+    const tid  = setTimeout(() => ctrl.abort(), timeoutMs)
     try {
       const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -278,7 +295,7 @@ ${pillarsInfo}
         },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 4096,
+          max_tokens: 3000,
           tools: [SAJU_TOOL],
           tool_choice: { type: 'tool', name: SAJU_TOOL.name },
           messages: [{ role: 'user', content: prompt }],
@@ -309,8 +326,8 @@ ${pillarsInfo}
     } catch (e) {
       clearTimeout(tid)
       const dur = Date.now() - t0
-      // AbortError = 28s 타임아웃 / TypeError = 네트워크 / 기타 = 알 수 없음
-      const errorType = e?.name === 'AbortError' ? 'abort_28s'
+      // AbortError = 비대칭 timeout / TypeError = 네트워크 / 기타 = 알 수 없음
+      const errorType = e?.name === 'AbortError' ? `abort_${Math.round(timeoutMs/1000)}s`
                       : e?.name === 'TypeError'  ? 'network'
                       : `exception_${e?.name || 'unknown'}`
       console.error(`[saju] attempt=${attempt} ${errorType} dur=${dur}ms msg=${e?.message}`)
@@ -320,7 +337,7 @@ ${pillarsInfo}
   }
 
   try {
-    // 최대 2번 시도 (Vercel 60s · 프론트 55s · 28s × 2 + 1s 대기 = 57s)
+    // 최대 2번 시도 (Vercel 60s · 프론트 55s · 비대칭 38s+18s + 1s 대기 = 57s)
     let result = null
     for (let attempt = 0; attempt < 2; attempt++) {
       if (attempt > 0) await new Promise(r => setTimeout(r, 1000))
