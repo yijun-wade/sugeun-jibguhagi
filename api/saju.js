@@ -109,9 +109,9 @@ function getAptSamples(gu, count = 2) {
 // ── Anthropic Tool Schema — 모델이 반드시 이 구조로 응답 ─────
 //   모든 string 필드에 maxLength 강제 → 출력 토큰 ↓ → 응답 시간 ↓
 //   (Anthropic Haiku tool-use가 28s 안에 안 끝나는 케이스 회피)
-const REASON_MAX = 60     // scoreBreakdown 4축 reason
-const SHORT_MAX  = 80     // jiming, dailyLife, summary 등
-const MED_MAX    = 150    // whyThisGu, regionComparison, finalVerdict
+const REASON_MAX = 70     // scoreBreakdown 4축 reason (풀어쓰기 여유)
+const SHORT_MAX  = 100    // jiming, dailyLife, summary 등
+const MED_MAX    = 180    // whyThisGu, regionComparison, finalVerdict
 
 export const SAJU_TOOL = {
   name: 'submit_saju_report',
@@ -165,21 +165,21 @@ export const SAJU_TOOL = {
             scoreBreakdown: {
               type: 'object',
               properties: {
-                ohaengMatch:   { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX } }, required: ['score','reason'] },
-                jimingOhaeng:  { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX } }, required: ['score','reason'] },
-                landscape:     { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX } }, required: ['score','reason'] },
-                lifeEnergy:    { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX } }, required: ['score','reason'] },
+                ohaengMatch:   { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX, description: '점수 이유 한 문장. 일상 언어로. 한자 오행·전문어 금지.' } }, required: ['score','reason'] },
+                jimingOhaeng:  { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX, description: '점수 이유 한 문장. 일상 언어로. 한자 오행·전문어 금지.' } }, required: ['score','reason'] },
+                landscape:     { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX, description: '점수 이유 한 문장. 일상 언어로. 한자 오행·전문어 금지.' } }, required: ['score','reason'] },
+                lifeEnergy:    { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX, description: '점수 이유 한 문장. 일상 언어로. 한자 오행·전문어 금지.' } }, required: ['score','reason'] },
               },
               required: ['ohaengMatch','jimingOhaeng','landscape','lifeEnergy'],
             },
-            jiming:    { type: 'string', maxLength: SHORT_MAX, description: '지명 풀이 (예: "麻浦(마포) — 浦자에 水변, 한강 포구")' },
-            whyThisGu: { type: 'string', maxLength: MED_MAX,   description: '이 구를 추천하는 이유 (사주와 연결, 1~2문장)' },
-            dailyLife: { type: 'string', maxLength: SHORT_MAX, description: '일상 생활 에너지 한 줄' },
+            jiming:    { type: 'string', maxLength: SHORT_MAX, description: '지명을 친근하게 풀이. 한자 의미를 한국어로 풀기. 예: "麻浦 — \'포구\'라는 뜻으로 한강 물기운이 담긴 동네"' },
+            whyThisGu: { type: 'string', maxLength: MED_MAX,   description: '이 구를 추천하는 이유 1~2문장. 일반인 일상 언어. 한자 오행(木火土金水)·사주 전문어(일간·신강·신약·용신·설기·비겁 등) 금지. 풍경·분위기·기분으로 풀어쓰기.' },
+            dailyLife: { type: 'string', maxLength: SHORT_MAX, description: '일상 생활 에너지 한 줄. 일반인이 공감할 일상 언어 (예: "한강 산책으로 하루 마무리, 출퇴근도 편한 동네")' },
           },
           required: ['gu','rank','score','scoreBreakdown','jiming','whyThisGu','dailyLife'],
         },
       },
-      regionComparison: { type: 'string', maxLength: MED_MAX,   description: '3개 구의 비교 한 줄' },
+      regionComparison: { type: 'string', maxLength: MED_MAX,   description: '3개 구의 비교 한 줄. 일반인 톤으로 (예: "마포는 한강 가까이, 용산은 산세 좋고, 영등포는 활기 강한 동네").' },
       warning: {
         type: 'object',
         properties: {
@@ -189,8 +189,8 @@ export const SAJU_TOOL = {
         },
         required: ['year','reason','action'],
       },
-      summary:      { type: 'string', maxLength: SHORT_MAX, description: '한 줄 요약' },
-      finalVerdict: { type: 'string', maxLength: MED_MAX,   description: '최종 판단 (1~2문장)' },
+      summary:      { type: 'string', maxLength: SHORT_MAX, description: '한 줄 요약. 일반인 톤. 한자 오행·전문어 금지.' },
+      finalVerdict: { type: 'string', maxLength: MED_MAX,   description: '최종 판단 1~2문장. 일반인 톤. 한자 오행·전문어 금지. (예: "지금 시기가 정착에 좋아요. 마포가 풍경·동네 분위기·교통 모두에서 가장 잘 맞습니다.")' },
     },
     required: ['ilgan','plainSummary','saju','timing','regions','regionComparison','warning','summary','finalVerdict'],
   },
@@ -265,10 +265,21 @@ ${pillarsInfo}
   · 점수 차이의 근거를 지명 오행·지형·생활 에너지 세 가지로 설명하세요
   · scoreBreakdown 4개 항목 점수 합이 score와 일치하도록 분배하세요
 
+[답변 톤 — 매우 중요]
+plainSummary뿐 아니라 reason·whyThisGu·dailyLife·jiming·regionComparison·summary·finalVerdict 모두 사주 모르는 일반인이 읽는 글입니다.
+- 한자 오행(木·火·土·金·水)을 단독으로 쓰지 말고 "나무 기운·물 기운·불 기운·쇠 기운·흙 기운" 으로
+- 사주 전문어("일간·신강·신약·설기·용신·비겁·식신·관성·재성·인성·세운·대운") 금지
+- 풍경·동네 분위기·생활 에너지·기분 같은 감각적 묘사로 풀어쓰기
+
+✗ 어려운 답: "한양도성 내 목기 강한 지세, 청계천 수 흐름과 남산 목 에너지 조화. 신강 목일간에 최적."
+✓ 쉬운 답: "남산의 푸른 산세와 청계천 물줄기가 어우러진 동네예요. 추진력 강한 당신에게 차분한 균형을 찾아주는 곳."
+
+(예외: saju 객체 안의 ohaengDist·sinkang·yongshin·yongShinReason·daewon·sewon은 전문 분석 필드라 한자·전문어 그대로 사용)
+
 [글자수 제한 — 응답 시간 단축]
-- 각 reason은 한 문장 60자 이내로 압축하세요
-- whyThisGu / regionComparison / finalVerdict 는 1~2문장 150자 이내
-- 핵심만 담고 부연·중복 표현은 제거하세요
+- 각 reason은 한 문장 70자 이내
+- whyThisGu / regionComparison / finalVerdict 는 1~2문장 180자 이내
+- 핵심만 담고 부연·중복 제거
 
 분석 결과는 반드시 submit_saju_report 도구로 제출하세요.`
 
