@@ -252,7 +252,7 @@ function SajuLoading({ birthData, onResult, onError }) {
     const { year, month, day, si, gender } = birthData
     const clientStart = Date.now()
     const ctrl = new AbortController()
-    const tid  = setTimeout(() => ctrl.abort(), 55000)
+    const tid  = setTimeout(() => ctrl.abort(), 60000)
     fetch(`/api/saju?year=${year}&month=${month}&day=${day}&si=${si || ''}&gender=${gender}`, { signal: ctrl.signal })
       .then(r => r.json())
       .then(data => {
