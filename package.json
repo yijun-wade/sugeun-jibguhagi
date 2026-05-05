@@ -7,7 +7,8 @@
     "dev": "granite dev",
     "build": "ait build",
     "preview": "vite preview",
-    "deploy": "ait deploy"
+    "deploy": "ait deploy",
+    "test": "node --test api/__tests__/*.test.js"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.41.0",
