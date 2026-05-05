@@ -63,7 +63,7 @@ function hanja(stem, branch) {
   return HEAVENLY_STEMS_H[HEAVENLY_STEMS.indexOf(stem)] + EARTHLY_BRANCHES_H[EARTHLY_BRANCHES.indexOf(branch)]
 }
 
-function calcFourPillars(year, month, day, si) {
+export function calcFourPillars(year, month, day, si) {
   const yr = getYearPillar(year)
   const mo = getMonthPillar(year, month, day)
   const da = getDayPillar(year, month, day)
@@ -106,18 +106,110 @@ function getAptSamples(gu, count = 2) {
   }))
 }
 
-function sanitizeJson(str) {
-  let out = '', inStr = false, esc = false
-  for (const ch of str) {
-    if (esc)                   { out += ch; esc = false; continue }
-    if (ch === '\\' && inStr)  { out += ch; esc = true;  continue }
-    if (ch === '"')            { inStr = !inStr; out += ch; continue }
-    if (inStr && ch === '\n')  { out += '\\n'; continue }
-    if (inStr && ch === '\r')  { out += '\\r'; continue }
-    if (inStr && ch === '\t')  { out += '\\t'; continue }
-    out += ch
+// ── Anthropic Tool Schema — 모델이 반드시 이 구조로 응답 ─────
+//   모든 string 필드에 maxLength 강제 → 출력 토큰 ↓ → 응답 시간 ↓
+//   (Anthropic Haiku tool-use가 28s 안에 안 끝나는 케이스 회피)
+const REASON_MAX = 70     // scoreBreakdown 4축 reason (풀어쓰기 여유)
+const SHORT_MAX  = 100    // jiming, dailyLife, summary 등
+const MED_MAX    = 180    // whyThisGu, regionComparison, finalVerdict
+
+export const SAJU_TOOL = {
+  name: 'submit_saju_report',
+  description: '사주 분석 결과를 정해진 구조로 제출합니다. 모든 필드는 정해진 maxLength 안에서 간결하게 작성하세요.',
+  input_schema: {
+    type: 'object',
+    properties: {
+      ilgan: {
+        type: 'string',
+        enum: ['甲木','乙木','丙火','丁火','戊土','己土','庚金','辛金','壬水','癸水'],
+        description: '일간 (천간 한자 + 오행). 만세력 일주(日柱)의 천간을 그대로 사용.',
+      },
+      plainSummary: {
+        type: 'string',
+        maxLength: 100,
+        description: '사주 모르는 일반인용 2~3문장. 한자/전문용어(일간·용신·신강·신약·오행·설기 등) 절대 금지. 형식: "당신은 [성격] 사주예요. [어떤 동네]가 잘 맞아요."',
+      },
+      saju: {
+        type: 'object',
+        properties: {
+          ohaengDist:     { type: 'string', maxLength: 50, description: '오행 분포 한 줄 (예: "火 과다 木 약")' },
+          sinkang:        { type: 'string', enum: ['신강','신약','중화'] },
+          yongshin:       { type: 'string', enum: ['水','木','火','金','土'] },
+          yongShinReason: { type: 'string', maxLength: 80, description: '용신 선정 이유 (한 문장)' },
+          daewon:         { type: 'string', maxLength: 50, description: '현재 대운 (예: "庚申 대운(2022-2032)")' },
+          sewon:          { type: 'string', maxLength: 50, description: '올해 세운 한 줄 (예: "丙午년 비겁")' },
+        },
+        required: ['ohaengDist','sinkang','yongshin','yongShinReason','daewon','sewon'],
+      },
+      timing: {
+        type: 'object',
+        properties: {
+          isGoodYear:  { type: 'boolean' },
+          timingScore: { type: 'integer', minimum: 0, maximum: 100 },
+          reason:      { type: 'string', maxLength: 100 },
+          bestMonths:  { type: 'string', maxLength: 50 },
+        },
+        required: ['isGoodYear','timingScore','reason','bestMonths'],
+      },
+      regions: {
+        type: 'array',
+        minItems: 3,
+        maxItems: 3,
+        description: '용신 오행 매핑에서 TOP 3 자치구. rank는 1·2·3, score 내림차순.',
+        items: {
+          type: 'object',
+          properties: {
+            gu:    { type: 'string', maxLength: 10, description: '서울 자치구 이름 (예: "마포구")' },
+            rank:  { type: 'integer', minimum: 1, maximum: 3 },
+            score: { type: 'integer', minimum: 0, maximum: 100 },
+            scoreBreakdown: {
+              type: 'object',
+              properties: {
+                ohaengMatch:   { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX, description: '점수 이유 한 문장. 일상 언어로. 한자 오행·전문어 금지.' } }, required: ['score','reason'] },
+                jimingOhaeng:  { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX, description: '점수 이유 한 문장. 일상 언어로. 한자 오행·전문어 금지.' } }, required: ['score','reason'] },
+                landscape:     { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX, description: '점수 이유 한 문장. 일상 언어로. 한자 오행·전문어 금지.' } }, required: ['score','reason'] },
+                lifeEnergy:    { type: 'object', properties: { score: { type: 'integer', minimum: 0, maximum: 25 }, reason: { type: 'string', maxLength: REASON_MAX, description: '점수 이유 한 문장. 일상 언어로. 한자 오행·전문어 금지.' } }, required: ['score','reason'] },
+              },
+              required: ['ohaengMatch','jimingOhaeng','landscape','lifeEnergy'],
+            },
+            jiming:    { type: 'string', maxLength: SHORT_MAX, description: '지명을 친근하게 풀이. 한자 의미를 한국어로 풀기. 예: "麻浦 — \'포구\'라는 뜻으로 한강 물기운이 담긴 동네"' },
+            whyThisGu: { type: 'string', maxLength: MED_MAX,   description: '이 구를 추천하는 이유 1~2문장. 일반인 일상 언어. 한자 오행(木火土金水)·사주 전문어(일간·신강·신약·용신·설기·비겁 등) 금지. 풍경·분위기·기분으로 풀어쓰기.' },
+            dailyLife: { type: 'string', maxLength: SHORT_MAX, description: '일상 생활 에너지 한 줄. 일반인이 공감할 일상 언어 (예: "한강 산책으로 하루 마무리, 출퇴근도 편한 동네")' },
+          },
+          required: ['gu','rank','score','scoreBreakdown','jiming','whyThisGu','dailyLife'],
+        },
+      },
+      regionComparison: { type: 'string', maxLength: MED_MAX,   description: '3개 구의 비교 한 줄. 일반인 톤으로 (예: "마포는 한강 가까이, 용산은 산세 좋고, 영등포는 활기 강한 동네").' },
+      warning: {
+        type: 'object',
+        properties: {
+          year:   { type: 'string', maxLength: 20,  description: '주의 세운 연도' },
+          reason: { type: 'string', maxLength: 100 },
+          action: { type: 'string', maxLength: 100 },
+        },
+        required: ['year','reason','action'],
+      },
+      summary:      { type: 'string', maxLength: SHORT_MAX, description: '한 줄 요약. 일반인 톤. 한자 오행·전문어 금지.' },
+      finalVerdict: { type: 'string', maxLength: MED_MAX,   description: '최종 판단 1~2문장. 일반인 톤. 한자 오행·전문어 금지. (예: "지금 시기가 정착에 좋아요. 마포가 풍경·동네 분위기·교통 모두에서 가장 잘 맞습니다.")' },
+    },
+    required: ['ilgan','plainSummary','saju','timing','regions','regionComparison','warning','summary','finalVerdict'],
+  },
+}
+
+// ── tool_use 응답 검증 — 응답에서 tool 블록 추출 + regions 후처리 검사 ─
+export function processToolResponse(data, toolName = SAJU_TOOL.name) {
+  if (data?.stop_reason === 'max_tokens') return { ok: false, errorType: 'max_tokens' }
+  const block = Array.isArray(data?.content)
+    ? data.content.find(c => c?.type === 'tool_use' && c?.name === toolName)
+    : null
+  if (!block || !block.input || typeof block.input !== 'object') {
+    return { ok: false, errorType: 'no_tool_use' }
   }
-  return out
+  const result = block.input
+  if (!Array.isArray(result.regions) || result.regions.length !== 3) {
+    return { ok: false, errorType: 'invalid_regions' }
+  }
+  return { ok: true, result }
 }
 
 export default async function handler(req, res) {
@@ -158,7 +250,7 @@ ${pillarsInfo}
 성별: ${gender === 'female' ? '여성' : '남성'}
 현재: ${currentYear}년
 
-[용신 오행별 서울 구 매핑 — 반드시 이 목록에서 선택]
+[용신 오행별 서울 구 매핑 — 반드시 이 목록에서만 선택]
 水 용신: 마포구·용산구·영등포구·노원구·도봉구
 木 용신: 성동구·광진구·동대문구·중랑구·강동구
 火 용신: 강남구·서초구·송파구·동작구·관악구
@@ -170,26 +262,39 @@ ${pillarsInfo}
 - 오행 분포와 8자를 꼼꼼히 분석해 신강/신약과 용신을 정확히 판단하세요.
 - 용신 오행 매핑에서 TOP 3 구를 선정하세요. 단, 아래 조건을 지키세요:
   · 사주마다 다른 구가 나와야 합니다 (같은 오행 내에서도 순위는 8자 특성에 따라 달라집니다)
-  · 점수 차이가 나는 이유를 지명 오행·지형·생활 에너지 세 가지로 구체적으로 설명하세요
+  · 점수 차이의 근거를 지명 오행·지형·생활 에너지 세 가지로 설명하세요
+  · scoreBreakdown 4개 항목 점수 합이 score와 일치하도록 분배하세요
 
-[plainSummary 작성 규칙 — 매우 중요]
-- 사주 모르는 일반인을 위한 2~3문장 요약
-- "일간/용신/신강/신약/오행/설기" 같은 한자·전문용어 절대 사용 금지
-- "활동적이다 / 차분하다 / 열정적이다 / 안정적이다" 같은 일상 언어로
-- 형식: "당신은 [성격] 사주예요. [어떤 동네]가 잘 맞아요."
-- 예시: "당신은 에너지가 강하고 추진력이 좋은 사주예요. 차분하고 정돈된 동네에서 균형이 맞춰져요."
+[답변 톤 — 매우 중요]
+plainSummary뿐 아니라 reason·whyThisGu·dailyLife·jiming·regionComparison·summary·finalVerdict 모두 사주 모르는 일반인이 읽는 글입니다.
+- 한자 오행(木·火·土·金·水)을 단독으로 쓰지 말고 "나무 기운·물 기운·불 기운·쇠 기운·흙 기운" 으로
+- 사주 전문어("일간·신강·신약·설기·용신·비겁·식신·관성·재성·인성·세운·대운") 금지
+- 풍경·동네 분위기·생활 에너지·기분 같은 감각적 묘사로 풀어쓰기
 
-아래 JSON만 출력 (줄바꿈 없이):
-{"ilgan":"丙火","plainSummary":"당신은 에너지 강하고 열정적인 사주예요. 차분하고 정돈된 동네에서 균형이 맞춰져요.","saju":{"ohaengDist":"火 과다 木 약","sinkang":"신강","yongshin":"金","yongShinReason":"신강 丙火는 金으로 설기해야 균형","daewon":"庚申 대운(2022-2032)","sewon":"丙午년 비겁"},"timing":{"isGoodYear":false,"timingScore":62,"reason":"비겁운으로 경쟁·충돌 주의","bestMonths":"가을 9-10월"},"regions":[{"gu":"강서구","rank":1,"score":91,"scoreBreakdown":{"ohaengMatch":{"score":25,"reason":"江西의 西는 金 방위, 서쪽 기운"},"jimingOhaeng":{"score":22,"reason":"강서의 西자 金 오행 직결"},"landscape":{"score":22,"reason":"한강 北岸 평지, 金 기운 안정"},"lifeEnergy":{"score":22,"reason":"김포공항·마곡 신산업 金 에너지"}},"jiming":"江西(강서) — 西자에 金 방위","whyThisGu":"이유","dailyLife":"일상 에너지"},{"gu":"양천구","rank":2,"score":83,"scoreBreakdown":{"ohaengMatch":{"score":22,"reason":"서쪽 위치, 金 방위"},"jimingOhaeng":{"score":18,"reason":"陽川, 직접 금 오행 약함"},"landscape":{"score":22,"reason":"목동 정주 에너지 안정"},"lifeEnergy":{"score":21,"reason":"학군·가족 중심 생활"}},"jiming":"陽川(양천) — 서쪽 금 방위 지역","whyThisGu":"이유","dailyLife":"일상"},{"gu":"서대문구","rank":3,"score":74,"scoreBreakdown":{"ohaengMatch":{"score":20,"reason":"서쪽 金 방위 약하게 해당"},"jimingOhaeng":{"score":16,"reason":"西大門의 西자 金 방위"},"landscape":{"score":19,"reason":"인왕산 金 기운, 북쪽 지형"},"lifeEnergy":{"score":19,"reason":"대학가 지식 에너지"}},"jiming":"西大門(서대문) — 西자 金 방위","whyThisGu":"이유","dailyLife":"일상"}],"regionComparison":"비교","warning":{"year":"2029년","reason":"주의","action":"대비"},"summary":"한 줄 요약","finalVerdict":"최종 판단"}`
+✗ 어려운 답: "한양도성 내 목기 강한 지세, 청계천 수 흐름과 남산 목 에너지 조화. 신강 목일간에 최적."
+✓ 쉬운 답: "남산의 푸른 산세와 청계천 물줄기가 어우러진 동네예요. 추진력 강한 당신에게 차분한 균형을 찾아주는 곳."
 
-  // ── 진단 로깅용 — 모든 시도의 결과를 추적 ─────────────────
-  const diag = { startedAt: Date.now(), attempts: [], finalErrorType: null }
+(예외: saju 객체 안의 ohaengDist·sinkang·yongshin·yongShinReason·daewon·sewon은 전문 분석 필드라 한자·전문어 그대로 사용)
+
+[글자수 제한 — 응답 시간 단축]
+- 각 reason은 한 문장 70자 이내
+- whyThisGu / regionComparison / finalVerdict 는 1~2문장 180자 이내
+- 핵심만 담고 부연·중복 제거
+
+분석 결과는 반드시 submit_saju_report 도구로 제출하세요.`
+
+  // ── 진단 로깅 — 모든 시도 결과 추적 ───────────────────────
+  const diag = { startedAt: Date.now(), attempts: [] }
+
+  // 비대칭 timeout: 첫 시도 cold start + 풀 응답 흡수, 재시도는 transient 회복용
+  // 38s + 1s wait + 18s = 57s (Vercel 60s 한도 안)
+  const TIMEOUTS = [38000, 18000]
 
   async function callAI(attempt) {
     const t0 = Date.now()
     const ctrl = new AbortController()
-    const tid  = setTimeout(() => ctrl.abort(), 25000)
-    let httpStatus = null
+    const timeoutMs = TIMEOUTS[attempt] || 18000
+    const tid  = setTimeout(() => ctrl.abort(), timeoutMs)
     try {
       const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -201,15 +306,13 @@ ${pillarsInfo}
         },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 4096,
-          messages: [
-            { role: 'user', content: prompt },
-            { role: 'assistant', content: '{"ilgan":"' },
-          ],
+          max_tokens: 3000,
+          tools: [SAJU_TOOL],
+          tool_choice: { type: 'tool', name: SAJU_TOOL.name },
+          messages: [{ role: 'user', content: prompt }],
         }),
       })
       clearTimeout(tid)
-      httpStatus = resp.status
       const dur = Date.now() - t0
 
       if (!resp.ok) {
@@ -221,30 +324,21 @@ ${pillarsInfo}
       }
 
       const data = await resp.json()
-      const raw  = '{"ilgan":"' + (data?.content?.[0]?.text || '')
-
-      if (data?.stop_reason === 'max_tokens') {
-        const errorType = 'max_tokens'
-        console.error(`[saju] attempt=${attempt} ${errorType} dur=${dur}ms — output truncated`)
-        diag.attempts.push({ attempt, errorType, durationMs: dur })
-        return { ok: false, errorType }
+      const tokens = data?.usage?.output_tokens ?? '?'
+      const r = processToolResponse(data)
+      if (!r.ok) {
+        console.error(`[saju] attempt=${attempt} ${r.errorType} dur=${dur}ms stop=${data?.stop_reason} tokens_out=${tokens}`)
+        diag.attempts.push({ attempt, errorType: r.errorType, durationMs: dur })
+        return r
       }
-
-      if (!data?.content?.[0]?.text) {
-        const errorType = 'empty_response'
-        console.error(`[saju] attempt=${attempt} ${errorType} dur=${dur}ms stop=${data?.stop_reason}`)
-        diag.attempts.push({ attempt, errorType, durationMs: dur })
-        return { ok: false, errorType }
-      }
-
-      console.log(`[saju] attempt=${attempt} ok dur=${dur}ms tokens_out=${data?.usage?.output_tokens || '?'}`)
+      console.log(`[saju] attempt=${attempt} ok dur=${dur}ms tokens_out=${tokens}`)
       diag.attempts.push({ attempt, ok: true, durationMs: dur })
-      return { ok: true, raw }
+      return r
     } catch (e) {
       clearTimeout(tid)
       const dur = Date.now() - t0
-      // AbortError = 25s 타임아웃 / TypeError = 네트워크 / 기타 = 알 수 없음
-      const errorType = e?.name === 'AbortError' ? 'abort_25s'
+      // AbortError = 비대칭 timeout / TypeError = 네트워크 / 기타 = 알 수 없음
+      const errorType = e?.name === 'AbortError' ? `abort_${Math.round(timeoutMs/1000)}s`
                       : e?.name === 'TypeError'  ? 'network'
                       : `exception_${e?.name || 'unknown'}`
       console.error(`[saju] attempt=${attempt} ${errorType} dur=${dur}ms msg=${e?.message}`)
@@ -254,45 +348,21 @@ ${pillarsInfo}
   }
 
   try {
-    // 최대 2번 시도 — JSON 파싱 성공할 때까지 (Vercel 60s · 프론트 55s 한도 안에 맞춤)
+    // 최대 2번 시도 (Vercel 60s · 프론트 55s · 비대칭 38s+18s + 1s 대기 = 57s)
     let result = null
-    let parseFails = 0
     for (let attempt = 0; attempt < 2; attempt++) {
-      // 재시도 전 1초 대기 — Anthropic 일시 부하·rate limit 회피
       if (attempt > 0) await new Promise(r => setTimeout(r, 1000))
-
       const r = await callAI(attempt)
-      if (!r.ok || !r.raw || !r.raw.includes('{')) continue
-
-      const start = r.raw.indexOf('{')
-      const end   = r.raw.lastIndexOf('}')
-      if (start === -1 || end === -1) {
-        parseFails++
-        diag.attempts[diag.attempts.length - 1].parseError = 'no_brace'
-        continue
-      }
-
-      try {
-        result = JSON.parse(sanitizeJson(r.raw.slice(start, end + 1)))
-        break
-      } catch (e) {
-        parseFails++
-        const lastAttempt = diag.attempts[diag.attempts.length - 1]
-        lastAttempt.parseError = 'json_parse'
-        lastAttempt.parseErrorMsg = e?.message?.slice(0, 100)
-        console.error(`[saju] attempt=${attempt} parse_fail msg=${e?.message?.slice(0, 100)}`)
-        continue
-      }
+      if (r.ok) { result = r.result; break }
     }
 
     if (!result) {
-      // 최종 실패 — 가장 흔한 errorType 추출 + 전체 진단 로깅
       const lastAttempt = diag.attempts[diag.attempts.length - 1] || {}
-      const finalErrorType = lastAttempt.parseError || lastAttempt.errorType || 'unknown'
+      const finalErrorType = lastAttempt.errorType || 'unknown'
       const totalMs = Date.now() - diag.startedAt
-      console.error(`[saju] FAIL total=${totalMs}ms attempts=${diag.attempts.length} parseFails=${parseFails} finalErrorType=${finalErrorType}`, JSON.stringify(diag.attempts))
+      console.error(`[saju] FAIL total=${totalMs}ms attempts=${diag.attempts.length} finalErrorType=${finalErrorType}`, JSON.stringify(diag.attempts))
       return res.status(500).json({
-        error: '분석 결과를 읽지 못했어요. 다시 시도해주세요.',
+        error: '분석 결과를 받지 못했어요. 다시 시도해주세요.',
         errorType: finalErrorType,
         attempts: diag.attempts.length,
         durationMs: totalMs,
