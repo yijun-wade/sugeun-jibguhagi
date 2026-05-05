@@ -266,7 +266,7 @@ ${pillarsInfo}
   async function callAI(attempt) {
     const t0 = Date.now()
     const ctrl = new AbortController()
-    const tid  = setTimeout(() => ctrl.abort(), 25000)
+    const tid  = setTimeout(() => ctrl.abort(), 28000)
     try {
       const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -309,8 +309,8 @@ ${pillarsInfo}
     } catch (e) {
       clearTimeout(tid)
       const dur = Date.now() - t0
-      // AbortError = 25s 타임아웃 / TypeError = 네트워크 / 기타 = 알 수 없음
-      const errorType = e?.name === 'AbortError' ? 'abort_25s'
+      // AbortError = 28s 타임아웃 / TypeError = 네트워크 / 기타 = 알 수 없음
+      const errorType = e?.name === 'AbortError' ? 'abort_28s'
                       : e?.name === 'TypeError'  ? 'network'
                       : `exception_${e?.name || 'unknown'}`
       console.error(`[saju] attempt=${attempt} ${errorType} dur=${dur}ms msg=${e?.message}`)
@@ -320,7 +320,7 @@ ${pillarsInfo}
   }
 
   try {
-    // 최대 2번 시도 (Vercel 60s · 프론트 55s · 25s × 2 + 1s 대기)
+    // 최대 2번 시도 (Vercel 60s · 프론트 55s · 28s × 2 + 1s 대기 = 57s)
     let result = null
     for (let attempt = 0; attempt < 2; attempt++) {
       if (attempt > 0) await new Promise(r => setTimeout(r, 1000))
