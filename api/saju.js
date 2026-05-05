@@ -155,7 +155,7 @@ export const SAJU_TOOL = {
         type: 'array',
         minItems: 3,
         maxItems: 3,
-        description: '용신 오행 매핑에서 TOP 3 자치구. rank는 1·2·3, score 내림차순.',
+        description: '용신 오행 매핑에서 **정확히 3개** 자치구 (4개도 2개도 1개도 아닌). rank는 1·2·3, score 내림차순.',
         items: {
           type: 'object',
           properties: {
@@ -207,7 +207,7 @@ export function processToolResponse(data, toolName = SAJU_TOOL.name) {
   }
   const result = block.input
   if (!Array.isArray(result.regions) || result.regions.length !== 3) {
-    return { ok: false, errorType: 'invalid_regions' }
+    return { ok: false, errorType: 'invalid_regions', regionsCount: Array.isArray(result.regions) ? result.regions.length : null }
   }
   return { ok: true, result }
 }
@@ -261,6 +261,7 @@ ${pillarsInfo}
 - 일주(日柱) 천간이 일간(日干)입니다. 위 계산값을 그대로 쓰세요.
 - 오행 분포와 8자를 꼼꼼히 분석해 신강/신약과 용신을 정확히 판단하세요.
 - 용신 오행 매핑에서 TOP 3 구를 선정하세요. 단, 아래 조건을 지키세요:
+  · **regions 배열은 반드시 정확히 3개 항목** (4개도 2개도 1개도 아닌). 3개 채우지 못한다면 동일 용신 오행 매핑에서라도 3개를 채우세요.
   · 사주마다 다른 구가 나와야 합니다 (같은 오행 내에서도 순위는 8자 특성에 따라 달라집니다)
   · 점수 차이의 근거를 지명 오행·지형·생활 에너지 세 가지로 설명하세요
   · scoreBreakdown 4개 항목 점수 합이 score와 일치하도록 분배하세요
@@ -286,9 +287,10 @@ plainSummary뿐 아니라 reason·whyThisGu·dailyLife·jiming·regionComparison
   // ── 진단 로깅 — 모든 시도 결과 추적 ───────────────────────
   const diag = { startedAt: Date.now(), attempts: [] }
 
-  // 비대칭 timeout: 첫 시도 cold start + 풀 응답 흡수, 재시도는 transient 회복용
-  // 38s + 1s wait + 18s = 57s (Vercel 60s 한도 안)
-  const TIMEOUTS = [38000, 18000]
+  // 비대칭 timeout: 첫 시도는 cold start + 풀 응답, 재시도는 정상 응답(19~25s) 흡수 가능
+  // 35s + 1s wait + 22s = 58s (Vercel 60s 한도 안)
+  // (이전 18s 재시도는 정상 응답 시간보다 짧아 dead code였음 — 5/6 invalid_regions+abort 케이스로 발견)
+  const TIMEOUTS = [35000, 22000]
 
   async function callAI(attempt) {
     const t0 = Date.now()
@@ -327,8 +329,9 @@ plainSummary뿐 아니라 reason·whyThisGu·dailyLife·jiming·regionComparison
       const tokens = data?.usage?.output_tokens ?? '?'
       const r = processToolResponse(data)
       if (!r.ok) {
-        console.error(`[saju] attempt=${attempt} ${r.errorType} dur=${dur}ms stop=${data?.stop_reason} tokens_out=${tokens}`)
-        diag.attempts.push({ attempt, errorType: r.errorType, durationMs: dur })
+        const extra = r.errorType === 'invalid_regions' ? ` regionsCount=${r.regionsCount ?? 'null'}` : ''
+        console.error(`[saju] attempt=${attempt} ${r.errorType} dur=${dur}ms stop=${data?.stop_reason} tokens_out=${tokens}${extra}`)
+        diag.attempts.push({ attempt, errorType: r.errorType, durationMs: dur, ...(r.regionsCount !== undefined ? { regionsCount: r.regionsCount } : {}) })
         return r
       }
       console.log(`[saju] attempt=${attempt} ok dur=${dur}ms tokens_out=${tokens}`)
