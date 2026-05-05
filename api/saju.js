@@ -182,9 +182,14 @@ ${pillarsInfo}
 아래 JSON만 출력 (줄바꿈 없이):
 {"ilgan":"丙火","plainSummary":"당신은 에너지 강하고 열정적인 사주예요. 차분하고 정돈된 동네에서 균형이 맞춰져요.","saju":{"ohaengDist":"火 과다 木 약","sinkang":"신강","yongshin":"金","yongShinReason":"신강 丙火는 金으로 설기해야 균형","daewon":"庚申 대운(2022-2032)","sewon":"丙午년 비겁"},"timing":{"isGoodYear":false,"timingScore":62,"reason":"비겁운으로 경쟁·충돌 주의","bestMonths":"가을 9-10월"},"regions":[{"gu":"강서구","rank":1,"score":91,"scoreBreakdown":{"ohaengMatch":{"score":25,"reason":"江西의 西는 金 방위, 서쪽 기운"},"jimingOhaeng":{"score":22,"reason":"강서의 西자 金 오행 직결"},"landscape":{"score":22,"reason":"한강 北岸 평지, 金 기운 안정"},"lifeEnergy":{"score":22,"reason":"김포공항·마곡 신산업 金 에너지"}},"jiming":"江西(강서) — 西자에 金 방위","whyThisGu":"이유","dailyLife":"일상 에너지"},{"gu":"양천구","rank":2,"score":83,"scoreBreakdown":{"ohaengMatch":{"score":22,"reason":"서쪽 위치, 金 방위"},"jimingOhaeng":{"score":18,"reason":"陽川, 직접 금 오행 약함"},"landscape":{"score":22,"reason":"목동 정주 에너지 안정"},"lifeEnergy":{"score":21,"reason":"학군·가족 중심 생활"}},"jiming":"陽川(양천) — 서쪽 금 방위 지역","whyThisGu":"이유","dailyLife":"일상"},{"gu":"서대문구","rank":3,"score":74,"scoreBreakdown":{"ohaengMatch":{"score":20,"reason":"서쪽 金 방위 약하게 해당"},"jimingOhaeng":{"score":16,"reason":"西大門의 西자 金 방위"},"landscape":{"score":19,"reason":"인왕산 金 기운, 북쪽 지형"},"lifeEnergy":{"score":19,"reason":"대학가 지식 에너지"}},"jiming":"西大門(서대문) — 西자 金 방위","whyThisGu":"이유","dailyLife":"일상"}],"regionComparison":"비교","warning":{"year":"2029년","reason":"주의","action":"대비"},"summary":"한 줄 요약","finalVerdict":"최종 판단"}`
 
-  async function callAI() {
+  // ── 진단 로깅용 — 모든 시도의 결과를 추적 ─────────────────
+  const diag = { startedAt: Date.now(), attempts: [], finalErrorType: null }
+
+  async function callAI(attempt) {
+    const t0 = Date.now()
     const ctrl = new AbortController()
     const tid  = setTimeout(() => ctrl.abort(), 25000)
+    let httpStatus = null
     try {
       const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -204,41 +209,98 @@ ${pillarsInfo}
         }),
       })
       clearTimeout(tid)
-      if (!resp.ok) return null
+      httpStatus = resp.status
+      const dur = Date.now() - t0
+
+      if (!resp.ok) {
+        const errBody = await resp.text().catch(() => '')
+        const errorType = `http_${resp.status}`
+        console.error(`[saju] attempt=${attempt} ${errorType} dur=${dur}ms body=${errBody.slice(0, 200)}`)
+        diag.attempts.push({ attempt, errorType, durationMs: dur, status: resp.status })
+        return { ok: false, errorType }
+      }
+
       const data = await resp.json()
-      // pre-fill로 시작 부분이 잘려있으니 복원
       const raw  = '{"ilgan":"' + (data?.content?.[0]?.text || '')
-      if (data?.stop_reason === 'max_tokens') return null
-      return raw
-    } catch {
+
+      if (data?.stop_reason === 'max_tokens') {
+        const errorType = 'max_tokens'
+        console.error(`[saju] attempt=${attempt} ${errorType} dur=${dur}ms — output truncated`)
+        diag.attempts.push({ attempt, errorType, durationMs: dur })
+        return { ok: false, errorType }
+      }
+
+      if (!data?.content?.[0]?.text) {
+        const errorType = 'empty_response'
+        console.error(`[saju] attempt=${attempt} ${errorType} dur=${dur}ms stop=${data?.stop_reason}`)
+        diag.attempts.push({ attempt, errorType, durationMs: dur })
+        return { ok: false, errorType }
+      }
+
+      console.log(`[saju] attempt=${attempt} ok dur=${dur}ms tokens_out=${data?.usage?.output_tokens || '?'}`)
+      diag.attempts.push({ attempt, ok: true, durationMs: dur })
+      return { ok: true, raw }
+    } catch (e) {
       clearTimeout(tid)
-      return null
+      const dur = Date.now() - t0
+      // AbortError = 25s 타임아웃 / TypeError = 네트워크 / 기타 = 알 수 없음
+      const errorType = e?.name === 'AbortError' ? 'abort_25s'
+                      : e?.name === 'TypeError'  ? 'network'
+                      : `exception_${e?.name || 'unknown'}`
+      console.error(`[saju] attempt=${attempt} ${errorType} dur=${dur}ms msg=${e?.message}`)
+      diag.attempts.push({ attempt, errorType, durationMs: dur })
+      return { ok: false, errorType }
     }
   }
 
   try {
     // 최대 2번 시도 — JSON 파싱 성공할 때까지 (Vercel 60s · 프론트 55s 한도 안에 맞춤)
     let result = null
+    let parseFails = 0
     for (let attempt = 0; attempt < 2; attempt++) {
       // 재시도 전 1초 대기 — Anthropic 일시 부하·rate limit 회피
       if (attempt > 0) await new Promise(r => setTimeout(r, 1000))
 
-      const raw = await callAI()
-      if (!raw || !raw.includes('{')) continue
+      const r = await callAI(attempt)
+      if (!r.ok || !r.raw || !r.raw.includes('{')) continue
 
-      const start = raw.indexOf('{')
-      const end   = raw.lastIndexOf('}')
-      if (start === -1 || end === -1) continue
+      const start = r.raw.indexOf('{')
+      const end   = r.raw.lastIndexOf('}')
+      if (start === -1 || end === -1) {
+        parseFails++
+        diag.attempts[diag.attempts.length - 1].parseError = 'no_brace'
+        continue
+      }
 
       try {
-        result = JSON.parse(sanitizeJson(raw.slice(start, end + 1)))
+        result = JSON.parse(sanitizeJson(r.raw.slice(start, end + 1)))
         break
-      } catch {
+      } catch (e) {
+        parseFails++
+        const lastAttempt = diag.attempts[diag.attempts.length - 1]
+        lastAttempt.parseError = 'json_parse'
+        lastAttempt.parseErrorMsg = e?.message?.slice(0, 100)
+        console.error(`[saju] attempt=${attempt} parse_fail msg=${e?.message?.slice(0, 100)}`)
         continue
       }
     }
 
-    if (!result) return res.status(500).json({ error: '분석 결과를 읽지 못했어요. 다시 시도해주세요.' })
+    if (!result) {
+      // 최종 실패 — 가장 흔한 errorType 추출 + 전체 진단 로깅
+      const lastAttempt = diag.attempts[diag.attempts.length - 1] || {}
+      const finalErrorType = lastAttempt.parseError || lastAttempt.errorType || 'unknown'
+      const totalMs = Date.now() - diag.startedAt
+      console.error(`[saju] FAIL total=${totalMs}ms attempts=${diag.attempts.length} parseFails=${parseFails} finalErrorType=${finalErrorType}`, JSON.stringify(diag.attempts))
+      return res.status(500).json({
+        error: '분석 결과를 읽지 못했어요. 다시 시도해주세요.',
+        errorType: finalErrorType,
+        attempts: diag.attempts.length,
+        durationMs: totalMs,
+      })
+    }
+
+    const totalMs = Date.now() - diag.startedAt
+    console.log(`[saju] OK total=${totalMs}ms attempts=${diag.attempts.length}`)
 
     // 아파트 데이터 주입
     if (result.regions) {

@@ -250,6 +250,7 @@ function SajuLoading({ birthData, onResult, onError }) {
 
   useEffect(() => {
     const { year, month, day, si, gender } = birthData
+    const clientStart = Date.now()
     const ctrl = new AbortController()
     const tid  = setTimeout(() => ctrl.abort(), 55000)
     fetch(`/api/saju?year=${year}&month=${month}&day=${day}&si=${si || ''}&gender=${gender}`, { signal: ctrl.signal })
@@ -258,8 +259,15 @@ function SajuLoading({ birthData, onResult, onError }) {
         clearTimeout(tid)
         if (doneRef.current) return
         doneRef.current = true
+        const clientDurationMs = Date.now() - clientStart
         if (data.error) {
-          track('saju_error', { error: data.error })
+          track('saju_error', {
+            error: data.error,
+            errorType: data.errorType || 'unknown',     // 백엔드가 분류한 에러 종류
+            backendAttempts: data.attempts,              // 시도 횟수
+            backendDurationMs: data.durationMs,          // 백엔드 실행 시간
+            clientDurationMs,                            // 클라이언트 총 대기 시간
+          })
           onError(data.error)
         } else {
           track('saju_complete', {
@@ -268,6 +276,7 @@ function SajuLoading({ birthData, onResult, onError }) {
             top_gu: data.regions?.[0]?.gu,
             top_score: data.regions?.[0]?.score,
             timing_score: data.timing?.timingScore,
+            clientDurationMs,
           })
           onResult(data)
         }
@@ -276,9 +285,14 @@ function SajuLoading({ birthData, onResult, onError }) {
         clearTimeout(tid)
         if (doneRef.current) return
         doneRef.current = true
+        const clientDurationMs = Date.now() - clientStart
+        const errorType = e?.name === 'AbortError' ? 'frontend_abort_55s'
+                        : e?.name === 'TypeError'  ? 'network'
+                        : `exception_${e?.name || 'unknown'}`
         const msg = e?.name === 'AbortError'
           ? '서버가 잠시 바빠요. 잠시 후 다시 시도해주세요.'
           : '분석 중 오류가 발생했어요. 다시 시도해주세요.'
+        track('saju_error', { error: msg, errorType, clientDurationMs })
         onError(msg)
       })
 
