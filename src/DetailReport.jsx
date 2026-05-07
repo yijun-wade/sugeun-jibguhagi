@@ -578,39 +578,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
         )}
       </Accordion> */}
 
-      {/* 콘텐츠 끝 큰 수집 CTA — 미수집 상태에서만 노출 */}
-      {!collected && (
-        <button
-          type="button"
-          className="collect-cta-card"
-          onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm, from: 'cta_card' }); handleCollect() }}
-        >
-          <span className="collect-cta-icon" aria-hidden="true">★</span>
-          <span className="collect-cta-text">
-            <span className="collect-cta-title">이 단지, 이불 속에서 또 볼래요?</span>
-            <span className="collect-cta-sub">수집해두면 나중에 비교할 때 편해요</span>
-          </span>
-          <span className="collect-cta-arrow" aria-hidden="true">›</span>
-        </button>
-      )}
-
       <p className="data-disclaimer">실거래 데이터는 국토교통부 실거래가 공개시스템 기준이에요. 동네 분위기·후기 요약은 AI가 웹에서 수집한 정보예요.</p>
-
-      {/* 모바일 sticky 액션 바 — 어느 위치에서도 손에 닿게 */}
-      <div className="detail-mobile-actions">
-        <button
-          className={`mobile-collect-btn${collected ? ' collected' : ''}`}
-          onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm, from: 'mobile_sticky' }); handleCollect() }}
-        >
-          {collected ? '✓ 수집됨' : '★ 수집하기'}
-        </button>
-        <button
-          className="mobile-share-btn"
-          onClick={() => { track('share_click', { apt_name: apt.aptNm, from: 'mobile_sticky' }); handleShare() }}
-        >
-          🔗 공유
-        </button>
-      </div>
     </div>
   )
 }
