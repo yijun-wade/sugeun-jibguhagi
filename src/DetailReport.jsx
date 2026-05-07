@@ -109,6 +109,22 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           <span className="collect-cta-arrow" aria-hidden="true">›</span>
         </button>
       )}
+
+      {/* 모바일 sticky 액션 바 — 어느 위치에서도 손에 닿게 */}
+      <div className="detail-mobile-actions">
+        <button
+          className={`mobile-collect-btn${collected ? ' collected' : ''}`}
+          onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm, from: 'mobile_sticky' }); handleCollect() }}
+        >
+          {collected ? '✓ 수집됨' : '★ 수집하기'}
+        </button>
+        <button
+          className="mobile-share-btn"
+          onClick={() => { track('share_click', { apt_name: apt.aptNm, from: 'mobile_sticky' }); handleShare() }}
+        >
+          🔗 공유
+        </button>
+      </div>
     </div>
   )
 }
