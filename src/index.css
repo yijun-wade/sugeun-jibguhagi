@@ -1527,8 +1527,8 @@ header { text-align: center; padding: 4px 0 2px; }
 
   /* hero 검색창은 모바일에서도 한 줄 유지 */
   .search-wrap-hero .search-box { flex-wrap: nowrap; }
-  .search-wrap-hero .search-input { font-size: 16px; padding: 16px 14px; }
-  .search-wrap-hero .search-btn { width: auto; padding: 14px 16px; font-size: 14px; }
+  .search-wrap-hero .search-input { font-size: 16px; padding: 16px 12px; min-width: 0; }
+  .search-wrap-hero .search-btn { width: auto; padding: 14px 14px; font-size: 14px; flex-shrink: 0; }
   .sugg-item    { padding: 14px 16px; }
   .sugg-name    { font-size: 14px; }
 
