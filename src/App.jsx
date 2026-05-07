@@ -454,9 +454,9 @@ function SearchApp() {
       </Helmet>
 
       {/* 5월 프로모션 — 네비 위 얇은 배너 */}
-      <a href="/saju" className="saju-top-banner">
+      <a href="/saju" className="saju-top-banner" onClick={() => track('saju_banner_click', { from: location.pathname })}>
         <span className="saju-top-badge">5월 무료</span>
-        <span className="saju-top-text">🔮 이불 속 터잡기 — 내 사주로 찾는 동네 기운</span>
+        <span className="saju-top-text">🔮 나는 어느 동네 살아야 잘 풀릴까? 사주로 확인</span>
         <span className="saju-top-arrow">›</span>
       </a>
 
