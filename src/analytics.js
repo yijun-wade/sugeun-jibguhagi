@@ -1,11 +1,13 @@
 import * as amplitude from '@amplitude/analytics-browser'
 import { sessionReplayPlugin } from '@amplitude/plugin-session-replay-browser'
+import { plugin as engagementPlugin } from '@amplitude/engagement-browser'
 
 const AMP_KEY = import.meta.env.VITE_AMPLITUDE_API_KEY
 
 if (AMP_KEY) {
   // 1) 플러그인 먼저 등록 (init 전에 add해야 deviceId 공유됨)
   amplitude.add(sessionReplayPlugin({ sampleRate: 1.0 }))
+  amplitude.add(engagementPlugin())
 
   // 2) init — defaultTracking 대신 autocapture로 통일
   //    sessions: true 는 세션 리플레이 필수 옵션
