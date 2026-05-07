@@ -1176,6 +1176,58 @@ header { text-align: center; padding: 4px 0 2px; }
 .hint-chip:hover { background: var(--blue-lt); border-color: var(--blue); color: var(--blue); }
 
 .loading-msg { text-align: center; color: var(--muted); font-size: 14px; padding: 20px; }
+
+/* ─── 검색 로딩 카드 ─── */
+.loading-card {
+  background: var(--card);
+  border: 2px solid var(--blue);
+  border-radius: 20px;
+  padding: 32px 24px;
+  margin: 12px 0;
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+.loading-spinner {
+  width: 44px; height: 44px;
+  border: 4px solid var(--blue-lt);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: loading-spin 0.8s linear infinite;
+}
+@keyframes loading-spin { to { transform: rotate(360deg); } }
+.loading-title {
+  font-size: 17px; font-weight: 700; color: var(--text);
+  letter-spacing: -0.2px;
+}
+.loading-query { color: var(--blue); }
+.loading-bar {
+  width: 100%; height: 6px;
+  background: var(--blue-lt);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.loading-bar-fill {
+  position: absolute;
+  height: 100%; width: 35%;
+  background: var(--blue);
+  border-radius: 3px;
+  animation: loading-indeterminate 1.4s ease-in-out infinite;
+}
+@keyframes loading-indeterminate {
+  0%   { left: -35%; }
+  100% { left: 100%; }
+}
+.loading-step {
+  font-size: 15px; font-weight: 600; color: var(--text2);
+}
+.loading-hint {
+  font-size: 13px; color: var(--muted); line-height: 1.6;
+}
 .error-msg   { text-align: center; color: var(--red);   font-size: 14px; padding: 20px; }
 
 /* 8차: 에러 복구 UI */
@@ -1252,6 +1304,105 @@ header { text-align: center; padding: 4px 0 2px; }
   text-align: center;
   padding: 16px 0 4px;
   line-height: 1.6;
+}
+
+/* ─── 콘텐츠 끝 큰 수집 CTA ─── */
+.collect-cta-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 2px solid #fb923c;
+  border-radius: 18px;
+  padding: 20px 22px;
+  margin: 24px 0 16px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 6px 18px rgba(249, 115, 22, 0.14);
+}
+.collect-cta-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(249, 115, 22, 0.22);
+}
+.collect-cta-icon {
+  font-size: 32px;
+  color: #f97316;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.collect-cta-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.collect-cta-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #7c2d12;
+  letter-spacing: -0.2px;
+}
+.collect-cta-sub {
+  font-size: 13px;
+  color: #9a3412;
+}
+.collect-cta-arrow {
+  font-size: 28px;
+  color: #f97316;
+  font-weight: 300;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* ─── 모바일 sticky 액션 바 ─── */
+.detail-mobile-actions { display: none; }
+@media (max-width: 600px) {
+  .detail-mobile-actions {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #fff;
+    border-top: 1px solid var(--border);
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+    gap: 8px;
+    z-index: 140;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+  }
+  .mobile-collect-btn {
+    flex: 2;
+    background: #f97316;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .mobile-collect-btn.collected { background: #16a34a; }
+  .mobile-share-btn {
+    flex: 1;
+    background: #fff;
+    color: var(--text);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  /* sticky 바 가리지 않게 콘텐츠 하단 여백 */
+  .detail-report { padding-bottom: 80px; }
+  .collect-cta-card { padding: 18px; gap: 12px; }
+  .collect-cta-icon { font-size: 28px; }
+  .collect-cta-title { font-size: 15px; }
+  .collect-cta-sub { font-size: 12px; }
 }
 
 /* ─── 사이트 푸터 ─── */

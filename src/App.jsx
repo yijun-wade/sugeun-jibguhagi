@@ -221,12 +221,13 @@ function SearchApp() {
   }
 
   const LOADING_MSGS = [
-    '아파트 매매 실거래가 조회 중...',
-    '커뮤니티 후기 검색 중...',
-    '동네 분위기 파악 중...',
-    '여러 정보를 모아 정리하는 중...',
+    '실거래가 살펴보는 중',
+    '블로그·카페 후기 모으는 중',
+    '동네 사람들 목소리 듣는 중',
+    '거의 다 됐어요, 정리하는 중',
   ]
   const loadingMsgRef = useRef(null)
+  const [loadingQuery, setLoadingQuery] = useState('')
 
   // #37: finally로 setLoading 일원화
   const handleSearch = useCallback(async (q) => {
@@ -240,11 +241,12 @@ function SearchApp() {
     clearTimeout(emptyQueryTimerRef.current)
     // URL 업데이트 (검색 히스토리 생성)
     navigate(`/search?q=${encodeURIComponent(q)}`, { replace: false })
+    setLoadingQuery(q)
     setLoading(true)
     setLoadingMsg(LOADING_MSGS[0])
     let msgIdx = 1
     loadingMsgRef.current = setInterval(() => {
-      setLoadingMsg(LOADING_MSGS[msgIdx % LOADING_MSGS.length])
+      setLoadingMsg(LOADING_MSGS[Math.min(msgIdx, LOADING_MSGS.length - 1)])
       msgIdx++
     }, 2000)
     setError(null)
@@ -612,7 +614,19 @@ function SearchApp() {
         </>
       )}
 
-      {loading && <div className="loading-msg">{loadingMsg}</div>}
+      {loading && (
+        <div className="loading-card" role="status" aria-live="polite">
+          <div className="loading-spinner" aria-hidden="true" />
+          <div className="loading-title">
+            <span className="loading-query">'{loadingQuery}'</span> 알아보는 중
+          </div>
+          <div className="loading-bar"><div className="loading-bar-fill" /></div>
+          <div className="loading-step">{loadingMsg}</div>
+          <div className="loading-hint">
+            AI가 직접 동네 후기를 모으고 있어요<br />보통 20~30초 정도 걸려요
+          </div>
+        </div>
+      )}
       {error && (
         <div className="error-block">
           <div className="error-msg" style={{ whiteSpace: 'pre-line' }}>{error}</div>
