@@ -153,6 +153,7 @@ function SearchApp() {
   const [compareOpen, setCompareOpen] = useState(false)
   const [heroIdx, setHeroIdx] = useState(0)
   const heroImages = ['/hero-1.jpg', '/hero-2.jpg', '/hero-3.jpg']
+  const [phIdx, setPhIdx] = useState(0)
   const [searchMode, setSearchMode] = useState('name') // 'name' | 'discover'
   const [discoverData, setDiscoverData] = useState(null)
   const [selectedGu, setSelectedGu] = useState(null)
@@ -416,6 +417,25 @@ function SearchApp() {
     return () => clearInterval(timer)
   }, [isHome])
 
+  // placeholder 회전 — 입력 중이면 정지
+  useEffect(() => {
+    if (!isHome || searchMode !== 'name' || query) return
+    const t = setInterval(() => setPhIdx(i => (i + 1) % HINT_SEARCHES.length), 2200)
+    return () => clearInterval(t)
+  }, [isHome, searchMode, query])
+
+  // 데스크톱에서 첫 진입 시 검색창 auto-focus (모바일은 키보드 자동 띄움 방지)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!window.matchMedia('(min-width: 768px)').matches) return
+    const t = setTimeout(() => {
+      if (inputRef.current && !inputRef.current.value) {
+        inputRef.current.focus({ preventScroll: true })
+      }
+    }, 200)
+    return () => clearTimeout(t)
+  }, [])
+
   const metaTitle = searchedQuery
     ? `'${searchedQuery}' 검색 결과 · 수군수군 우리집`
     : '수군수군 우리집 · SuZip — 아파트 실거주 후기 & 동네 분위기'
@@ -464,41 +484,15 @@ function SearchApp() {
         </div>
       )}
 
-      {/* 홈: OG 이미지 히어로 */}
-      {isHome && (
-        <img
-          src="/ogimage.png"
-          alt="퇴근 후 이불 속에서 하는 임장 — 수군수군 우리집"
-          className="hero-og-img"
-        />
-      )}
-
-
-
-      {/* Discovery 모드 */}
-      {isHome && searchMode === 'discover' && (
-        <DiscoveryPanel
-          data={discoverData}
-          selectedGu={selectedGu}
-          setSelectedGu={setSelectedGu}
-          selectedPrice={selectedPrice}
-          setSelectedPrice={setSelectedPrice}
-          onSelect={(apt) => {
-            track('discover_apt_click', { apt_name: apt.name, gu: apt.gu, avg: apt.avg, from: 'discover' })
-            setSearchMode('name'); setQuery(apt.name); handleSearch(apt.name)
-          }}
-        />
-      )}
-
-      {/* 검색창 (이름 검색 모드에서만) */}
-      <div className="search-wrap" ref={searchRef} style={isHome && searchMode === 'discover' ? { display: 'none' } : {}}>
+      {/* 검색창 (이름 검색 모드에서만) — 홈에선 ogimage 위에 배치 */}
+      <div className={`search-wrap${isHome && searchMode === 'name' ? ' search-wrap-hero' : ''}`} ref={searchRef} style={isHome && searchMode === 'discover' ? { display: 'none' } : {}}>
         <div className="search-box">
           <input
             ref={inputRef}
             className="search-input"
             type="text"
             aria-label="아파트 이름으로 검색"
-            placeholder="아파트 이름으로 검색 (예: 반포자이)"
+            placeholder={`아파트 이름으로 검색 (예: ${HINT_SEARCHES[phIdx]})`}
             value={query}
             onChange={handleQueryChange}
             onKeyDown={handleKeyDown}
@@ -526,15 +520,43 @@ function SearchApp() {
         )}
       </div>
 
+      {/* 홈: hint chips → 검색창 바로 아래 (한 번 더 검색 의도 유도) */}
+      {isHome && searchMode === 'name' && (
+        <div className="hint-searches">
+          {HINT_SEARCHES.map(h => (
+            <button key={h} className="hint-chip" onClick={() => { track('hint_click', { hint_text: h }); setQuery(h); handleSearch(h) }}>
+              {h}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* 홈: OG 이미지 히어로 — 검색창 아래에서 컨텍스트 제공 */}
+      {isHome && (
+        <img
+          src="/ogimage.png"
+          alt="퇴근 후 이불 속에서 하는 임장 — 수군수군 우리집"
+          className="hero-og-img"
+        />
+      )}
+
+      {/* Discovery 모드 */}
+      {isHome && searchMode === 'discover' && (
+        <DiscoveryPanel
+          data={discoverData}
+          selectedGu={selectedGu}
+          setSelectedGu={setSelectedGu}
+          selectedPrice={selectedPrice}
+          setSelectedPrice={setSelectedPrice}
+          onSelect={(apt) => {
+            track('discover_apt_click', { apt_name: apt.name, gu: apt.gu, avg: apt.avg, from: 'discover' })
+            setSearchMode('name'); setQuery(apt.name); handleSearch(apt.name)
+          }}
+        />
+      )}
+
       {isHome && (
         <>
-          <div className="hint-searches">
-            {HINT_SEARCHES.map(h => (
-              <button key={h} className="hint-chip" onClick={() => { track('hint_click', { hint_text: h }); setQuery(h); handleSearch(h) }}>
-                {h}
-              </button>
-            ))}
-          </div>
           <p className="beta-notice">현재 서울 아파트 중심으로 운영되는 베타 서비스예요</p>
 
           {collection.length > 0 && (

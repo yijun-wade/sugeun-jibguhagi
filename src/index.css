@@ -1111,6 +1111,43 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .search-btn:hover { opacity: 0.88; }
 
+/* ─── HERO 검색창 (홈, 이름검색 모드) — 시선 첫 진입 지점 ─── */
+.search-wrap-hero {
+  position: relative;
+  z-index: 5;
+}
+.search-wrap-hero .search-box {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18), 0 4px 12px rgba(15, 23, 42, 0.08);
+  padding: 4px;
+  gap: 4px;
+  border: 2px solid #f97316;
+}
+.search-wrap-hero .search-input {
+  border: none;
+  border-radius: 14px;
+  padding: 18px 20px;
+  font-size: 18px;
+  font-weight: 500;
+  background: transparent;
+}
+.search-wrap-hero .search-input::placeholder {
+  color: #475569;
+  font-weight: 500;
+}
+.search-wrap-hero .search-input:focus { border-color: transparent; }
+.search-wrap-hero .search-btn {
+  border-radius: 14px;
+  padding: 14px 22px;
+  background: #f97316;
+}
+.search-wrap-hero .search-btn:hover { background: #ea6a0c; opacity: 1; }
+.search-wrap-hero .sugg-list {
+  top: calc(100% + 6px);
+  z-index: 200;
+}
+
 /* 자동완성 드롭다운 */
 .sugg-list {
   position: absolute; top: calc(100% + 6px); left: 0; right: 0;
@@ -1336,6 +1373,11 @@ header { text-align: center; padding: 4px 0 2px; }
   .search-box   { flex-wrap: wrap; }
   .search-input { font-size: 16px; padding: 15px 16px; border-radius: 14px; }
   .search-btn   { font-size: 15px; padding: 15px 18px; border-radius: 14px; width: 100%; }
+
+  /* hero 검색창은 모바일에서도 한 줄 유지 */
+  .search-wrap-hero .search-box { flex-wrap: nowrap; }
+  .search-wrap-hero .search-input { font-size: 16px; padding: 16px 14px; }
+  .search-wrap-hero .search-btn { width: auto; padding: 14px 16px; font-size: 14px; }
   .sugg-item    { padding: 14px 16px; }
   .sugg-name    { font-size: 14px; }
 
