@@ -93,6 +93,22 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
         {tab === '시세'       && <PriceTab apt={apt} />}
         {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} apt={apt} />}
       </div>
+
+      {/* 콘텐츠 끝 큰 수집 CTA — 미수집 상태에서만 노출 */}
+      {!collected && (
+        <button
+          type="button"
+          className="collect-cta-card"
+          onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm, from: 'cta_card' }); handleCollect() }}
+        >
+          <span className="collect-cta-icon" aria-hidden="true">★</span>
+          <span className="collect-cta-text">
+            <span className="collect-cta-title">이 단지, 이불 속에서 또 볼래요?</span>
+            <span className="collect-cta-sub">수집해두면 나중에 비교할 때 편해요</span>
+          </span>
+          <span className="collect-cta-arrow" aria-hidden="true">›</span>
+        </button>
+      )}
     </div>
   )
 }
