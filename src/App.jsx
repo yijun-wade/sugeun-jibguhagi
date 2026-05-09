@@ -769,7 +769,7 @@ function SearchApp() {
         </div>
         <div className="site-footer-biz">
           상호: 준준팩토리 · 대표: 전이준 · 사업자등록번호: 895-24-01970<br/>
-          서울특별시 용산구 이촌로 100-8, 103동 1004호 · 통신판매업 신고: 준비 중<br/>
+          서울특별시 용산구 이촌로 100-8 · 통신판매업 신고: 준비 중<br/>
           고객센터: <a href="mailto:fiveio27@gmail.com">fiveio27@gmail.com</a>
         </div>
       </footer>
