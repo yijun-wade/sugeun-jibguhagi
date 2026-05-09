@@ -152,13 +152,29 @@ export function getVerdict(tag, dong) {
 }
 
 // ── 이름 유사도 ────────────────────────────
-function normNm(s) { return (s || '').replace(/[\s()（）아파트]/g, '') }
+function normNm(s) { return (s || '').replace(/[\s()（）]/g, '').replace(/아파트$/, '') }
+// 단지/차 번호 추출: "1단지", "2차"의 숫자만 비교 (1단지·1차 혼용 케이스 수용)
+function extractMarkers(s) {
+  const out = []
+  const re = /(\d+)(단지|차)/g
+  let m
+  while ((m = re.exec(s)) !== null) out.push(m[1])
+  return out
+}
 export function nameSim(a, b) {
   const na = normNm(a), nb = normNm(b)
   if (!na || !nb) return 0
   if (na === nb) return 1
-  // 포함 관계면 바로 매칭 (예: "동아그린" ⊂ "이촌동아그린아파트")
-  if (na.includes(nb) || nb.includes(na)) return 1
+  // 단지/차 마커 검증 — 한쪽이라도 마커가 있으면 양쪽 마커 집합이 일치해야 함
+  const ma = extractMarkers(na), mb = extractMarkers(nb)
+  if (ma.length || mb.length) {
+    if (ma.length !== mb.length) return 0
+    if (!ma.every(x => mb.includes(x))) return 0
+  }
+  // 포함 관계는 마커 검증 통과 후에만 (예: "동아그린" ⊂ "이촌동아그린")
+  // 단, 너무 짧은(2자 이하) 부분문자열은 포함 매칭 거부 — "라이프" ⊂ "공릉라이프" 류 오매칭 방지
+  const shorter = na.length <= nb.length ? na : nb
+  if (shorter.length >= 4 && (na.includes(nb) || nb.includes(na))) return 1
   const setB = new Set(nb)
   let overlap = 0
   for (const ch of na) if (setB.has(ch)) overlap++
