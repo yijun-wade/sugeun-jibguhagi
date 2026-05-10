@@ -454,6 +454,53 @@ function SajuResult({ result, onBack }) {
         )}
       </div>
 
+      {/* 헤로 직후 — 동네 추천 미리보기 + 1순위 큰 CTA (사주 미끼 가설 검증용) */}
+      {result.regions?.[0] && (
+        <section style={{
+          margin: '16px 0',
+          padding: '20px 18px',
+          background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+          borderRadius: 16,
+          color: '#fff',
+          boxShadow: '0 4px 14px rgba(37, 99, 235, 0.25)',
+        }}>
+          <div style={{ fontSize: 13, opacity: 0.85, marginBottom: 6, fontWeight: 600 }}>
+            당신과 가장 잘 맞는 동네
+          </div>
+          <div style={{ fontSize: 30, fontWeight: 900, marginBottom: 4, letterSpacing: -0.5 }}>
+            {result.regions[0].gu}
+          </div>
+          {result.regions[0].jiming && (
+            <div style={{ fontSize: 13, opacity: 0.9, marginBottom: 16, lineHeight: 1.5 }}>
+              {result.regions[0].jiming}
+            </div>
+          )}
+          <a
+            href={`/?tab=discover&gu=${encodeURIComponent(result.regions[0].gu)}`}
+            onClick={() => track('saju_discover_click', { gu: result.regions[0].gu, rank: 1, position: 'hero_preview' })}
+            style={{
+              display: 'block',
+              padding: '14px 0',
+              background: '#fff',
+              color: '#1d4ed8',
+              borderRadius: 12,
+              textAlign: 'center',
+              fontSize: 15,
+              fontWeight: 800,
+              textDecoration: 'none',
+              marginBottom: result.regions.length > 1 ? 12 : 0,
+            }}
+          >
+            {result.regions[0].gu} 아파트 바로 보기 →
+          </a>
+          {result.regions.length > 1 && (
+            <div style={{ fontSize: 12, opacity: 0.8, textAlign: 'center' }}>
+              다음 추천: {result.regions.slice(1, 3).map(r => r.gu).join(' · ')}
+            </div>
+          )}
+        </section>
+      )}
+
       {/* 사주 용어 설명 — 처음 본 사람을 위한 가이드 */}
       <details className="saju-glossary">
         <summary>ℹ️ 사주 용어가 어렵나요?</summary>
@@ -567,7 +614,7 @@ function SajuResult({ result, onBack }) {
             )}
             <a
               href={`/?tab=discover&gu=${encodeURIComponent(region.gu)}`}
-              onClick={() => track('saju_discover_click', { gu: region.gu, rank: i + 1 })}
+              onClick={() => track('saju_discover_click', { gu: region.gu, rank: i + 1, position: 'detail_card' })}
               style={{
                 display: 'block', marginTop: 14, padding: '10px 0',
                 background: i === 0 ? '#2563eb' : '#F3F4F6',
