@@ -16,7 +16,7 @@ if (AMP_KEY) {
       pageViews: false,
       formInteractions: false,
       fileDownloads: false,
-      attribution: false,
+      attribution: true,
     },
   })
 }
