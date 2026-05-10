@@ -117,19 +117,40 @@ async function buildEvalData(apt) {
   }
 }
 
+function PageViewTracker() {
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
+  useEffect(() => {
+    const path = location.pathname
+    const pageType = path === '/' ? 'home'
+      : path.startsWith('/apt') ? 'apt_detail'
+      : path.startsWith('/briefing') ? 'briefing'
+      : path === '/policy' ? 'policy'
+      : path === '/glossary' ? 'glossary'
+      : path.startsWith('/search') ? 'search'
+      : path.startsWith('/saju') ? 'saju'
+      : 'other'
+    track('page_view', { page_path: path, page_type: pageType, search_query: searchParams.get('q') || undefined })
+  }, [location.pathname])
+  return null
+}
+
 export default function App() {
   return (
-    <Routes>
-      <Route path="/apt/:kaptCode" element={<AptDetailPage />} />
-      <Route path="/briefing" element={<BriefingPage />} />
-      <Route path="/briefing/:date" element={<BriefingPage />} />
-      <Route path="/glossary" element={<GlossaryPage />} />
-      <Route path="/policy" element={<PolicyPage />} />
-      <Route path="/saju" element={<SajuPage />} />
-      <Route path="/saju/success" element={<SajuPage />} />
-      <Route path="/saju/fail" element={<SajuPage />} />
-      <Route path="*" element={<SearchApp />} />
-    </Routes>
+    <>
+      <PageViewTracker />
+      <Routes>
+        <Route path="/apt/:kaptCode" element={<AptDetailPage />} />
+        <Route path="/briefing" element={<BriefingPage />} />
+        <Route path="/briefing/:date" element={<BriefingPage />} />
+        <Route path="/glossary" element={<GlossaryPage />} />
+        <Route path="/policy" element={<PolicyPage />} />
+        <Route path="/saju" element={<SajuPage />} />
+        <Route path="/saju/success" element={<SajuPage />} />
+        <Route path="/saju/fail" element={<SajuPage />} />
+        <Route path="*" element={<SearchApp />} />
+      </Routes>
+    </>
   )
 }
 
@@ -175,20 +196,6 @@ function SearchApp() {
       fetch('/apt-discovery.json').then(r => r.json()).then(setDiscoverData).catch(() => {})
     }
   }, [searchMode, discoverData])
-
-  // 라우트 변경 시 page_view 이벤트
-  useEffect(() => {
-    const path = location.pathname
-    const pageType = path === '/' ? 'home'
-      : path.startsWith('/apt') ? 'apt_detail'
-      : path.startsWith('/briefing') ? 'briefing'
-      : path === '/policy' ? 'policy'
-      : path === '/glossary' ? 'glossary'
-      : path.startsWith('/search') ? 'search'
-      : path === '/saju' ? 'saju'
-      : 'other'
-    track('page_view', { page_path: path, page_type: pageType, search_query: searchParams.get('q') || undefined })
-  }, [location.pathname])
 
   // URL ?q= 파라미터로 진입 시 자동 검색
   useEffect(() => {
