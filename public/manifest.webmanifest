@@ -1,0 +1,33 @@
+{
+  "name": "수군수군 우리집",
+  "short_name": "수군수군",
+  "description": "발품 팔기 전, 동네 수군수군 먼저 — AI가 단지 후기·시세·사주 동네 모두",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "ko",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "categories": ["lifestyle", "utilities"],
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
