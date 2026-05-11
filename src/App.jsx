@@ -12,6 +12,8 @@ import BriefingPage from './BriefingPage.jsx'
 import GlossaryPage from './GlossaryPage.jsx'
 import PolicyPage from './PolicyPage.jsx'
 import SajuPage from './SajuPage.jsx'
+import PrivacyPage from './PrivacyPage.jsx'
+import TermsPage from './TermsPage.jsx'
 import { track } from './analytics.js'
 import AdUnit from './AdUnit.jsx'
 import AdFitBanner from './AdFitBanner.jsx'
@@ -129,6 +131,8 @@ function PageViewTracker() {
       : path === '/glossary' ? 'glossary'
       : path.startsWith('/search') ? 'search'
       : path.startsWith('/saju') ? 'saju'
+      : path === '/privacy' ? 'privacy'
+      : path === '/terms' ? 'terms'
       : 'other'
     track('page_view', { page_path: path, page_type: pageType, search_query: searchParams.get('q') || undefined })
   }, [location.pathname])
@@ -148,6 +152,8 @@ export default function App() {
         <Route path="/saju" element={<SajuPage />} />
         <Route path="/saju/success" element={<SajuPage />} />
         <Route path="/saju/fail" element={<SajuPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
         <Route path="*" element={<SearchApp />} />
       </Routes>
     </>
