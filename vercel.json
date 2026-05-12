@@ -14,6 +14,6 @@
     "api/saju-confirm.js": { "regions": ["icn1"], "maxDuration": 60 }
   },
   "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/((?!api/|.well-known/).*)", "destination": "/index.html" }
   ]
 }
