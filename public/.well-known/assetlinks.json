@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "kr.suzip.app",
+      "sha256_cert_fingerprints": [
+        "6D:1E:F8:FD:3A:92:4D:7E:32:43:81:CE:A3:80:44:59:83:30:28:58:53:23:0E:BD:B1:3B:C1:45:37:EC:D0:C7"
+      ]
+    }
+  }
+]
