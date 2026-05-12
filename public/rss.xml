@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Mon, 11 May 2026 23:03:42 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 12 May 2026 23:10:15 GMT</lastBuildDate>
+    <item>
+      <title>양도세 유예 끝, 매물 정리 완료…이제 본 게임 시작</title>
+      <link>https://www.suzip.kr/briefing/2026-05-13</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-13</guid>
+      <pubDate>Tue, 12 May 2026 22:00:00 GMT</pubDate>
+      <description>• 다주택자 양도세 중과 유예가 어제 끝나면서 급매 물량이 소진되고 시장이 진정 국면에 접어들었다.
+• 토허제 실거주 의무가 연말까지 유예되면서 비거주 1주택자들의 매도 심리는 약할 것으로 예상된다.
+• 5월 아파트 분양심리지수가 80.0으로 상승했고 서울은 기준선 100을 회복하며 실수요자 매수 전환이 일어나고 있다.
+
+정부 의도: 정책 유예와 실거주 의무 완화로 급급한 매도를 막아 시장 안정화를 원하고 있다. 동시에 6월 지방선거를 앞두고 주택 시장에 대한 정책 신뢰도를 높이려는 의도도 있다.
+
+시장 변화: 매물 출회가 줄어들면서 가격이 오를 가능성이 높아진다. 대신 구매 기회는 줄어들 수 있으니 지금이 비교적 선택의 폭이 넓은 시기다.</description>
+    </item>
     <item>
       <title>전세 급감, 대출 규제로 실수요자 '동시다중 압박'</title>
       <link>https://www.suzip.kr/briefing/2026-05-12</link>
@@ -253,19 +266,6 @@
 정부 의도: 과열된 부동산 시장을 식히기 위해 지난해 10월 대출규제를 강화했습니다. 고가 주택의 투기를 막고 무주택자가 집을 살 수 있는 기회를 늘리려는 취지입니다. 다만 신생아 특례대출 같은 정책으로는 저출산 극복을 동시에 추진하고 있습니다.
 
 시장 변화: 대출규제로 대출액이 줄어들자, 사람들이 자금 부담이 적은 소형 아파트로 몰리고 있습니다. 결과적으로 소형 집값이 올라가고 전세 매물이 줄어드는 악순환이 생겼습니다. 규제지역뿐 아니라 비규제지역까지 전세난이 번지면서 시장이 경직되는 상황입니다.</description>
-    </item>
-    <item>
-      <title>대출 규제에 소형 아파트 몰려, 전세난 확산 중</title>
-      <link>https://www.suzip.kr/briefing/2026-04-19</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-04-19</guid>
-      <pubDate>Sat, 18 Apr 2026 22:00:00 GMT</pubDate>
-      <description>• 대출 규제로 41~60㎡ 소형 아파트 수요 집중, 올해 상승률 1위 기록 (3.55%)
-• 서울·경기 전세 매물 부족 심화, 비규제지역까지 확산되는 중
-• 소형과 대형 가격 역전 현상 발생, 74㎡가 101㎡보다 비싼 지역 증가
-
-정부 의도: 정부가 15억원 이하 주택 대출을 6억원으로 제한한 것은 집값 상승을 억제하려는 것이다. 하지만 이 규제가 생각과 달리 소형 아파트로 수요를 몰아주면서 역효과를 낳고 있다.
-
-시장 변화: 대출이 줄어들자 사람들이 담보대출 없이 살 수 있는 싼 집으로 몰려가고 있다. 이에 따라 소형 아파트는 올라가고 전세 매물은 떨어져 전세 구하기가 점점 어려워지는 악순환이 반복되고 있다.</description>
     </item>
   </channel>
 </rss>
