@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Wed, 20 May 2026 23:21:01 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 21 May 2026 23:11:32 GMT</lastBuildDate>
+    <item>
+      <title>서울 집값 오름·대출 규제 강화…실수요자 '이중고'</title>
+      <link>https://www.suzip.kr/briefing/2026-05-22</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-22</guid>
+      <pubDate>Thu, 21 May 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 아파트값이 5월 셋째 주 0.31% 올라 올해 최고 상승률을 기록했고, 성북·서대문 같은 비강남권도 가격이 빠르게 오르고 있다.
+• 정부가 주택담보대출 규제를 더 강화하면서 실수요자들의 대출이 어려워지고 있으며, 정책 대출도 시중금리 수준으로 올라갔다.
+• 하남 아파트 주민들이 집값을 담합해 파는 가격을 통제한 혐의로 검찰 송치됐다.
+
+정부 의도: 정부는 투기 수요를 막고 부동산 시장을 실수요자 중심으로 재편하려고 대출을 강하게 규제하고 있다. 동시에 금융회사들이 부동산 말고 다른 산업에 돈을 더 많이 빌려주도록 유도하고 싶다.
+
+시장 변화: 집값은 오르는데 대출은 받기 어려워지는 현상이 계속될 것으로 보인다. 투자 목적의 매매는 줄고 실제 살 사람 중심의 거래로 바뀌면서 15억 원대 중저가 아파트에 관심이 몰릴 것 같다.</description>
+    </item>
     <item>
       <title>전세 품귀에 금리 부담…실수요자 '이중고'</title>
       <link>https://www.suzip.kr/briefing/2026-05-21</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 다주택자의 투기를 막고 실제 집이 필요한 사람들을 보호하려고 규제를 계속 강화하고 있다. 또한 기업 활동을 지원하기 위해 기업대출 금리를 낮추는 정책을 추진 중이다.
 
 시장 변화: 규제가 강화되면서 집주인들이 매물을 내놓지 않거나 자식에게 미리 넘기는 증여로 우회하고 있다. 전세 매물이 급격히 줄어들면서 전세 구하기가 매우 어려워지는 '전월세 대란' 우려가 커지고 있다.</description>
-    </item>
-    <item>
-      <title>강남 규제에 중하위 지역 집값 상승, 전세난 심화</title>
-      <link>https://www.suzip.kr/briefing/2026-05-02</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-02</guid>
-      <pubDate>Fri, 01 May 2026 22:00:00 GMT</pubDate>
-      <description>• 강남·용산의 60대 이상 고령층이 집을 팔아 주식 투자로 옮기면서 규제 지역 매도 압력이 커지고 있다.
-• 성북·관악·강서 등 중하위 지역과 15억 이하 아파트 수요가 몰리면서 가격이 크게 올랐다.
-• 전세 매물 부족이 심해지자 오피스텔로 눈을 돌리는 사람들이 늘어 거래량이 30% 증가했다.
-
-정부 의도: 정부는 강남·서초 등 대형 평수 고가 아파트 거래를 규제해 집값 상승을 억제하려고 한다. 하지만 규제가 강할수록 오히려 규제 받지 않는 중소형 아파트와 낙후 지역으로 수요가 몰리는 부작용을 막기 위해 고심 중이다.
-
-시장 변화: 규제 정책이 강해질수록 강남에선 거래가 줄고, 대신 성북·관악·강서 같은 외곽 지역의 집값이 오른다. 또한 전세난으로 전세 대신 월세나 오피스텔을 찾는 사람들이 크게 늘어날 것 같다.</description>
     </item>
   </channel>
 </rss>
