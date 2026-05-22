@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Thu, 21 May 2026 23:11:32 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 22 May 2026 23:12:37 GMT</lastBuildDate>
+    <item>
+      <title>전세값 급등, 정부 '비아파트 임대' 대책 내놓다</title>
+      <link>https://www.suzip.kr/briefing/2026-05-23</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-23</guid>
+      <pubDate>Fri, 22 May 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 아파트 매매가가 5월 3주 연속 상승 중이며, 전세가격은 10년 만에 최고치를 경신했다.
+• 정부가 전월세 시장 안정을 위해 2년 내 비아파트(오피스텔·주택) 매입임대 9만 호를 공급하기로 발표했다.
+• 강남·해운대 등 수도권과 대도시 외곽 GTX 예정 노선 주변으로 실수요자들의 이동이 활발해지고 있다.
+
+정부 의도: 전셋값이 급등하면서 서민들의 주거비 부담이 심해지자, 정부가 서둘러 대책을 내놓은 것이다. 아파트만 공급하던 것을 오피스텔이나 일반 주택까지 확대해서 임대주택을 늘리려는 전략이다.
+
+시장 변화: 단기적으로는 비아파트 임대물량이 증가하면서 전세 시장에 약간의 숨통이 트일 것으로 보인다. 하지만 시장 전문가들은 6월 지방선거 이후까지는 관망 분위기가 계속될 것이라고 예상한다.</description>
+    </item>
     <item>
       <title>서울 집값 오름·대출 규제 강화…실수요자 '이중고'</title>
       <link>https://www.suzip.kr/briefing/2026-05-22</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 부동산 투기를 막고 서민 주거 안정을 목표로 다주택자 규제와 대출 제한을 강화하고 있다. 동시에 주식 시장으로 자금을 유도해 금융 시장 활성화를 노리고 있다. 하지만 정책들이 여러 부처에서 따로따로 나오면서 일관성이 부족하다는 지적도 나온다.
 
 시장 변화: 전세 공급이 줄면서 전세를 찾는 사람들이 어쩔 수 없이 매매 시장으로 넘어오고 있다. 한편 금융 규제 강화로 신축 분양이 어려워지면서 구매력 있는 사람들도 흔들리는 중이다.</description>
-    </item>
-    <item>
-      <title>규제 강화로 전세 사라지고, 대출금리 역차별 심화</title>
-      <link>https://www.suzip.kr/briefing/2026-05-03</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-03</guid>
-      <pubDate>Sat, 02 May 2026 22:00:00 GMT</pubDate>
-      <description>• 다주택 양도세 중과 시행 앞두고 서울 아파트 증여·직거래가 급증하면서 시장이 급변하고 있다.
-• 정부 부동산 규제로 가계대출이 2년 만에 최저치를 기록했고, 기업대출보다 금리가 비싼 역차별 현상이 심화됐다.
-• 전월세 매물이 실종되고 있으며, 규제지역에서는 전세 구하기가 더 어려워지는 중이다.
-
-정부 의도: 정부는 다주택자의 투기를 막고 실제 집이 필요한 사람들을 보호하려고 규제를 계속 강화하고 있다. 또한 기업 활동을 지원하기 위해 기업대출 금리를 낮추는 정책을 추진 중이다.
-
-시장 변화: 규제가 강화되면서 집주인들이 매물을 내놓지 않거나 자식에게 미리 넘기는 증여로 우회하고 있다. 전세 매물이 급격히 줄어들면서 전세 구하기가 매우 어려워지는 '전월세 대란' 우려가 커지고 있다.</description>
     </item>
   </channel>
 </rss>
