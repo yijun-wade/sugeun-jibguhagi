@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Mon, 25 May 2026 23:15:32 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 26 May 2026 23:16:46 GMT</lastBuildDate>
+    <item>
+      <title>전세난 속 정부, 도시형생활주택 11만가구 공급 본격화</title>
+      <link>https://www.suzip.kr/briefing/2026-05-27</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-27</guid>
+      <pubDate>Tue, 26 May 2026 22:00:00 GMT</pubDate>
+      <description>• 정부가 2030년까지 수도권에 도시형생활주택 등 비아파트 11만가구를 공급하기로 결정했다.
+• 서울 아파트 전세가격이 0.82% 상승하며 거주비 부담이 확대되고 있다.
+• 아파트 대출규제 때문에 오피스텔 같은 다른 투자처로 자금이 몰리고 있다.
+
+정부 의도: 전세난으로 실수요자들의 주거비 부담이 극심해지자, 정부는 공급 부족 문제를 해결하려고 움직이고 있다. 아파트 위주 규제로 인한 시장 불안을 완화하기 위해 도시형생활주택(작은 주택) 공급을 늘리고 대출 조건도 완화하는 중이다.
+
+시장 변화: 도시형생활주택이 아파트 수준으로 공급되면서 전세 시장에 약간의 숨통이 트일 것으로 보인다. 다만 아파트 가격은 여전히 오름세가 강해서, 아파트와 비아파트 사이의 가격 격차는 좁혀질 가능성이 있다.</description>
+    </item>
     <item>
       <title>대출 규제에 시장 이동…서울→경기, 저가대로 쏠린다</title>
       <link>https://www.suzip.kr/briefing/2026-05-26</link>
@@ -253,19 +266,6 @@
 정부 의도: 다주택자들이 세금 부담으로 집을 팔도록 유도해서 시장에 매물을 늘리려는 것이다. 동시에 신축 아파트 공급을 확대해서 주택 부족 문제를 풀려고 한다.
 
 시장 변화: 다주택자의 매각 매물이 증가하면서 매매 시장이 활기를 띨 것 같지만, 금리 인상과 대출 규제가 동시에 작용하면서 실제 거래 증가로 이어질지는 불확실하다. 전세 매물 부족은 계속될 것으로 보인다.</description>
-    </item>
-    <item>
-      <title>집값 안 내린다…세금·대출 규제 강화 카드 꺼냈다</title>
-      <link>https://www.suzip.kr/briefing/2026-05-07</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-07</guid>
-      <pubDate>Wed, 06 May 2026 22:00:00 GMT</pubDate>
-      <description>• 정부가 비거주 1주택자의 세금 공제를 줄이는 방안을 검토 중이며, 장기보유특별공제 제도 개편을 추진하고 있다.
-• 양도세 중과 부활을 앞두고 다주택자들의 급매물이 폭주하면서 서울 부동산 시장이 출렁이고 있다.
-• 임대인 규제로 전세와 월세 공급이 줄어들면서 세입자들의 전월세 부담이 계속 늘어나고 있다.
-
-정부 의도: 집값이 안 내려가자 공급 부족을 해결하고 실제 살 사람 중심으로 시장을 재편하려는 것이다. 투기꾼의 세금 혜택을 없애고 규제를 강화해서 매물을 시장에 내보내고 집값 상승을 억누르려는 작전이다.
-
-시장 변화: 규제가 강해질수록 다주택자들이 급하게 팔려고 나오면서 단기적으로는 매물이 많아질 것 같지만, 공급 부족 근본 문제는 안 풀려서 결국 집값이 크게 내릴 가능성은 낮다. 대신 전세와 월세 시장이 더 타이트해질 수 있다.</description>
     </item>
   </channel>
 </rss>
