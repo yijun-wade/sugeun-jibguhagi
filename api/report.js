@@ -22,18 +22,13 @@ async function fetchAptContext(kaptCode, origin) {
   }
 
   // 2) 병렬 fetch — kapt(세대수·입주), apt-discovery(주변 비교용)
-  const [kaptInfo, discovery, building] = await Promise.allSettled([
-    fetch(`${origin}/api/kapt?kaptCode=${kaptCode}`).then(r => r.json()).catch(() => null),
+  const [kaptInfo, discovery] = await Promise.allSettled([
+    fetch(`${origin}/api/kapt?kaptCode=${encodeURIComponent(kaptCode)}`).then(r => r.json()).catch(() => null),
     fetch(`${origin}/apt-discovery.json`).then(r => r.json()).catch(() => []),
-    aptListItem.bjdCode
-      ? fetch(`${origin}/api/building?bjdCode=${aptListItem.bjdCode}&aptName=${encodeURIComponent(aptListItem.kaptName)}`)
-          .then(r => r.json()).catch(() => null)
-      : Promise.resolve(null),
   ])
 
-  const kapt   = kaptInfo.status === 'fulfilled' ? kaptInfo.value : null
-  const disc   = discovery.status === 'fulfilled' ? discovery.value : []
-  const bld    = building.status === 'fulfilled' ? building.value : null
+  const kapt = kaptInfo.status === 'fulfilled' ? kaptInfo.value : null
+  const disc = discovery.status === 'fulfilled' ? discovery.value : []
 
   // 3) 같은 구의 다른 단지 3~5개를 주변 비교로 자동 선정
   const addrParts = (aptListItem.addr || '').split(' ')
@@ -44,8 +39,9 @@ async function fetchAptContext(kaptCode, origin) {
     .slice(0, 5)
     .map(a => ({ name: a.name, avgPrice: a.avg, perPy: a.perPy, units: a.units }))
 
-  // 4) 최근 실거래 (간단히 빈 배열로 시작; 향후 /api/trade 통합)
-  // V1에서는 명시적 trade fetch 생략하고 AI가 추세 추론하게 함 (입력 토큰 절약)
+  // 4) 최근 실거래 — V1에서는 빈 배열로 시작
+  // TODO(V2): /api/trade?lawdCd=&dealYmd= 통합해서 최근 3개월 실거래 추가
+  // V1은 AI가 avgPrice·주변 비교만으로 추세 추론 (입력 토큰 절약)
   const recentTrades = []
 
   return {
@@ -108,7 +104,7 @@ export default async function handler(req, res) {
   if (!kaptCode) return res.status(400).json({ error: 'kaptCode 필요' })
   const priceManwon = parseInt(price, 10)
   const yearsNum    = parseInt(years, 10)
-  const savingsManwon = parseInt(savings, 10) || 0
+  const savingsManwon = Math.max(0, parseInt(savings, 10) || 0)
 
   if (!priceManwon || priceManwon < 1000) {
     return res.status(400).json({ error: 'price (만원 단위) 필요' })
