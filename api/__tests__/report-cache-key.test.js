@@ -54,3 +54,31 @@ describe('buildReportCacheKey — 키 포맷', () => {
     assert.notEqual(k1, k2)
   })
 })
+
+describe('입력 검증 — 잘못된 입력은 throw', () => {
+  test('bucketize(undefined) throws', () => {
+    assert.throws(() => bucketize(undefined), TypeError)
+  })
+
+  test('bucketize(NaN) throws', () => {
+    assert.throws(() => bucketize(NaN), TypeError)
+  })
+
+  test('bucketize(-1000) throws (음수 거부)', () => {
+    assert.throws(() => bucketize(-1000), TypeError)
+  })
+
+  test('buildReportCacheKey({ kaptCode: undefined }) throws', () => {
+    assert.throws(
+      () => buildReportCacheKey({ kaptCode: undefined, priceManwon: 50000, years: 5, savingsManwon: 10000 }),
+      TypeError
+    )
+  })
+
+  test('buildReportCacheKey({ years: 10 }) throws (3/5만 허용)', () => {
+    assert.throws(
+      () => buildReportCacheKey({ kaptCode: 'X', priceManwon: 50000, years: 10, savingsManwon: 10000 }),
+      TypeError
+    )
+  })
+})
