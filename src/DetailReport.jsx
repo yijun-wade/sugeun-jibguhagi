@@ -404,6 +404,19 @@ function PriceTab({ apt }) {
           <p className="data-disclaimer">국토교통부 실거래가 공개시스템에서 직접 조회한 실제 거래 데이터예요.</p>
         </>
       )}
+
+      {/* 살까말까 보고서 CTA — 시세 탭 하단 */}
+      <div className="report-cta-wrap">
+        <a
+          href={`/report?kaptCode=${apt.kaptCode}&aptName=${encodeURIComponent(apt.aptNm)}&price=${(typeof apt.recentAvg !== 'undefined' && apt.recentAvg) ? Math.round(apt.recentAvg / 10000) * 10000 : 50000}&years=5&savings=10000&source=apt_detail_cta`}
+          className="report-cta-btn"
+          onClick={() => track('report_cta_click', { apt_name: apt.aptNm, source: 'price_tab' })}
+        >
+          <span className="report-cta-title">이 단지 살까말까 보고서 만들기</span>
+          <span className="report-cta-subtitle">4시나리오 가격 · 5축 점수 · 징검다리 판단까지 12 섹션</span>
+          <span className="report-cta-arrow">→</span>
+        </a>
+      </div>
     </div>
   )
 }
