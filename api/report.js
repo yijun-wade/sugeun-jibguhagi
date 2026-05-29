@@ -82,10 +82,10 @@ async function callClaude(prompt) {
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      // Haiku 4.5 — Sonnet 대비 2~3배 빠름. 504 회피 우선.
-      // 품질 차이는 V1.5 사용자 피드백 보고 결정 (Sonnet 복귀 vs 유료 Pro plan 90s)
+      // Haiku 4.5 — Sonnet 대비 2~3배 빠름. 60s 한계 안에서 max_tokens 5000도 안전.
+      // 3500 → 12 섹션 중 후반(징검다리·결론) 잘림 발생 → 5000으로 복귀
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 3500,
+      max_tokens: 5000,
       system: prompt.system,
       messages: [{ role: 'user', content: prompt.user }],
     }),
