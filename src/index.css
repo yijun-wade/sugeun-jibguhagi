@@ -2241,7 +2241,11 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 
 .report-scenario-table {
-  margin: 16px 0;
+  margin: 12px 0;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #fed7aa;
 }
 .report-scenario-table table {
   width: 100%;
@@ -2250,45 +2254,71 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .report-scenario-table th {
   text-align: left;
-  padding: 8px;
-  background: #f1f5f9;
-  font-weight: 600;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, #fff7ed, #fef3c7);
+  font-weight: 700;
+  color: #7c2d12;
+  font-size: 13px;
+  letter-spacing: -0.2px;
+  border-bottom: 1px solid #fed7aa;
 }
 .report-scenario-table td {
-  padding: 8px;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f5f9;
 }
+.report-scenario-table tr:last-child td { border-bottom: none; }
 .report-scenario-table .base-row {
-  background: #fff7ed;
+  background: linear-gradient(90deg, #fff7ed, #fef3c7);
+  font-weight: 700;
 }
-.report-scenario-table .scenario-name { font-weight: 600; }
-.report-scenario-table .scenario-cell { text-align: center; font-variant-numeric: tabular-nums; }
-.report-scenario-table .scenario-condition { font-size: 12px; color: #64748b; }
-.report-scenario-unit { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+.report-scenario-table .scenario-name { font-weight: 700; font-size: 14px; }
+.report-scenario-table .scenario-cell {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 14px;
+}
+.report-scenario-table .scenario-condition {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.5;
+}
+.report-scenario-unit {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 8px 0 0;
+  text-align: right;
+}
 
 .report-score-card {
-  padding: 16px;
+  padding: 28px;
   background: #fff;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  margin: 16px 0;
+  border-radius: 16px;
+  margin: 20px 0;
 }
 .report-score-header {
   display: flex;
   align-items: baseline;
-  gap: 8px;
-  margin-bottom: 14px;
+  gap: 6px;
+  margin-bottom: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #f1f5f9;
 }
-.report-score-total { font-size: 36px; font-weight: 700; color: #0f172a; }
-.report-score-unit { font-size: 14px; color: #64748b; }
+.report-score-total {
+  font-size: 48px; font-weight: 800; color: #0f172a;
+  letter-spacing: -2px; line-height: 1;
+}
+.report-score-unit { font-size: 14px; color: #94a3b8; font-weight: 500; }
 .report-score-grade {
   margin-left: auto;
-  font-size: 12px;
-  padding: 2px 10px;
-  background: #fff7ed;
+  font-size: 13px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #fff7ed, #fed7aa);
   color: #9a3412;
-  border-radius: 12px;
-  font-weight: 600;
+  border-radius: 14px;
+  font-weight: 700;
+  border: 1px solid #fdba74;
 }
 .report-score-axis {
   display: flex;
@@ -2303,37 +2333,149 @@ header { text-align: center; padding: 4px 0 2px; }
 .report-score-axis-value { width: 36px; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
 .report-score-axis-weight { width: 36px; font-size: 10px; color: #94a3b8; }
 
-.report-result { padding: 20px 8px; }
+/* ── 보고서 결과 — suzip 톤 (따뜻한 오렌지 + 깔끔한 카드) ── */
+.report-result {
+  padding: 20px 0 60px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* 정체성 — 가장 임팩트 큰 첫인상 카드 */
 .report-identity {
-  padding: 28px 24px;
-  background: linear-gradient(135deg, #fff7ed, #fef3c7);
-  border-radius: 14px;
-  margin-bottom: 24px;
+  padding: 36px 32px;
+  background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 60%, #fed7aa 100%);
+  border-radius: 20px;
+  margin-bottom: 28px;
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.12);
+  position: relative;
 }
-.report-identity-text { font-size: 20px; line-height: 1.55; color: #9a3412; font-weight: 600; }
-.report-section { margin: 36px 0; }
+.report-identity::before {
+  content: '이 집의 정체';
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  color: #c2410c;
+  letter-spacing: 1.5px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+.report-identity-text {
+  font-size: 22px;
+  line-height: 1.55;
+  color: #7c2d12;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+/* 일반 텍스트 섹션 — 카드 형태 */
+.report-section {
+  margin: 20px 0;
+  padding: 28px 28px 24px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+}
 .report-section-title {
-  font-size: 22px; font-weight: 700; color: #0f172a;
-  margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 18px;
+  padding: 0 0 0 14px;
+  border-bottom: none;
+  position: relative;
+  letter-spacing: -0.2px;
 }
-.report-section-body p { margin: 10px 0; line-height: 1.75; color: #1e293b; font-size: 16px; }
+.report-section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 4px;
+  background: linear-gradient(180deg, #fb923c, #f97316);
+  border-radius: 2px;
+}
+.report-section-body p {
+  margin: 8px 0;
+  line-height: 1.75;
+  color: #334155;
+  font-size: 15px;
+}
+
+/* 시나리오 섹션 — 가격 표가 있어서 강조 */
+.report-section:has(.report-scenario-table) {
+  background: linear-gradient(180deg, #fffbf5, #fff);
+  border-color: #fed7aa;
+}
+
+/* 결론 — 마지막 강조 카드 */
 .report-conclusion {
-  padding: 24px;
-  background: #f1f5f9;
-  border-left: 4px solid #f97316;
-  border-radius: 10px;
-  margin: 36px 0;
+  padding: 36px 32px;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  border-radius: 20px;
+  margin: 32px 0 16px;
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.3);
 }
-.report-conclusion-text { font-size: 18px; line-height: 1.7; color: #0f172a; font-weight: 600; }
-.report-actions { display: flex; gap: 8px; margin: 24px 0; flex-wrap: wrap; }
+.report-conclusion .report-section-title {
+  color: #fff7ed;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.report-conclusion .report-section-title::before {
+  background: #fff7ed;
+}
+.report-conclusion-text {
+  font-size: 22px;
+  line-height: 1.6;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 600px) {
+  .report-identity { padding: 28px 22px; }
+  .report-identity-text { font-size: 19px; }
+  .report-section { padding: 22px 20px 18px; }
+  .report-section-body p { font-size: 14.5px; }
+  .report-conclusion { padding: 28px 24px; }
+  .report-conclusion-text { font-size: 19px; }
+}
+.report-actions {
+  display: flex; gap: 10px; margin: 28px 0 20px;
+  flex-wrap: wrap;
+}
 .report-regenerate-btn, .report-beta-btn {
-  padding: 10px 16px; border-radius: 8px; border: 1px solid #cbd5e1;
-  background: #fff; cursor: pointer; font-size: 13px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  transition: all 0.15s ease;
 }
-.report-beta-btn { background: #fff7ed; color: #9a3412; border-color: #f97316; font-weight: 600; }
+.report-regenerate-btn:hover { background: #f8fafc; border-color: #94a3b8; }
+.report-beta-btn {
+  background: linear-gradient(135deg, #fff7ed, #fed7aa);
+  color: #9a3412;
+  border-color: #fb923c;
+  font-weight: 700;
+}
+.report-beta-btn:hover { background: linear-gradient(135deg, #fed7aa, #fdba74); }
 .report-disclaimer {
-  font-size: 11px; color: #94a3b8; line-height: 1.5;
-  margin-top: 24px; padding: 12px; background: #f8fafc; border-radius: 8px;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.65;
+  margin-top: 28px;
+  padding: 16px 18px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
 }
 
 .report-input-form { padding: 16px; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; }
