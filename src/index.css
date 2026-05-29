@@ -2303,28 +2303,28 @@ header { text-align: center; padding: 4px 0 2px; }
 .report-score-axis-value { width: 36px; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
 .report-score-axis-weight { width: 36px; font-size: 10px; color: #94a3b8; }
 
-.report-result { padding: 16px; }
+.report-result { padding: 20px 8px; }
 .report-identity {
-  padding: 20px;
+  padding: 28px 24px;
   background: linear-gradient(135deg, #fff7ed, #fef3c7);
-  border-radius: 12px;
-  margin-bottom: 16px;
+  border-radius: 14px;
+  margin-bottom: 24px;
 }
-.report-identity-text { font-size: 16px; line-height: 1.5; color: #9a3412; font-weight: 500; }
-.report-section { margin: 24px 0; }
+.report-identity-text { font-size: 20px; line-height: 1.55; color: #9a3412; font-weight: 600; }
+.report-section { margin: 36px 0; }
 .report-section-title {
-  font-size: 18px; font-weight: 700; color: #0f172a;
-  margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid #e2e8f0;
+  font-size: 22px; font-weight: 700; color: #0f172a;
+  margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0;
 }
-.report-section-body p { margin: 6px 0; line-height: 1.6; color: #334155; font-size: 14px; }
+.report-section-body p { margin: 10px 0; line-height: 1.75; color: #1e293b; font-size: 16px; }
 .report-conclusion {
-  padding: 16px;
+  padding: 24px;
   background: #f1f5f9;
   border-left: 4px solid #f97316;
-  border-radius: 8px;
-  margin: 24px 0;
+  border-radius: 10px;
+  margin: 36px 0;
 }
-.report-conclusion-text { font-size: 15px; line-height: 1.6; color: #0f172a; font-weight: 500; }
+.report-conclusion-text { font-size: 18px; line-height: 1.7; color: #0f172a; font-weight: 600; }
 .report-actions { display: flex; gap: 8px; margin: 24px 0; flex-wrap: wrap; }
 .report-regenerate-btn, .report-beta-btn {
   padding: 10px 16px; border-radius: 8px; border: 1px solid #cbd5e1;
@@ -2372,9 +2372,45 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .report-submit-btn:hover { background: #ea580c; }
 
-.report-page { max-width: 720px; margin: 0 auto; padding: 24px 16px; }
-.report-page-title { font-size: 28px; font-weight: 700; margin: 0; color: #0f172a; }
-.report-page-subtitle { font-size: 14px; color: #64748b; margin: 8px 0 24px; }
+.report-page { max-width: 760px; margin: 0 auto; padding: 24px 16px; }
+.report-page-title { font-size: 32px; font-weight: 800; margin: 0; color: #0f172a; letter-spacing: -0.5px; }
+.report-page-subtitle {
+  font-size: 15px; color: #64748b; margin: 12px 0 28px; line-height: 1.6;
+}
+.report-page-subtitle-strong {
+  display: inline-block; margin-top: 4px;
+  font-size: 16px; color: #f97316; font-weight: 700;
+}
+
+/* 로딩 카드 — 보고서 전용 */
+.report-loading-card {
+  margin: 24px 0; padding: 28px 24px;
+  background: linear-gradient(135deg, #fff7ed, #fef3c7);
+  border-radius: 14px; border: 1px solid #fed7aa;
+  text-align: center;
+}
+.report-loading-spinner {
+  width: 36px; height: 36px; margin: 0 auto 16px;
+  border: 3px solid #fed7aa; border-top-color: #f97316;
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.report-loading-title { font-size: 17px; font-weight: 700; color: #9a3412; margin-bottom: 14px; }
+.report-loading-progress-wrap {
+  width: 100%; height: 8px; background: #fed7aa;
+  border-radius: 4px; overflow: hidden; margin-bottom: 10px;
+}
+.report-loading-progress-fill {
+  height: 100%; background: linear-gradient(90deg, #fb923c, #f97316);
+  border-radius: 4px; transition: width 0.5s ease-out;
+}
+.report-loading-meta {
+  display: flex; justify-content: space-between;
+  font-size: 13px; color: #9a3412; margin-bottom: 12px;
+}
+.report-loading-elapsed { font-weight: 700; font-variant-numeric: tabular-nums; }
+.report-loading-eta { color: #b45309; }
+.report-loading-step { font-size: 13px; color: #92400e; margin-top: 4px; }
 
 .report-cta-wrap { margin: 24px 0; padding: 0 16px; }
 .report-cta-btn {

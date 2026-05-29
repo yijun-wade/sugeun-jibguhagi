@@ -29,6 +29,7 @@ export default function ReportPage() {
   const [report, setReport] = useState(null)
   const [loading, setLoading] = useState(false)
   const [loadingMsg, setLoadingMsg] = useState('')
+  const [elapsedSec, setElapsedSec] = useState(0)
   const [error, setError] = useState(null)
 
   useEffect(() => {
@@ -74,11 +75,16 @@ export default function ReportPage() {
     setLoading(true)
     setSubmittedInput(input)
     setLoadingMsg(LOADING_MSGS[0])
+    setElapsedSec(0)
+    const startedAt = Date.now()
     let msgIdx = 1
     const msgTimer = setInterval(() => {
       setLoadingMsg(LOADING_MSGS[Math.min(msgIdx, LOADING_MSGS.length - 1)])
       msgIdx++
-    }, 18000)  // 18초마다 메시지 전환
+    }, 18000)
+    const elapsedTimer = setInterval(() => {
+      setElapsedSec(Math.floor((Date.now() - startedAt) / 1000))
+    }, 1000)
 
     track('report_loading_start', { apt_name: input.aptName, kapt_code: input.kaptCode })
 
@@ -107,6 +113,7 @@ export default function ReportPage() {
       track('report_error', { error_type: e.message })
     } finally {
       clearInterval(msgTimer)
+      clearInterval(elapsedTimer)
       setLoading(false)
     }
   }, [setSearchParams])
@@ -134,7 +141,7 @@ export default function ReportPage() {
     <div className="app">
       <Helmet>
         <title>살까말까 보고서 · 수군수군 우리집</title>
-        <meta name="description" content="부동산 의사결정 전, 컨설팅급 12 섹션 분석을 한 번에. 단지를 입력하면 4시나리오 가격·5축 점수·징검다리 판단까지." />
+        <meta name="description" content="이 집 사도 될까 고민될 때. AI가 12 가지 관점으로 진단해드려요. 4시나리오 가격·5축 점수·징검다리 판단까지." />
       </Helmet>
 
       <header className="site-header">
@@ -154,18 +161,27 @@ export default function ReportPage() {
       <div className="report-page">
         <h1 className="report-page-title">살까말까 보고서</h1>
         <p className="report-page-subtitle">
-          부동산 의사결정 전, 컨설팅급 12 섹션 분석을 한 번에.
+          이 집 사도 될까 고민될 때<br />
+          <span className="report-page-subtitle-strong">AI가 12 가지 관점으로 진단해드려요</span>
         </p>
 
         <ReportInputForm initial={initialInput} onSubmit={handleSubmit} />
 
         {loading && (
-          <div className="loading-card" role="status" aria-live="polite">
-            <div className="loading-spinner" aria-hidden="true" />
-            <div className="loading-title">살까말까 보고서를 만들고 있어요</div>
-            <div className="loading-bar"><div className="loading-bar-fill" /></div>
-            <div className="loading-step">{loadingMsg}</div>
-            <div className="loading-hint">보통 60~90초 걸려요</div>
+          <div className="report-loading-card" role="status" aria-live="polite">
+            <div className="report-loading-spinner" aria-hidden="true" />
+            <div className="report-loading-title">살까말까 보고서를 만들고 있어요</div>
+            <div className="report-loading-progress-wrap">
+              <div
+                className="report-loading-progress-fill"
+                style={{ width: `${Math.min(100, (elapsedSec / 90) * 100)}%` }}
+              />
+            </div>
+            <div className="report-loading-meta">
+              <span className="report-loading-elapsed">{elapsedSec}초 경과</span>
+              <span className="report-loading-eta">보통 60~90초</span>
+            </div>
+            <div className="report-loading-step">{loadingMsg}</div>
           </div>
         )}
 

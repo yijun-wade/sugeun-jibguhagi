@@ -77,7 +77,7 @@ export default function ReportInputForm({ initial, onSubmit }) {
           <input
             type="text"
             className="report-input"
-            placeholder="예: 잠실파크리오, 여의휴젠느"
+            placeholder="예: 잠실파크리오, 아크로타워스퀘어"
             value={aptQuery}
             onChange={(e) => { setAptQuery(e.target.value); setAptCode(''); }}
             onFocus={() => suggestions.length > 0 && setShowSugg(true)}
