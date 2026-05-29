@@ -2371,3 +2371,7 @@ header { text-align: center; padding: 4px 0 2px; }
   cursor: pointer; margin-top: 8px;
 }
 .report-submit-btn:hover { background: #ea580c; }
+
+.report-page { max-width: 720px; margin: 0 auto; padding: 24px 16px; }
+.report-page-title { font-size: 28px; font-weight: 700; margin: 0; color: #0f172a; }
+.report-page-subtitle { font-size: 14px; color: #64748b; margin: 8px 0 24px; }
