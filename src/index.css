@@ -2265,3 +2265,40 @@ header { text-align: center; padding: 4px 0 2px; }
 .report-scenario-table .scenario-cell { text-align: center; font-variant-numeric: tabular-nums; }
 .report-scenario-table .scenario-condition { font-size: 12px; color: #64748b; }
 .report-scenario-unit { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+
+.report-score-card {
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  margin: 16px 0;
+}
+.report-score-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.report-score-total { font-size: 36px; font-weight: 700; color: #0f172a; }
+.report-score-unit { font-size: 14px; color: #64748b; }
+.report-score-grade {
+  margin-left: auto;
+  font-size: 12px;
+  padding: 2px 10px;
+  background: #fff7ed;
+  color: #9a3412;
+  border-radius: 12px;
+  font-weight: 600;
+}
+.report-score-axis {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+  font-size: 12px;
+}
+.report-score-axis-label { width: 50px; color: #64748b; }
+.report-score-axis-bar { flex: 1; height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden; }
+.report-score-axis-bar-fill { height: 100%; border-radius: 4px; }
+.report-score-axis-value { width: 36px; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.report-score-axis-weight { width: 36px; font-size: 10px; color: #94a3b8; }
