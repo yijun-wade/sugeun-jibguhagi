@@ -2,7 +2,9 @@
 //   query: kaptCode, price (만원), years (3|5), savings (만원), force (캐시 무효화)
 //   response: { sections: { 정체성, 요약, ... 결론 }, scenarioMatrix, cacheHit }
 
-export const config = { maxDuration: 90, regions: ['icn1'] }
+// maxDuration 60 — Hobby plan 한계. Sonnet 4.6 + max_tokens 5000은 보통 30~50초로 끝남.
+// 캐시 hit 케이스는 즉시 응답. Pro plan 업그레이드 시 90으로 올릴 수 있음.
+export const config = { maxDuration: 60, regions: ['icn1'] }
 
 import { setCors } from './_utils.js'
 import { buildScenarioMatrix, DEFAULT_WEIGHTS } from './_scenario-math.js'
