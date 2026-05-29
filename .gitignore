@@ -6,4 +6,6 @@ dist/
 .DS_Store
 .vercel
 .env*.local
+.env.local.backup
+.env.local.*
 .worktrees/

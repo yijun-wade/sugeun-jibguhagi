@@ -9,6 +9,7 @@ import EvalCard from './EvalCard.jsx'
 import DetailReport from './DetailReport.jsx'
 import AptDetailPage from './AptDetailPage.jsx'
 import BriefingPage from './BriefingPage.jsx'
+import ReportPage from './ReportPage.jsx'
 import GlossaryPage from './GlossaryPage.jsx'
 import PolicyPage from './PolicyPage.jsx'
 import SajuPage from './SajuPage.jsx'
@@ -129,6 +130,7 @@ function PageViewTracker() {
       : path.startsWith('/briefing') ? 'briefing'
       : path === '/policy' ? 'policy'
       : path === '/glossary' ? 'glossary'
+      : path === '/report' ? 'report'
       : path.startsWith('/search') ? 'search'
       : path.startsWith('/saju') ? 'saju'
       : path === '/privacy' ? 'privacy'
@@ -154,6 +156,7 @@ export default function App() {
         <Route path="/saju/fail" element={<SajuPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
+        <Route path="/report" element={<ReportPage />} />
         <Route path="*" element={<SearchApp />} />
       </Routes>
     </>
@@ -484,6 +487,7 @@ function SearchApp() {
           <a href="/briefing" className="site-nav-link">속닥속닥 뉴스</a>
           <a href="/policy" className="site-nav-link">이불 속 정책</a>
           <a href="/glossary" className="site-nav-link"><span className="nav-bubble">이불 속</span> 사전</a>
+          <a href="/report" className="site-nav-link">살까말까 보고서</a>
         </nav>
       </header>
 
