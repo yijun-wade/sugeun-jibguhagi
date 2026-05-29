@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Thu, 28 May 2026 23:24:50 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 29 May 2026 23:21:00 GMT</lastBuildDate>
+    <item>
+      <title>매물 부족에 전세 사라지고, 금리 부담 가중</title>
+      <link>https://www.suzip.kr/briefing/2026-05-30</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-30</guid>
+      <pubDate>Fri, 29 May 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 아파트 매물이 6만여 건으로 줄어들면서 '매물 잠김' 현상이 다시 나타나고 있다.
+• 올해 1~4월 임대차 중 월세 비중이 68.5%로 올라 전세가 빠르게 사라지고 있다.
+• 고금리 장기화로 변동금리 대출자들의 이자 부담이 증가하면서 대출 규제까지 겹쳐 취약층이 압박받고 있다.
+
+정부 의도: 정부는 주택 공급 확대와 조기 착공을 통해 매물 부족 현상을 해결하려고 한다. 동시에 대출 규제로 과도한 빚을 줄이고 집값 상승을 억제하려는 의도를 보이고 있다.
+
+시장 변화: 매물이 부족하면서 집값은 하방 지지(내려가기 어려운 상태)를 받고 있고, 전세가 월세로 급속도로 전환되면서 세입자 부담이 커지고 있다. 반도체 벨트 같은 특정 지역은 대기업 직원들의 수요로 가격이 오르는 양극화 현상이 심해지고 있다.</description>
+    </item>
     <item>
       <title>세금 정책이 만드는 인위적 공급 부족, 서울 집값 재상승</title>
       <link>https://www.suzip.kr/briefing/2026-05-29</link>
@@ -253,19 +266,6 @@
 정부 의도: 다주택자들이 집을 팔아서 시장에 물량을 풀도록 유도하려는 정책이다. 이를 통해 집값을 잡으려던 것이지만, 같은 1주택자라도 사는 집에 안 사는 사람 간의 차별 논란이 터져나왔다.
 
 시장 변화: 다주택자 규제와 신축 감소로 전세 물량이 부족해지면서 전세값이 매매가보다 더 빠르게 오르고 있다. 집을 사려던 사람들도, 세 들려던 사람들도 모두 어려워지는 상황이 벌어지고 있다.</description>
-    </item>
-    <item>
-      <title>양도세 중과 시작, 전세 품귀에 매매 수요 몰려</title>
-      <link>https://www.suzip.kr/briefing/2026-05-10</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-10</guid>
-      <pubDate>Sat, 09 May 2026 22:00:00 GMT</pubDate>
-      <description>• 오늘부터 다주택자 양도세 중과 시행으로 서울 아파트 매매 거래량이 폭발했고, 매물도 6만9천 건대로 늘어났다.
-• 전세 매물 급감으로 실수요자들이 월세나 매매로 눈을 돌리고 있으며, 서울 아파트값은 계속 올라가는 중이다.
-• 마이너스통장 잔액이 40조 원대를 넘어서며 주식과 코인으로 번 돈을 빚까지 얹어서 부동산으로 몰려드는 상황이다.
-
-정부 의도: 정부는 다주택자들이 집을 팔게 해서 시장에 매물을 풀고, 실거주자 중심의 주택 정책으로 전환하려고 한다. 부동산 세제 개편을 통해 투기를 억제하고 실제로 살 사람들의 주택 접근성을 높이려는 것이다.
-
-시장 변화: 다주택자들이 팔기를 서두르면서 단기적으로 매물이 늘고 거래가 활발해지고 있다. 하지만 전세가 사라지고 전세 대신 월세 전환이 늘어나면서 전세 구하는 사람들이 큰 어려움을 겪을 것으로 보인다.</description>
     </item>
   </channel>
 </rss>
