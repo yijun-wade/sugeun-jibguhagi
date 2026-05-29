@@ -2239,3 +2239,29 @@ header { text-align: center; padding: 4px 0 2px; }
   font-size: 11px; color: #9CA3AF;
   text-align: center; margin-top: 10px; line-height: 1.5;
 }
+
+.report-scenario-table {
+  margin: 16px 0;
+}
+.report-scenario-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.report-scenario-table th {
+  text-align: left;
+  padding: 8px;
+  background: #f1f5f9;
+  font-weight: 600;
+}
+.report-scenario-table td {
+  padding: 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.report-scenario-table .base-row {
+  background: #fff7ed;
+}
+.report-scenario-table .scenario-name { font-weight: 600; }
+.report-scenario-table .scenario-cell { text-align: center; font-variant-numeric: tabular-nums; }
+.report-scenario-table .scenario-condition { font-size: 12px; color: #64748b; }
+.report-scenario-unit { font-size: 11px; color: #94a3b8; margin-top: 4px; }
