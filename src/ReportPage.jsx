@@ -138,7 +138,7 @@ export default function ReportPage() {
   }, [submittedInput])
 
   return (
-    <div className="app">
+    <div className="app app-report">
       <Helmet>
         <title>살까말까 보고서 · 수군수군 우리집</title>
         <meta name="description" content="이 집 사도 될까 고민될 때. AI가 12 가지 관점으로 진단해드려요. 4시나리오 가격·5축 점수·징검다리 판단까지." />

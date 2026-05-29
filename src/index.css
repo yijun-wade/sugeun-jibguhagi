@@ -2372,7 +2372,10 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .report-submit-btn:hover { background: #ea580c; }
 
-.report-page { max-width: 760px; margin: 0 auto; padding: 24px 16px; }
+/* /report 페이지는 .app 680px 제한 풀고 더 넓게 */
+.app-report { max-width: 880px; }
+.report-page { max-width: 100%; margin: 0; padding: 24px 24px 60px; }
+.report-input-form { width: 100%; padding: 24px; box-sizing: border-box; }
 .report-page-title { font-size: 32px; font-weight: 800; margin: 0; color: #0f172a; letter-spacing: -0.5px; }
 .report-page-subtitle {
   font-size: 15px; color: #64748b; margin: 12px 0 28px; line-height: 1.6;
