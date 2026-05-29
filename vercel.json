@@ -11,8 +11,7 @@
     "api/stories.js":  { "regions": ["icn1"] },
     "api/vibe.js":     { "regions": ["icn1"], "maxDuration": 30 },
     "api/saju.js":         { "regions": ["icn1"], "maxDuration": 60 },
-    "api/saju-confirm.js": { "regions": ["icn1"], "maxDuration": 60 },
-    "api/report.js":       { "regions": ["icn1"], "maxDuration": 60 }
+    "api/saju-confirm.js": { "regions": ["icn1"], "maxDuration": 60 }
   },
   "rewrites": [
     { "source": "/((?!api/|.well-known/).*)", "destination": "/index.html" }
