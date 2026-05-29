@@ -72,7 +72,8 @@ export default function ReportInputForm({ initial, onSubmit }) {
   return (
     <form className="report-input-form" onSubmit={handleSubmit}>
       <div className="report-field">
-        <label className="report-label">단지 검색</label>
+        <label className="report-label">어떤 아파트가 궁금하세요?</label>
+        <p className="report-hint">아파트 이름을 검색해서 골라주세요</p>
         <div className="report-input-wrap">
           <input
             type="text"
@@ -101,7 +102,8 @@ export default function ReportInputForm({ initial, onSubmit }) {
       </div>
 
       <div className="report-field">
-        <label className="report-label">매가: {fmtEok(priceManwon)}</label>
+        <label className="report-label">얼마에 살까 고민 중이세요? <span className="report-label-value">{fmtEok(priceManwon)}</span></label>
+        <p className="report-hint">호가나 실거래가를 보고 슬라이더로 조정하세요</p>
         <input
           type="range"
           min={10000} max={300000} step={5000}
@@ -112,7 +114,8 @@ export default function ReportInputForm({ initial, onSubmit }) {
       </div>
 
       <div className="report-field">
-        <label className="report-label">보유 기간</label>
+        <label className="report-label">몇 년 정도 살 생각이세요?</label>
+        <p className="report-hint">3년 / 5년 후 시점의 시나리오 가격을 계산해드려요</p>
         <div className="report-radios">
           {[3, 5].map(y => (
             <label key={y} className={`report-radio${years === y ? ' on' : ''}`}>
@@ -128,7 +131,8 @@ export default function ReportInputForm({ initial, onSubmit }) {
       </div>
 
       <div className="report-field">
-        <label className="report-label">추가 저축 가능: {fmtEok(savings)}</label>
+        <label className="report-label">그 사이 얼마나 더 모을 수 있어요? <span className="report-label-value">{fmtEok(savings)}</span></label>
+        <p className="report-hint">집값 + 저축 합쳐서 다음 집 갈아타기까지 같이 계산해요</p>
         <input
           type="range"
           min={0} max={30000} step={5000}
@@ -138,7 +142,7 @@ export default function ReportInputForm({ initial, onSubmit }) {
         />
       </div>
 
-      <button type="submit" className="report-submit-btn">분석 시작</button>
+      <button type="submit" className="report-submit-btn">이 집 살까말까 진단하기</button>
     </form>
   )
 }
