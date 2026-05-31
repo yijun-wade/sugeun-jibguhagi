@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sat, 30 May 2026 23:07:01 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 31 May 2026 23:10:11 GMT</lastBuildDate>
+    <item>
+      <title>양도세 강화·전세난 심화, 6월 부동산 시장 분기점</title>
+      <link>https://www.suzip.kr/briefing/2026-06-01</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-01</guid>
+      <pubDate>Sun, 31 May 2026 22:00:00 GMT</pubDate>
+      <description>• 다주택자 양도소득세 중과(많이 파는 사람에게 세금을 더 매김)가 시행되면서 서울 아파트 매매와 전세가 동시에 오르고 있다.
+• 전세 매물 부족이 서울을 넘어 지방까지 확산되고 있으며, 2021년 전세난 수준에 도달했다.
+• 부동산 규제가 강해지자 투자자금이 주식시장으로 이동하고 있으며, 신용대출(담보 없이 신용만으로 빌린 돈)이 사상 최대치를 넘었다.
+
+정부 의도: 정부는 부동산을 투기 수단이 아닌 '살 집'으로 돌려놓겠다는 방침이다. 불로소득(일하지 않고 버는 돈)을 줄이고 실제 사는 사람 중심의 시장을 만들려고 투기자들을 압박하고 있다.
+
+시장 변화: 투기자들이 매물을 내놓지 않으면서 공급이 줄고 가격은 오르는 현상이 계속될 것으로 보인다. 전세난은 수도권을 넘어 지방까지 번지고 있어 실제로 집이 필요한 사람들의 선택지가 점점 줄어들고 있다.</description>
+    </item>
     <item>
       <title>금리 올라도 집값 오른다…서울 강세 지속</title>
       <link>https://www.suzip.kr/briefing/2026-05-31</link>
@@ -253,19 +266,6 @@
 정부 의도: 정책 유예와 실거주 의무 완화로 급급한 매도를 막아 시장 안정화를 원하고 있다. 동시에 6월 지방선거를 앞두고 주택 시장에 대한 정책 신뢰도를 높이려는 의도도 있다.
 
 시장 변화: 매물 출회가 줄어들면서 가격이 오를 가능성이 높아진다. 대신 구매 기회는 줄어들 수 있으니 지금이 비교적 선택의 폭이 넓은 시기다.</description>
-    </item>
-    <item>
-      <title>전세 급감, 대출 규제로 실수요자 '동시다중 압박'</title>
-      <link>https://www.suzip.kr/briefing/2026-05-12</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-12</guid>
-      <pubDate>Mon, 11 May 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 아파트 전세 매물이 30% 이상 줄어들면서 전세가가 2015년 이후 최고 수준으로 올랐다.
-• 다주택자 세금 강화와 토지거래허가구역 지정으로 임대용 주택이 매매로 전환되면서 전월세 공급이 부족해지고 있다.
-• 정부의 강화된 가계대출 규제로 주택담보대출과 전세대출이 어려워지면서 실제 집 사려는 사람들까지 영향을 받고 있다.
-
-정부 의도: 정부는 부동산 투기를 억제하고 시장을 안정시키기 위해 다주택자 세금을 올리고 대출을 줄이는 정책을 펼치고 있다. 가계부채가 너무 커졌다고 생각해서 빚을 내서 집을 사는 것 자체를 막으려는 전략이다.
-
-시장 변화: 다주택자들이 세금 부담을 피하기 위해 집을 팔거나 임대를 포기하면서 전월세 시장의 공급이 급격히 줄어들고 있다. 결과적으로 세입자들이 구하는 집은 없고 가격만 올라가는 악순환이 벌어지고 있다.</description>
     </item>
   </channel>
 </rss>
