@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sat, 06 Jun 2026 23:11:44 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 07 Jun 2026 23:14:26 GMT</lastBuildDate>
+    <item>
+      <title>집값·전세값 70주 연속 상승, 정부 정책 전환 주목</title>
+      <link>https://www.suzip.kr/briefing/2026-06-08</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-08</guid>
+      <pubDate>Sun, 07 Jun 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 아파트 매매가와 전세가가 70주 연속 상승 중이며, 전세 매물 부족이 집값 상승을 가속화하고 있다.
+• 대통령 취임 1주년 기자회견에서 부동산 정책 방향이 발표될 예정이며, 지난 지방선거 패배 원인 중 하나가 부동산 민심이었다.
+• 은행권 대출 규제 강화로 인해 자금이 2금융권과 대기업 사내대출로 몰리는 '풍선 효과'가 나타나고 있다.
+
+정부 의도: 지난 지방선거에서 부동산 문제로 여당이 큰 패배를 당했기 때문에, 부동산 정책을 손볼 필요가 생겼다. 전세 매물 부족과 집값 상승으로 일반인들이 집을 사기 어려워지자, 이를 완화하기 위해 정책을 조정하려는 움직임이 보인다.
+
+시장 변화: 현재 규제 위주의 정책에서 공급 활성화 쪽으로 방향을 바꿀 가능성이 높다. 다만 급격한 정책 변화 없이는 전세 매물 부족과 집값 상승 추세가 당분간 계속될 것으로 보인다.</description>
+    </item>
     <item>
       <title>서울 전세 강세, 지방 건설사 위기…금리 쓰나미</title>
       <link>https://www.suzip.kr/briefing/2026-06-07</link>
@@ -253,19 +266,6 @@
 정부 의도: 고금리와 대출 규제로 집을 못 사던 무주택자들이 서둘러 매수하도록 유도하려는 의도로 보인다. 특히 생애첫 주택 구입자에게는 대출 한도를 높게 유지해(70%) 진입 문턱을 낮추고 있다.
 
 시장 변화: 중저가 아파트와 외곽 지역에 수요가 몰리면서 가격 상승이 빨라지고 있다. 하지만 금리 급등은 전체 부동산 시장의 장기적 둔화를 초래할 수 있어 불확실성이 크다.</description>
-    </item>
-    <item>
-      <title>양도세 중과 후 매물 급감, 전세가 급등 중</title>
-      <link>https://www.suzip.kr/briefing/2026-05-19</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-19</guid>
-      <pubDate>Mon, 18 May 2026 22:00:00 GMT</pubDate>
-      <description>• 다주택자 양도소득세 중과 유예 종료 이후 서울 아파트 매매매물이 8만 건에서 6만3000건으로 급감했다.
-• 전세시장이 5년 만에 최고조를 기록했고, 전세수급지수가 113.7까지 치솟으면서 전세가격이 급등하고 있다.
-• 정부의 부동산 억제 정책에도 불구하고 시장은 반대로 움직이며 세입자들의 주거불안이 심해지고 있다.
-
-정부 의도: 정부는 다주택자가 집을 팔도록 세금을 높여서 시장 공급을 늘리고 집값을 낮추려고 했다. 부동산 투기를 억제하고 실제로 집이 필요한 사람들을 돕기 위한 정책이었다.
-
-시장 변화: 예상과 달리 다주택자들이 오히려 집을 팔지 않으면서 매매 매물이 줄어들었다. 대신 전세 수요가 쏠려서 전세가격이 오르고 전세 매물도 사라지고 있다.</description>
     </item>
   </channel>
 </rss>
