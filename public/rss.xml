@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sun, 07 Jun 2026 23:14:26 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 08 Jun 2026 23:17:44 GMT</lastBuildDate>
+    <item>
+      <title>이재명, 보유세·대출·공급 3단계 규제 본격화</title>
+      <link>https://www.suzip.kr/briefing/2026-06-09</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-09</guid>
+      <pubDate>Mon, 08 Jun 2026 22:00:00 GMT</pubDate>
+      <description>• 이재명 대통령이 지방선거 이후 부동산 규제를 본격 드라이브하겠다고 선언, 세제·대출·공급 종합대책을 예고했다.
+• 전세대출 축소와 비거주 1주택자 규제가 구체화되면서 전세 월세화 현상이 가속화 중이다.
+• 서울 아파트 평균값이 13억 원을 넘었지만 대출은 최대 6억 원으로 제한돼 실수요자들의 진입이 어려워지고 있다.
+
+정부 의도: 부동산 투기를 막고 집값을 내리려는 것이다. 전세가 올라 집값이 따라 오르는 악순환을 끊기 위해 전세대출을 줄이고, 보유세를 높여서 투기세를 빼내려는 전략이다.
+
+시장 변화: 집값이 더 내려갈 가능성이 높지만 당장은 오를 수도 있다. 규제가 강해지자 매물을 거두는 사람들이 많아져서 수급이 더 타이트해지고 있기 때문이다. 또한 전세가 월세로 바뀌면서 월세 시장이 커질 것으로 보인다.</description>
+    </item>
     <item>
       <title>집값·전세값 70주 연속 상승, 정부 정책 전환 주목</title>
       <link>https://www.suzip.kr/briefing/2026-06-08</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 은행권 주택대출을 제한해 과도한 부동산 투기를 막으려고 했습니다. 하지만 이 과정에서 일반인들의 주거 수요까지 억제되고 있어서, 실제 집이 필요한 사람들의 부담이 커지고 있는 상황입니다.
 
 시장 변화: 전세 공급이 줄면서 전월세 시장으로의 쏠림이 심해질 것 같습니다. 비은행권 금융으로 빠져나가는 차주들이 늘면서 금융 시장 전체의 리스크도 커지고 있습니다.</description>
-    </item>
-    <item>
-      <title>금리 급등에 생애첫 매수 몰려, 전세 시장은 붕괴</title>
-      <link>https://www.suzip.kr/briefing/2026-05-20</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-20</guid>
-      <pubDate>Tue, 19 May 2026 22:00:00 GMT</pubDate>
-      <description>• 미국 금리가 급등하면서 한국 부동산 시장이 둔화될 우려가 커지고 있다.
-• 4월 생애첫 주택 매수자가 4년5개월 만에 최다를 기록했으며, 특히 외곽 지역에서 30~40대의 매수가 폭발했다.
-• 전세 매물이 1년 전 2만7000건에서 5월 1만6240건으로 40% 감소하면서 전세 시장이 붕괴 중이다.
-
-정부 의도: 고금리와 대출 규제로 집을 못 사던 무주택자들이 서둘러 매수하도록 유도하려는 의도로 보인다. 특히 생애첫 주택 구입자에게는 대출 한도를 높게 유지해(70%) 진입 문턱을 낮추고 있다.
-
-시장 변화: 중저가 아파트와 외곽 지역에 수요가 몰리면서 가격 상승이 빨라지고 있다. 하지만 금리 급등은 전체 부동산 시장의 장기적 둔화를 초래할 수 있어 불확실성이 크다.</description>
     </item>
   </channel>
 </rss>
