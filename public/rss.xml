@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Wed, 10 Jun 2026 23:41:28 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 11 Jun 2026 23:45:16 GMT</lastBuildDate>
+    <item>
+      <title>서울 70주 연속 상승, 전세·월세까지 불안 확산</title>
+      <link>https://www.suzip.kr/briefing/2026-06-12</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-12</guid>
+      <pubDate>Thu, 11 Jun 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 아파트가 70주 연속 상승하며 매매뿐 아니라 전세·월세 시장까지 급변하고 있다.
+• 서울 외곽 지역의 전세가율이 6년 만에 최고치를 기록했고, 월세 비중이 50% 수준까지 올라갔다.
+• 가계대출이 5월에 9.3조원 급증하면서 금융당국이 비상관리 체계에 돌입했다.
+
+정부 의도: 부동산 시장 과열을 식히고 가계부채 급증을 막기 위해 대출 규제를 강화하고 있다. 이는 버블을 예방하고 서민들의 금융 부담을 줄이기 위한 것이다.
+
+시장 변화: 집값이 계속 오르지만 대출 규제 때문에 매수 여력이 줄어들고 있다. 그 결과 전세를 월세로 바꾸는 추세가 빨라지고 있는 상황이다.</description>
+    </item>
     <item>
       <title>생애 첫 집 사는 무주택자 역대 최대, 대출규제가 부른 현금 전쟁</title>
       <link>https://www.suzip.kr/briefing/2026-06-11</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 과도한 부채를 줄이기 위해 주택담보대출을 억제하고 있다. 하지만 서울처럼 집값이 계속 오르는 지역에서는 현금이 많은 사람들을 중심으로 거래가 일어나고 있고, 이는 형평성 문제로 이어질 수 있다는 걱정이 생기고 있다.
 
 시장 변화: 집값이 오르고 있지만 대출은 받기 어려워지면서, 현금이 풍부한 사람들의 거래가 늘어나고 있다. 이로 인해 일반 실수요자들은 더 비싼 집값에 더 적은 대출로 집을 사야 하는 악순환이 생기고 있다.</description>
-    </item>
-    <item>
-      <title>전세값 급등, 정부 '비아파트 임대' 대책 내놓다</title>
-      <link>https://www.suzip.kr/briefing/2026-05-23</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-23</guid>
-      <pubDate>Fri, 22 May 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 아파트 매매가가 5월 3주 연속 상승 중이며, 전세가격은 10년 만에 최고치를 경신했다.
-• 정부가 전월세 시장 안정을 위해 2년 내 비아파트(오피스텔·주택) 매입임대 9만 호를 공급하기로 발표했다.
-• 강남·해운대 등 수도권과 대도시 외곽 GTX 예정 노선 주변으로 실수요자들의 이동이 활발해지고 있다.
-
-정부 의도: 전셋값이 급등하면서 서민들의 주거비 부담이 심해지자, 정부가 서둘러 대책을 내놓은 것이다. 아파트만 공급하던 것을 오피스텔이나 일반 주택까지 확대해서 임대주택을 늘리려는 전략이다.
-
-시장 변화: 단기적으로는 비아파트 임대물량이 증가하면서 전세 시장에 약간의 숨통이 트일 것으로 보인다. 하지만 시장 전문가들은 6월 지방선거 이후까지는 관망 분위기가 계속될 것이라고 예상한다.</description>
     </item>
   </channel>
 </rss>
