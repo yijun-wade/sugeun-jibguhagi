@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Wed, 17 Jun 2026 23:45:18 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 18 Jun 2026 23:52:50 GMT</lastBuildDate>
+    <item>
+      <title>서울 집값 10억 돌파, 전세·월세도 함께 급등</title>
+      <link>https://www.suzip.kr/briefing/2026-06-19</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-19</guid>
+      <pubDate>Thu, 18 Jun 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 아파트 평균값이 10억원을 넘어섰고, 전세와 월세까지 함께 올라 71주 연속 상승 중이다.
+• 수도권 집값은 연간 4.5% 오를 것으로 예상되며, 특히 전셋값은 5.0% 상승할 것으로 전망된다.
+• 양도세 중과(세금을 더 내는 것)를 피하려고 급히 파는 사람들이 늘면서 주담대(주택담보대출)가 3개월에 6조원 불어났다.
+
+정부 의도: 정부는 부동산 시장의 과도한 거래 열기를 식히고 가계부채 문제를 줄이려고 한다. 동시에 청년들이 전세사기 같은 피해를 입지 않도록 교육과 상담 서비스를 강화해서 부동산 시장을 안정시키려는 것이다.
+
+시장 변화: 집값이 계속 오르면서 전세 물량이 부족해지고 있다. 앞으로 매매·전세·월세 모두 오르는 추세가 이어질 것으로 보인다.</description>
+    </item>
     <item>
       <title>금리 인상 앞두고 서울 아파트값 상승세…규제 우회 움직임 심화</title>
       <link>https://www.suzip.kr/briefing/2026-06-18</link>
@@ -253,19 +266,6 @@
 정부 의도: 이재명 정부는 작년부터 대출 규제와 세금으로 집값을 잡으려고 했다. 하지만 경제 활성화를 위해 풀린 자금이 증시로 몰렸다가 다시 부동산으로 흘러가고 있다. 한은은 이제 금리를 올려서 과열을 식히려는 단계다.
 
 시장 변화: 금리가 올라가면 대출 비용이 늘어나므로 집값 상승이 둔화될 것으로 예상되지만, 현재는 공급 부족이 더 큰 영향을 미치고 있다. 앞으로 정책 변화가 없으면 서울·수도권 주택가격은 계속 오를 가능성이 크다.</description>
-    </item>
-    <item>
-      <title>매물 부족에 전세 사라지고, 금리 부담 가중</title>
-      <link>https://www.suzip.kr/briefing/2026-05-30</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-30</guid>
-      <pubDate>Fri, 29 May 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 아파트 매물이 6만여 건으로 줄어들면서 '매물 잠김' 현상이 다시 나타나고 있다.
-• 올해 1~4월 임대차 중 월세 비중이 68.5%로 올라 전세가 빠르게 사라지고 있다.
-• 고금리 장기화로 변동금리 대출자들의 이자 부담이 증가하면서 대출 규제까지 겹쳐 취약층이 압박받고 있다.
-
-정부 의도: 정부는 주택 공급 확대와 조기 착공을 통해 매물 부족 현상을 해결하려고 한다. 동시에 대출 규제로 과도한 빚을 줄이고 집값 상승을 억제하려는 의도를 보이고 있다.
-
-시장 변화: 매물이 부족하면서 집값은 하방 지지(내려가기 어려운 상태)를 받고 있고, 전세가 월세로 급속도로 전환되면서 세입자 부담이 커지고 있다. 반도체 벨트 같은 특정 지역은 대기업 직원들의 수요로 가격이 오르는 양극화 현상이 심해지고 있다.</description>
     </item>
   </channel>
 </rss>
