@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Thu, 18 Jun 2026 23:52:50 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 19 Jun 2026 23:07:17 GMT</lastBuildDate>
+    <item>
+      <title>전세값 폭등, 대출 규제 강화로 선택지 줄어든다</title>
+      <link>https://www.suzip.kr/briefing/2026-06-20</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-20</guid>
+      <pubDate>Fri, 19 Jun 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 전세시장이 반년 만에 수억 원 오르며 신고가가 전방위로 확산되고 있다.
+• 정부가 전세대출 규제를 강화하면서 금융권의 부동산 대출이 위축되고 있다.
+• 대출이 막히자 사모대출(일반인이 아닌 투자자들끼리의 대출) 같은 비정상적 시장이 커지고 있다.
+
+정부 의도: 정부는 전세대출로 인한 집값 상승을 억제하고, 투기 수요를 자본시장(주식)으로 유도하려고 한다. 쉽게 말해 부동산에 몰린 돈을 주식 쪽으로 흘러가게 하려는 것이다.
+
+시장 변화: 대출 규제로 집을 살 때 빌릴 수 있는 돈이 줄어들면서 누군가는 매매를 포기하고 전세로 눈을 돌리고 있다. 그러다 보니 전세 매물이 부족해지고 전세값만 자꾸 올라가는 악순환이 벌어지고 있다.</description>
+    </item>
     <item>
       <title>서울 집값 10억 돌파, 전세·월세도 함께 급등</title>
       <link>https://www.suzip.kr/briefing/2026-06-19</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 부동산을 투기 수단이 아닌 '살 집'으로 돌려놓겠다는 방침이다. 불로소득(일하지 않고 버는 돈)을 줄이고 실제 사는 사람 중심의 시장을 만들려고 투기자들을 압박하고 있다.
 
 시장 변화: 투기자들이 매물을 내놓지 않으면서 공급이 줄고 가격은 오르는 현상이 계속될 것으로 보인다. 전세난은 수도권을 넘어 지방까지 번지고 있어 실제로 집이 필요한 사람들의 선택지가 점점 줄어들고 있다.</description>
-    </item>
-    <item>
-      <title>금리 올라도 집값 오른다…서울 강세 지속</title>
-      <link>https://www.suzip.kr/briefing/2026-05-31</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-05-31</guid>
-      <pubDate>Sat, 30 May 2026 22:00:00 GMT</pubDate>
-      <description>• 한은이 기준금리 인상을 검토 중인데도 서울 아파트 매매·전세가 계속 오르고 있다.
-• 전세 물량이 급감하면서 월세로 바꾸는 집주인이 늘어 전세 구하기가 더 어려워졌다.
-• 신용대출로 주식에 투자하는 사람들이 늘면서 빚투(빚내서 투자) 규모가 36조를 넘었다.
-
-정부 의도: 이재명 정부는 작년부터 대출 규제와 세금으로 집값을 잡으려고 했다. 하지만 경제 활성화를 위해 풀린 자금이 증시로 몰렸다가 다시 부동산으로 흘러가고 있다. 한은은 이제 금리를 올려서 과열을 식히려는 단계다.
-
-시장 변화: 금리가 올라가면 대출 비용이 늘어나므로 집값 상승이 둔화될 것으로 예상되지만, 현재는 공급 부족이 더 큰 영향을 미치고 있다. 앞으로 정책 변화가 없으면 서울·수도권 주택가격은 계속 오를 가능성이 크다.</description>
     </item>
   </channel>
 </rss>
