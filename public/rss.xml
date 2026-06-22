@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sun, 21 Jun 2026 23:24:21 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 22 Jun 2026 23:27:25 GMT</lastBuildDate>
+    <item>
+      <title>금리 오르고 규제 강화, 서울 집값은 오르는 역설</title>
+      <link>https://www.suzip.kr/briefing/2026-06-23</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-23</guid>
+      <pubDate>Mon, 22 Jun 2026 22:00:00 GMT</pubDate>
+      <description>• 미국 금리 인상 기조 속에서도 서울·경기 아파트 매매가와 전세가가 동시에 상승하고 있다.
+• 서울 전세 수급지수가 122.5로 5년 반 만에 최고치를 기록하며 전세난이 심화되고 있다.
+• 정부는 주택담보대출 규제와 규제지역 지정으로 집값을 제어하려 하지만 부처 간 정책 조율이 엇박자를 이루고 있다.
+
+정부 의도: 부동산 양극화를 해결하고 가계대출 과열을 막으려고 규제를 강화하는 중이다. 특히 반도체 호황으로 인한 급격한 집값 상승을 우려해 대출 한도를 낮추고 규제지역을 확대하려는 움직임이다.
+
+시장 변화: 금리가 오르는데도 서울·경기의 우수 지역 집값은 오르고 있어 투자심리가 되살아나는 중이다. 반면 전세 공급이 부족해지면서 월세로 내몰리는 세입자가 늘어날 것으로 보인다.</description>
+    </item>
     <item>
       <title>서울 집값 12.9% 폭등, 전세난 심화 속 규제 완화 신호</title>
       <link>https://www.suzip.kr/briefing/2026-06-22</link>
@@ -253,19 +266,6 @@
 정부 의도: 투기꾼들을 몰아내고 집값을 안정시키려고 금리 인상, 세금 강화, 대출 규제를 동시에 펼쳤다. 실수요자들이 집을 쉽게 살 수 있는 환경을 만들겠다는 취지다.
 
 시장 변화: 규제가 강해서 거래 자체가 줄었는데, 정작 서울 같은 강남권 집값은 더 올랐다. 서울과 지방의 부동산 양극화가 심해지고 있고, 전세 부족으로 월세로 내몰리는 사람들이 늘고 있다.</description>
-    </item>
-    <item>
-      <title>전세난 심화, 빌라·연립 대체수요 증가</title>
-      <link>https://www.suzip.kr/briefing/2026-06-03</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-03</guid>
-      <pubDate>Tue, 02 Jun 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 아파트 전세 물량 감소로 전셋값이 올라가면서 빌라와 연립주택 시장이 다시 살아나고 있다.
-• 6월 30일부터 사업자대출 사후점검 기준이 1억 원에서 5000만 원으로 강화되어 대출 편법을 더 엄격하게 단속한다.
-• 서울 아파트 매매가격은 5월 셋째 주 기준 올해 최고치를 기록했지만 지역별 양극화가 심해지고 있다.
-
-정부 의도: 정부는 부동산 투기를 막고 실제 집이 필요한 사람들을 보호하려고 한다. 사업자대출로 집을 사는 편법을 차단하고, 실수요자들이 공정하게 주택금융을 받을 수 있는 환경을 만들려는 것이다.
-
-시장 변화: 아파트 전세 물량 부족이 계속되면서 저가 주택 수요가 빌라와 연립주택으로 흐르고 있다. 대출 규제가 강화되면서 갭투자 같은 투기 수법은 어려워지지만, 실수요자들도 대출받기가 더 까다로워질 수 있다.</description>
     </item>
   </channel>
 </rss>
