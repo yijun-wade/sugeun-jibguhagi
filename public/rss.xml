@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Mon, 22 Jun 2026 23:27:25 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 23 Jun 2026 23:14:44 GMT</lastBuildDate>
+    <item>
+      <title>매매 강세·전세 부족, 규제 부작용 심화</title>
+      <link>https://www.suzip.kr/briefing/2026-06-24</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-24</guid>
+      <pubDate>Tue, 23 Jun 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 아파트 매매가 14개월 연속 상승, 전세는 25개월 연속 올라 '트리플 강세' 지속 중.
+• 전세 매물 급감으로 세입자들이 어쩔 수 없이 매매로 눈을 돌리면서 집값을 더 올리는 악순환 발생.
+• 정부의 강한 대출규제(DSR)와 실거주 정책이 공급 부족과 전세난을 심화시킨다는 지적.
+
+정부 의도: 정부는 집값 안정화와 과도한 빚을 막기 위해 대출을 더 엄격하게 심사하고(DSR 강화), 실제 사는 사람만 집을 사도록 제한하려 했다. 하지만 이 정책이 전세 공급을 막아서 오히려 세입자들을 매매시장으로 몰아내고 있는 상황.
+
+시장 변화: 전세가 사라지고 있어서 전세 찾는 사람들이 할 수 없이 집을 사는 쪽으로 몰리고 있다. 금융규제로 신규 아파트 건설도 늦어지면서 공급 부족 문제가 장기화될 전망이다.</description>
+    </item>
     <item>
       <title>금리 오르고 규제 강화, 서울 집값은 오르는 역설</title>
       <link>https://www.suzip.kr/briefing/2026-06-23</link>
@@ -253,19 +266,6 @@
 정부 의도: 부동산 정책이 선거의 핵심 쟁점이 되자, 새로운 정부는 규제 완화 신호를 보내고 있다. 시장 활성화를 통해 경기를 부양하려는 의도로 보인다.
 
 시장 변화: 규제 완화 기대감에 매수세가 늘면서 집값과 전세가가 동시에 올라가는 추세가 이어질 것으로 예상된다. 다만 공급이 부족한 구조적 문제는 남아있다.</description>
-    </item>
-    <item>
-      <title>서울 집값 계속 올라, 규제는 역효과</title>
-      <link>https://www.suzip.kr/briefing/2026-06-04</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-04</guid>
-      <pubDate>Wed, 03 Jun 2026 22:00:00 GMT</pubDate>
-      <description>• 이재명 정부 1년간 서울 아파트 가격이 2배 올랐고, 규제 정책이 오히려 서울 집값만 더 올렸다는 분석이 나왔다.
-• 전세사기 후유증으로 서울 전세 매물이 1년간 30% 이상 줄어들면서 월세 비중이 75%까지 높아졌다.
-• 정부가 가계대출을 막으니 신용대출로 주식시장에 들어갔다가 결국 다시 부동산으로 돌아오는 '풍선효과'가 일어나고 있다.
-
-정부 의도: 투기꾼들을 몰아내고 집값을 안정시키려고 금리 인상, 세금 강화, 대출 규제를 동시에 펼쳤다. 실수요자들이 집을 쉽게 살 수 있는 환경을 만들겠다는 취지다.
-
-시장 변화: 규제가 강해서 거래 자체가 줄었는데, 정작 서울 같은 강남권 집값은 더 올랐다. 서울과 지방의 부동산 양극화가 심해지고 있고, 전세 부족으로 월세로 내몰리는 사람들이 늘고 있다.</description>
     </item>
   </channel>
 </rss>
