@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Tue, 30 Jun 2026 23:20:19 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 01 Jul 2026 23:22:48 GMT</lastBuildDate>
+    <item>
+      <title>동탄·구리·기흥 규제 강화, 실수요자만 살 수 있게</title>
+      <link>https://www.suzip.kr/briefing/2026-07-02</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-07-02</guid>
+      <pubDate>Wed, 01 Jul 2026 22:00:00 GMT</pubDate>
+      <description>• 동탄구, 기흥, 구리에 새로운 규제(토허제)가 적용되면서 실거주 의무와 대출 제한이 시작됐다.
+• 무주택자 대출 비율이 70%에서 40%로 줄어들고 유주택자는 아예 대출이 안 된다.
+• 규제 지역에서 전세가 줄어들면서 월세 수요가 증가하고 세입자들이 외곽으로 밀려나는 중이다.
+
+정부 의도: 정부는 수도권 집값 상승을 잡으려고 강한 규제 카드를 꺼냈다. 투자 목적 매매를 막고 실제로 집이 필요한 사람들만 사도록 유도하는 것이 핵심 의도다. 동시에 135만 가구 공급 계획으로 시간을 버는 전략이다.
+
+시장 변화: 규제 지역에서는 갭투자(전세 끼고 매매하는 것)가 막혀서 전세 매물이 빠르게 줄어들고 있다. 그러면서 전월세 시장이 불안정해지고, 세입자들은 외곽 지역으로 이동할 수밖에 없는 상황이 벌어지고 있다.</description>
+    </item>
     <item>
       <title>동탄·기흥·구리 3중규제, 오늘부터 시작</title>
       <link>https://www.suzip.kr/briefing/2026-07-01</link>
@@ -253,19 +266,6 @@
 정부 의도: 빚으로 집을 사고 주식을 사는 '빚투'가 늘면서 가계부채가 눈덩이처럼 불어나고 있습니다. 정부는 이를 막기 위해 신용대출 문을 좁히고 전세제도를 축소해 무리한 차입을 줄이려는 겁니다. 동시에 금리를 올려 시장 과열을 식히려고 합니다.
 
 시장 변화: 앞으로 은행에서 돈 빌리기가 훨씬 어려워질 것 같습니다. 특히 신용등급이 낮거나 소득이 적으면 더 그럴 겁니다. 전세난이 심해질 가능성이 높고, 일부 투자자들은 손절매를 하면서 시장이 출렁거릴 수 있습니다.</description>
-    </item>
-    <item>
-      <title>서울 70주 연속 상승, 전세·월세까지 불안 확산</title>
-      <link>https://www.suzip.kr/briefing/2026-06-12</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-12</guid>
-      <pubDate>Thu, 11 Jun 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 아파트가 70주 연속 상승하며 매매뿐 아니라 전세·월세 시장까지 급변하고 있다.
-• 서울 외곽 지역의 전세가율이 6년 만에 최고치를 기록했고, 월세 비중이 50% 수준까지 올라갔다.
-• 가계대출이 5월에 9.3조원 급증하면서 금융당국이 비상관리 체계에 돌입했다.
-
-정부 의도: 부동산 시장 과열을 식히고 가계부채 급증을 막기 위해 대출 규제를 강화하고 있다. 이는 버블을 예방하고 서민들의 금융 부담을 줄이기 위한 것이다.
-
-시장 변화: 집값이 계속 오르지만 대출 규제 때문에 매수 여력이 줄어들고 있다. 그 결과 전세를 월세로 바꾸는 추세가 빨라지고 있는 상황이다.</description>
     </item>
   </channel>
 </rss>
