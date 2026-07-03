@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Thu, 02 Jul 2026 23:16:44 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 03 Jul 2026 23:13:26 GMT</lastBuildDate>
+    <item>
+      <title>규제에 쫓긴 수요, 경기·지방으로 확산 중</title>
+      <link>https://www.suzip.kr/briefing/2026-07-04</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-07-04</guid>
+      <pubDate>Fri, 03 Jul 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 전역이 토지거래허가구역으로 묶이면서 매수 수요가 경기 남부와 지방으로 이동 중입니다.
+• 전세 물량이 급감하자 전세를 못 구한 사람들까지 매매 시장으로 몰려 집값을 올리고 있습니다.
+• 7월 말 정부가 다주택자와 고가 부동산에 대한 세금을 올릴 예정이어서 규제가 더 강해질 것 같습니다.
+
+정부 의도: 부동산에 묶인 자금을 실제 경제에 돌리고 싶은 겁니다. 집값이 자꾸 오르니까 세금을 높이고 규제를 강화해서 투기를 억제하고, 무주택자들이 집을 사거나 빌릴 수 있게 만들려는 거예요.
+
+시장 변화: 규제가 쎄니까 서울에서는 고민하던 사람들이 경기도 남부나 지방으로 눈을 돌리고 있습니다. 다만 공급이 따라가지 못하면서 규제로 거래가 줄어드는 대신 가격만 계속 오를 수 있다는 우려가 나옵니다.</description>
+    </item>
     <item>
       <title>동탄 규제에 풍선효과, 외곽으로 몰리는 실수요자들</title>
       <link>https://www.suzip.kr/briefing/2026-07-03</link>
@@ -253,19 +266,6 @@
 정부 의도: 집값을 잡으려고 대출을 줄였는데, 오히려 전세 수요가 몰려서 전세값이 급등했다. 그래서 이번엔 실제로 살지 않으면서 투자 목적으로 전세대출을 받는 사람들을 겨냥해서 규제를 강화하려는 것이다.
 
 시장 변화: 수도권은 집값과 전세값이 함께 오르는 '이중 상승'이 일어나고 있고, 지방은 거기에 못 미치며 지역 격차가 심해지고 있다. 앞으로 전세대출 규제가 강해지면 전세 공급이 줄어들어 전세값 상승 압력은 계속될 것 같다.</description>
-    </item>
-    <item>
-      <title>주식 팔아 집 사는 현상, 전세난까지 겹쳤다</title>
-      <link>https://www.suzip.kr/briefing/2026-06-14</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-14</guid>
-      <pubDate>Sat, 13 Jun 2026 22:00:00 GMT</pubDate>
-      <description>• 4개월간 3조7천억원의 주식 수익금이 부동산으로 몰리면서 강남 중심으로 집값이 올라가고 있다.
-• 서울 전세가가 2015년 전세대란 수준으로 치솟으면서 전세 구하기가 어려워지고 있다.
-• 정부가 다음 달 투기성 전세대출 규제를 발표할 예정으로, 비거주 1주택자 4조9천억원대 대출이 관리 대상이 된다.
-
-정부 의도: 정부는 주식으로 번 돈이 부동산 투기로 몰리는 현상을 막으려고 한다. 특히 집에 살지 않으면서 전세로 돈을 빌려 갭투자(저가 매입 후 고가 전세 임대)하는 투기를 규제하려는 것이다.
-
-시장 변화: 규제가 강해지면서 강남 같은 고가 아파트는 오르기 어려워지겠지만, 규제가 없는 지역(동탄, 구리 등)으로 수요가 몰려 지역 편차가 더 커질 것으로 보인다. 전세는 공급 부족으로 계속 오를 가능성이 높다.</description>
     </item>
   </channel>
 </rss>
