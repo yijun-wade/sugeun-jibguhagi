@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sat, 04 Jul 2026 23:04:51 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 05 Jul 2026 23:10:34 GMT</lastBuildDate>
+    <item>
+      <title>전세난·규제 강화, 무주택자 시장 양극화 심화</title>
+      <link>https://www.suzip.kr/briefing/2026-07-06</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-07-06</guid>
+      <pubDate>Sun, 05 Jul 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 전세가가 1년에 9.3% 급등하며 무주택자들의 전세난이 심화되고 있습니다.
+• 정부가 이달 말 부동산 세제 개편안을 발표 예정이며, 보유세 중심으로 세금 구조를 바꿀 예정입니다.
+• 삼성전자 등 대기업이 사내 대출을 국민평형 이하로 제한하며 고가 주택 거래 억제에 동참했습니다.
+
+정부 의도: 정부는 전세난을 완화하고 집값 상승을 막기 위해 세제 개편으로 보유세(집을 들고만 있어도 내는 세금)를 늘리는 방향을 추진 중입니다. 동시에 대출 규제를 강화해 과도한 주택자금 대출이 집값을 올리는 것을 차단하려는 것입니다.
+
+시장 변화: 앞으로 고가 주택 매매가 줄어들 가능성이 높으며, 전세 공급 부족으로 전세가는 계속 오를 수 있습니다. 대신 규제가 약한 지역이나 비아파트 전월세 수요는 늘어날 것으로 예상됩니다.</description>
+    </item>
     <item>
       <title>전세난 심화, 매매로 몰리는 실수요자들</title>
       <link>https://www.suzip.kr/briefing/2026-07-05</link>
@@ -253,19 +266,6 @@
 정부 의도: 부동산 투기를 줄이기 위해서다. 전세를 낀 상태로 아파트를 사고, 신용대출을 끌어다 쓰는 빚투 행태가 늘어나면서 금융 위험이 커지고 있기 때문이다. 정부는 8월부터 대출 규제를 강화해 투기 수요를 원천 차단하려고 한다.
 
 시장 변화: 매매 시장에서는 가격이 더 오르기 전에 사려는 사람들이 몰려 거래가 증가할 가능성이 높다. 하지만 규제가 강해지면서 투기 수요는 줄어들고, 실제로 살 사람들이 돈을 내기 어려워져 결국 시장이 경직될 것으로 보인다.</description>
-    </item>
-    <item>
-      <title>전세값 폭등, 매매 규제로 역류하는 수요</title>
-      <link>https://www.suzip.kr/briefing/2026-06-16</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-16</guid>
-      <pubDate>Mon, 15 Jun 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 강남 84㎡ 전세가 24억원을 기록했고, 20억원 이상 고액 전세 거래가 작년의 2배 가까이 증가했습니다.
-• 매매 대출 규제가 강하다 보니 집을 못 사는 사람들이 전세 시장으로 몰리면서 전세값이 급등하고 있습니다.
-• 정부가 재개발·재건축 사업을 빠르게 진행하기 위해 규제를 풀겠다고 나섰습니다.
-
-정부 의도: 정부는 전월세 시장의 불안정을 잠재우려고 재개발·재건축을 빠르게 진행해 새 집을 많이 공급하려고 합니다. 또한 이주비 대출 규제를 풀어서 주택 이동을 더 쉽게 만들려고 합니다.
-
-시장 변화: 전세 시장의 심각한 품귀 현상이 계속될 것으로 보입니다. 규제 완화로 신축 아파트 공급이 늘면 중기적으로는 전월세 가격 상승이 조금씩 완화될 가능성이 있습니다.</description>
     </item>
   </channel>
 </rss>
