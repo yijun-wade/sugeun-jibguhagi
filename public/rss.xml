@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sun, 12 Jul 2026 22:57:23 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 13 Jul 2026 23:02:35 GMT</lastBuildDate>
+    <item>
+      <title>매매·전세 격차 9억, 대출 규제로 실수요자 '비상'</title>
+      <link>https://www.suzip.kr/briefing/2026-07-14</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-07-14</guid>
+      <pubDate>Mon, 13 Jul 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 아파트 매매가는 연 14.6% 올랐지만 전셋값은 7.6%만 올라 둘의 격차가 9억까지 벌어졌다.
+• 주택담보대출 규제로 은행들이 대출 모집을 제한하면서 집 사려는 사람들이 자금난을 겪고 있다.
+• 정부는 다음 주 대토론회를 열어 부동산 정책을 새로 짤 예정인데, 보유세(집 가진 사람 세금) 문제가 논쟁이 될 것으로 보인다.
+
+정부 의도: 집값 급등으로 서민들의 주거 불안이 커지자 부동산 정책을 손질하려는 것이다. 경제 부양과 집값 안정 사이에서 균형을 맞추면서 민심을 살피려는 의도로 보인다.
+
+시장 변화: 매매가와 전셋값이 동시에 오르면서 젊은층이 집 마련을 포기하는 현상이 늘어날 것이다. 대출 규제가 풀리지 않으면 자기자금이 많은 사람 위주로 거래가 몰릴 가능성이 크다.</description>
+    </item>
     <item>
       <title>금리 인상·대출 규제 강화, 매매·전세 시장 이중 충격</title>
       <link>https://www.suzip.kr/briefing/2026-07-13</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 지금까지의 대출 규제만으로는 집값을 못 잡았다고 판단했다. 그래서 세금 쪽에서 본격적으로 손을 쓰겠다는 의도다. 보유세를 높이고 양도세를 강화해서 집을 투기 수단이 아닌 주거 수단으로 만들려는 것.
 
 시장 변화: 대출 규제와 세제 강화가 동시에 진행되면서 집값 올라가는 추세는 더 오래갈 가능성이 높다. 공급이 부족한데 규제만 계속하니까 가격은 못 잡고, 오피스텔이나 수익형 부동산 같은 다른 상품으로 돈이 몰릴 것으로 보인다.</description>
-    </item>
-    <item>
-      <title>매매 강세·전세 부족, 규제 부작용 심화</title>
-      <link>https://www.suzip.kr/briefing/2026-06-24</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-24</guid>
-      <pubDate>Tue, 23 Jun 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 아파트 매매가 14개월 연속 상승, 전세는 25개월 연속 올라 '트리플 강세' 지속 중.
-• 전세 매물 급감으로 세입자들이 어쩔 수 없이 매매로 눈을 돌리면서 집값을 더 올리는 악순환 발생.
-• 정부의 강한 대출규제(DSR)와 실거주 정책이 공급 부족과 전세난을 심화시킨다는 지적.
-
-정부 의도: 정부는 집값 안정화와 과도한 빚을 막기 위해 대출을 더 엄격하게 심사하고(DSR 강화), 실제 사는 사람만 집을 사도록 제한하려 했다. 하지만 이 정책이 전세 공급을 막아서 오히려 세입자들을 매매시장으로 몰아내고 있는 상황.
-
-시장 변화: 전세가 사라지고 있어서 전세 찾는 사람들이 할 수 없이 집을 사는 쪽으로 몰리고 있다. 금융규제로 신규 아파트 건설도 늦어지면서 공급 부족 문제가 장기화될 전망이다.</description>
     </item>
   </channel>
 </rss>
