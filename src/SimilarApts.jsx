@@ -20,7 +20,7 @@ export default function SimilarApts({ kaptCode, avg, gu, aptNm }) {
     const params = new URLSearchParams({ kaptCode })
     if (avg) params.set('avg', String(avg))
     if (gu) params.set('gu', gu)
-    fetch(`/api/similar?${params.toString()}`)
+    fetch(`/api/nearby?${params.toString()}`)
       .then(r => r.json())
       .then(data => { if (alive) setItems(Array.isArray(data) ? data : []) })
       .catch(() => { if (alive) setItems([]) })
