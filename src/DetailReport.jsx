@@ -4,6 +4,7 @@ import { fP, fR, getYM, formatDealDate, nameSim } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM, SQM_TO_PYEONG, KR_LAT, KR_LON } from './constants.js'
 import { track } from './analytics.js'
 import { isCollected, toggleCollection } from './collection.js'
+import SimilarApts from './SimilarApts.jsx'
 
 function isValidUrl(url) {
   try { const { protocol } = new URL(url); return protocol === 'http:' || protocol === 'https:' }
@@ -109,6 +110,9 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           <span className="collect-cta-arrow" aria-hidden="true">›</span>
         </button>
       )}
+
+      {/* 이 근처 비슷한 값 단지 — 막다른 페이지 탈출구(2nd 페이지뷰 + 내부링크 SEO) */}
+      <SimilarApts kaptCode={apt.kaptCode} avg={apt.recentAvg} gu={apt.regionName} aptNm={apt.aptNm} />
 
       {/* 모바일 sticky 액션 바 — 어느 위치에서도 손에 닿게 */}
       <div className="detail-mobile-actions">

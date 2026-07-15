@@ -1349,6 +1349,81 @@ header { text-align: center; padding: 4px 0 2px; }
   font-size: 13px;
   color: #9a3412;
 }
+
+/* ── 이 근처 비슷한 값 단지 ─────────────────── */
+.similar-apts {
+  margin: 28px 0 8px;
+}
+.similar-apts-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.2px;
+  margin: 0 0 12px;
+}
+.similar-apts-sub {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.similar-apts-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.similar-apt-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+.similar-apt-card:hover {
+  border-color: var(--blue);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.1);
+}
+.similar-apt-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.similar-apt-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.similar-apt-loc {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.similar-apt-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--blue);
+  flex-shrink: 0;
+}
+.similar-apt-arrow {
+  font-size: 18px;
+  color: var(--muted);
+  flex-shrink: 0;
+  line-height: 1;
+}
 .collect-cta-arrow {
   font-size: 28px;
   color: #f97316;
