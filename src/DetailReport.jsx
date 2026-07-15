@@ -13,6 +13,9 @@ function isValidUrl(url) {
 
 const TABS = ['동네·이야기', '시세']
 
+// 가격 방향(↑상승/→보합/↓하락) → 색상 클래스
+const dirClass = (d) => d?.includes('상승') ? 'up' : d?.includes('하락') ? 'down' : 'flat'
+
 export default function DetailReport({ apt, onBack, onCollectionChange }) {
   const [tab, setTab] = useState('동네·이야기')
   const [toast, setToast] = useState(null) // 'share' | 'collect' | 'uncollect' | null
@@ -76,6 +79,22 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           </button>
         </div>
       </div>
+
+      {/* 가격신호 바 — 검색의도(실거래가) 첫 화면 매칭. 탭과 무관하게 항상 노출 */}
+      {apt.recentAvg > 0 && (
+        <button
+          type="button"
+          className="price-signal-bar"
+          onClick={() => { track('tab_switch', { tab_name: '시세', apt_name: apt.aptNm, from: 'price_signal_bar' }); setTab('시세') }}
+        >
+          <span className="psb-left">
+            <span className="psb-label">최근 실거래가</span>
+            <span className="psb-price">{fP(apt.recentAvg)}</span>
+            {apt.direction && <span className={`psb-dir ${dirClass(apt.direction)}`}>{apt.direction}</span>}
+          </span>
+          <span className="psb-more">실거래 자세히 ›</span>
+        </button>
+      )}
 
       <div className="detail-tabs">
         {TABS.map(t => (

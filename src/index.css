@@ -1350,6 +1350,63 @@ header { text-align: center; padding: 4px 0 2px; }
   color: #9a3412;
 }
 
+/* ── 가격신호 바 (검색의도 첫 화면 매칭) ───────── */
+.price-signal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  background: var(--blue-lt);
+  border: 1px solid var(--blue-md);
+  border-radius: 14px;
+  padding: 13px 16px;
+  margin: 12px 0 4px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+}
+.price-signal-bar:hover {
+  background: var(--blue-md);
+  border-color: var(--blue);
+}
+.psb-left {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+.psb-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.psb-price {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.4px;
+}
+.psb-dir {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.psb-dir.up   { color: var(--red);  background: var(--red-lt); }
+.psb-dir.down { color: var(--blue); background: #eff6ff; }
+.psb-dir.flat { color: #6b7280;     background: #f3f4f6; }
+.psb-more {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 /* ── 이 근처 비슷한 값 단지 ─────────────────── */
 .similar-apts {
   margin: 28px 0 8px;
