@@ -993,6 +993,51 @@ header { text-align: center; padding: 4px 0 2px; }
   box-shadow: 0 2px 12px rgba(37,99,235,0.06);
 }
 
+/* 동네 Q&A */
+.qna-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin: 12px 0 4px;
+  box-shadow: 0 2px 12px rgba(37,99,235,0.06);
+}
+.qna-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 12px; }
+.qna-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.qna-sub { font-size: 11px; color: var(--muted); }
+.qna-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.qna-chip {
+  font-size: 12px; font-weight: 600; color: var(--blue);
+  background: var(--blue-lt); border: 1px solid var(--blue-md);
+  padding: 6px 11px; border-radius: 16px; cursor: pointer;
+}
+.qna-chip:disabled { opacity: 0.5; cursor: default; }
+.qna-form { display: flex; gap: 8px; }
+.qna-input {
+  flex: 1; min-width: 0; font-size: 14px; color: var(--text);
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 12px;
+}
+.qna-input:focus { outline: none; border-color: var(--blue); }
+.qna-submit {
+  white-space: nowrap; font-size: 13px; font-weight: 700; color: #fff;
+  background: var(--blue); border: 0; border-radius: 10px; padding: 10px 14px; cursor: pointer;
+}
+.qna-submit:disabled { opacity: 0.5; cursor: default; }
+.qna-thread { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+.qna-q {
+  align-self: flex-end; max-width: 85%;
+  font-size: 13px; font-weight: 600; color: #fff;
+  background: var(--blue); padding: 8px 12px; border-radius: 14px 14px 4px 14px;
+}
+.qna-a {
+  align-self: flex-start; max-width: 92%;
+  font-size: 14px; line-height: 1.65; color: var(--text);
+  background: var(--blue-lt); padding: 12px 14px; border-radius: 14px 14px 14px 4px;
+}
+.qna-loading { color: var(--muted); font-weight: 500; }
+.qna-error { color: #b91c1c; background: #fef2f2; }
+
 /* 헤더: 배지 + 출처 */
 .vibe-card-header {
   display: flex; align-items: center; gap: 8px; margin-bottom: 14px;

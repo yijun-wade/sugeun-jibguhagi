@@ -548,6 +548,67 @@ function AptInfoCard({ apt }) {
   )
 }
 
+/* ── 동네 Q&A — 수집된 이야기에 AI가 답 (저장 없는 대화형 v1) ── */
+function NeighborhoodQnA({ aptNm, dong }) {
+  const SUGGESTED = ['주차 어때요?', '초등학교 배정은요?', '밤에 조용한 편이에요?', '주변에 뭐가 있어요?']
+  const [q, setQ] = useState('')
+  const [answer, setAnswer] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
+  const [asked, setAsked] = useState(null)
+
+  const ask = async (question, source) => {
+    const text = (question || '').trim()
+    if (!text || loading) return
+    setLoading(true); setError(false); setAnswer(null); setAsked(text)
+    track('qna_ask', { apt_name: aptNm, question: text, source })
+    try {
+      const res = await fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}&question=${encodeURIComponent(text)}`)
+      const data = await res.json()
+      if (data?.answer) { setAnswer(data.answer); track('qna_answer', { apt_name: aptNm, question: text }) }
+      else { setError(true); track('qna_error', { apt_name: aptNm, question: text }) }
+    } catch {
+      setError(true); track('qna_error', { apt_name: aptNm, question: text })
+    } finally { setLoading(false) }
+  }
+
+  return (
+    <div className="qna-card">
+      <div className="qna-head">
+        <span className="qna-title">더 궁금한 건 직접 물어보세요</span>
+        <span className="qna-sub">모아둔 이야기에서 AI가 답을 찾아드려요</span>
+      </div>
+      <div className="qna-chips">
+        {SUGGESTED.map((s) => (
+          <button key={s} className="qna-chip" onClick={() => ask(s, 'chip')} disabled={loading}>{s}</button>
+        ))}
+      </div>
+      <form className="qna-form" onSubmit={(e) => { e.preventDefault(); ask(q, 'free') }}>
+        <input
+          className="qna-input"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="예: 초품아인가요? 전세 물량 많아요?"
+          maxLength={100}
+        />
+        <button type="submit" className="qna-submit" disabled={loading || !q.trim()}>물어보기</button>
+      </form>
+      {asked && (
+        <div className="qna-thread">
+          <div className="qna-q">{asked}</div>
+          {loading ? (
+            <div className="qna-a qna-loading">이야기 뒤져보는 중이에요...</div>
+          ) : error ? (
+            <div className="qna-a qna-error">지금은 답을 못 찾았어요. 다시 시도해 주세요.</div>
+          ) : answer ? (
+            <div className="qna-a">{answer}</div>
+          ) : null}
+        </div>
+      )}
+    </div>
+  )
+}
+
 /* ── 동네·이야기 통합 탭 ─────────────────── */
 function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
   const [vibe, setVibe] = useState(null)
@@ -612,6 +673,9 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
           <div className="vibe-empty">아직 소문이 없네요</div>
         )}
       </div>
+
+      {/* 동네 Q&A */}
+      <NeighborhoodQnA aptNm={aptNm} dong={dong} />
 
       {/* 단지 인포 카드 */}
       <AptInfoCard apt={apt} />

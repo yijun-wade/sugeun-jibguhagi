@@ -11,12 +11,59 @@ function formatItems(items, tag) {
 
 export default async function handler(req, res) {
   if (setCors(req, res)) return
-  const { aptName, location } = req.query
+  const { aptName, location, question } = req.query
   if (!aptName) return res.status(400).json({ error: 'aptName이 필요해요' })
   if (!process.env.NAVER_CLIENT_ID) return res.status(500).json({ error: 'Naver API 키 없음' })
   if (!process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: 'Anthropic API 키 없음' })
 
   try {
+    // ── 동네 Q&A 모드 — question이 있으면 질문에 답한다 (수집된 글에 근거) ──
+    if (question && question.trim()) {
+      const q = question.trim().slice(0, 100)
+      const settled = await Promise.allSettled([
+        naverSearch(NAVER_BLOG, `${aptName} ${q}`),
+        naverSearch(NAVER_CAFE, location ? `${location} ${q}` : `${aptName} ${q}`),
+        naverSearch(NAVER_KIN,  `${aptName} ${q}`, 4),
+        naverSearch(NAVER_BLOG, `${aptName} 살아보니`),
+      ])
+      const [qb, qc, qk, qb2] = settled.map(r => r.status === 'fulfilled' ? r.value : [])
+      const qseen = new Set()
+      const qdedup = (items) => items.filter(i => {
+        if (qseen.has(i.link)) return false
+        qseen.add(i.link)
+        return true
+      })
+      const context = [
+        formatItems(qdedup([...qb, ...qb2]).slice(0, 6), '블로그'),
+        formatItems(qdedup(qc).slice(0, 4), '카페'),
+        formatItems(qdedup(qk).slice(0, 4), '지식인'),
+      ].filter(Boolean).join('\n\n---\n\n')
+
+      const qPrompt = `누군가 "${aptName}"${location ? ` (${location})` : ''}에 대해 이렇게 물었어: "${q}"\n\n아래는 인터넷에서 모은 관련 글이야:\n\n${context || '(관련 글을 거의 못 찾았어요)'}\n\n이 자료를 바탕으로 질문에 답해줘.\n규칙:\n- 친한 친구한테 귓속말로 알려주듯 "~대요", "~래요", "~는 편이래요" 같은 전달 말투\n- 자료에 근거해서만 답하고, 자료에 없으면 "이건 자료가 부족해서 확실친 않은데요"라고 솔직하게\n- 지어내지 말 것. 모르면 모른다고 해줘\n- 2~4문장, 이모지 없이\n- 마지막에 "직접 확인해보는 게 제일 정확해요" 같은 과신 경계 한 마디를 자연스럽게`
+
+      const qClaude = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 400,
+          messages: [{ role: 'user', content: qPrompt }],
+        }),
+      })
+      if (!qClaude.ok) {
+        const err = await qClaude.json().catch(() => ({}))
+        console.error('Anthropic API error (qna):', qClaude.status, err)
+        return res.status(500).json({ error: '답변 생성에 실패했어요' })
+      }
+      const qData = await qClaude.json()
+      const answer = qData?.content?.[0]?.text?.trim() || ''
+      return res.json({ answer })
+    }
+
     const settled = await Promise.allSettled([
       naverSearch(NAVER_BLOG, `${aptName} 살아보니`),
       naverSearch(NAVER_BLOG, location ? `${location} 동네 분위기` : `${aptName} 동네 분위기`),
