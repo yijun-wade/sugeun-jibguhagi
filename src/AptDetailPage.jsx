@@ -124,6 +124,18 @@ export default function AptDetailPage() {
       .catch(() => setLoadError(true))
   }, [kaptCode, location.state])
 
+  // apt_view는 상세페이지 마운트 시 1회 발화 — SEO 직접 착지 방문자까지 포착.
+  // (카드 클릭 유입은 location.state.evalData 존재 → entry='card', 직접 착지 → 'direct')
+  useEffect(() => {
+    if (!evalData) return
+    track('apt_view', {
+      apt_name: evalData.aptNm,
+      region: evalData.regionName,
+      entry: location.state?.evalData ? 'card' : 'direct',
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [evalData?.kaptCode])
+
   const goBack = useCallback(() => {
     if (window.history.length > 1) {
       navigate(-1)

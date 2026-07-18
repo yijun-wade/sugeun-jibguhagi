@@ -469,9 +469,9 @@ function SearchApp() {
         {searchedQuery && <meta name="robots" content="noindex, follow" />}
       </Helmet>
 
-      {/* 5월 프로모션 — 네비 위 얇은 배너 */}
+      {/* 사주 프로모션 — 네비 위 얇은 배너 */}
       <a href="/saju" className="saju-top-banner" onClick={() => track('saju_banner_click', { from: location.pathname })}>
-        <span className="saju-top-badge">5월 무료</span>
+        <span className="saju-top-badge">무료</span>
         <span className="saju-top-text">🔮 나는 어느 동네 살아야 잘 풀릴까? 사주로 확인</span>
         <span className="saju-top-arrow">›</span>
       </a>
@@ -703,7 +703,7 @@ function SearchApp() {
               <div className="card-list">
                 {cards.map((apt, i) => (
                   <>
-                    <EvalCard key={apt.kaptCode} apt={apt} onDetail={() => { track('apt_view', { apt_name: apt.aptNm, region: apt.regionName }); navigate(`/apt/${apt.kaptCode}`, { state: { evalData: apt } }) }} onCollectionChange={setCollection} />
+                    <EvalCard key={apt.kaptCode} apt={apt} onDetail={() => { navigate(`/apt/${apt.kaptCode}`, { state: { evalData: apt } }) }} onCollectionChange={setCollection} />
                     {i === 1 && cards.length > 2 && (
                       <AdUnit key="ad-mid" adSlot={import.meta.env.VITE_ADSENSE_SLOT_RESULTS} style={{ margin: '8px 0' }} />
                     )}

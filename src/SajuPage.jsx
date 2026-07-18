@@ -66,7 +66,7 @@ function SajuInput({ onPreview }) {
       </a>
       <Helmet>
         <title>이사하면 개운할 동네 — 내 사주로 찾는 지역 기운 궁합 | 수군수군 우리집</title>
-        <meta name="description" content="생년월일 입력하면 내 사주 용신 오행으로 나와 맞는 서울 동네를 찾아드려요. 5월 무료." />
+        <meta name="description" content="생년월일 입력하면 내 사주 용신 오행으로 나와 맞는 서울 동네를 찾아드려요. 지금 무료." />
         <meta property="og:title" content="이사하면 개운할 동네 — 내 사주로 찾는 지역 기운 궁합" />
         <meta property="og:description" content="내 사주로 찾는 지역 기운 궁합. 이사하면 개운할 서울 동네를 찾아드려요." />
         <meta property="og:image" content="https://www.suzip.kr/saju-og.png" />
@@ -75,7 +75,7 @@ function SajuInput({ onPreview }) {
       {/* 프로모션 배지 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
         <span style={{ background: '#f97316', color: '#fff', fontSize: 12, fontWeight: 800, padding: '4px 10px', borderRadius: 20 }}>
-          5월 오픈기념 무료
+          오픈기념 무료
         </span>
         <span style={{ fontSize: 13, color: '#9CA3AF', textDecoration: 'line-through' }}>원가 1,900원</span>
       </div>
