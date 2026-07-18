@@ -993,6 +993,37 @@ header { text-align: center; padding: 4px 0 2px; }
   box-shadow: 0 2px 12px rgba(37,99,235,0.06);
 }
 
+/* 살만해요? 버디트 히어로 */
+.verdict-hero {
+  background: linear-gradient(135deg, var(--blue-lt), var(--card));
+  border: 1px solid var(--blue-md);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 12px rgba(37,99,235,0.08);
+}
+.verdict-badge {
+  display: inline-block;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.02em;
+  color: var(--blue); background: var(--card);
+  border: 1px solid var(--blue-md);
+  padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
+}
+.verdict-line {
+  font-size: 16px; font-weight: 700; color: var(--text);
+  line-height: 1.55; margin: 0 0 6px;
+}
+.verdict-price {
+  font-size: 12px; color: var(--muted); line-height: 1.5; margin: 0 0 12px;
+}
+.verdict-share {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; color: #fff;
+  background: var(--blue); border: 0; border-radius: 10px;
+  padding: 9px 16px; cursor: pointer;
+}
+.verdict-share:hover { filter: brightness(1.05); }
+
 /* 동네 Q&A */
 .qna-card {
   background: var(--card);

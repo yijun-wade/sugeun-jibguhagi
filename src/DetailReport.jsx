@@ -44,6 +44,23 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
     })
   }, [apt.aptNm])
 
+  // 리치 공유 — 모바일 네이티브 공유시트(카톡 포함). 데스크톱은 링크 복사로 폴백.
+  // 공유가 네이버 밖 유입을 만들어 오가닉 단일의존 리스크를 완화.
+  const handleShareRich = useCallback(async () => {
+    const url = `${window.location.origin}/apt/${apt.kaptCode}`
+    const hasVerdict = apt.verdict && apt.verdict !== '실거래 데이터 없음'
+    const text = hasVerdict
+      ? `${apt.aptNm} (${apt.dong}) — ${apt.verdict}`
+      : `${apt.aptNm} (${apt.dong}) 동네 이야기·실거래가 한눈에`
+    track('share_click', { apt_name: apt.aptNm, from: 'verdict_hero', method: navigator.share ? 'web_share' : 'clipboard' })
+    if (navigator.share) {
+      try { await navigator.share({ title: `${apt.aptNm} — 살만한 동네일까?`, text, url }) } catch { /* 사용자 취소 */ }
+    } else {
+      try { await navigator.clipboard.writeText(`${text}\n${url}`) } catch { /* noop */ }
+      setToast('share')
+    }
+  }, [apt])
+
   const handleCollect = useCallback(() => {
     const next = toggleCollection(apt)
     const saving = !collected
@@ -79,6 +96,20 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           </button>
         </div>
       </div>
+
+      {/* 살만해요? 종합 버디트 히어로 — SEO 착지 첫 화면 훅 + 공유 유도 */}
+      {apt.verdict && apt.verdict !== '실거래 데이터 없음' && (
+        <div className="verdict-hero">
+          <div className="verdict-badge">이 단지, 살만해요?</div>
+          <p className="verdict-line">{apt.verdict}</p>
+          {apt.priceJudgment?.sentence && (
+            <p className="verdict-price">{apt.priceJudgment.sentence}</p>
+          )}
+          <button type="button" className="verdict-share" onClick={handleShareRich}>
+            <span aria-hidden="true">💬</span> 친구에게 공유
+          </button>
+        </div>
+      )}
 
       {/* 가격신호 바 — 검색의도(실거래가) 첫 화면 매칭. 탭과 무관하게 항상 노출 */}
       {apt.recentAvg > 0 && (
