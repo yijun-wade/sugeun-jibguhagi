@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sat, 18 Jul 2026 22:57:32 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 19 Jul 2026 22:59:55 GMT</lastBuildDate>
+    <item>
+      <title>금리 인상·대출 규제로 집값·전세 상승, 서민 부담 증가</title>
+      <link>https://www.suzip.kr/briefing/2026-07-20</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-07-20</guid>
+      <pubDate>Sun, 19 Jul 2026 22:00:00 GMT</pubDate>
+      <description>• 한은이 금리를 올리면서 수도권 주택시장과 가계부채를 금융 위험 요인으로 지목했다.
+• 서울 아파트값이 75주 연속 상승했고 경기남부는 매매와 전세가 동시에 뛰고 있다.
+• 정부는 대출 규제를 강화하는 한편 청년층 주택담보대출 규제 완화를 논의 중이다.
+
+정부 의도: 부동산 투기 돈을 막으면서도 청년 같은 실수요자는 집을 살 수 있도록 하려는 의도다. 금리를 올려서 전체 경제의 과도한 유동성(돈)을 줄이면서도, 서민 주거 안정을 위해 선택적으로 대출 규제를 풀려고 한다.
+
+시장 변화: 금리가 오르고 대출이 어려워지면서 집값과 전세보증금이 계속 오를 가능성이 크다. 투기꾼들은 빠져나가겠지만, 금리 인상으로 실수요자들의 대출 부담은 늘어날 수밖에 없다.</description>
+    </item>
     <item>
       <title>집값 상승 속 대출 규제 강화, 실수요자 '이중고'</title>
       <link>https://www.suzip.kr/briefing/2026-07-19</link>
@@ -253,19 +266,6 @@
 정부 의도: 동탄 등 수도권 신도시에서 집값이 급등하고 투기 수요가 몰리자 이를 막기 위해 규제를 강화했다. 투기꾼들의 자금 유입을 차단해서 실제로 살 사람들의 집값을 안정시키려는 의도다.
 
 시장 변화: 규제 지역의 집값 상승세는 꺾일 것으로 예상되지만, 규제를 피한 인근 지역으로 투기 자금이 몰릴 가능성이 크다. 또한 은행 대출이 막히면서 비정규 금융권(카드론, 대부업) 이용이 늘어날 것으로 보인다.</description>
-    </item>
-    <item>
-      <title>서울 강세 지속, 지방은 자금난…양극화 심화</title>
-      <link>https://www.suzip.kr/briefing/2026-06-30</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-06-30</guid>
-      <pubDate>Mon, 29 Jun 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 아파트 매매가 43주 연속 상승, 강남권 중위가는 16억 원 돌파했지만 지방은 약세 지속
-• 반도체·AI 메가 프로젝트에 정책 자금이 몰려 건설과 지방 중소 인프라는 자금 조달 통로가 막힌 상태
-• 정부가 부실 PF(부동산 프로젝트파이낸싱) 점검단을 투입해 미분양·부실 현장을 강제 정리하는 중
-
-정부 의도: 부동산 거품을 빼고 시장을 정상화하려는 것. 부실 사업장을 정리하면서 동시에 반도체 같은 미래산업에 자본을 몰아주려는 전략이다. 다만 이 과정에서 지방과 중소 사업은 피해를 보고 있는 상황.
-
-시장 변화: 서울과 지방의 부동산 격차가 더 벌어질 수밖에 없다. 금융 자금이 대형 프로젝트로 몰리면서 일반 건설사와 지방 개발사는 자금 조달이 어려워져 사업을 포기하거나 지연할 수밖에 없게 된다.</description>
     </item>
   </channel>
 </rss>
