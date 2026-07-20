@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sun, 19 Jul 2026 22:59:55 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 20 Jul 2026 23:07:14 GMT</lastBuildDate>
+    <item>
+      <title>금리 인상에 공급 정책 강화, 집값 상승 가속화</title>
+      <link>https://www.suzip.kr/briefing/2026-07-21</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-07-21</guid>
+      <pubDate>Mon, 20 Jul 2026 22:00:00 GMT</pubDate>
+      <description>• 정부가 주택 공급 확대와 금융 정책을 논의하며 5%대 금리 인상 속에 부동산 시장 관리에 나섰다.
+• 서울 아파트 매매가와 전셋값이 동시에 올라 강남 집값 상승으로 경기도 수요가 몰리고 있다.
+• 고액 주택 대출 규제 속에도 특수 거래 방식이 활용되면서 금융소비자 혼란이 커지고 있다.
+
+정부 의도: 정부는 금리 인상으로 과열된 부동산 시장을 식히려고 한다. 동시에 주택 공급을 늘려서 수급 불균형을 맞추고, 고액대 대출 규제로 투기를 차단하려는 것이다.
+
+시장 변화: 금리가 올라가면서 대출받기가 더 어려워지고 월 상환액도 커진다. 하지만 공급이 부족해서 집값은 오르는 '금리 인상 역설'이 계속될 것으로 보인다.</description>
+    </item>
     <item>
       <title>금리 인상·대출 규제로 집값·전세 상승, 서민 부담 증가</title>
       <link>https://www.suzip.kr/briefing/2026-07-20</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 수도권 집값 상승을 잡으려고 강한 규제 카드를 꺼냈다. 투자 목적 매매를 막고 실제로 집이 필요한 사람들만 사도록 유도하는 것이 핵심 의도다. 동시에 135만 가구 공급 계획으로 시간을 버는 전략이다.
 
 시장 변화: 규제 지역에서는 갭투자(전세 끼고 매매하는 것)가 막혀서 전세 매물이 빠르게 줄어들고 있다. 그러면서 전월세 시장이 불안정해지고, 세입자들은 외곽 지역으로 이동할 수밖에 없는 상황이 벌어지고 있다.</description>
-    </item>
-    <item>
-      <title>동탄·기흥·구리 3중규제, 오늘부터 시작</title>
-      <link>https://www.suzip.kr/briefing/2026-07-01</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-07-01</guid>
-      <pubDate>Tue, 30 Jun 2026 22:00:00 GMT</pubDate>
-      <description>• 동탄·기흥·구리가 투기과열지구와 토지거래허가구역으로 동시 지정되어 대출(LTV 40%)과 전세 투자가 모두 제한된다.
-• 동탄 아파트는 올해 11.38% 상승해 전국에서 가장 높은데, 84㎡ 기준 22억 원대까지 올랐다.
-• 부동산 규제가 강해지면서 은행 대출을 받지 못한 사람들이 카드론과 대부업체 대출로 몰리고 있다.
-
-정부 의도: 동탄 등 수도권 신도시에서 집값이 급등하고 투기 수요가 몰리자 이를 막기 위해 규제를 강화했다. 투기꾼들의 자금 유입을 차단해서 실제로 살 사람들의 집값을 안정시키려는 의도다.
-
-시장 변화: 규제 지역의 집값 상승세는 꺾일 것으로 예상되지만, 규제를 피한 인근 지역으로 투기 자금이 몰릴 가능성이 크다. 또한 은행 대출이 막히면서 비정규 금융권(카드론, 대부업) 이용이 늘어날 것으로 보인다.</description>
     </item>
   </channel>
 </rss>
