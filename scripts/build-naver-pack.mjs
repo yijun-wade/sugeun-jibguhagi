@@ -40,6 +40,14 @@ function bodyToHtml(body) {
     .join('\n')
 }
 
+// 대표 이미지용 3줄 요약(정부/시장/실수요자) 추출
+function parseSummary(body) {
+  const clip = (s) => { const t = s.trim().replace(/\s+/g, ' '); return t.length > 46 ? t.slice(0, 45) + '…' : t }
+  const m = body.match(/\*\*정부\*\*\s*[—\-]\s*(.+?)\s*[/·]?\s*\*\*시장\*\*\s*[—\-]\s*(.+?)\s*[/·]?\s*\*\*실수요자\*\*\s*[—\-]\s*([^*\n]+)/)
+  if (m) return [['정부', clip(m[1])], ['시장', clip(m[2])], ['실수요자', clip(m[3])]]
+  return []
+}
+
 function parsePost(md) {
   const lines = md.split('\n')
   let title = ''
@@ -53,7 +61,8 @@ function parsePost(md) {
     if (line.trim() === '' && bodyLines.length === 0) continue // 선행 공백 스킵
     bodyLines.push(line)
   }
-  return { title, tags, bodyHtml: bodyToHtml(bodyLines.join('\n')) }
+  const body = bodyLines.join('\n')
+  return { title, tags, bodyHtml: bodyToHtml(body), summary: parseSummary(body) }
 }
 
 const files = readdirSync(POSTS_DIR)
@@ -89,6 +98,25 @@ const cards = posts
       <div class="val tags" id="tags-${i}">${esc(p.tags)}</div>
       <button class="copy" data-copy="text" data-target="tags-${i}">태그 복사</button>
     </div>
+    <div class="row">
+      <div class="label">이미지</div>
+      <div class="thumb-wrap">
+        <div class="thumb-preview">
+          <div class="thumb-card" id="thumb-${i}">
+            <div class="tc-top">
+              <span class="tc-badge">부동산 브리핑</span>
+              <span class="tc-date">${p.date}</span>
+            </div>
+            <div class="tc-title">${esc(p.title)}</div>
+            <div class="tc-summary">
+              ${(p.summary || []).map(([k, v]) => `<div class="tc-row"><span class="tc-k">${esc(k)}</span><span class="tc-v">${esc(v)}</span></div>`).join('')}
+            </div>
+            <div class="tc-foot"><span>수군수군 우리집</span><span>suzip.kr</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="copy dl-img" onclick="downloadImage(event, ${i}, '${p.date}-대표이미지')">이미지 다운로드</button>
+    </div>
   </article>`)
   .join('\n')
 
@@ -118,18 +146,39 @@ const html = `<!DOCTYPE html>
   .copy { align-self: start; white-space: nowrap; background: #f97316; color: #fff; border: 0; border-radius: 8px; padding: 8px 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
   .copy:hover { background: #ea580c; }
   .copy.done { background: #16a34a; }
+  .dl-img { background: #2563eb; }
+  .dl-img:hover { background: #1e40af; }
+  /* 대표 이미지 미리보기 (1080×1080을 0.30 스케일로 클립) */
+  .thumb-wrap { width: 324px; height: 324px; overflow: hidden; border-radius: 12px; border: 1px solid #e5e7eb; }
+  .thumb-preview { transform: scale(0.30); transform-origin: top left; }
+  .thumb-card {
+    width: 1080px; height: 1080px; box-sizing: border-box; padding: 88px 80px;
+    background: linear-gradient(145deg, #1e3a8a 0%, #2563eb 100%); color: #fff;
+    display: flex; flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  }
+  .tc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 56px; }
+  .tc-badge { font-size: 34px; font-weight: 900; background: rgba(255,255,255,.18); padding: 14px 30px; border-radius: 40px; }
+  .tc-date { font-size: 30px; opacity: .85; }
+  .tc-title { font-size: 76px; font-weight: 900; line-height: 1.28; letter-spacing: -2px; margin-bottom: 48px; }
+  .tc-summary { display: flex; flex-direction: column; gap: 26px; margin-top: auto; }
+  .tc-row { display: flex; gap: 22px; align-items: baseline; }
+  .tc-k { font-size: 30px; font-weight: 900; background: #fff; color: #1e3a8a; padding: 8px 20px; border-radius: 12px; white-space: nowrap; }
+  .tc-v { font-size: 31px; line-height: 1.45; opacity: .96; }
+  .tc-foot { display: flex; justify-content: space-between; margin-top: 52px; padding-top: 36px; border-top: 2px solid rgba(255,255,255,.25); font-size: 29px; font-weight: 800; opacity: .92; }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
   <h1>📋 네이버 붙여넣기 팩</h1>
   <div class="guide">
     <b>주 1회 15분 루틴</b><br>
     ① 네이버 블로그 글쓰기 열기 → ② <b>제목 복사</b> 붙여넣기 → ③ <b>본문 복사(서식 유지)</b> 붙여넣기 → ④ <b>태그 복사</b> 붙여넣기 →
-    ⑤ 발행 대신 <b>예약</b>으로 <b>하루 1개씩</b> 날짜 지정. 아래 1일차부터 순서대로 예약하면 리듬이 자동 유지돼요.
+    ⑤ <b>이미지 다운로드</b>로 대표 이미지 받아서 글 맨 위에 첨부 → ⑥ 발행 대신 <b>예약</b>으로 <b>하루 1개씩</b> 날짜 지정. 아래 1일차부터 순서대로 예약하면 리듬이 자동 유지돼요.
   </div>
   ${cards}
 <script>
-  document.querySelectorAll('.copy').forEach((btn) => {
+  document.querySelectorAll('.copy[data-copy]').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const el = document.getElementById(btn.dataset.target)
       try {
@@ -154,6 +203,26 @@ const html = `<!DOCTYPE html>
       }
     })
   })
+
+  async function downloadImage(ev, idx, filename) {
+    const btn = ev.currentTarget
+    const node = document.getElementById('thumb-' + idx)
+    const orig = btn.textContent
+    btn.textContent = '만드는 중…'
+    try {
+      const canvas = await html2canvas(node, { scale: 1, width: 1080, height: 1080, windowWidth: 1080, windowHeight: 1080, backgroundColor: null, useCORS: true })
+      const link = document.createElement('a')
+      link.download = filename + '.png'
+      link.href = canvas.toDataURL('image/png')
+      link.click()
+      btn.textContent = '받음 ✓'
+      btn.classList.add('done')
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('done') }, 1600)
+    } catch (e) {
+      alert('이미지 생성 실패 — 새로고침 후 다시 시도해주세요.')
+      btn.textContent = orig
+    }
+  }
 </script>
 </body>
 </html>`

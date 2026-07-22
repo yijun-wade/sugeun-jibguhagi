@@ -24,14 +24,35 @@
   .copy { align-self: start; white-space: nowrap; background: #f97316; color: #fff; border: 0; border-radius: 8px; padding: 8px 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
   .copy:hover { background: #ea580c; }
   .copy.done { background: #16a34a; }
+  .dl-img { background: #2563eb; }
+  .dl-img:hover { background: #1e40af; }
+  /* 대표 이미지 미리보기 (1080×1080을 0.30 스케일로 클립) */
+  .thumb-wrap { width: 324px; height: 324px; overflow: hidden; border-radius: 12px; border: 1px solid #e5e7eb; }
+  .thumb-preview { transform: scale(0.30); transform-origin: top left; }
+  .thumb-card {
+    width: 1080px; height: 1080px; box-sizing: border-box; padding: 88px 80px;
+    background: linear-gradient(145deg, #1e3a8a 0%, #2563eb 100%); color: #fff;
+    display: flex; flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  }
+  .tc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 56px; }
+  .tc-badge { font-size: 34px; font-weight: 900; background: rgba(255,255,255,.18); padding: 14px 30px; border-radius: 40px; }
+  .tc-date { font-size: 30px; opacity: .85; }
+  .tc-title { font-size: 76px; font-weight: 900; line-height: 1.28; letter-spacing: -2px; margin-bottom: 48px; }
+  .tc-summary { display: flex; flex-direction: column; gap: 26px; margin-top: auto; }
+  .tc-row { display: flex; gap: 22px; align-items: baseline; }
+  .tc-k { font-size: 30px; font-weight: 900; background: #fff; color: #1e3a8a; padding: 8px 20px; border-radius: 12px; white-space: nowrap; }
+  .tc-v { font-size: 31px; line-height: 1.45; opacity: .96; }
+  .tc-foot { display: flex; justify-content: space-between; margin-top: 52px; padding-top: 36px; border-top: 2px solid rgba(255,255,255,.25); font-size: 29px; font-weight: 800; opacity: .92; }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
   <h1>📋 네이버 붙여넣기 팩</h1>
   <div class="guide">
     <b>주 1회 15분 루틴</b><br>
     ① 네이버 블로그 글쓰기 열기 → ② <b>제목 복사</b> 붙여넣기 → ③ <b>본문 복사(서식 유지)</b> 붙여넣기 → ④ <b>태그 복사</b> 붙여넣기 →
-    ⑤ 발행 대신 <b>예약</b>으로 <b>하루 1개씩</b> 날짜 지정. 아래 1일차부터 순서대로 예약하면 리듬이 자동 유지돼요.
+    ⑤ <b>이미지 다운로드</b>로 대표 이미지 받아서 글 맨 위에 첨부 → ⑥ 발행 대신 <b>예약</b>으로 <b>하루 1개씩</b> 날짜 지정. 아래 1일차부터 순서대로 예약하면 리듬이 자동 유지돼요.
   </div>
   
   <article class="card">
@@ -60,6 +81,25 @@
       <div class="label">태그</div>
       <div class="val tags" id="tags-0">부동산시장, 금리인상, 주택정책, 서울아파트, 전세대출, 영끌, 집값</div>
       <button class="copy" data-copy="text" data-target="tags-0">태그 복사</button>
+    </div>
+    <div class="row">
+      <div class="label">이미지</div>
+      <div class="thumb-wrap">
+        <div class="thumb-preview">
+          <div class="thumb-card" id="thumb-0">
+            <div class="tc-top">
+              <span class="tc-badge">부동산 브리핑</span>
+              <span class="tc-date">2026-07-16</span>
+            </div>
+            <div class="tc-title">금리 올리고 대출 줄인다, 집 사려던 사람들 어쩌나</div>
+            <div class="tc-summary">
+              <div class="tc-row"><span class="tc-k">정부</span><span class="tc-v">금리 인상과 대출 규제로 투기 수요를 억제하면서 주택 공급을 늘리는 정책 추진 중</span></div><div class="tc-row"><span class="tc-k">시장</span><span class="tc-v">영끌 구매층 감소로 단기 위축 우려, 다만 매물 증가로 선택지 확대 가능</span></div><div class="tc-row"><span class="tc-k">실수요자</span><span class="tc-v">매매는 협상력 생기지만 대출 어려움, 전세·월세는 금리 인상 여파로 불안</span></div>
+            </div>
+            <div class="tc-foot"><span>수군수군 우리집</span><span>suzip.kr</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="copy dl-img" onclick="downloadImage(event, 0, '2026-07-16-대표이미지')">이미지 다운로드</button>
     </div>
   </article>
 
@@ -102,6 +142,25 @@
       <div class="val tags" id="tags-1">부동산, 주택대출, 실수요자, 전세난, 월세상승, 집값, 정부정책</div>
       <button class="copy" data-copy="text" data-target="tags-1">태그 복사</button>
     </div>
+    <div class="row">
+      <div class="label">이미지</div>
+      <div class="thumb-wrap">
+        <div class="thumb-preview">
+          <div class="thumb-card" id="thumb-1">
+            <div class="tc-top">
+              <span class="tc-badge">부동산 브리핑</span>
+              <span class="tc-date">2026-07-17</span>
+            </div>
+            <div class="tc-title">대출 반토막, 월세는 올라… 실수요자 '옥죄기'</div>
+            <div class="tc-summary">
+              <div class="tc-row"><span class="tc-k">정부</span><span class="tc-v">공급을 늘리면서 동시에 대출을 제한하고 금리를 올려 수요를 억제하는 이중 전략 추진</span></div><div class="tc-row"><span class="tc-k">시장</span><span class="tc-v">비수기에도 서울·경기 아파트 값이 오르고, 현금 많은 사람들만 남는 양극화 가속</span></div><div class="tc-row"><span class="tc-k">실수요자</span><span class="tc-v">대출 한도 축소로 구매 포기 또는 저가 이동, 전세난으로 월세 부담 증가</span></div>
+            </div>
+            <div class="tc-foot"><span>수군수군 우리집</span><span>suzip.kr</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="copy dl-img" onclick="downloadImage(event, 1, '2026-07-17-대표이미지')">이미지 다운로드</button>
+    </div>
   </article>
 
   <article class="card">
@@ -129,6 +188,25 @@
       <div class="label">태그</div>
       <div class="val tags" id="tags-2">서울부동산, 경기부동산, 금리인상, 주택담보대출, 아파트시장, 전세사기, 실수요자</div>
       <button class="copy" data-copy="text" data-target="tags-2">태그 복사</button>
+    </div>
+    <div class="row">
+      <div class="label">이미지</div>
+      <div class="thumb-wrap">
+        <div class="thumb-preview">
+          <div class="thumb-card" id="thumb-2">
+            <div class="tc-top">
+              <span class="tc-badge">부동산 브리핑</span>
+              <span class="tc-date">2026-07-18</span>
+            </div>
+            <div class="tc-title">금리 올리니 서울 떠난다…외곽·빌라로 몰리는 실수요자들</div>
+            <div class="tc-summary">
+              <div class="tc-row"><span class="tc-k">정부</span><span class="tc-v">가계부채 감축을 위해 금리를 올리고 대출 규제를 강화하고 있습니다.</span></div><div class="tc-row"><span class="tc-k">시장</span><span class="tc-v">서울 아파트 수요가 줄면서 경기·인천 신축과 빌라 같은 저가 주택으로 수요가 이동…</span></div><div class="tc-row"><span class="tc-k">실수요자</span><span class="tc-v">높아진 금리와 줄어든 대출 한도로 집 구매가 점점 어려워지고 있습니다.</span></div>
+            </div>
+            <div class="tc-foot"><span>수군수군 우리집</span><span>suzip.kr</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="copy dl-img" onclick="downloadImage(event, 2, '2026-07-18-대표이미지')">이미지 다운로드</button>
     </div>
   </article>
 
@@ -159,6 +237,25 @@
       <div class="val tags" id="tags-3">서울 부동산, 집값 상승, 대출 규제, 실수요자, 전세난, 가계대출, 주택시장</div>
       <button class="copy" data-copy="text" data-target="tags-3">태그 복사</button>
     </div>
+    <div class="row">
+      <div class="label">이미지</div>
+      <div class="thumb-wrap">
+        <div class="thumb-preview">
+          <div class="thumb-card" id="thumb-3">
+            <div class="tc-top">
+              <span class="tc-badge">부동산 브리핑</span>
+              <span class="tc-date">2026-07-19</span>
+            </div>
+            <div class="tc-title">집값은 올라도 대출은 안 된다, 실수요자의 딜레마</div>
+            <div class="tc-summary">
+              <div class="tc-row"><span class="tc-k">정부</span><span class="tc-v">가계대출 규제를 '양적 제한'에서 '질적 심사'로 전환하려 함</span></div><div class="tc-row"><span class="tc-k">시장</span><span class="tc-v">전세 공급 급감과 대출 규제 회피로 오히려 집값 상승 압력 커짐</span></div><div class="tc-row"><span class="tc-k">실수요자</span><span class="tc-v">매매·전세·월세 모든 부문에서 선택지 제한되고 심사 기준 강화</span></div>
+            </div>
+            <div class="tc-foot"><span>수군수군 우리집</span><span>suzip.kr</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="copy dl-img" onclick="downloadImage(event, 3, '2026-07-19-대표이미지')">이미지 다운로드</button>
+    </div>
   </article>
 
   <article class="card">
@@ -187,6 +284,25 @@
       <div class="label">태그</div>
       <div class="val tags" id="tags-4">부동산시장, 금리인상, 집값상승, 전세가, 월세, 주택시장, 서민주거</div>
       <button class="copy" data-copy="text" data-target="tags-4">태그 복사</button>
+    </div>
+    <div class="row">
+      <div class="label">이미지</div>
+      <div class="thumb-wrap">
+        <div class="thumb-preview">
+          <div class="thumb-card" id="thumb-4">
+            <div class="tc-top">
+              <span class="tc-badge">부동산 브리핑</span>
+              <span class="tc-date">2026-07-20</span>
+            </div>
+            <div class="tc-title">금리 올라도 집값은 계속 오른다, 월세 세입자의 고통</div>
+            <div class="tc-summary">
+              <div class="tc-row"><span class="tc-k">정부</span><span class="tc-v">금리 인상으로 투기 자금을 빼내되, 청년 대출 규제는 풀어서 실수요자 배려</span></div><div class="tc-row"><span class="tc-k">시장</span><span class="tc-v">금리 상승에도 서울 아파트 75주 연속 오름, 전세는 월세로 전환</span></div><div class="tc-row"><span class="tc-k">실수요자</span><span class="tc-v">대출금리 상승으로 월 부담금 증가, 월세 상승까지 겹쳐 생활비 압박</span></div>
+            </div>
+            <div class="tc-foot"><span>수군수군 우리집</span><span>suzip.kr</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="copy dl-img" onclick="downloadImage(event, 4, '2026-07-20-대표이미지')">이미지 다운로드</button>
     </div>
   </article>
 
@@ -217,6 +333,25 @@
       <div class="val tags" id="tags-5">부동산시장, 금리인상, 집값, 전세, 경기도부동산, 강남집값, 월세</div>
       <button class="copy" data-copy="text" data-target="tags-5">태그 복사</button>
     </div>
+    <div class="row">
+      <div class="label">이미지</div>
+      <div class="thumb-wrap">
+        <div class="thumb-preview">
+          <div class="thumb-card" id="thumb-5">
+            <div class="tc-top">
+              <span class="tc-badge">부동산 브리핑</span>
+              <span class="tc-date">2026-07-21</span>
+            </div>
+            <div class="tc-title">금리 올라도 집값은 오른다, 2026년 부동산의 역설</div>
+            <div class="tc-summary">
+              <div class="tc-row"><span class="tc-k">정부</span><span class="tc-v">금리 인상과 공급 확대로 과열된 부동산 시장을 진정시키려 하지만, 공급 부족으로 …</span></div><div class="tc-row"><span class="tc-k">시장</span><span class="tc-v">강남 집값 상승으로 경기도 수요가 쏠리고 있으며, 전세 공급 감소로 전셋값 상승 …</span></div><div class="tc-row"><span class="tc-k">실수요자</span><span class="tc-v">금리 인상으로 대출이 어려워진 만큼 현금 확보와 경기도 알짜 지역 공략이 중요해졌…</span></div>
+            </div>
+            <div class="tc-foot"><span>수군수군 우리집</span><span>suzip.kr</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="copy dl-img" onclick="downloadImage(event, 5, '2026-07-21-대표이미지')">이미지 다운로드</button>
+    </div>
   </article>
 
   <article class="card">
@@ -244,9 +379,28 @@
       <div class="val tags" id="tags-6">서울 아파트값, 주택담보대출, 전세 월세, 부동산 규제, 실수요자, 집값 상승, 갭투자</div>
       <button class="copy" data-copy="text" data-target="tags-6">태그 복사</button>
     </div>
+    <div class="row">
+      <div class="label">이미지</div>
+      <div class="thumb-wrap">
+        <div class="thumb-preview">
+          <div class="thumb-card" id="thumb-6">
+            <div class="tc-top">
+              <span class="tc-badge">부동산 브리핑</span>
+              <span class="tc-date">2026-07-22</span>
+            </div>
+            <div class="tc-title">집값은 올라도 돈을 못 빌린다, 서울 부동산의 현실</div>
+            <div class="tc-summary">
+              <div class="tc-row"><span class="tc-k">정부</span><span class="tc-v">투기를 억제하기 위해 고가 주택 대출과 갭투자를 제한하고 있습니다.</span></div><div class="tc-row"><span class="tc-k">시장</span><span class="tc-v">아파트값은 5월에 1.33% 올랐는데 대출은 점점 줄어들고 있습니다.</span></div><div class="tc-row"><span class="tc-k">실수요자</span><span class="tc-v">집값 상승과 대출 규제 사이에서 현금이 충분한 사람만 집을 살 수 있는 악순환이 …</span></div>
+            </div>
+            <div class="tc-foot"><span>수군수군 우리집</span><span>suzip.kr</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="copy dl-img" onclick="downloadImage(event, 6, '2026-07-22-대표이미지')">이미지 다운로드</button>
+    </div>
   </article>
 <script>
-  document.querySelectorAll('.copy').forEach((btn) => {
+  document.querySelectorAll('.copy[data-copy]').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const el = document.getElementById(btn.dataset.target)
       try {
@@ -271,6 +425,26 @@
       }
     })
   })
+
+  async function downloadImage(ev, idx, filename) {
+    const btn = ev.currentTarget
+    const node = document.getElementById('thumb-' + idx)
+    const orig = btn.textContent
+    btn.textContent = '만드는 중…'
+    try {
+      const canvas = await html2canvas(node, { scale: 1, width: 1080, height: 1080, windowWidth: 1080, windowHeight: 1080, backgroundColor: null, useCORS: true })
+      const link = document.createElement('a')
+      link.download = filename + '.png'
+      link.href = canvas.toDataURL('image/png')
+      link.click()
+      btn.textContent = '받음 ✓'
+      btn.classList.add('done')
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('done') }, 1600)
+    } catch (e) {
+      alert('이미지 생성 실패 — 새로고침 후 다시 시도해주세요.')
+      btn.textContent = orig
+    }
+  }
 </script>
 </body>
 </html>
