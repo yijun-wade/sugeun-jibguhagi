@@ -13,6 +13,17 @@
     "api/saju-confirm.js": { "regions": ["icn1"], "maxDuration": 60 }
   },
   "rewrites": [
+    {
+      "source": "/apt/:kaptCode",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|meta-externalagent|kakaotalk|kakaotalk-scrap|twitterbot|telegrambot|whatsapp|slackbot|discordbot|skypeuripreview|linkedinbot|bingbot|googlebot|naverbot|yeti|duckduckbot|applebot|msnbot|baiduspider|yandexbot).*"
+        }
+      ],
+      "destination": "/api/apt?kaptCode=:kaptCode&prerender=1"
+    },
     { "source": "/((?!api/|.well-known/).*)", "destination": "/index.html" }
   ]
 }
