@@ -77,6 +77,13 @@ const posts = files.map((f) => {
   return { date, ...parsePost(readFileSync(join(POSTS_DIR, f), 'utf-8')) }
 })
 
+// 대표 이미지 카드 내부 마크업 (미리보기·캡처용 동일 사용)
+const tcInner = (p) => `
+      <div class="tc-top"><span class="tc-badge">부동산 브리핑</span><span class="tc-date">${p.date}</span></div>
+      <div class="tc-title">${esc(p.title)}</div>
+      <div class="tc-summary">${(p.summary || []).map(([k, v]) => `<div class="tc-row"><span class="tc-k">${esc(k)}</span><span class="tc-v">${esc(v)}</span></div>`).join('')}</div>
+      <div class="tc-foot"><span>수군수군 우리집</span><span>suzip.kr</span></div>`
+
 const cards = posts
   .map((p, i) => `
   <article class="card">
@@ -100,23 +107,10 @@ const cards = posts
     </div>
     <div class="row">
       <div class="label">이미지</div>
-      <div class="thumb-wrap">
-        <div class="thumb-preview">
-          <div class="thumb-card" id="thumb-${i}">
-            <div class="tc-top">
-              <span class="tc-badge">부동산 브리핑</span>
-              <span class="tc-date">${p.date}</span>
-            </div>
-            <div class="tc-title">${esc(p.title)}</div>
-            <div class="tc-summary">
-              ${(p.summary || []).map(([k, v]) => `<div class="tc-row"><span class="tc-k">${esc(k)}</span><span class="tc-v">${esc(v)}</span></div>`).join('')}
-            </div>
-            <div class="tc-foot"><span>수군수군 우리집</span><span>suzip.kr</span></div>
-          </div>
-        </div>
-      </div>
+      <div class="thumb-wrap"><div class="thumb-preview"><div class="thumb-card">${tcInner(p)}</div></div></div>
       <button class="copy dl-img" onclick="downloadImage(event, ${i}, '${p.date}-대표이미지')">이미지 다운로드</button>
     </div>
+    <div class="thumb-capture"><div class="thumb-card" id="thumb-${i}">${tcInner(p)}</div></div>
   </article>`)
   .join('\n')
 
@@ -148,24 +142,23 @@ const html = `<!DOCTYPE html>
   .copy.done { background: #16a34a; }
   .dl-img { background: #2563eb; }
   .dl-img:hover { background: #1e40af; }
-  /* 대표 이미지 미리보기 (1080×1080을 0.30 스케일로 클립) */
+  /* 대표 이미지: 미리보기(0.30 스케일 클립) + 캡처용(화면 밖 풀사이즈) */
   .thumb-wrap { width: 324px; height: 324px; overflow: hidden; border-radius: 12px; border: 1px solid #e5e7eb; }
-  .thumb-preview { transform: scale(0.30); transform-origin: top left; }
+  .thumb-preview { width: 1080px; height: 1080px; transform: scale(0.30); transform-origin: top left; }
+  .thumb-capture { position: absolute; left: -99999px; top: 0; width: 1080px; height: 1080px; }
   .thumb-card {
-    width: 1080px; height: 1080px; box-sizing: border-box; padding: 88px 80px;
+    width: 1080px; height: 1080px; box-sizing: border-box; padding: 84px 80px; overflow: hidden;
     background: linear-gradient(145deg, #1e3a8a 0%, #2563eb 100%); color: #fff;
-    display: flex; flex-direction: column;
     font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
   }
   .tc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 56px; }
-  .tc-badge { font-size: 34px; font-weight: 900; background: rgba(255,255,255,.18); padding: 14px 30px; border-radius: 40px; }
-  .tc-date { font-size: 30px; opacity: .85; }
-  .tc-title { font-size: 76px; font-weight: 900; line-height: 1.28; letter-spacing: -2px; margin-bottom: 48px; }
-  .tc-summary { display: flex; flex-direction: column; gap: 26px; margin-top: auto; }
-  .tc-row { display: flex; gap: 22px; align-items: baseline; }
-  .tc-k { font-size: 30px; font-weight: 900; background: #fff; color: #1e3a8a; padding: 8px 20px; border-radius: 12px; white-space: nowrap; }
-  .tc-v { font-size: 31px; line-height: 1.45; opacity: .96; }
-  .tc-foot { display: flex; justify-content: space-between; margin-top: 52px; padding-top: 36px; border-top: 2px solid rgba(255,255,255,.25); font-size: 29px; font-weight: 800; opacity: .92; }
+  .tc-badge { font-size: 33px; font-weight: 900; background: rgba(255,255,255,.18); padding: 13px 30px; border-radius: 40px; }
+  .tc-date { font-size: 29px; opacity: .85; }
+  .tc-title { font-size: 64px; font-weight: 900; line-height: 1.3; letter-spacing: -1.5px; margin-bottom: 60px; }
+  .tc-row { margin-bottom: 26px; }
+  .tc-k { display: inline-block; font-size: 28px; font-weight: 900; background: #fff; color: #1e3a8a; padding: 6px 18px; border-radius: 12px; margin-bottom: 10px; }
+  .tc-v { display: block; font-size: 30px; line-height: 1.5; opacity: .96; }
+  .tc-foot { margin-top: 40px; padding-top: 34px; border-top: 2px solid rgba(255,255,255,.25); font-size: 28px; font-weight: 800; opacity: .92; display: flex; justify-content: space-between; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
