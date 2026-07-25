@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Fri, 24 Jul 2026 23:09:37 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 25 Jul 2026 23:01:50 GMT</lastBuildDate>
+    <item>
+      <title>정부, 집값 못 잡고 대출·세제 개편 나선다</title>
+      <link>https://www.suzip.kr/briefing/2026-07-26</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-07-26</guid>
+      <pubDate>Sat, 25 Jul 2026 22:00:00 GMT</pubDate>
+      <description>• 정부가 27일 부동산정책 대토론회에서 보유세·거래세 등 세제개편안을 최종 검토하고 8월 초 발표할 예정이다.
+• 7월 서울 아파트 매매 거래량이 전월 대비 52% 급감하며 거래 절벽이 나타났다.
+• 정부는 전세대출 규제를 완화하고 청년 대출 한도를 늘리는 방향으로 실수요자 지원을 검토 중이다.
+
+정부 의도: 집값을 잡지 못해 민심이 돌아서자 정부는 세제개편과 대출 규제 완화 같은 대수술을 준비하고 있다. 높은 전세가율로 왜곡된 시장 구조를 바꾸고, 실제 집이 필요한 사람들의 숨통을 트려는 의도다.
+
+시장 변화: 거래량이 급감하면서 부동산 시장 자체가 얼어붙고 있다. 정부 정책이 확정되면 보유세가 올라가는 대신 거래세는 내려가고, 대출 규제가 완화되면서 시장이 조금씩 풀릴 가능성이 있다.</description>
+    </item>
     <item>
       <title>대출 규제 강화, 실수요자 '자금난' 심화</title>
       <link>https://www.suzip.kr/briefing/2026-07-25</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 집값 안정을 위해 규제지역을 확대하고 대출 한도를 줄이는 정책을 펼치고 있다. 하지만 규제만으로는 부동산 시장의 수요와 자금 흐름을 완전히 통제할 수 없다는 한계를 드러내고 있다.
 
 시장 변화: 규제로 신축 아파트 공급이 줄면서 매매 수요가 전세 시장으로 몰려가고 있다. 임대인들은 전세보다 월세를 선호하게 되면서 전월세 시장의 불균형이 심화되고 있다.</description>
-    </item>
-    <item>
-      <title>전세난·규제 강화, 무주택자 시장 양극화 심화</title>
-      <link>https://www.suzip.kr/briefing/2026-07-06</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-07-06</guid>
-      <pubDate>Sun, 05 Jul 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 전세가가 1년에 9.3% 급등하며 무주택자들의 전세난이 심화되고 있습니다.
-• 정부가 이달 말 부동산 세제 개편안을 발표 예정이며, 보유세 중심으로 세금 구조를 바꿀 예정입니다.
-• 삼성전자 등 대기업이 사내 대출을 국민평형 이하로 제한하며 고가 주택 거래 억제에 동참했습니다.
-
-정부 의도: 정부는 전세난을 완화하고 집값 상승을 막기 위해 세제 개편으로 보유세(집을 들고만 있어도 내는 세금)를 늘리는 방향을 추진 중입니다. 동시에 대출 규제를 강화해 과도한 주택자금 대출이 집값을 올리는 것을 차단하려는 것입니다.
-
-시장 변화: 앞으로 고가 주택 매매가 줄어들 가능성이 높으며, 전세 공급 부족으로 전세가는 계속 오를 수 있습니다. 대신 규제가 약한 지역이나 비아파트 전월세 수요는 늘어날 것으로 예상됩니다.</description>
     </item>
   </channel>
 </rss>
