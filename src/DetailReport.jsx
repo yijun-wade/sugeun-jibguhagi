@@ -160,7 +160,11 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           <span className="discover-nudge-icon" aria-hidden="true">🏘</span>
           <span className="discover-nudge-text">
             <span className="discover-nudge-title">이 근처 비슷한 값 단지 {similarItems.length}곳</span>
-            <span className="discover-nudge-sub">여기 말고 다른 집도 눈에 담아둘까요?</span>
+            <span className="discover-nudge-sub">
+              {apt.recentAvg > 0
+                ? `${apt.regionName || '이 근처'} · 이 집과 값이 비슷한 순`
+                : `같은 ${apt.regionName || '이 근처'} · 규모 큰 단지 순`}
+            </span>
           </span>
           <span className="discover-nudge-arrow" aria-hidden="true">↓</span>
         </button>
