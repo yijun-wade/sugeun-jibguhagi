@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { track } from './analytics.js'
@@ -58,6 +58,45 @@ function formatDate(dateStr) {
   if (!dateStr) return ''
   const [, m, d] = dateStr.split('-')
   return `${parseInt(m)}/${parseInt(d)}`
+}
+
+const DOW = ['일', '월', '화', '수', '목', '금', '토']
+const DAY_MS = 86400000
+
+// 로컬 자정 기준(요일·M/D 계산용) — UTC 파싱 시프트 방지
+function parseYMD(s) { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d) }
+function fmtMD(dt) { return `${dt.getMonth() + 1}/${dt.getDate()}` }
+function dowOf(s) { return DOW[parseYMD(s).getDay()] }
+function ymLabel(ym) { const [y, m] = ym.split('-'); return `${y}년 ${parseInt(m)}월` }
+function mondayOf(dt) { const off = (dt.getDay() + 6) % 7; const mon = new Date(dt); mon.setDate(dt.getDate() - off); return mon }
+
+// 아카이브 목록(최신순)을 월 → 주 계층으로 그룹핑. 오늘 기준 이번주/지난주 태그 부여.
+function groupArchive(list, todayStr) {
+  const thisMon = mondayOf(parseYMD(todayStr)).getTime()
+  const months = new Map() // 'YYYY-MM' -> Map(weekKey -> week)
+  for (const item of list) {
+    if (!item?.date) continue
+    const dt = parseYMD(item.date)
+    const ym = item.date.slice(0, 7)
+    const mon = mondayOf(dt)
+    const sun = new Date(mon); sun.setDate(mon.getDate() + 6)
+    const monTime = mon.getTime()
+    const weekKey = String(monTime)
+    if (!months.has(ym)) months.set(ym, new Map())
+    const weeks = months.get(ym)
+    if (!weeks.has(weekKey)) {
+      const rel = monTime === thisMon ? '이번 주' : monTime === thisMon - 7 * DAY_MS ? '지난 주' : null
+      weeks.set(weekKey, { monTime, label: `${fmtMD(mon)}–${fmtMD(sun)}`, rel, days: [] })
+    }
+    weeks.get(weekKey).days.push(item)
+  }
+  // list가 최신순 → months/weeks 삽입순도 최신순. 방어적으로 주는 monTime 내림차순 정렬.
+  return [...months.entries()].map(([ym, weeks]) => ({
+    ym,
+    label: ymLabel(ym),
+    count: [...weeks.values()].reduce((n, w) => n + w.days.length, 0),
+    weeks: [...weeks.values()].sort((a, b) => b.monTime - a.monTime),
+  }))
 }
 
 function BriefingDetail({ isToday, data }) {
@@ -166,6 +205,22 @@ export default function BriefingPage() {
 
   const filteredList = list?.filter(item => item.date !== canonicalDate) || []
 
+  // 월 → 주 계층 아카이브 (목록 페이지에서만 사용)
+  const groups = useMemo(
+    () => (list ? groupArchive(filteredList, TODAY) : []),
+    [list, canonicalDate]
+  )
+  // 최신 월만 기본 펼침. null=아직 초기화 전.
+  const [openMonths, setOpenMonths] = useState(null)
+  useEffect(() => {
+    if (openMonths === null && groups.length) setOpenMonths(new Set([groups[0].ym]))
+  }, [groups, openMonths])
+  const toggleMonth = (ym) => setOpenMonths(prev => {
+    const next = new Set(prev)
+    next.has(ym) ? next.delete(ym) : next.add(ym)
+    return next
+  })
+
   return (
     <div className="app">
       <Helmet>
@@ -209,22 +264,56 @@ export default function BriefingPage() {
           <BriefingNav date={date} list={list} />
         )}
 
-        {/* 목록 페이지: 지난 브리핑 아래 */}
-        {!isDetail && filteredList.length > 0 && (
+        {/* 목록 페이지: 지난 브리핑 — 월 아코디언 → 주 소제목 → 날짜 행 */}
+        {!isDetail && groups.length > 0 && (
           <section className="briefing-archive">
             <h2 className="briefing-archive-title-row">지난 브리핑</h2>
-            <div className="briefing-archive-tabs">
-              {filteredList.map(item => (
-                <Link
-                  key={item.date}
-                  to={`/briefing/${item.date}`}
-                  className="briefing-archive-tab"
-                  onClick={() => track('briefing_archive_click', { date: item.date, title: item.title || '' })}
-                >
-                  <span className="briefing-archive-tab-date">{formatDate(item.date)}</span>
-                  {item.title && <span className="briefing-archive-tab-title">{item.title}</span>}
-                </Link>
-              ))}
+            <div className="briefing-archive-months">
+              {groups.map(g => {
+                const open = openMonths ? openMonths.has(g.ym) : false
+                return (
+                  <div key={g.ym} className={`briefing-month${open ? ' open' : ''}`}>
+                    <button
+                      className="briefing-month-head"
+                      aria-expanded={open}
+                      onClick={() => { toggleMonth(g.ym); track('briefing_month_toggle', { month: g.ym, open: !open }) }}
+                    >
+                      <span className="briefing-month-label">{g.label}</span>
+                      <span className="briefing-month-meta">
+                        {g.count}건<span className="briefing-month-arrow" aria-hidden="true">{open ? '▲' : '▼'}</span>
+                      </span>
+                    </button>
+                    {open && (
+                      <div className="briefing-month-body">
+                        {g.weeks.map(w => (
+                          <div key={w.monTime} className="briefing-week">
+                            <div className="briefing-week-label">
+                              {w.rel && <span className="briefing-week-tag">{w.rel}</span>}
+                              <span>{w.label}</span>
+                            </div>
+                            <ul className="briefing-week-days">
+                              {w.days.map(item => (
+                                <li key={item.date}>
+                                  <Link
+                                    to={`/briefing/${item.date}`}
+                                    className="briefing-day-row"
+                                    onClick={() => track('briefing_archive_click', { date: item.date, title: item.title || '' })}
+                                  >
+                                    <span className="briefing-day-date">
+                                      {formatDate(item.date)}<span className="briefing-day-dow">{dowOf(item.date)}</span>
+                                    </span>
+                                    <span className="briefing-day-title">{item.title || '브리핑'}</span>
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           </section>
         )}

@@ -2226,23 +2226,63 @@ header { text-align: center; padding: 4px 0 2px; }
   color: var(--muted); letter-spacing: 0.04em;
   margin-bottom: 12px;
 }
-.briefing-archive-tabs {
-  display: flex; flex-direction: column; gap: 6px;
+/* 월 아코디언 */
+.briefing-archive-months { display: flex; flex-direction: column; gap: 10px; }
+.briefing-month {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  overflow: hidden;
 }
-.briefing-archive-tab {
-  display: flex; align-items: center; gap: 12px;
-  padding: 11px 14px;
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 10px; text-decoration: none;
-  transition: border-color 0.15s, background 0.15s;
+.briefing-month.open { border-color: var(--blue); }
+.briefing-month-head {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%;
+  padding: 13px 15px;
+  background: none; border: none; cursor: pointer;
+  font-family: inherit; text-align: left;
 }
-.briefing-archive-tab:hover { border-color: var(--blue); background: var(--blue-lt); }
-.briefing-archive-tab-date {
+.briefing-month-label { font-size: 15px; font-weight: 700; color: var(--text); }
+.briefing-month-meta {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 600; color: var(--muted);
+}
+.briefing-month-arrow { font-size: 10px; color: var(--muted); }
+.briefing-month-body {
+  padding: 4px 15px 14px;
+  border-top: 1px solid var(--border);
+}
+
+/* 주 소제목 */
+.briefing-week { margin-top: 14px; }
+.briefing-week:first-child { margin-top: 8px; }
+.briefing-week-label {
+  display: flex; align-items: center; gap: 7px;
   font-size: 12px; font-weight: 700; color: var(--muted);
-  white-space: nowrap; flex-shrink: 0;
-  background: var(--bg); padding: 2px 8px; border-radius: 8px;
+  margin-bottom: 7px; letter-spacing: 0.02em;
 }
-.briefing-archive-tab-title {
+.briefing-week-tag {
+  font-size: 11px; font-weight: 700; color: var(--blue);
+  background: var(--blue-lt);
+  padding: 2px 7px; border-radius: 6px;
+}
+
+/* 날짜 행 */
+.briefing-week-days { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.briefing-day-row {
+  display: flex; align-items: baseline; gap: 11px;
+  padding: 9px 10px;
+  border-radius: 9px; text-decoration: none;
+  transition: background 0.12s;
+}
+.briefing-day-row:hover { background: var(--blue-lt); }
+.briefing-day-date {
+  display: inline-flex; align-items: baseline; gap: 4px;
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  white-space: nowrap; flex-shrink: 0; min-width: 52px;
+}
+.briefing-day-dow { font-size: 11px; font-weight: 600; opacity: 0.7; }
+.briefing-day-title {
   font-size: 14px; font-weight: 500; color: var(--text);
   line-height: 1.4;
 }
