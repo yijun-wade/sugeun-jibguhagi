@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { fP, fR, getYM, formatDealDate, nameSim } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM, SQM_TO_PYEONG, KR_LAT, KR_LON } from './constants.js'
 import { track } from './analytics.js'
-import { isCollected, toggleCollection } from './collection.js'
+import { isCollected, toggleCollection, getCollection } from './collection.js'
 import SimilarApts from './SimilarApts.jsx'
 
 function isValidUrl(url) {
@@ -20,6 +20,9 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
   const [tab, setTab] = useState('동네·이야기')
   const [toast, setToast] = useState(null) // 'share' | 'collect' | 'uncollect' | null
   const [collected, setCollected] = useState(() => isCollected(apt.kaptCode))
+  // 이전 페이지들에서 이미 담은 '다른' 집 — 착지자 심리 분기용(마운트 시점 스냅샷).
+  // 0곳=그 단지만 검색해 온 신규(결정 유보 프레이밍), 1곳+=여러 집 둘러보는 중(비교 완성 프레이밍).
+  const [otherSaved] = useState(() => getCollection().filter(a => a.kaptCode !== apt.kaptCode))
   // 유사단지 데이터를 상단에서 미리 조회 → 상단 넛지 + 하단 리스트가 공유(중복 fetch 없음).
   const [similarItems, setSimilarItems] = useState(null) // null=로딩, []=없음
   const similarRef = useRef(null)
@@ -181,17 +184,37 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
         {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} apt={apt} />}
       </div>
 
-      {/* 콘텐츠 끝 큰 수집 CTA — 미수집 상태에서만 노출 */}
+      {/* 콘텐츠 끝 큰 수집 CTA — 미수집 상태에서만 노출.
+          착지자 맥락으로 카피 분기: 담은 집 0곳=결정 유보, 1곳+=비교 완성. */}
       {!collected && (
         <button
           type="button"
           className="collect-cta-card"
-          onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm, from: 'cta_card' }); handleCollect() }}
+          onClick={() => {
+            track('detail_collect_click', {
+              apt_name: apt.aptNm,
+              from: 'cta_card',
+              variant: otherSaved.length > 0 ? 'compare' : 'defer',
+              has_saved: otherSaved.length,
+            })
+            handleCollect()
+          }}
         >
           <span className="collect-cta-icon" aria-hidden="true">★</span>
           <span className="collect-cta-text">
-            <span className="collect-cta-title">이 단지, 이불 속에서 또 볼래요?</span>
-            <span className="collect-cta-sub">수집해두면 나중에 비교할 때 편해요</span>
+            {otherSaved.length > 0 ? (
+              <>
+                <span className="collect-cta-title">
+                  {otherSaved[0].aptNm}{otherSaved.length > 1 ? ` 외 ${otherSaved.length - 1}곳` : ''} 담는 중 · 이 집도 같이 볼까요?
+                </span>
+                <span className="collect-cta-sub">수집한 집끼리 나란히 비교돼요</span>
+              </>
+            ) : (
+              <>
+                <span className="collect-cta-title">결정은 천천히 — 지금은 찜만 해둘까요?</span>
+                <span className="collect-cta-sub">수집해두면 배우자랑 같이, 나중에 다시 열어봐요</span>
+              </>
+            )}
           </span>
           <span className="collect-cta-arrow" aria-hidden="true">›</span>
         </button>
