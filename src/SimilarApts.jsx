@@ -10,11 +10,15 @@ const fmtEok = (man) => {
   return `${eok % 1 === 0 ? eok : eok.toFixed(1)}억`
 }
 
-export default function SimilarApts({ kaptCode, avg, gu, aptNm }) {
+export default function SimilarApts({ kaptCode, avg, gu, aptNm, items: itemsProp }) {
   const navigate = useNavigate()
-  const [items, setItems] = useState(null) // null=로딩, []=없음
+  const [fetched, setFetched] = useState(null) // null=로딩, []=없음
+  // 부모가 items를 내려주면 그걸 신뢰(상단 넛지와 데이터 공유·중복 fetch 방지),
+  // 아니면 종전처럼 스스로 조회(하위호환).
+  const items = itemsProp !== undefined ? itemsProp : fetched
 
   useEffect(() => {
+    if (itemsProp !== undefined) return // 부모가 공급 → 자체 조회 생략
     if (!kaptCode) return
     let alive = true
     const params = new URLSearchParams({ kaptCode })
@@ -22,10 +26,10 @@ export default function SimilarApts({ kaptCode, avg, gu, aptNm }) {
     if (gu) params.set('gu', gu)
     fetch(`/api/nearby?${params.toString()}`)
       .then(r => r.json())
-      .then(data => { if (alive) setItems(Array.isArray(data) ? data : []) })
-      .catch(() => { if (alive) setItems([]) })
+      .then(data => { if (alive) setFetched(Array.isArray(data) ? data : []) })
+      .catch(() => { if (alive) setFetched([]) })
     return () => { alive = false }
-  }, [kaptCode, avg, gu])
+  }, [kaptCode, avg, gu, itemsProp])
 
   // 로딩 중이거나 결과 없으면 섹션 자체를 감춘다(깨진 빈 섹션 방지)
   if (!items || items.length === 0) return null

@@ -1483,6 +1483,43 @@ header { text-align: center; padding: 4px 0 2px; }
   white-space: nowrap;
 }
 
+/* ── 상단 discovery 넛지 (막다른길 탈출구를 상단으로) ─── */
+.discover-nudge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 14px 0 4px;
+  padding: 13px 15px;
+  background: linear-gradient(180deg, #fff7ed 0%, #fffdfa 100%);
+  border: 1.5px solid #fed7aa;
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: border-color 0.15s, transform 0.06s;
+}
+.discover-nudge:active { transform: scale(0.99); }
+.discover-nudge:hover { border-color: #fdba74; }
+.discover-nudge-icon { font-size: 24px; flex-shrink: 0; }
+.discover-nudge-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.discover-nudge-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.discover-nudge-sub { font-size: 12.5px; color: var(--muted); }
+.discover-nudge-arrow {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f97316;
+  flex-shrink: 0;
+  animation: nudge-bounce 1.6s ease-in-out infinite;
+}
+@keyframes nudge-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .discover-nudge-arrow { animation: none; }
+}
+
 /* ── 이 근처 비슷한 값 단지 ─────────────────── */
 .similar-apts {
   margin: 28px 0 8px;

@@ -20,6 +20,22 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
   const [tab, setTab] = useState('동네·이야기')
   const [toast, setToast] = useState(null) // 'share' | 'collect' | 'uncollect' | null
   const [collected, setCollected] = useState(() => isCollected(apt.kaptCode))
+  // 유사단지 데이터를 상단에서 미리 조회 → 상단 넛지 + 하단 리스트가 공유(중복 fetch 없음).
+  const [similarItems, setSimilarItems] = useState(null) // null=로딩, []=없음
+  const similarRef = useRef(null)
+
+  useEffect(() => {
+    if (!apt.kaptCode) return
+    let alive = true
+    const params = new URLSearchParams({ kaptCode: apt.kaptCode })
+    if (apt.recentAvg) params.set('avg', String(apt.recentAvg))
+    if (apt.regionName) params.set('gu', apt.regionName)
+    fetch(`/api/nearby?${params.toString()}`)
+      .then(r => r.json())
+      .then(data => { if (alive) setSimilarItems(Array.isArray(data) ? data : []) })
+      .catch(() => { if (alive) setSimilarItems([]) })
+    return () => { alive = false }
+  }, [apt.kaptCode, apt.recentAvg, apt.regionName])
 
   useEffect(() => {
     if (!toast) return
@@ -127,6 +143,26 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
         </button>
       )}
 
+      {/* 상단 discovery 넛지 — SEO 착지자가 실제 보는 위치에서 '막다른길' 탈출구를 노출.
+          리스트 자체는 SEO 내부링크 위해 하단 유지, 여기선 진입 통로만 끌어올림. */}
+      {similarItems && similarItems.length > 0 && (
+        <button
+          type="button"
+          className="discover-nudge"
+          onClick={() => {
+            track('discover_nudge_click', { apt_name: apt.aptNm, from: 'detail_top', count: similarItems.length })
+            similarRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }}
+        >
+          <span className="discover-nudge-icon" aria-hidden="true">🏘</span>
+          <span className="discover-nudge-text">
+            <span className="discover-nudge-title">이 근처 비슷한 값 단지 {similarItems.length}곳</span>
+            <span className="discover-nudge-sub">여기 말고 다른 집도 눈에 담아둘까요?</span>
+          </span>
+          <span className="discover-nudge-arrow" aria-hidden="true">↓</span>
+        </button>
+      )}
+
       <div className="detail-tabs">
         {TABS.map(t => (
           <button
@@ -161,8 +197,11 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
         </button>
       )}
 
-      {/* 이 근처 비슷한 값 단지 — 막다른 페이지 탈출구(2nd 페이지뷰 + 내부링크 SEO) */}
-      <SimilarApts kaptCode={apt.kaptCode} avg={apt.recentAvg} gu={apt.regionName} aptNm={apt.aptNm} />
+      {/* 이 근처 비슷한 값 단지 — 막다른 페이지 탈출구(2nd 페이지뷰 + 내부링크 SEO).
+          items를 상단에서 내려줘 넛지와 데이터 공유(중복 fetch 방지). ref는 넛지 스크롤 타겟. */}
+      <div ref={similarRef}>
+        <SimilarApts kaptCode={apt.kaptCode} avg={apt.recentAvg} gu={apt.regionName} aptNm={apt.aptNm} items={similarItems} />
+      </div>
 
       {/* 모바일 sticky 액션 바 — 어느 위치에서도 손에 닿게 */}
       <div className="detail-mobile-actions">
