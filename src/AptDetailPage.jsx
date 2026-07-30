@@ -8,6 +8,7 @@ import { DONG } from './data.js'
 import DetailReport from './DetailReport.jsx'
 import { track } from './analytics.js'
 import { getCollection } from './collection.js'
+import { recordInterest } from './interest.js'
 
 async function buildEvalData(apt) {
   const bjdCode = apt.bjdCode || null
@@ -132,6 +133,12 @@ export default function AptDetailPage() {
       apt_name: evalData.aptNm,
       region: evalData.regionName,
       entry: location.state?.evalData ? 'card' : 'direct',
+    })
+    recordInterest({
+      kaptCode: evalData.kaptCode,
+      aptNm: evalData.aptNm,
+      dong: evalData.dong,
+      gu: evalData.regionName,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [evalData?.kaptCode])
