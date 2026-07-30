@@ -39,7 +39,7 @@ function BriefingNav({ date, list }) {
 
 function PersonalizedStrip({ region, apts, today }) {
   useEffect(() => {
-    track('briefing_personalized_view', { has_interest: true, region: region.gu || region.dong || '' })
+    track('briefing_personalized_view', { region: region.gu || region.dong || '' })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [region.gu, region.dong])
 
@@ -58,14 +58,14 @@ function PersonalizedStrip({ region, apts, today }) {
               key={a.kaptCode}
               to={`/apt/${a.kaptCode}`}
               className="briefing-personal-chip"
-              onClick={() => track('briefing_personal_apt_click', { kaptCode: a.kaptCode })}
+              onClick={() => track('briefing_personal_apt_click', { kapt_code: a.kaptCode, apt_name: a.aptNm })}
             >
               {a.aptNm || '단지'}
             </Link>
           ))}
         </div>
       )}
-      {matched.length > 0 ? (
+      {today && (matched.length > 0 ? (
         <div className="briefing-personal-match">
           <span className="briefing-personal-badge">내 지역</span>
           <ul className="briefing-personal-list">
@@ -76,7 +76,7 @@ function PersonalizedStrip({ region, apts, today }) {
         <div className="briefing-personal-none">
           오늘은 {region.gu || region.dong} 직접 언급은 없어요 — 전국 흐름은 아래에서 확인하세요.
         </div>
-      )}
+      ))}
     </section>
   )
 }
@@ -251,7 +251,12 @@ export default function BriefingPage() {
 
   // 개인화 스트립: 목록/오늘 화면에서만, 관심 데이터 있을 때만
   const topRegion = useMemo(() => (isDetail ? null : getTopRegion()), [isDetail, date])
-  const interestApts = useMemo(() => (isDetail ? [] : getInterest().slice(0, 5)), [isDetail, date])
+  const interestApts = useMemo(() => {
+    if (isDetail) return []
+    const all = getInterest()
+    const inRegion = topRegion?.gu ? all.filter(a => a.gu === topRegion.gu) : []
+    return (inRegion.length ? inRegion : all).slice(0, 5)
+  }, [isDetail, date, topRegion?.gu])
 
   const filteredList = list?.filter(item => item.date !== canonicalDate) || []
 
