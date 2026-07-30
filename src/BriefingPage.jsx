@@ -4,6 +4,8 @@ import { Helmet } from 'react-helmet-async'
 import { track } from './analytics.js'
 import AdFitBanner from './AdFitBanner.jsx'
 import CoupangBanner from './CoupangBanner.jsx'
+import { getTopRegion, getInterest } from './interest.js'
+import { matchRegion } from './interest-core.js'
 
 const TODAY = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
 
@@ -32,6 +34,50 @@ function BriefingNav({ date, list }) {
         </Link>
       ) : <div />}
     </nav>
+  )
+}
+
+function PersonalizedStrip({ region, apts, today }) {
+  useEffect(() => {
+    track('briefing_personalized_view', { has_interest: true, region: region.gu || region.dong || '' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [region.gu, region.dong])
+
+  const label = [region.dong, region.gu].filter(Boolean).join('·')
+  const matched = (today?.news || []).filter(n => matchRegion(n, region.gu, region.dong))
+
+  return (
+    <section className="briefing-personal">
+      <div className="briefing-personal-hi">
+        <b>{label}</b> 보고 계셨죠? 오늘 소식 챙겨왔어요.
+      </div>
+      {apts.length > 0 && (
+        <div className="briefing-personal-apts">
+          {apts.map(a => (
+            <Link
+              key={a.kaptCode}
+              to={`/apt/${a.kaptCode}`}
+              className="briefing-personal-chip"
+              onClick={() => track('briefing_personal_apt_click', { kaptCode: a.kaptCode })}
+            >
+              {a.aptNm || '단지'}
+            </Link>
+          ))}
+        </div>
+      )}
+      {matched.length > 0 ? (
+        <div className="briefing-personal-match">
+          <span className="briefing-personal-badge">내 지역</span>
+          <ul className="briefing-personal-list">
+            {matched.map((n, i) => <li key={i}>{n}</li>)}
+          </ul>
+        </div>
+      ) : (
+        <div className="briefing-personal-none">
+          오늘은 {region.gu || region.dong} 직접 언급은 없어요 — 전국 흐름은 아래에서 확인하세요.
+        </div>
+      )}
+    </section>
   )
 }
 
@@ -203,6 +249,10 @@ export default function BriefingPage() {
     ? `${data.title} — 실수요자 관점으로 읽는 부동산 뉴스 요약`
     : '부동산 뉴스를 실수요자 관점으로 요약합니다.'
 
+  // 개인화 스트립: 목록/오늘 화면에서만, 관심 데이터 있을 때만
+  const topRegion = useMemo(() => (isDetail ? null : getTopRegion()), [isDetail, date])
+  const interestApts = useMemo(() => (isDetail ? [] : getInterest().slice(0, 5)), [isDetail, date])
+
   const filteredList = list?.filter(item => item.date !== canonicalDate) || []
 
   // 월 → 주 계층 아카이브 (목록 페이지에서만 사용)
@@ -251,6 +301,11 @@ export default function BriefingPage() {
           <h1 className="briefing-title">속닥속닥 뉴스</h1>
           <p className="briefing-sub">오늘 부동산 뉴스, 내 입장에서 어떤 의미인지 풀어드려요</p>
         </div>
+
+        {/* 개인화 스트립 — 관심 데이터 있을 때만, 본문 위 */}
+        {!isDetail && topRegion && (
+          <PersonalizedStrip region={topRegion} apts={interestApts} today={data} />
+        )}
 
         {/* 본문 먼저 */}
         {loading && <BriefingSkeleton />}
