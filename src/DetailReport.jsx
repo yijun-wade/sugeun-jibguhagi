@@ -5,6 +5,7 @@ import { FETCH_TIMEOUT, MIN_AREA_SQM, SQM_TO_PYEONG, KR_LAT, KR_LON } from './co
 import { track } from './analytics.js'
 import { isCollected, toggleCollection, getCollection } from './collection.js'
 import SimilarApts from './SimilarApts.jsx'
+import { Link } from 'react-router-dom'
 
 function isValidUrl(url) {
   try { const { protocol } = new URL(url); return protocol === 'http:' || protocol === 'https:' }
@@ -229,6 +230,20 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       <div ref={similarRef}>
         <SimilarApts kaptCode={apt.kaptCode} avg={apt.recentAvg} gu={apt.regionName} aptNm={apt.aptNm} items={similarItems} />
       </div>
+
+      {/* 브리핑 씨앗 훅 — 상세(에피소딕) → 브리핑(재방문 엔진)으로 넘기는 관문 */}
+      <Link
+        to="/briefing"
+        className="briefing-seed"
+        onClick={() => track('briefing_seed_click', { from: 'apt_detail', dong: apt.dong })}
+      >
+        <span className="briefing-seed-icon" aria-hidden="true">📰</span>
+        <span className="briefing-seed-text">
+          <span className="briefing-seed-title">{apt.dong || '이 동네'} 부동산 소식, 매일 정리해드려요</span>
+          <span className="briefing-seed-sub">속닥속닥 뉴스에서 오늘 흐름 한눈에</span>
+        </span>
+        <span className="briefing-seed-arrow" aria-hidden="true">›</span>
+      </Link>
 
       {/* 모바일 sticky 액션 바 — 어느 위치에서도 손에 닿게 */}
       <div className="detail-mobile-actions">
