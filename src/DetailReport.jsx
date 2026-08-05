@@ -5,6 +5,7 @@ import { FETCH_TIMEOUT, MIN_AREA_SQM, SQM_TO_PYEONG, KR_LAT, KR_LON } from './co
 import { track } from './analytics.js'
 import { isCollected, toggleCollection, getCollection } from './collection.js'
 import { buildDelta } from './collection-delta.js'
+import { isSubscribed, subscribeRegion } from './interest.js'
 import SimilarApts from './SimilarApts.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -24,6 +25,8 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
   const [toast, setToast] = useState(null) // 'share' | 'uncollect' | null
   // 저장 직후 인라인 확인 블록 — 토스트와 달리 사라지지 않는다(즉시 보상 노출).
   const [justSaved, setJustSaved] = useState(false)
+  const [subscribed, setSubscribed] = useState(() => isSubscribed(apt.dong))
+  const [subFull, setSubFull] = useState(false)
   const [collected, setCollected] = useState(() => isCollected(apt.kaptCode))
   // 이전 페이지들에서 이미 담은 '다른' 집 — 착지자 심리 분기용(마운트 시점 스냅샷).
   // 0곳=그 단지만 검색해 온 신규(결정 유보 프레이밍), 1곳+=여러 집 둘러보는 중(비교 완성 프레이밍).
@@ -270,6 +273,20 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           ) : (
             <div className="save-confirm-hint">한 곳 더 저장하면 나란히 비교돼요</div>
           )}
+          {apt.dong && !subscribed && (
+            <button
+              type="button"
+              className="save-confirm-action"
+              onClick={() => {
+                const ok = subscribeRegion({ gu: apt.regionName, dong: apt.dong }, 'save_confirm')
+                // 실패(5곳 초과) 시 아래 region-sub가 사유를 설명하도록 플래그를 넘긴다.
+                if (ok) { setSubscribed(true) } else { setSubFull(true) }
+                track('save_confirm_action', { action: 'subscribe_region', dong: apt.dong, ok: !!ok })
+              }}
+            >
+              📰 {apt.dong} 소식도 매일 받아볼래요? ›
+            </button>
+          )}
         </div>
       )}
 
@@ -279,19 +296,57 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
         <SimilarApts kaptCode={apt.kaptCode} avg={apt.recentAvg} gu={apt.regionName} aptNm={apt.aptNm} items={similarItems} />
       </div>
 
-      {/* 브리핑 씨앗 훅 — 상세(에피소딕) → 브리핑(재방문 엔진)으로 넘기는 관문 */}
-      <Link
-        to="/briefing"
-        className="briefing-seed"
-        onClick={() => track('briefing_seed_click', { from: 'apt_detail', dong: apt.dong })}
-      >
-        <span className="briefing-seed-icon" aria-hidden="true">📰</span>
-        <span className="briefing-seed-text">
-          <span className="briefing-seed-title">{apt.dong || '이 동네'} 부동산 소식, 매일 정리해드려요</span>
-          <span className="briefing-seed-sub">속닥속닥 뉴스에서 오늘 흐름 한눈에</span>
-        </span>
-        <span className="briefing-seed-arrow" aria-hidden="true">›</span>
-      </Link>
+      {/* 동네 구독 — 단지(월 0~2건)보다 빈도 높은 저장 단위. 이동 없이 인라인 등록. */}
+      {apt.dong ? (
+        <div className={`region-sub${subscribed ? ' on' : ''}`}>
+          <span className="region-sub-icon" aria-hidden="true">📰</span>
+          <span className="region-sub-text">
+            <span className="region-sub-title">
+              {subscribed ? `✓ ${apt.dong} 저장됨` : `${apt.dong} 저장 — 새 거래·소식 매일 정리`}
+            </span>
+            <span className="region-sub-sub">
+              {subFull
+                ? '저장한 동네가 5곳이에요. 브리핑에서 하나 지우고 다시 시도해 주세요.'
+                : subscribed
+                  ? '속닥속닥 뉴스에서 매일 챙겨드려요'
+                  : '저장하면 이 동네 흐름을 매일 정리해드려요'}
+            </span>
+          </span>
+          {subscribed ? (
+            <Link
+              to="/briefing"
+              className="region-sub-go"
+              onClick={() => track('briefing_seed_click', { from: 'apt_detail', dong: apt.dong, subscribed: true })}
+            >
+              오늘 소식 ›
+            </Link>
+          ) : (
+            <button
+              type="button"
+              className="region-sub-btn"
+              onClick={() => {
+                const ok = subscribeRegion({ gu: apt.regionName, dong: apt.dong }, 'apt_detail')
+                if (ok) { setSubscribed(true); setSubFull(false) } else { setSubFull(true) }
+              }}
+            >
+              저장
+            </button>
+          )}
+        </div>
+      ) : (
+        <Link
+          to="/briefing"
+          className="briefing-seed"
+          onClick={() => track('briefing_seed_click', { from: 'apt_detail', dong: '' })}
+        >
+          <span className="briefing-seed-icon" aria-hidden="true">📰</span>
+          <span className="briefing-seed-text">
+            <span className="briefing-seed-title">부동산 소식, 매일 정리해드려요</span>
+            <span className="briefing-seed-sub">속닥속닥 뉴스에서 오늘 흐름 한눈에</span>
+          </span>
+          <span className="briefing-seed-arrow" aria-hidden="true">›</span>
+        </Link>
+      )}
 
       {/* 모바일 sticky — 페이지의 유일한 1차 CTA. 공유(획득 지표)와 경쟁시키지 않는다. */}
       <div className="detail-mobile-actions">

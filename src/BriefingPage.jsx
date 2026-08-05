@@ -49,7 +49,9 @@ function PersonalizedStrip({ region, apts, today }) {
   return (
     <section className="briefing-personal">
       <div className="briefing-personal-hi">
-        <b>{label}</b> 보고 계셨죠? 오늘 소식 챙겨왔어요.
+        {region.subscribed
+          ? <><b>{label}</b> 저장해두셨죠 — 오늘 소식이에요.</>
+          : <><b>{label}</b> 보고 계셨죠? 오늘 소식 챙겨왔어요.</>}
       </div>
       {apts.length > 0 && (
         <div className="briefing-personal-apts">

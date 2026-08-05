@@ -1580,6 +1580,43 @@ header { text-align: center; padding: 4px 0 2px; }
 .briefing-seed-sub { font-size: 12.5px; color: var(--muted); }
 .briefing-seed-arrow { font-size: 18px; font-weight: 700; color: var(--blue); flex-shrink: 0; }
 
+/* ─── 동네 구독 (빈도 높은 저장 단위) ─── */
+.region-sub {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 4px;
+  padding: 14px 15px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.region-sub.on { background: var(--blue-lt); border-color: #bfdbfe; }
+.region-sub-icon { font-size: 22px; flex-shrink: 0; }
+.region-sub-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.region-sub-title { font-size: 14.5px; font-weight: 700; color: var(--text); }
+.region-sub-sub { font-size: 12.5px; color: var(--muted); }
+.region-sub-btn {
+  flex-shrink: 0;
+  padding: 9px 16px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--blue);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.region-sub-btn:hover { filter: brightness(1.08); }
+.region-sub-go {
+  flex-shrink: 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--blue);
+  text-decoration: none;
+}
+
 /* ── 이 근처 비슷한 값 단지 ─────────────────── */
 .similar-apts {
   margin: 28px 0 8px;
