@@ -64,23 +64,6 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delta])
 
-  const handleShare = useCallback(() => {
-    const url = `${window.location.origin}/?q=${encodeURIComponent(apt.aptNm)}`
-    navigator.clipboard.writeText(url).then(() => {
-      setToast('share')
-    }).catch(() => {
-      const el = document.createElement('textarea')
-      el.value = url
-      el.style.position = 'fixed'
-      el.style.opacity = '0'
-      document.body.appendChild(el)
-      el.select()
-      document.execCommand('copy')
-      document.body.removeChild(el)
-      setToast('share')
-    })
-  }, [apt.aptNm])
-
   // 리치 공유 — 모바일 네이티브 공유시트(카톡 포함). 데스크톱은 링크 복사로 폴백.
   // 공유가 네이버 밖 유입을 만들어 오가닉 단일의존 리스크를 완화.
   const handleShareRich = useCallback(async () => {
@@ -102,10 +85,15 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
     const next = toggleCollection(apt)
     const saving = !collected
     setCollected(saving)
-    track(saving ? 'collect_save' : 'collect_remove', { apt_name: apt.aptNm, region: apt.regionName })
+    track(saving ? 'collect_save' : 'collect_remove', {
+      apt_name: apt.aptNm,
+      region: apt.regionName,
+      has_delta_shown: !!delta,
+      other_saved: otherSaved.length,
+    })
     onCollectionChange?.(next)
     setToast(saving ? 'collect' : 'uncollect')
-  }, [apt, collected, onCollectionChange])
+  }, [apt, collected, onCollectionChange, delta, otherSaved])
 
   return (
     <div className="detail-report">
@@ -125,11 +113,8 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           <div className="detail-apt-loc">{apt.dong} · {apt.regionName}</div>
         </div>
         <div className="detail-header-actions">
-          <button className={`collect-btn${collected ? ' collected' : ''}`} aria-label={collected ? '수집 취소' : '수집하기'} onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm }); handleCollect() }}>
-            {collected ? '✓ 수집됨' : '★ 수집하기'}
-          </button>
-          <button className="share-btn" aria-label="공유하기" onClick={() => { track('share_click', { apt_name: apt.aptNm }); handleShare() }}>
-            🔗 공유
+          <button className={`collect-btn${collected ? ' collected' : ''}`} aria-label={collected ? '저장 취소' : '저장하기'} onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm, from: 'header' }); handleCollect() }}>
+            {collected ? '✓ 저장됨' : '★ 저장'}
           </button>
         </div>
       </div>
@@ -254,8 +239,8 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
               </>
             ) : (
               <>
-                <span className="collect-cta-title">결정은 천천히 — 지금은 찜만 해둘까요?</span>
-                <span className="collect-cta-sub">수집해두면 배우자랑 같이, 나중에 다시 열어봐요</span>
+                <span className="collect-cta-title">이 단지 거래 올라오면 여기서 알려드릴게요</span>
+                <span className="collect-cta-sub">다시 오면 저장할 때랑 얼마나 달라졌는지 보여드려요</span>
               </>
             )}
           </span>
@@ -283,19 +268,13 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
         <span className="briefing-seed-arrow" aria-hidden="true">›</span>
       </Link>
 
-      {/* 모바일 sticky 액션 바 — 어느 위치에서도 손에 닿게 */}
+      {/* 모바일 sticky — 페이지의 유일한 1차 CTA. 공유(획득 지표)와 경쟁시키지 않는다. */}
       <div className="detail-mobile-actions">
         <button
           className={`mobile-collect-btn${collected ? ' collected' : ''}`}
           onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm, from: 'mobile_sticky' }); handleCollect() }}
         >
-          {collected ? '✓ 수집됨' : '★ 수집하기'}
-        </button>
-        <button
-          className="mobile-share-btn"
-          onClick={() => { track('share_click', { apt_name: apt.aptNm, from: 'mobile_sticky' }); handleShare() }}
-        >
-          🔗 공유
+          {collected ? '✓ 저장됨 · 변동 지켜보는 중' : '★ 저장 · 새 거래 뜨면 알려드려요'}
         </button>
       </div>
     </div>

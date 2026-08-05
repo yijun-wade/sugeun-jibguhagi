@@ -827,15 +827,6 @@ header { text-align: center; padding: 4px 0 2px; }
 .detail-header-actions {
   display: flex; flex-direction: column; gap: 6px; align-items: flex-end; flex-shrink: 0;
 }
-.share-btn {
-  flex-shrink: 0;
-  background: none; border: 1px solid var(--border);
-  color: var(--muted); border-radius: 20px;
-  padding: 5px 10px; font-size: 12px; font-weight: 500;
-  cursor: pointer; font-family: inherit; white-space: nowrap;
-  transition: all 0.15s;
-}
-.share-btn:hover { background: var(--bg); border-color: var(--muted); color: var(--text2); }
 
 .collect-toast {
   position: fixed; bottom: calc(28px + env(safe-area-inset-bottom));
@@ -1658,32 +1649,22 @@ header { text-align: center; padding: 4px 0 2px; }
     z-index: 140;
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
   }
+  /* 유일한 1차 CTA — 공유를 뺐으므로 바 전체 폭을 쓴다.
+     라벨이 길어져(★ 저장 · 새 거래 뜨면 알려드려요) 좁은 화면 줄바꿈 방지로 15→14px. */
   .mobile-collect-btn {
-    flex: 2;
+    flex: 1;
     background: #f97316;
     color: #fff;
     border: none;
     border-radius: 12px;
     padding: 14px;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     font-family: inherit;
     cursor: pointer;
     transition: background 0.15s;
   }
   .mobile-collect-btn.collected { background: #16a34a; }
-  .mobile-share-btn {
-    flex: 1;
-    background: #fff;
-    color: var(--text);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 14px;
-    font-size: 14px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-  }
   /* sticky 바 가리지 않게 콘텐츠 하단 여백 */
   .detail-report { padding-bottom: 80px; }
   .collect-cta-card { padding: 18px; gap: 12px; }
