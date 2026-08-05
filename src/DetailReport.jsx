@@ -4,6 +4,7 @@ import { fP, fR, getYM, formatDealDate, nameSim } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM, SQM_TO_PYEONG, KR_LAT, KR_LON } from './constants.js'
 import { track } from './analytics.js'
 import { isCollected, toggleCollection, getCollection } from './collection.js'
+import { buildDelta } from './collection-delta.js'
 import SimilarApts from './SimilarApts.jsx'
 import { Link } from 'react-router-dom'
 
@@ -24,6 +25,11 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
   // 이전 페이지들에서 이미 담은 '다른' 집 — 착지자 심리 분기용(마운트 시점 스냅샷).
   // 0곳=그 단지만 검색해 온 신규(결정 유보 프레이밍), 1곳+=여러 집 둘러보는 중(비교 완성 프레이밍).
   const [otherSaved] = useState(() => getCollection().filter(a => a.kaptCode !== apt.kaptCode))
+  // 저장 시점 스냅샷 대비 변동. 마운트 시 1회 고정(저장/해제로 재계산되면 방금 저장한 값과 비교하게 됨).
+  const [delta] = useState(() => {
+    const saved = getCollection().find(a => a.kaptCode === apt.kaptCode)
+    return buildDelta(saved, apt.recentAvg)
+  })
   // 유사단지 데이터를 상단에서 미리 조회 → 상단 넛지 + 하단 리스트가 공유(중복 fetch 없음).
   const [similarItems, setSimilarItems] = useState(null) // null=로딩, []=없음
   const similarRef = useRef(null)
@@ -46,6 +52,17 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
     const id = setTimeout(() => setToast(null), 2800)
     return () => clearTimeout(id)
   }, [toast])
+
+  useEffect(() => {
+    if (!delta) return
+    track('delta_strip_view', {
+      apt_name: apt.aptNm,
+      days: delta.days,
+      level: delta.level,
+      diff_pct: delta.diffPct,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [delta])
 
   const handleShare = useCallback(() => {
     const url = `${window.location.origin}/?q=${encodeURIComponent(apt.aptNm)}`
@@ -116,6 +133,27 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           </button>
         </div>
       </div>
+
+      {/* 델타 스트립 — 저장자 재방문 보상. 저장 시점 baseline은 갱신하지 않는다. */}
+      {delta && (
+        <div className={`delta-strip ${delta.level}`}>
+          <span className="delta-strip-icon" aria-hidden="true">★</span>
+          <span className="delta-strip-text">
+            {delta.level === 'fresh' ? (
+              <>오늘 저장했어요 · 변동 생기면 여기서 알려드릴게요</>
+            ) : delta.level === 'flat' ? (
+              <>{delta.stale ? '6개월 전' : `${delta.days}일 전`} 저장 · 큰 변동 없어요 ({fP(delta.to)} 유지)</>
+            ) : (
+              <>
+                {delta.stale ? '6개월 전' : `${delta.days}일 전`} 저장 · {fP(delta.from)} → {fP(delta.to)}{' '}
+                <b className="delta-strip-diff">
+                  {delta.level === 'up' ? '▲' : '▼'}{fP(Math.abs(delta.diff))}
+                </b>
+              </>
+            )}
+          </span>
+        </div>
+      )}
 
       {/* 살만해요? 종합 버디트 히어로 — SEO 착지 첫 화면 훅 + 공유 유도 */}
       {apt.verdict && apt.verdict !== '실거래 데이터 없음' && (

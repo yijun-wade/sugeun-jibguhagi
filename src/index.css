@@ -1382,6 +1382,28 @@ header { text-align: center; padding: 4px 0 2px; }
   line-height: 1.6;
 }
 
+/* ─── 델타 스트립 (저장자 재방문 보상) ─── */
+.delta-strip {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 14px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.delta-strip.up   { background: #fef2f2; border-color: #fecaca; }
+.delta-strip.down { background: #eff6ff; border-color: #bfdbfe; }
+.delta-strip-icon { font-size: 15px; flex-shrink: 0; color: #f59e0b; }
+.delta-strip-text { flex: 1; min-width: 0; }
+.delta-strip-diff { font-weight: 800; }
+.delta-strip.up   .delta-strip-diff { color: #dc2626; }
+.delta-strip.down .delta-strip-diff { color: #2563eb; }
+
 /* ─── 콘텐츠 끝 큰 수집 CTA ─── */
 .collect-cta-card {
   display: flex;
