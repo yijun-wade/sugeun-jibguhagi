@@ -1395,6 +1395,33 @@ header { text-align: center; padding: 4px 0 2px; }
 .delta-strip.up   .delta-strip-diff { color: #dc2626; }
 .delta-strip.down .delta-strip-diff { color: #2563eb; }
 
+/* ─── 저장 직후 인라인 확인 블록 ─── */
+.save-confirm {
+  margin: 20px 0 8px;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 1.5px solid #86efac;
+  border-radius: 16px;
+}
+.save-confirm-head { font-size: 14.5px; font-weight: 700; color: #15803d; }
+.save-confirm-hint { margin-top: 8px; font-size: 13px; color: var(--muted); }
+.save-confirm-action {
+  display: block;
+  width: 100%;
+  margin-top: 11px;
+  padding: 11px 14px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-align: left;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid #86efac;
+  border-radius: 11px;
+  cursor: pointer;
+}
+.save-confirm-action:hover { border-color: #22c55e; color: #15803d; }
+
 /* ─── 콘텐츠 끝 큰 수집 CTA ─── */
 .collect-cta-card {
   display: flex;

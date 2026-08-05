@@ -6,7 +6,7 @@ import { track } from './analytics.js'
 import { isCollected, toggleCollection, getCollection } from './collection.js'
 import { buildDelta } from './collection-delta.js'
 import SimilarApts from './SimilarApts.jsx'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function isValidUrl(url) {
   try { const { protocol } = new URL(url); return protocol === 'http:' || protocol === 'https:' }
@@ -19,8 +19,11 @@ const TABS = ['동네·이야기', '시세']
 const dirClass = (d) => d?.includes('상승') ? 'up' : d?.includes('하락') ? 'down' : 'flat'
 
 export default function DetailReport({ apt, onBack, onCollectionChange }) {
+  const navigate = useNavigate()
   const [tab, setTab] = useState('동네·이야기')
-  const [toast, setToast] = useState(null) // 'share' | 'collect' | 'uncollect' | null
+  const [toast, setToast] = useState(null) // 'share' | 'uncollect' | null
+  // 저장 직후 인라인 확인 블록 — 토스트와 달리 사라지지 않는다(즉시 보상 노출).
+  const [justSaved, setJustSaved] = useState(false)
   const [collected, setCollected] = useState(() => isCollected(apt.kaptCode))
   // 이전 페이지들에서 이미 담은 '다른' 집 — 착지자 심리 분기용(마운트 시점 스냅샷).
   // 0곳=그 단지만 검색해 온 신규(결정 유보 프레이밍), 1곳+=여러 집 둘러보는 중(비교 완성 프레이밍).
@@ -92,16 +95,15 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       other_saved: otherSaved.length,
     })
     onCollectionChange?.(next)
-    setToast(saving ? 'collect' : 'uncollect')
+    // 저장 성공은 인라인 확인 블록이 대신한다(사라지는 토스트로는 보상이 안 됨). 해제만 토스트.
+    setJustSaved(saving)
+    if (!saving) setToast('uncollect')
   }, [apt, collected, onCollectionChange, delta, otherSaved])
 
   return (
     <div className="detail-report">
       {toast === 'share' && (
         <div className="collect-toast">링크 복사 완료! 원하는 곳에 공유하세요.</div>
-      )}
-      {toast === 'collect' && (
-        <div className="collect-toast">수집 목록에 추가했어요 ★</div>
       )}
       {toast === 'uncollect' && (
         <div className="collect-toast">수집 목록에서 제거했어요</div>
@@ -246,6 +248,29 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           </span>
           <span className="collect-cta-arrow" aria-hidden="true">›</span>
         </button>
+      )}
+
+      {/* 저장 직후 인라인 확인 — 즉시 보상 + 다음 행동 2개(비교 / 동네 구독) */}
+      {justSaved && (
+        <div className="save-confirm">
+          <div className="save-confirm-head">
+            <span aria-hidden="true">✓</span> 저장했어요 — 변동 생기면 여기서 알려드릴게요
+          </div>
+          {otherSaved.length > 0 ? (
+            <button
+              type="button"
+              className="save-confirm-action"
+              onClick={() => {
+                track('save_confirm_action', { action: 'compare', other_saved: otherSaved.length })
+                navigate('/', { state: { openTab: 'collection' } })
+              }}
+            >
+              {otherSaved[0].aptNm}{otherSaved.length > 1 ? ` 외 ${otherSaved.length - 1}곳` : ''} 담는 중 · 수집 목록에서 비교하기 ›
+            </button>
+          ) : (
+            <div className="save-confirm-hint">한 곳 더 저장하면 나란히 비교돼요</div>
+          )}
+        </div>
       )}
 
       {/* 이 근처 비슷한 값 단지 — 막다른 페이지 탈출구(2nd 페이지뷰 + 내부링크 SEO).

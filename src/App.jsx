@@ -178,7 +178,8 @@ function SearchApp() {
   const [nearbyState, setNearbyState] = useState('idle') // 'idle' | 'loading' | 'done' | 'error' | 'denied'
   const [nearbyApts, setNearbyApts] = useState([])
   const [collection, setCollection] = useState(() => getCollection())
-  const [resultTab, setResultTab] = useState('search') // 'search' | 'collection'
+  // 상세페이지에서 '수집 목록에서 비교하기'로 넘어오면 수집 탭을 연 채 착지
+  const [resultTab, setResultTab] = useState(() => (location.state?.openTab === 'collection' ? 'collection' : 'search')) // 'search' | 'collection'
   const [compareSelected, setCompareSelected] = useState([])
   const [compareOpen, setCompareOpen] = useState(false)
   const [heroIdx, setHeroIdx] = useState(0)
