@@ -502,9 +502,24 @@ function PriceTab({ apt }) {
             </button>
           ))}
         </div>
-        {loading ? (
+        {apt.recentAvg > 0 ? (
+          <>
+            {/* 페이지 기준값 — 히어로·가격신호바·판단문장과 동일한 숫자. 필터로 바뀌지 않는다. */}
+            <div className="price-hero-label">최근 3개월 평균</div>
+            <div className="price-hero-main">{fP(apt.recentAvg)}</div>
+            {loading ? (
+              <div className="price-hero-sub">{months}개월 평균 계산 중...</div>
+            ) : avgAmt > 0 ? (
+              <div className="price-hero-sub">
+                {months}개월 {areaFilter || '전체'} 평균 {fP(avgAmt)}
+                {avgPerPy > 0 && <> · 평당 {fP(avgPerPy)}</>}
+              </div>
+            ) : null}
+          </>
+        ) : loading ? (
           <div className="price-hero-loading">평균가 계산 중...</div>
         ) : avgAmt > 0 ? (
+          /* recentAvg가 없는 예외 단지 — 필터 평균을 대표값으로 폴백 */
           <>
             <div className="price-hero-label">{months}개월 거래 평균</div>
             <div className="price-hero-main">{fP(avgAmt)}</div>
