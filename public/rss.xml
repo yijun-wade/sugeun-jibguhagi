@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sat, 08 Aug 2026 22:37:36 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 09 Aug 2026 22:39:31 GMT</lastBuildDate>
+    <item>
+      <title>정부 13일 공급대책, 청년·실수요자 대출 완화 추진</title>
+      <link>https://www.suzip.kr/briefing/2026-08-10</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-08-10</guid>
+      <pubDate>Sun, 09 Aug 2026 22:00:00 GMT</pubDate>
+      <description>• 정부가 이르면 13일 주택 공급대책을 발표하며 청년·신혼부부 등 실수요자 대상 대출 규제 완화를 검토 중이다.
+• 서울 전세가격이 7억 원을 넘었고 매매·전세·월세가 동시에 오르는 '트리플 강세' 현상이 심화되고 있다.
+• 은행들이 대출총량 규제로 인한 어려움을 호소하며 정부의 정비사업 이주비 대출 규제 완화를 요청했다.
+
+정부 의도: 정부는 주택 공급 부족으로 인한 청년층과 서민의 주거난이 심각해지자 대출 규제를 선택적으로 풀어주려고 한다. 실제로 집을 살 사람들에게는 돈을 빌려주되, 투기 목적의 대출은 막겠다는 뜻이다.
+
+시장 변화: 실수요자들의 구매력이 조금 살아나면서 전월세 시장의 수요가 매매 쪽으로 옮겨갈 수 있다. 하지만 공급 부족이 근본 원인이라면 가격 하락으로 이어지기는 어려울 것으로 보인다.</description>
+    </item>
     <item>
       <title>공급 확대·규제 완화, 전세 시장은 더 얼어붙나</title>
       <link>https://www.suzip.kr/briefing/2026-08-09</link>
@@ -253,19 +266,6 @@
 정부 의도: 투기를 줄이기 위해 고가 주택 대출을 제한하고 갭투자(현금 없이 전세금으로 사는 것)를 막으려고 합니다. 부동산 시장 과열을 식히려는 목적인데, 정책이 엄격한 만큼 실제 거주할 집을 사려는 일반인도 영향을 받고 있습니다.
 
 시장 변화: 아파트값이 올라가는데 집을 살 때 빌릴 수 있는 돈은 줄어들고 있습니다. 은행들이 주택담보대출을 조여서 서민들은 대출받기가 더 어려워질 예정이고, 전세를 구하기도 어려워지면서 월세로 밀려나는 추세가 가속화되고 있습니다.</description>
-    </item>
-    <item>
-      <title>금리 인상에 공급 정책 강화, 집값 상승 가속화</title>
-      <link>https://www.suzip.kr/briefing/2026-07-21</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-07-21</guid>
-      <pubDate>Mon, 20 Jul 2026 22:00:00 GMT</pubDate>
-      <description>• 정부가 주택 공급 확대와 금융 정책을 논의하며 5%대 금리 인상 속에 부동산 시장 관리에 나섰다.
-• 서울 아파트 매매가와 전셋값이 동시에 올라 강남 집값 상승으로 경기도 수요가 몰리고 있다.
-• 고액 주택 대출 규제 속에도 특수 거래 방식이 활용되면서 금융소비자 혼란이 커지고 있다.
-
-정부 의도: 정부는 금리 인상으로 과열된 부동산 시장을 식히려고 한다. 동시에 주택 공급을 늘려서 수급 불균형을 맞추고, 고액대 대출 규제로 투기를 차단하려는 것이다.
-
-시장 변화: 금리가 올라가면서 대출받기가 더 어려워지고 월 상환액도 커진다. 하지만 공급이 부족해서 집값은 오르는 '금리 인상 역설'이 계속될 것으로 보인다.</description>
     </item>
   </channel>
 </rss>
