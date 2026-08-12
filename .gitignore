@@ -9,3 +9,8 @@ dist/
 .env.local.backup
 .env.local.*
 .worktrees/
+
+# 로컬 발행 파이프라인 (scripts/publish/)
+.publish-state/
+.publish-assets/
+.chrome-publish-profile/
