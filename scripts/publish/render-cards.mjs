@@ -17,7 +17,7 @@ export async function renderCards(dateStr, { browser: given } = {}) {
   const outDir = join(process.cwd(), '.publish-assets', dateStr)
   mkdirSync(outDir, { recursive: true })
 
-  const conn = given ? null : await connectChrome({ headless: true })
+  const conn = given ? null : await connectChrome({ headless: true, profile: 'render' })
   const browser = given || conn.browser
   const page = await newPage(browser)
   await page.setViewport({ width: SIZE, height: SIZE, deviceScaleFactor: 1 })

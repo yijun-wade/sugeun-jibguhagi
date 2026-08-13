@@ -28,9 +28,14 @@ async function main() {
   await page.setViewport({ width: 1440, height: 950 })
 
   console.log('\n[2] 네이버 로그인 상태')
-  await page.goto('https://nid.naver.com/nidlogin.login', { waitUntil: 'domcontentloaded', timeout: 30000 })
-  await sleep(1500)
-  let loggedIn = !/nidlogin\.login/.test(page.url())
+  // 로그인 페이지로 가서 "URL이 바뀌었나"로 판정하면 리다이렉트보다 먼저 읽어
+  // 로그인 상태인데도 로그아웃으로 나온다(2026-08-14 실제 오판). 여유를 두고 여러 번 본다.
+  await page.goto('https://nid.naver.com/nidlogin.login', { waitUntil: 'networkidle2', timeout: 30000 })
+  let loggedIn = false
+  for (let i = 0; i < 10 && !loggedIn; i++) {
+    await sleep(600)
+    loggedIn = !/nidlogin\.login/.test(page.url())
+  }
 
   if (!loggedIn && WANT_LOGIN) {
     console.log('\n  🔑 로그인 창을 띄웠습니다. 브라우저에서 직접 로그인해주세요.')

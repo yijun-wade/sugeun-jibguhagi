@@ -14,3 +14,4 @@ dist/
 .publish-state/
 .publish-assets/
 .chrome-publish-profile/
+.chrome-render-profile/
