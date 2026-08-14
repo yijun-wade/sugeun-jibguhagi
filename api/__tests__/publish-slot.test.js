@@ -1,82 +1,93 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { nextSlot, MINUTE_OPTIONS, TODAY_SLOTS, TOMORROW_SLOTS } from '../../scripts/publish/lib/slot.mjs'
+import { nextSlot, nextSlots, slotsForDate, MINUTE_OPTIONS, SLOT_HOURS } from '../../scripts/publish/lib/slot.mjs'
 
-// KST 시각을 만든다. 테스트는 항상 now를 주입한다 — Date.now()에 의존하지 않는다.
 const kst = (s) => new Date(`${s}+09:00`)
+const at = (s) => `${s.date} ${s.hourValue}:${s.minuteValue}`
 
-test('예약 가능한 분은 10분 단위뿐 — 네이버 select 옵션이 6개다', () => {
-  // 실측(2026-08-12): minute select = 00 10 20 30 40 50.
-  // 어뷰징 완화로 넣었던 "±0~9분 랜덤"은 여기서 불가능해진다.
-  assert.deepEqual(MINUTE_OPTIONS, ['00', '10', '20', '30', '40', '50'])
-  for (const s of [...TODAY_SLOTS, ...TOMORROW_SLOTS]) {
-    assert.ok(MINUTE_OPTIONS.includes(String(s.minute).padStart(2, '0')), `${s.hour}:${s.minute} 는 선택 불가`)
+test('4시간 간격 4슬롯 — 08/12/16/20시', () => {
+  assert.deepEqual(SLOT_HOURS, [8, 12, 16, 20])
+  const s = slotsForDate('2026-08-20')
+  assert.equal(s.length, 4)
+  assert.deepEqual(s.map((x) => x.hour), [8, 12, 16, 20])
+})
+
+test('00시·04시는 슬롯이 아니다 — 독자 없는 시간', () => {
+  const hours = slotsForDate('2026-08-20').map((s) => s.hour)
+  assert.ok(!hours.includes(0) && !hours.includes(4))
+})
+
+test('분은 네이버 select가 허용하는 값만 쓴다', () => {
+  // 실측: minute select = 00 10 20 30 40 50. 그 밖의 값은 넣을 수 없다.
+  for (let d = 1; d <= 28; d++) {
+    for (const s of slotsForDate(`2026-09-${String(d).padStart(2, '0')}`)) {
+      assert.ok(MINUTE_OPTIONS.includes(s.minuteValue), `${s.hourValue}:${s.minuteValue}`)
+    }
   }
 })
 
-test('아침 실행(08:30) → 당일 낮 슬롯', () => {
-  const s = nextSlot(kst('2026-08-12T08:30:00'))
-  assert.equal(s.date, '2026-08-12')
-  assert.ok(s.hour >= 11 && s.hour <= 12, `${s.hour}시`)
+test('같은 날 슬롯끼리 시각이 겹치지 않는다', () => {
+  const keys = slotsForDate('2026-08-20').map(at)
+  assert.equal(new Set(keys).size, 4)
 })
 
-test('저녁 실행(20:30) → 익일 아침 슬롯', () => {
-  const s = nextSlot(kst('2026-08-12T20:30:00'))
-  assert.equal(s.date, '2026-08-13')
-  assert.ok(s.hour >= 8 && s.hour <= 9, `${s.hour}시`)
+test('아침 실행이면 남은 오늘 슬롯부터 채운다', () => {
+  const got = nextSlots(kst('2026-08-20T07:00:00'), 4)
+  assert.equal(got.length, 4)
+  assert.ok(got.every((s) => s.date === '2026-08-20'))
+  assert.deepEqual(got.map((s) => s.hour), [8, 12, 16, 20])
 })
 
-test('당일 슬롯을 이미 지났으면 익일로 민다', () => {
-  // 글을 버리는 것보다 하루 늦추는 게 낫다 — 스펙 STEP 3
-  const s = nextSlot(kst('2026-08-12T13:00:00'))
-  assert.equal(s.date, '2026-08-13')
+test('낮 실행이면 지난 슬롯은 건너뛰고 다음날로 넘어간다', () => {
+  const got = nextSlots(kst('2026-08-20T13:00:00'), 4)
+  assert.deepEqual(got.map((s) => `${s.date} ${s.hour}`), [
+    '2026-08-20 16', '2026-08-20 20', '2026-08-21 8', '2026-08-21 12',
+  ])
 })
 
-test('경계 — 슬롯 정각에 실행하면 그 슬롯은 쓰지 않는다', () => {
-  // 예약 확정까지 몇 분 걸린다. 정각을 살려두면 "예약"이 "즉시 발행"이 될 수 있다.
-  const s = nextSlot(kst('2026-08-12T12:20:00'))
-  assert.equal(s.date, '2026-08-13', '마지막 당일 슬롯 정각인데 당일로 잡힘')
+test('마진 — 슬롯까지 10분이 안 남으면 쓰지 않는다', () => {
+  // 예약 확정에 시간이 걸린다. 마진이 없으면 "예약"이 "즉시 발행"이 된다.
+  const s = slotsForDate('2026-08-20').find((x) => x.hour === 12)
+  const justBefore = kst(`2026-08-20T12:${String(Math.max(0, s.minute - 5)).padStart(2, '0')}:00`)
+  const got = nextSlots(justBefore, 1)[0]
+  assert.notEqual(`${got.date} ${got.hour}`, '2026-08-20 12')
 })
 
-test('마진 — 실행 시각으로부터 최소 10분 뒤여야 한다', () => {
-  for (const t of ['2026-08-12T11:45:00', '2026-08-12T12:05:00', '2026-08-12T07:55:00']) {
-    const s = nextSlot(kst(t))
-    const at = kst(`${s.date}T${String(s.hour).padStart(2, '0')}:${String(s.minute).padStart(2, '0')}:00`)
-    assert.ok(at.getTime() - kst(t).getTime() >= 10 * 60000, `${t} → ${s.date} ${s.hour}:${s.minute} (마진 부족)`)
-  }
+test('이미 잡힌 자리는 건너뛴다', () => {
+  const all = nextSlots(kst('2026-08-20T07:00:00'), 4)
+  const taken = [at(all[0]), at(all[1])]
+  const got = nextSlots(kst('2026-08-20T07:00:00'), 2, { taken })
+  assert.deepEqual(got.map(at), [at(all[2]), at(all[3])])
 })
 
-test('같은 날짜·같은 시각이면 결과가 같다 (결정적)', () => {
-  const a = nextSlot(kst('2026-08-12T08:30:00'))
-  const b = nextSlot(kst('2026-08-12T08:30:00'))
+test('요청 수가 하루 슬롯보다 많으면 다음날로 이어진다', () => {
+  const got = nextSlots(kst('2026-08-20T07:00:00'), 6)
+  assert.equal(got.length, 6)
+  assert.equal(got[4].date, '2026-08-21')
+})
+
+test('같은 입력이면 같은 결과 (결정적) — 재개 시 시각이 바뀌면 안 된다', () => {
+  const a = nextSlots(kst('2026-08-20T07:00:00'), 4).map(at)
+  const b = nextSlots(kst('2026-08-20T07:00:00'), 4).map(at)
   assert.deepEqual(a, b)
 })
 
-test('날짜가 바뀌면 슬롯도 바뀐다 — 매일 같은 시각에 발행하지 않는다', () => {
-  // 리스크 1 대응. 정확히 12:00:00 고정 발행은 사람이 만들지 않는 패턴이다.
-  const picks = new Set()
+test('날짜가 바뀌면 분이 흔들린다 — 매일 같은 시각 고정 발행을 피한다', () => {
+  const mins = new Set()
   for (let d = 1; d <= 28; d++) {
-    const day = String(d).padStart(2, '0')
-    const s = nextSlot(kst(`2026-09-${day}T08:30:00`))
-    picks.add(`${s.hour}:${s.minute}`)
+    mins.add(slotsForDate(`2026-09-${String(d).padStart(2, '0')}`)[0].minuteValue)
   }
-  assert.ok(picks.size >= 3, `28일간 슬롯이 ${picks.size}종류뿐: ${[...picks]}`)
+  assert.ok(mins.size >= 2, `28일간 08시 분이 ${mins.size}종류뿐`)
 })
 
-test('월말 롤오버 — 8/31 저녁 → 9/1', () => {
-  const s = nextSlot(kst('2026-08-31T20:30:00'))
-  assert.equal(s.date, '2026-09-01')
-})
-
-test('연말 롤오버 — 12/31 저녁 → 이듬해 1/1', () => {
-  const s = nextSlot(kst('2026-12-31T20:30:00'))
-  assert.equal(s.date, '2027-01-01')
+test('월말·연말 롤오버', () => {
+  assert.equal(nextSlots(kst('2026-08-31T21:00:00'), 1)[0].date, '2026-09-01')
+  assert.equal(nextSlots(kst('2026-12-31T21:00:00'), 1)[0].date, '2027-01-01')
 })
 
 test('UTC 머신에서 돌아도 KST 기준으로 같은 답', () => {
-  // launchd는 로컬이지만 CI나 다른 TZ에서 돌 수 있다.
   const before = process.env.TZ
-  const run = (tz) => { process.env.TZ = tz; return nextSlot(kst('2026-08-12T08:30:00')) }
+  const run = (tz) => { process.env.TZ = tz; return nextSlots(kst('2026-08-20T07:00:00'), 4).map(at) }
   const seoul = run('Asia/Seoul')
   const utc = run('UTC')
   const ny = run('America/New_York')
@@ -85,12 +96,10 @@ test('UTC 머신에서 돌아도 KST 기준으로 같은 답', () => {
   assert.deepEqual(seoul, ny)
 })
 
-test('반환 형식 — 네이버 select/달력에 바로 쓸 수 있는 모양', () => {
-  const s = nextSlot(kst('2026-08-12T08:30:00'))
+test('nextSlot — 하위 호환(1개)', () => {
+  const s = nextSlot(kst('2026-08-20T07:00:00'))
+  assert.equal(s.hour, 8)
   assert.match(s.date, /^\d{4}-\d{2}-\d{2}$/)
-  assert.equal(typeof s.hour, 'number')
-  assert.equal(typeof s.minute, 'number')
-  assert.match(s.hourValue, /^\d{2}$/) // select value
+  assert.match(s.hourValue, /^\d{2}$/)
   assert.match(s.minuteValue, /^\d{2}$/)
-  assert.equal(s.minuteValue, String(s.minute).padStart(2, '0'))
 })
