@@ -23,11 +23,47 @@ import { renderCards } from './render-cards.mjs'
 import { assemble } from './naver-editor.mjs'
 import { schedule } from './naver-schedule.mjs'
 import { precheckOffline, precheckOnline, printChecks, draftPath } from './precheck.mjs'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
+
+const run = promisify(execFile)
+
+/**
+ * 초안·브리핑을 원격에서 가져온다.
+ *
+ * 생성은 GitHub Actions(클라우드), 발행은 이 맥이고 접점은 git이다. 당기지 않으면
+ * 로컬에 남은 옛 초안을 매일 다시 발행하게 된다 — 실제로 8/14에 8/4자 글을
+ * 예약했다. 원격에는 8/13까지 있었는데 로컬이 8/5에 멈춰 있었다.
+ *
+ * `git pull`은 쓰지 않는다. 이 저장소에는 발행 스크립트 커밋이 쌓여 있어 병합·리베이스가
+ * 충돌하면 자동 실행이 멈춘다. 필요한 경로만 원격 스냅샷에서 꺼내오면 충돌이 없다.
+ */
+async function syncDrafts() {
+  try {
+    await run('git', ['fetch', 'origin', 'main', '--quiet'], { cwd: process.cwd(), timeout: 60000 })
+    await run('git', ['checkout', 'origin/main', '--', 'blog-posts', 'public/briefings'], { cwd: process.cwd(), timeout: 60000 })
+    return { ok: true }
+  } catch (e) {
+    // 동기화 실패로 발행을 막지는 않는다. 다만 오래된 초안을 쓰게 되므로 경고한다.
+    return { ok: false, reason: e.message.split('\n')[0] }
+  }
+}
+
+/** 사용할 초안 날짜 — 지정이 없으면 "가장 최근에 있는" 초안. 오늘 것이 없으면 어제 것. */
+function latestDraftDate() {
+  const dir = join(process.cwd(), 'blog-posts')
+  return readdirSync(dir)
+    .map((f) => (f.match(/^(\d{4}-\d{2}-\d{2})-부동산브리핑\.md$/) || [])[1])
+    .filter(Boolean)
+    .sort()
+    .pop()
+}
 
 const args = process.argv.slice(2)
 const DRY = args.includes('--dry-run')
-const DATE = args.find((a) => /^\d{4}-\d{2}-\d{2}$/.test(a))
-  || new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
+const FIXED_DATE = args.find((a) => /^\d{4}-\d{2}-\d{2}$/.test(a)) || null
+// 날짜는 초안 동기화가 끝난 뒤에 정한다 — 먼저 정하면 방금 받아온 오늘치를 못 본다
+let DATE = FIXED_DATE
 
 const log = (m) => console.log(m)
 
@@ -52,6 +88,16 @@ function recordPublished(date, info) {
 }
 
 async function main() {
+  const sync = await syncDrafts()
+  if (!sync.ok) log(`  ⚠️  초안 동기화 실패 — 로컬 초안으로 진행: ${sync.reason}`)
+
+  // 날짜를 지정하지 않았으면 오늘 것을 쓰되, 아직 안 만들어졌으면 가장 최근 초안을 쓴다.
+  // GitHub Actions는 07:00 KST에 도는데 08:30 슬롯이 그보다 빠를 수도, 워크플로가
+  // 하루 밀릴 수도 있다. 그때마다 "초안 없음"으로 종료하면 매일 빈다.
+  if (!DATE) {
+    const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
+    DATE = existsSync(draftPath(today)) ? today : (latestDraftDate() || today)
+  }
   log(`\n■ suzip 발행 — ${DATE}${DRY ? '  (드라이런)' : ''}\n`)
 
   const state = load(DATE)
@@ -167,6 +213,6 @@ async function main() {
 
 main().catch(async (e) => {
   console.error(`\n치명적 오류: ${e.message}\n`)
-  await notifyFail(`${DATE} 발행 오류 — ${e.message.slice(0, 80)}`)
+  await notifyFail(`${DATE || '날짜 미정'} 발행 오류 — ${e.message.slice(0, 80)}`)
   process.exit(1)
 })

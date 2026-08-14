@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  suzip 네이버 블로그 자동 발행 — launchd 스케줄
+
+  설치:
+    cp scripts/publish/kr.suzip.publish.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/kr.suzip.publish.plist
+  즉시 1회 실행(설치 확인):
+    launchctl start kr.suzip.publish
+  해제:
+    launchctl unload ~/Library/LaunchAgents/kr.suzip.publish.plist
+  로그:
+    tail -f .publish-state/launchd.log
+
+  주의:
+  - node는 절대경로여야 한다. launchd는 셸 PATH를 물려받지 않는다.
+  - 하루 2회(08:30 / 20:30)인 이유는 맥이 자고 있을 수 있어서다. 두 슬롯 모두
+    멱등이라 이미 예약된 날은 크롬도 켜지 않고 즉시 종료한다.
+  - 발행 자체는 네이버 서버가 하므로, 예약만 걸리면 맥이 꺼져 있어도 글은 나간다.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>kr.suzip.publish</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/node</string>
+    <string>scripts/publish/run.mjs</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/jeon-yijun/Documents/develope/sugeun-jibguhagi</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict>
+      <key>Hour</key><integer>8</integer>
+      <key>Minute</key><integer>30</integer>
+    </dict>
+    <dict>
+      <key>Hour</key><integer>20</integer>
+      <key>Minute</key><integer>30</integer>
+    </dict>
+  </array>
+
+  <key>StandardOutPath</key>
+  <string>/Users/jeon-yijun/Documents/develope/sugeun-jibguhagi/.publish-state/launchd.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/jeon-yijun/Documents/develope/sugeun-jibguhagi/.publish-state/launchd.log</string>
+
+  <key>RunAtLoad</key>
+  <false/>
+  <key>ProcessType</key>
+  <string>Background</string>
+</dict>
+</plist>
