@@ -4,17 +4,65 @@
 import { readFileSync, existsSync, mkdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { connectChrome, newPage } from './lib/chrome.mjs'
-import { renderCardsHtml, CARD_KEYS } from './card-template.mjs'
+import { renderCardsHtml, renderGenericCardsHtml, CARD_KEYS } from './card-template.mjs'
+import { parseDraft } from './lib/draft.mjs'
+import { stripInline } from './lib/inline.mjs'
 
 const MIN_BYTES = 20_000 // 빈 흰 카드는 이 크기를 못 넘긴다
 const SIZE = 1080
 
-export async function renderCards(dateStr, { browser: given } = {}) {
-  const briefingPath = join(process.cwd(), 'public', 'briefings', `${dateStr}.json`)
-  if (!existsSync(briefingPath)) throw new Error(`브리핑 없음: ${briefingPath}`)
-  const briefing = JSON.parse(readFileSync(briefingPath, 'utf-8'))
+/**
+ * 초안 파일에서 카드 재료를 뽑는다. 브리핑은 전용 JSON, 나머지는 초안의 굵은 소제목.
+ * @param {string} draftFile blog-posts 기준 파일명
+ */
+export function cardSourceFor(dateStr, draftFile) {
+  if (!draftFile || /부동산브리핑\.md$/.test(draftFile)) {
+    const p = join(process.cwd(), 'public', 'briefings', `${dateStr}.json`)
+    if (!existsSync(p)) throw new Error(`브리핑 없음: ${p}`)
+    return { kind: 'briefing', briefing: JSON.parse(readFileSync(p, 'utf-8')) }
+  }
 
-  const outDir = join(process.cwd(), '.publish-assets', dateStr)
+  const md = readFileSync(join(process.cwd(), 'blog-posts', draftFile), 'utf-8')
+  const d = parseDraft(md)
+  const category = (md.match(/^>\s*카테고리:\s*(.+)$/m) || [])[1]?.trim() || '수군수군 우리집'
+
+  // 문장 중간에서 자르면 "…03년 준공이니" 처럼 깨져 보인다. 마지막 문장 끝에서
+  // 자르고, 그럴 자리가 없으면 말줄임표를 붙인다.
+  const clip = (t, max) => {
+    const s0 = String(t || '').trim()
+    if (s0.length <= max) return s0
+    const cut = s0.slice(0, max)
+    const end = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '), cut.lastIndexOf('요. '))
+    return end > max * 0.45 ? cut.slice(0, end + 1) : cut.replace(/\s+\S*$/, '') + '…'
+  }
+
+  // 굵은 소제목 = 카드 본문. 소제목이 없으면 앞쪽 본문 문단으로 대체해 최소 3장을 채운다.
+  const points = []
+  for (const i of d.subheadIndexes) {
+    const full = stripInline(d.blocks[i].text)
+    const head = clip(full.split(/(?<=[.!?])\s/)[0], 40)
+    const next = d.blocks[i + 1]
+    const rest = d.blocks[i].standalone && next && next.type === 'body'
+      ? stripInline(next.text)
+      : full.slice(full.split(/(?<=[.!?])\s/)[0].length).trim()
+    points.push({ head, body: clip(rest, 100) })
+  }
+  if (points.length === 0) {
+    for (let i = d.bodyStart; i <= d.bodyEnd && points.length < 2; i++) {
+      const t = stripInline(d.blocks[i]?.text || '')
+      if (t) points.push({ head: clip(t.split(/(?<=[.!?])\s/)[0], 40), body: clip(t, 100) })
+    }
+  }
+  return { kind: 'generic', title: d.title, date: dateStr, category, points }
+}
+
+export async function renderCards(dateStr, { browser: given, draftFile = null } = {}) {
+  const src = cardSourceFor(dateStr, draftFile)
+  const rendered = src.kind === 'briefing'
+    ? { html: renderCardsHtml(src.briefing), keys: CARD_KEYS }
+    : renderGenericCardsHtml(src)
+
+  const outDir = join(process.cwd(), '.publish-assets', draftFile ? draftFile.replace(/\.md$/, '') : dateStr)
   mkdirSync(outDir, { recursive: true })
 
   const conn = given ? null : await connectChrome({ headless: true, profile: 'render' })
@@ -23,7 +71,7 @@ export async function renderCards(dateStr, { browser: given } = {}) {
   await page.setViewport({ width: SIZE, height: SIZE, deviceScaleFactor: 1 })
 
   try {
-    await page.setContent(renderCardsHtml(briefing), { waitUntil: 'domcontentloaded' })
+    await page.setContent(rendered.html, { waitUntil: 'domcontentloaded' })
 
     // 폰트 로딩 전에 캡처하면 폴백 폰트로 찍힌다. 에러도 안 나고 파일도 정상 크기로 생긴다.
     await page.evaluate(() => document.fonts.ready)
@@ -43,8 +91,8 @@ export async function renderCards(dateStr, { browser: given } = {}) {
     }
 
     const files = []
-    for (let i = 0; i < CARD_KEYS.length; i++) {
-      const key = CARD_KEYS[i]
+    for (let i = 0; i < rendered.keys.length; i++) {
+      const key = rendered.keys[i]
       const el = await page.$(`[data-card="${key}"]`)
       if (!el) throw new Error(`카드 요소 없음: ${key}`)
       const path = join(outDir, `${String(i + 1).padStart(2, '0')}-${key}.png`)
@@ -71,8 +119,9 @@ export async function renderCards(dateStr, { browser: given } = {}) {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const date = process.argv[2] || new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
-  console.log(`\n카드 렌더: ${date}`)
-  renderCards(date)
+  const draftFile = process.argv[3] || null
+  console.log(`\n카드 렌더: ${date}${draftFile ? ` (${draftFile})` : ''}`)
+  renderCards(date, { draftFile })
     .then((f) => console.log(`\n${f.length}장 완료\n`))
     .catch((e) => { console.error(`\n실패: ${e.message}\n`); process.exit(1) })
 }
