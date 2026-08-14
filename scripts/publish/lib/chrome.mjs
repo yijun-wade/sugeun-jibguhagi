@@ -82,14 +82,39 @@ export async function connectChrome({ headless = false, profile = 'publish' } = 
   const browser = await puppeteer.connect({
     browserWSEndpoint: info.webSocketDebuggerUrl,
     defaultViewport: null,
+    // 탭이 무거워지면 기본 180초로도 모자란다. 실패는 빨리 드러나는 편이 낫다.
+    protocolTimeout: 90_000,
   })
+
+  // 지난 실행이 남긴 탭을 치운다. 네이버 에디터는 탭 하나가 무거워서 몇 개만 쌓여도
+  // 크롬이 CDP 응답을 못 하고 Runtime.callFunctionOn이 타임아웃난다(2026-08-14 실제 발생).
+  await reapPages(browser)
 
   return {
     browser,
     spawned: Boolean(child),
     // 붙기만 한 경우엔 프로세스를 죽이지 않는다. 사람이 열어둔 창일 수 있다.
-    close: async () => { await browser.disconnect() },
+    close: async () => { await reapPages(browser); await browser.disconnect() },
   }
+}
+
+/**
+ * 빈 탭 하나만 남기고 전부 닫는다.
+ *
+ * "1개만 남긴다"로는 부족했다. 남은 1개가 하필 지난 실행의 네이버 에디터면,
+ * 그게 백그라운드에서 자동저장을 계속 돌리는 채로 새 에디터를 또 열게 된다.
+ * 에디터 두 개가 동시에 돌면 렌더러가 막혀 Runtime.callFunctionOn이 타임아웃난다
+ * (2026-08-14). 그래서 내용이 있는 탭은 예외 없이 닫고 빈 탭을 새로 만든다.
+ */
+export async function reapPages(browser) {
+  const pages = await browser.pages()
+  const blank = await browser.newPage() // 먼저 확보 — 마지막 탭을 닫으면 크롬이 종료된다
+  let closed = 0
+  for (const p of pages) {
+    if (p === blank) continue
+    try { await p.close({ runBeforeUnload: false }); closed++ } catch { /* 이미 닫힘 */ }
+  }
+  return closed
 }
 
 /** 빈 탭을 재사용해 페이지를 하나 확보한다. */

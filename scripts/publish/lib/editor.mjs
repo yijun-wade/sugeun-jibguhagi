@@ -8,7 +8,9 @@ export const WRITE_URL = `https://blog.naver.com/${BLOG_ID}?Redirect=Write`
 export const SEL = {
   frame: /PostWriteForm/,
   title: '.se-component.se-documentTitle',
-  bodyComponent: '.se-component.se-text:not(.se-documentTitle)',
+  // 소제목 서식을 걸면 컴포넌트 클래스가 .se-text 가 아닌 것으로 바뀐다.
+  // .se-text 로 좁히면 소제목 문단이 조회에서 통째로 사라져 "안 남았다"로 오판한다.
+  bodyComponent: '.se-component:not(.se-documentTitle)',
   paragraph: '.se-text-paragraph',
   bold: 'button[data-name="bold"]',
   image: 'button[data-name="image"]',
@@ -50,11 +52,19 @@ export async function openEditor(page, { timeout = 45000 } = {}) {
  * 네이버가 자동저장을 하므로 이건 예외가 아니라 매 실행의 상시 경로다.
  * 반드시 "취소"(닫기). "확인"은 이어쓰기라 지난 초안이 섞인다.
  */
-export async function dismissResumePopup(frame) {
-  const found = await frame.evaluate(() =>
+export async function dismissResumePopup(frame, { waitMs = 4000 } = {}) {
+  const isUp = () => frame.evaluate(() =>
     [...document.querySelectorAll('.se-popup, [class*="popup"]')].some(
       (e) => /작성 중인 글/.test(e.innerText || '') && e.offsetParent !== null,
     ))
+
+  // 팝업은 프레임이 뜬 직후가 아니라 조금 뒤에 나타난다. 한 번만 보고 "없음"으로
+  // 넘어가면, 우리가 타이핑을 시작한 뒤에 떠서 클릭을 삼킨다.
+  let found = false
+  for (let i = 0; i < Math.ceil(waitMs / 400) && !found; i++) {
+    found = await isUp()
+    if (!found) await sleep(400)
+  }
   if (!found) return { found: false, dismissed: false }
 
   await frame.evaluate(() => {
@@ -71,7 +81,61 @@ export async function dismissResumePopup(frame) {
       (e) => /작성 중인 글/.test(e.innerText || '') && e.offsetParent !== null,
     ))
   if (!gone) throw new Error('"작성 중인 글" 팝업이 닫히지 않았다 — 이후 클릭이 전부 무시된다')
+  // 팝업이 사라진 직후에도 에디터는 잠깐 입력을 받지 않는다. 여기서 안 기다리면
+  // 첫 타이핑이 통째로 삼켜진다.
+  await sleep(1500)
   return { found: true, dismissed: true }
+}
+
+/**
+ * 에디터가 정말 비어 있는지 확인하고, 아니면 비운다.
+ *
+ * 팝업을 닫는 것만으로는 부족하다. 네이버는 자동저장분을 팝업 없이 복원해두기도 하고,
+ * 팝업이 우리가 확인한 뒤에 뜨기도 한다. 실제로 지난 실행의 잔재가 남은 채 그 위에
+ * 덧씌워져 제목이 "…금융규제의 …금융규제의 완벽한 폭풍…" 처럼 겹쳤다(2026-08-14).
+ * 빈 상태를 전제하지 말고 강제한다.
+ */
+export async function ensureBlankEditor(page, frame) {
+  const read = () => frame.evaluate((s) => {
+    const t = document.querySelector(s.title)
+    const bodies = [...document.querySelectorAll(`${s.bodyComponent} ${s.paragraph}`)]
+    const clean = (e) => (e?.innerText || '')
+      .replace(/​/g, '')
+      // 플레이스홀더가 innerText에 섞여 나온다
+      .replace(/^제목$/, '')
+      .replace(/나를 돌아보는 회고.*$/s, '')
+      .trim()
+    return { title: clean(t), body: bodies.map(clean).filter(Boolean).join('\n') }
+  }, SEL)
+
+  let st = await read()
+  if (!st.title && !st.body) return { wasBlank: true, cleared: false }
+
+  // 비운다: 본문 → 제목 순. 각각 전체 선택 후 삭제.
+  for (const target of ['body', 'title']) {
+    const sel = target === 'title' ? SEL.title : `${SEL.bodyComponent} ${SEL.paragraph}`
+    const el = await frame.$(sel)
+    if (!el) continue
+    await el.click()
+    await sleep(300)
+    await frame.evaluate((s) => {
+      const nodes = document.querySelectorAll(s)
+      const root = nodes[0]?.closest('.se-component') || nodes[0]
+      if (!root) return
+      const r = document.createRange()
+      r.selectNodeContents(root)
+      const g = window.getSelection(); g.removeAllRanges(); g.addRange(r)
+    }, sel)
+    await sleep(200)
+    await page.keyboard.press('Backspace')
+    await sleep(400)
+  }
+
+  st = await read()
+  if (st.title || st.body) {
+    throw new Error(`에디터를 비우지 못했다 — 제목:"${st.title.slice(0, 30)}" 본문:"${st.body.slice(0, 30)}"`)
+  }
+  return { wasBlank: false, cleared: true }
 }
 
 /** 도움말 패널이 열려 있으면 닫는다 (첫 진입 시 뜬다) */
