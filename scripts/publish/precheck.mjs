@@ -31,7 +31,13 @@ export async function precheckOffline(date, state) {
   if (draft.warnings.length) checks.push({ name: '초안 경고', ok: true, note: draft.warnings.join(' / ') })
 
   // 2-a. 상태 파일 — 이미 예약까지 끝났으면 더 볼 것도 없다
-  if (isComplete(state)) return fail('중복 방지', `이미 예약 완료 (${state.scheduledFor})`)
+  if (isComplete(state)) {
+    // note에는 이전 실행이 남긴 사유 문장이 그대로 들어 있어, 앞에 또 붙이면 겹친다
+    const why = state.scheduledFor
+      ? `이미 예약 완료 — ${state.scheduledFor}`
+      : (state.steps?.schedule?.note || '이미 예약 완료 (시각 미기록)')
+    return fail('중복 방지', why)
+  }
   pass('상태 파일', '미완료 — 진행 대상')
 
   // 2-b. 이미 발행됐는가 (상태 파일이 지워진 채 재실행되는 경우 방어)
