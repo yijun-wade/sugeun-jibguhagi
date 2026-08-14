@@ -10,7 +10,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { parseDraft } from './lib/draft.mjs'
-import { openEditor, dismissResumePopup, dismissHelpPanel, assertAccount, reserveCount, BLOG_ID } from './lib/editor.mjs'
+import { openEditor, dismissResumePopup, dismissHelpPanel, assertAccount, openPublishPanel, reserveCount, reservedTitles, BLOG_ID } from './lib/editor.mjs'
 import { fetchPublished, findDuplicate, normalizeDate } from './lib/published.mjs'
 import { isComplete } from './lib/state.mjs'
 
@@ -71,9 +71,23 @@ export async function precheckOnline(page, draft) {
   const popup = await dismissResumePopup(frame)
   checks.push({ name: '이어쓰기 팝업', ok: true, note: popup.found ? '감지 → 닫음(이어쓰기 아님)' : '없음' })
 
-  // 예약 건수 기준선. 등록 검증은 절대 수가 아니라 이 값의 증가분으로 한다.
-  const baseline = await reserveCount(frame)
-  checks.push({ name: '예약 건수 기준선', ok: true, note: `${baseline}건` })
+  // 예약 목록도 중복 검사에 넣는다. 예약분은 아직 발행 전이라 발행 목록 조회에
+  // 잡히지 않는다 — 상태 파일이 사라지면 같은 글을 두 번 예약하게 된다.
+  let baseline = null
+  try {
+    await openPublishPanel(frame)
+    baseline = await reserveCount(frame)
+    const titles = await reservedTitles(frame)
+    const norm = (t) => String(t || '').replace(/[\s.,!?'"''""…·\-—]/g, '')
+    const dup = titles.find((t) => norm(t) && norm(t) === norm(draft.title))
+    if (dup) {
+      checks.push({ name: '중복 방지', ok: false, reason: `이미 예약됨: "${dup}"` })
+      return { ok: false, checks }
+    }
+    checks.push({ name: '예약 목록', ok: true, note: `${baseline}건 (중복 없음)` })
+  } catch (e) {
+    checks.push({ name: '예약 목록', warn: true, ok: true, note: `⚠ 조회 실패 — 중복 예약 탐지 없이 진행: ${e.message}` })
+  }
 
   return { ok: true, checks, frame, reserveBaseline: baseline }
 }

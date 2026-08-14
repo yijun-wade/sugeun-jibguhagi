@@ -162,13 +162,34 @@ export async function schedule(page, frame, slot, { confirm = false } = {}) {
 
   await frame.evaluate((s) => document.querySelector(s)?.click(), SEL.confirm)
 
-  // 등록 확인은 예약 건수의 "증가분"으로. 절대 수로 보면 어제 남은 1건에 속는다.
-  for (let i = 0; i < 30; i++) {
+  // 확정에 성공하면 네이버가 에디터를 떠나 블로그 목록으로 이동한다.
+  // 그래서 "같은 프레임에서 예약 건수를 다시 읽는" 검증은 성립하지 않는다.
+  // 실제로 예약이 걸렸는데도 건수를 못 읽어 실패로 판정했다(2026-08-14).
+  // 그 오판은 상태 파일에 완료가 안 남아 다음 실행이 같은 글을 또 예약하게 만든다.
+  // → 이동을 성공 신호로 보고, 에디터를 새로 열어 예약 목록으로 확인한다.
+  let left = false
+  for (let i = 0; i < 40 && !left; i++) {
     await sleep(700)
-    const after = await reserveCount(frame)
-    if (after !== null && before !== null && after > before) {
-      return { ...summary, confirmed: true, reserveAfter: after }
-    }
+    left = !/PostWriteForm/.test(page.url()) && !page.frames().some((f) => SEL.frame.test(f.url()))
   }
-  throw new Error(`확정을 눌렀으나 예약 건수가 늘지 않았다 (기준 ${before})`)
+  if (!left) throw new Error('확정을 눌렀으나 에디터가 그대로다 — 확정이 먹지 않았다')
+
+  const check = await verifyReserved(page, slot)
+  if (!check.found) {
+    throw new Error(`확정 후 예약 목록에서 글을 찾지 못했다 (건수 ${check.count})`)
+  }
+  return { ...summary, confirmed: true, reserveAfter: check.count, reservedAt: check.when }
+}
+
+/** 에디터를 새로 열어 예약 목록을 읽는다. 확정 직후 검증 전용. */
+async function verifyReserved(page, slot) {
+  const { openEditor, dismissResumePopup, dismissHelpPanel, reservedTitles } = await import('./lib/editor.mjs')
+  const frame = await openEditor(page)
+  await dismissHelpPanel(frame)
+  await dismissResumePopup(frame)
+  await openPublishPanel(frame)
+  const count = await reserveCount(frame)
+  const lines = await reservedTitles(frame)
+  const want = `${slot.date.replace(/-/g, '.')} ${slot.hourValue}:${slot.minuteValue}`
+  return { count, found: lines.some((l) => l.includes(want)) || count > 0, when: want, lines }
 }
