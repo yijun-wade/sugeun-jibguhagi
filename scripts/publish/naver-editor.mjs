@@ -228,11 +228,23 @@ async function assembleBody(page, frame, draft, placements, assets) {
   }
 
   let prevWasSubhead = false
+  let prevWasImage = byIndex.has(-1)
   for (let i = 0; i < draft.blocks.length; i++) {
-    if (i > 0 || byIndex.has(-1)) {
+    // 문서 첫 이미지 뒤에는 에디터가 남겨둔 빈 문단이 그대로 커서 자리다.
+    // 여기서 Enter를 치면 빈 줄이 하나 더 생긴다.
+    const afterLeadImage = i === 0 && prevWasImage
+    if ((i > 0 || prevWasImage) && !afterLeadImage) {
+      // Enter 한 번은 문단만 바꾼다 — 화면에서는 앞 문단에 딱 붙어 보인다.
+      // 초안은 문단 사이가 빈 줄로 떨어져 있으므로 빈 문단을 하나 넣어 그 간격을 살린다.
+      // 이미지 뒤에는 에디터가 이미 문단을 만들어 두므로 한 번만 친다.
       await page.keyboard.press('Enter')
-      await sleep(200)
+      await sleep(180)
+      if (!prevWasImage) {
+        await page.keyboard.press('Enter')
+        await sleep(180)
+      }
     }
+    prevWasImage = false
     // 소제목 다음 문단은 소제목 서식을 물려받는다. 새 문단에서 본문으로 되돌린다.
     if (prevWasSubhead) {
       await setParagraphFormat(frame, '본문')
@@ -249,6 +261,7 @@ async function assembleBody(page, frame, draft, placements, assets) {
       await sleep(250)
       await insertImage(page, frame, pathOf(byIndex.get(i).card))
       await humanPause()
+      prevWasImage = true
     }
   }
 }

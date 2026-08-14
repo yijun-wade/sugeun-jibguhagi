@@ -78,14 +78,18 @@ try {
       fs: getComputedStyle(e.querySelector('span') || e).fontSize,
       cls: (e.className.match(/se-fs\d+|se-section-\w+/g) || []).join(','),
       comp: (e.closest('.se-component')?.className.match(/se-\w+/g) || []).filter((c) => !/se-l-|se-component|se-text$/.test(c)).join(','),
-    })).filter((x) => x.text))
+    })))
   console.log('\n■ 문단별 서식')
-  raw.forEach((r, i) => console.log(`  ${String(i).padStart(2)} b=${r.b} i=${r.i} ${String(r.fs).padStart(5)} ${r.comp.padEnd(14)} ${r.text}`))
+  raw.forEach((r, i) => console.log(`  ${String(i).padStart(2)} b=${r.b} i=${r.i} ${String(r.fs).padStart(5)} ${r.comp.padEnd(14)} ${r.text || '(빈 줄)'}`))
 
   console.log('\n네이버 임시저장 글을 직접 열어 확인해주세요. 발행은 하지 않았습니다.\n')
-  await frame.evaluate(() => window.scrollTo(0, 0))
-  await new Promise((r) => setTimeout(r, 800))
-  await page.screenshot({ path: `.publish-assets/assemble-${date}.png`, fullPage: true })
+  // iframe 내부를 스크롤해야 본문이 보인다. 상단부터 두 컷.
+  await frame.evaluate(() => (document.scrollingElement || document.documentElement).scrollTo(0, 0))
+  await new Promise((r) => setTimeout(r, 900))
+  await page.screenshot({ path: `.publish-assets/assemble-${date}-1.png` })
+  await frame.evaluate(() => (document.scrollingElement || document.documentElement).scrollBy(0, 900))
+  await new Promise((r) => setTimeout(r, 900))
+  await page.screenshot({ path: `.publish-assets/assemble-${date}-2.png` })
 } catch (e) {
   console.error(`\n❌ 실패: ${e.message}\n`)
   await page.screenshot({ path: `.publish-assets/assemble-fail-${date}.png` })
