@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Fri, 14 Aug 2026 22:31:29 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 15 Aug 2026 22:30:08 GMT</lastBuildDate>
+    <item>
+      <title>정부 10만가구 공급·청년대출 완화, 강남은 여전히 '관망'</title>
+      <link>https://www.suzip.kr/briefing/2026-08-16</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-08-16</guid>
+      <pubDate>Sat, 15 Aug 2026 22:00:00 GMT</pubDate>
+      <description>• 정부가 주택 10만가구를 공급하고 신혼부부 대출 조건을 완화했지만, 강남·용산 등 핵심 입지 확보가 관건이다.
+• 청년 금융지원으로 결혼 페널티가 없어지고 보금자리론 소득 기준이 낮아지지만, 시장에선 실효성을 의심한다.
+• 강남 집값은 13주 만에 보합세로 접어든 반면 강북과 전세값은 계속 오르는 등 지역별 편차가 벌어지고 있다.
+
+정부 의도: 수도권 주택 부족으로 치솟는 집값을 잡기 위해 공급을 늘리고, 청년·신혼부부가 집을 살 수 있도록 대출 문턱을 낮추려는 것. 일반인들이 체감할 수 있는 주택 시장 안정이 목표다.
+
+시장 변화: 공급 물량이 늘어나면서 강북과 신규 택지 지역 중심으로 가격 안정이 이루어질 가능성이 높다. 다만 강남 같은 선호 지역은 여전히 관망 분위기가 지속될 수 있다.</description>
+    </item>
     <item>
       <title>실거주 vs 투자, 부동산 정책으로 갈린다</title>
       <link>https://www.suzip.kr/briefing/2026-08-15</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 가계자산의 71.9%가 부동산에 쏠린 구조적 불평등을 해소하려고 하지만, 동시에 가계부채 위험도 관리해야 하는 상황에 놓여 있다. 때문에 대출규제 완화 요구와 매물 부족 해결이라는 상충하는 두 가지 목표 사이에서 균형을 맞추려는 중이다.
 
 시장 변화: 집값은 계속 오르는데 대출 한도는 줄고 있어서, 현금이 많은 사람만 집을 살 수 있는 구조가 심해질 것 같다. 전세 시장도 매매처럼 올라가면서 전월세 상승이 계속될 가능성이 크다.</description>
-    </item>
-    <item>
-      <title>정부 보유세 강화, 대출 규제로 시장 냉각 신호</title>
-      <link>https://www.suzip.kr/briefing/2026-07-27</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-07-27</guid>
-      <pubDate>Sun, 26 Jul 2026 22:00:00 GMT</pubDate>
-      <description>• 이 대통령 지지율 46.3%로 하락, 부동산 정책과 보유세 강화 발언이 민심 반발 야기
-• 동탄 아파트값 한 달새 6.25% 급등하며 경기 지역 선호 심화, 서울은 상승폭 둔화
-• 정부가 전세대출 한도를 2억 원 수준으로 낮추고 주택담보인정비율(LTV) 상한을 내리는 등 금융 조이기 본격화
-
-정부 의도: 부동산 가격 급등을 억제하고 투기 수요를 차단하려고 합니다. 특히 보유세(종부세) 강화와 대출 규제로 다주택자와 투기세력을 압박하면서, 동시에 실수요자의 주택 구입 부담을 줄이려는 의도로 보입니다.
-
-시장 변화: 전세와 월세 시장이 더 비싸질 가능성이 높습니다. 대출 규제로 매매 시장이 얼면서 세입자들이 전세 시장으로 몰리기 때문입니다. 또한 지역 간 양극화가 심화되어 경기 지역의 가격 상승이 가속화될 것 같습니다.</description>
     </item>
   </channel>
 </rss>
