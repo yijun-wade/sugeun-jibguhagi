@@ -34,17 +34,46 @@ export const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 // 단계 사이 대기는 상수가 아니라 범위로 — 매번 똑같은 간격은 사람이 만들지 않는다
 export const humanPause = (min = 400, max = 1100) => sleep(min + Math.floor(Math.random() * (max - min)))
 
-/** 에디터를 열고 프레임을 확보한다. 프레임이 뜨는 것이 로그인 판정 신호이기도 하다. */
-export async function openEditor(page, { timeout = 45000 } = {}) {
-  await page.goto(WRITE_URL, { waitUntil: 'networkidle2', timeout })
-  let frame = null
-  for (let i = 0; i < 25 && !frame; i++) {
-    await sleep(700)
-    frame = page.frames().find((f) => SEL.frame.test(f.url()))
+/**
+ * 에디터를 열고 프레임을 확보한다. 프레임이 뜨는 것이 로그인 판정 신호이기도 하다.
+ *
+ * 대기가 넉넉해야 한다. 크롬이 이미 떠 있어도 프레임 확보에 13초가 걸린 적이 있고,
+ * launchd는 크롬이 꺼진 상태에서 콜드 스타트하므로 더 느리다. 실제로 대기 17.5초로는
+ * 부족해 자동 실행이 이틀 연속 실패했다(2026-08-15·16).
+ *
+ * 실패 사유도 구분해야 한다. "로그아웃이거나 구조가 바뀌었다"로 뭉뚱그리면 멀쩡한
+ * 로그인을 의심하며 엉뚱한 곳을 파게 된다 — 실제로 그랬다.
+ */
+export async function openEditor(page, { timeout = 90000, attempts = 2 } = {}) {
+  let lastErr = null
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      // networkidle2는 네이버 에디터처럼 폴링이 계속 도는 페이지에서 잘 안 끝난다.
+      // 프레임 등장을 직접 기다리므로 goto는 domcontentloaded면 충분하다.
+      await page.goto(WRITE_URL, { waitUntil: 'domcontentloaded', timeout })
+    } catch (e) {
+      lastErr = new Error(`페이지 이동 실패(${attempt}/${attempts}): ${e.message}`)
+      continue
+    }
+
+    const deadline = Date.now() + timeout
+    let frame = null
+    while (!frame && Date.now() < deadline) {
+      await sleep(700)
+      frame = page.frames().find((f) => SEL.frame.test(f.url()))
+    }
+    if (frame) {
+      await sleep(1500)
+      return frame
+    }
+
+    // 로그인 페이지로 튕겼는지로 사유를 가른다
+    const url = page.url()
+    lastErr = /nidlogin|nid\.naver/.test(url)
+      ? new Error('네이버가 로그인 페이지로 보냈다 — 세션 만료. 사람이 1회 로그인해야 한다')
+      : new Error(`에디터 프레임이 ${timeout / 1000}초 안에 뜨지 않았다 (현재 ${url.slice(0, 60)}) — 느린 것이지 로그아웃이 아닐 수 있다`)
   }
-  if (!frame) throw new Error('에디터 프레임이 뜨지 않았다 — 로그아웃이거나 네이버가 구조를 바꿨다')
-  await sleep(1500)
-  return frame
+  throw lastErr
 }
 
 /**

@@ -26,11 +26,12 @@ const CATEGORY_META = {
   용어사전: { slug: '용어', naver: '진짜 쉬운 용어사전' },
   정책: { slug: '정책', naver: '요즘 부동산 정책' },
   임장가이드: { slug: '임장가이드', naver: '동네 임장 가이드' },
+  실거래가분석: { slug: '실거래가', naver: '실거래가 분석' },
 }
 
 // ── 후보 풀 ──────────────────────────────────────────────────
 function buildPools() {
-  const pools = { 용어사전: [], 정책: [], 임장가이드: [] }
+  const pools = { 용어사전: [], 정책: [], 임장가이드: [], 실거래가분석: [] }
 
   try {
     for (const g of readJson('glossary.json')) {
@@ -47,17 +48,42 @@ function buildPools() {
   try {
     const apts = readJson('seoul-apt-enriched.json')
     const prices = readJson('apt-prices.json')
-    const byGu = new Map()
-    for (const a of apts) {
-      if (!a.sigungu) continue
-      if (!byGu.has(a.sigungu)) byGu.set(a.sigungu, [])
-      byGu.get(a.sigungu).push({ ...a, price: prices[a.kaptCode] || null })
+    const withPrice = apts
+      .filter((a) => a.sigungu && a.dong && prices[a.kaptCode]?.avg)
+      .map((a) => ({ ...a, price: prices[a.kaptCode] }))
+
+    // ── 임장가이드: 동 단위 ──────────────────────────────────
+    // 구 단위(25개)는 한 달이면 소진된다. 동으로 쪼개면 117개가 나오고,
+    // 글도 "노원구 전체"보다 "상계동"이 구체적이라 검색 의도에 더 맞는다.
+    const byDong = new Map()
+    for (const a of withPrice) {
+      const k = `${a.sigungu} ${a.dong}`
+      if (!byDong.has(k)) byDong.set(k, [])
+      byDong.get(k).push(a)
     }
-    for (const [gu, list] of byGu) {
-      // 실거래가가 붙은 단지가 충분한 구만 쓴다 — 숫자 없는 임장 가이드는 일반론이 된다
-      const priced = list.filter((a) => a.price?.avg)
-      if (priced.length < 8) continue
-      pools.임장가이드.push({ category: '임장가이드', subject: gu, data: { gu, total: list.length, priced } })
+    for (const [k, list] of byDong) {
+      // 실거래가 5건 미만이면 "동네"를 말할 근거가 부족하다 — 일반론이 된다
+      if (list.length < 5) continue
+      const [gu, dong] = k.split(' ')
+      pools.임장가이드.push({ category: '임장가이드', subject: k, data: { gu, dong, list } })
+    }
+
+    // ── 실거래가 분석: 단지 단위 ─────────────────────────────
+    // 거래 1건짜리는 우연일 수 있어 2건 이상만 쓴다. 동·구 평균과 비교해야
+    // "비싼가 싼가"를 말할 수 있으므로 평균을 같이 실어 보낸다.
+    const dongAvg = new Map()
+    for (const [k, list] of byDong) {
+      dongAvg.set(k, Math.round(list.reduce((s2, a) => s2 + a.price.avg, 0) / list.length))
+    }
+    for (const a of withPrice) {
+      if ((a.price.count || 0) < 2) continue
+      if (!a.kaptdaCnt || a.kaptdaCnt < 100) continue // 소규모는 비교 근거가 약하다
+      const k = `${a.sigungu} ${a.dong}`
+      pools.실거래가분석.push({
+        category: '실거래가분석',
+        subject: a.kaptName,
+        data: { apt: a, dongAvg: dongAvg.get(k), dongCount: byDong.get(k)?.length || 0 },
+      })
     }
   } catch (e) { console.warn(`  아파트 데이터 로드 실패: ${e.message}`) }
 
@@ -137,31 +163,52 @@ ${TONE}`
   }
 
   if (topic.category === '임장가이드') {
-    const byDong = new Map()
-    for (const a of d.priced) {
-      if (!byDong.has(a.dong)) byDong.set(a.dong, [])
-      byDong.get(a.dong).push(a)
-    }
-    const lines = [...byDong.entries()]
-      .sort((a, b) => b[1].length - a[1].length)
-      .slice(0, 5)
-      .map(([dong, list]) => {
-        const top = list.sort((a, b) => b.price.avg - a.price.avg).slice(0, 5)
-          .map((a) => `    - ${a.kaptName}: ${(a.price.avg / 10000).toFixed(1)}억 (${a.kaptdaCnt}세대${a.useAprDay ? `, ${a.useAprDay.slice(2, 4)}년` : ''})`)
-        return `  ${dong} (단지 ${list.length}개)\n${top.join('\n')}`
-      })
-    return `서울 ${d.gu} 동네별 임장 가이드를 써줘. 1500자 내외.
+    // 상위만 보여주면 "저렴한 곳은 6억대"처럼 실제보다 비싸게 말한다(실측: 5.1억 단지를
+    // 못 봄). 가격대 분포를 말하는 글이므로 위·아래를 모두 실어야 한다.
+    const sorted = d.list.slice().sort((a, b) => b.price.avg - a.price.avg)
+    const fmt = (a) => `  - ${a.kaptName}: ${(a.price.avg / 10000).toFixed(1)}억, 평당 ${a.price.perPy}만원 (${a.kaptdaCnt}세대${a.useAprDay ? `, ${a.useAprDay.slice(0, 4)}년 준공` : ''})`
+    const top = sorted.length <= 12
+      ? sorted.map(fmt)
+      : [...sorted.slice(0, 7).map(fmt), `  … (중간 ${sorted.length - 12}개 생략)`, ...sorted.slice(-5).map(fmt)]
+    const avg = Math.round(d.list.reduce((s2, a) => s2 + a.price.avg, 0) / d.list.length)
+    const lo = sorted[sorted.length - 1], hi = sorted[0]
+    return `서울 ${d.gu} ${d.dong} 아파트 임장 가이드를 써줘. 1400자 내외.
 
 [근거 데이터 — 실거래 기반. 여기 없는 단지·가격을 지어내지 말 것]
-${d.gu} 전체 단지 ${d.total}개, 실거래가 확인된 단지 ${d.priced.length}개
-${lines.join('\n')}
+${d.gu} ${d.dong}, 실거래 확인된 단지 ${d.list.length}개, 평균 ${(avg / 10000).toFixed(1)}억
+가격대: 최저 ${(lo.price.avg / 10000).toFixed(1)}억(${lo.kaptName}) ~ 최고 ${(hi.price.avg / 10000).toFixed(1)}억(${hi.kaptName})
+${top.join('\n')}
 
-동네별로 나눠서, 각 동의 성격(교통·학군·연식·가격대)을 위 데이터에 근거해 설명해줘.
-단지명과 가격은 위 목록에서만 인용할 것. 지하철 노선처럼 데이터에 없는 사실은
-일반적으로 알려진 수준에서만 언급하고 단정하지 말 것.
+이 동네를 처음 보는 사람이 "여기 나한테 맞나"를 판단할 수 있게 써줘.
+가격대 분포(제일 비싼 곳과 저렴한 곳의 차이가 왜 나는지), 연식과 세대수로 본 성격,
+어떤 사람에게 맞는 동네인지. 단지명·가격·세대수·연식은 위 목록에서만 인용할 것.
+지하철·학군처럼 데이터에 없는 사실은 단정하지 말고 일반적으로 알려진 수준에서만.
 ${TONE}`
   }
-  throw new Error(`알 수 없는 카테고리: ${topic.category}`)
+
+  if (topic.category === '실거래가분석') {
+    const a = d.apt
+    const diff = d.dongAvg ? Math.round(((a.price.avg - d.dongAvg) / d.dongAvg) * 100) : null
+    return `"${a.kaptName}" 실거래가를 분석하는 블로그 글을 써줘. 1200자 내외.
+
+[근거 데이터 — 여기 없는 수치를 지어내지 말 것]
+단지명: ${a.kaptName}
+위치: ${a.sigungu} ${a.dong} (${a.doroJuso || '주소 미상'})
+세대수: ${a.kaptdaCnt}세대${a.kaptDongCnt ? ` / ${a.kaptDongCnt}개 동` : ''}
+준공: ${a.useAprDay ? `${a.useAprDay.slice(0, 4)}년 ${Number(a.useAprDay.slice(4, 6))}월` : '미상'}
+난방: ${a.codeHeatNm || '미상'}
+최근 실거래 평균: ${(a.price.avg / 10000).toFixed(1)}억 (평당 ${a.price.perPy}만원, ${a.price.ym} 기준 ${a.price.count}건)
+같은 동(${a.dong}) 평균: ${d.dongAvg ? `${(d.dongAvg / 10000).toFixed(1)}억 (단지 ${d.dongCount}개)` : '비교 불가'}
+동네 평균 대비: ${diff === null ? '비교 불가' : `${diff > 0 ? '+' : ''}${diff}%`}
+단지 소개: ${a.summary || '없음'}
+
+"이 단지가 동네 평균 대비 어떤 위치인지"를 중심으로 써줘.
+거래 건수가 ${a.price.count}건뿐이라는 점을 숨기지 말고, 표본이 적다는 한계를 분명히 밝힐 것.
+세대수·연식이 가격에 어떻게 작용하는지도 짚어줘.
+${TONE}`
+  }
+
+    throw new Error(`알 수 없는 카테고리: ${topic.category}`)
 }
 
 // ── Claude 호출 ──────────────────────────────────────────────

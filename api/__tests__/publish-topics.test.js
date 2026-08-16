@@ -78,6 +78,34 @@ test('빈 풀에도 던지지 않는다', () => {
   assert.ok(warnings.length >= 1)
 })
 
-test('CATEGORIES 4종이 슬롯 수와 맞는다', () => {
-  assert.equal(CATEGORIES.length, 4)
+test('CATEGORIES 5종 — 슬롯 4개보다 많아 매일 하나씩 쉰다', () => {
+  assert.equal(CATEGORIES.length, 5)
+})
+
+test('keyOf는 공백을 지운다 — 파일명 역산과 규칙이 같아야 한다', () => {
+  // 사용 이력은 파일명에서 역산하는데 파일명엔 공백이 없다.
+  // 정규화하지 않으면 "용산구 이촌동"을 매일 다시 고른다(지인 시스템의 그 사고).
+  assert.equal(
+    keyOf({ category: '임장가이드', subject: '용산구 이촌동' }),
+    keyOf({ category: '임장가이드', subject: '용산구이촌동' }),
+  )
+})
+
+test('5종 중 4개를 뽑고, 쉬는 카테고리가 날마다 바뀐다', () => {
+  const p = {
+    브리핑: [{ category: '브리핑', subject: 'a' }],
+    용어사전: [{ category: '용어사전', subject: 'b' }],
+    정책: [{ category: '정책', subject: 'c' }],
+    임장가이드: [{ category: '임장가이드', subject: 'd' }],
+    실거래가분석: [{ category: '실거래가분석', subject: 'e' }],
+  }
+  const skipped = new Set()
+  for (let d = 1; d <= 10; d++) {
+    const { picked } = pickTopics(p, [], 4, `2026-09-0${d}`)
+    assert.equal(picked.length, 4)
+    assert.equal(new Set(picked.map((t) => t.category)).size, 4)
+    const miss = CATEGORIES.find((c) => !picked.some((t) => t.category === c))
+    skipped.add(miss)
+  }
+  assert.ok(skipped.size >= 2, `쉬는 카테고리가 ${skipped.size}종류뿐`)
 })
