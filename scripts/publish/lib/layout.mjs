@@ -20,14 +20,23 @@ const MIDDLE_IN_ORDER = ['intent', 'market', 'demand']
 
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n))
 
-export function buildLayout(draft) {
+/**
+ * @param {object} draft
+ * @param {string[]|null} availableKeys 실제로 렌더된 카드 키. 브리핑이면 null(기본값).
+ *   범용 카드는 title/point1..3/cta 라서, 브리핑용 키(intent/market/demand)를 그대로
+ *   쓰면 이미지 경로가 undefined가 된다 — 실제로 조립이 그렇게 깨졌다(2026-08-16).
+ */
+export function buildLayout(draft, availableKeys = null) {
   const warnings = [...draft.warnings]
   const { blocks, summaryIndex, ctaIndex, disclaimerIndex, subheadIndexes, bodyStart, bodyEnd } = draft
 
   // 본문 문단 수. 여기서 장수가 결정된다.
   const bodyCount = Math.max(0, bodyEnd - bodyStart + 1)
   // 문단마다 이미지가 박히면 글보다 이미지가 많아 보인다. 문단 2개당 1장을 넘지 않는다.
-  const middleCount = clamp(Math.floor(bodyCount / 2), 0, MIDDLE_BY_PRIORITY.length)
+  const middleMax = availableKeys
+    ? availableKeys.filter((k) => k !== 'title' && k !== 'cta').length
+    : MIDDLE_BY_PRIORITY.length
+  const middleCount = clamp(Math.floor(bodyCount / 2), 0, middleMax)
 
   if (subheadIndexes.length === 0) {
     warnings.push('굵게 시작하는 소제목이 0개 — 문단 균등 분할로만 배치한다')
@@ -53,7 +62,13 @@ export function buildLayout(draft) {
   const hi = (ctaAt > -1 ? ctaAt : (disclaimerIndex === -1 ? blocks.length : disclaimerIndex)) - 1
 
   // 어떤 장을 남길지는 우선순위로, 어느 자리에 꽂을지는 논리 순서로.
-  const middleCards = MIDDLE_IN_ORDER.filter((c) => MIDDLE_BY_PRIORITY.indexOf(c) < middleCount)
+  // 범용 카드는 point1..n 이 곧 논리 순서이자 우선순위다.
+  const middlePool = availableKeys
+    ? availableKeys.filter((k) => k !== 'title' && k !== 'cta')
+    : null
+  const middleCards = middlePool
+    ? middlePool.slice(0, middleCount)
+    : MIDDLE_IN_ORDER.filter((c) => MIDDLE_BY_PRIORITY.indexOf(c) < middleCount)
 
   for (let j = 1; j <= middleCount; j++) {
     // j번째 분할 지점의 "그 앞에 넣을" 블록

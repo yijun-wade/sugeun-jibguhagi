@@ -16,15 +16,20 @@ import { isComplete } from './lib/state.mjs'
 
 export const draftPath = (date) => join(process.cwd(), 'blog-posts', `${date}-부동산브리핑.md`)
 
-/** 브라우저 없이 확인할 수 있는 것들. 크롬을 띄우기 전에 먼저 건다. */
-export async function precheckOffline(date, state) {
+/**
+ * 브라우저 없이 확인할 수 있는 것들. 크롬을 띄우기 전에 먼저 건다.
+ * @param {string} date
+ * @param {object} state
+ * @param {string|null} draftFile blog-posts 기준 파일명. 없으면 그날 브리핑.
+ */
+export async function precheckOffline(date, state, draftFile = null) {
   const checks = []
   const fail = (name, reason) => { checks.push({ name, ok: false, reason }); return { ok: false, checks } }
   const pass = (name, note) => checks.push({ name, ok: true, note })
 
   // 1. 오늘 초안이 있는가
-  const p = draftPath(date)
-  if (!existsSync(p)) return fail('초안 존재', `없음: blog-posts/${date}-부동산브리핑.md (GitHub Actions 실패?)`)
+  const p = draftFile ? join(process.cwd(), 'blog-posts', draftFile) : draftPath(date)
+  if (!existsSync(p)) return fail('초안 존재', `없음: ${draftFile || `${date}-부동산브리핑.md`} (GitHub Actions 실패?)`)
   const draft = parseDraft(readFileSync(p, 'utf-8'))
   if (!draft.title) return fail('초안 존재', '초안에 제목이 없다')
   pass('초안 존재', `"${draft.title}"`)

@@ -29,6 +29,13 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node scripts/generate-blog-post.mjs
 
+      # 8시간 간격 하루 2편이므로 브리핑 1편 + 카테고리 1편.
+      # 카테고리는 5종을 돌려가며 쓰고, 소재 풀은 1,100건이 넘어 3년치가 있다.
+      - name: Generate category draft
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/generate-category-posts.mjs --count=1
+
       - name: Build Naver paste pack
         run: node scripts/build-naver-pack.mjs
 

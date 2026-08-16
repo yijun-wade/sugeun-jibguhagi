@@ -14,11 +14,11 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 
 import { join } from 'node:path'
 import { parseDraft } from './lib/draft.mjs'
 import { buildLayout } from './lib/layout.mjs'
-import { nextSlot } from './lib/slot.mjs'
+import { nextSlots, SLOT_HOURS } from './lib/slot.mjs'
 import { load, save, mark, done, isComplete } from './lib/state.mjs'
 import { notifyFail, notifyOk } from './lib/notify.mjs'
 import { connectChrome, newPage } from './lib/chrome.mjs'
-import { SEL, humanPause } from './lib/editor.mjs'
+import { SEL, humanPause, reservedTitles, openPublishPanel } from './lib/editor.mjs'
 import { renderCards } from './render-cards.mjs'
 import { assemble } from './naver-editor.mjs'
 import { schedule } from './naver-schedule.mjs'
@@ -71,14 +71,30 @@ const log = (m) => console.log(m)
  *  하루에 여러 편이 나가는 것 자체가 대량 발행 신호다. */
 function pendingAlert() {
   const dir = join(process.cwd(), 'blog-posts')
-  const dates = readdirSync(dir)
-    .map((f) => (f.match(/^(\d{4}-\d{2}-\d{2})-부동산브리핑\.md$/) || [])[1])
-    .filter(Boolean)
-    .filter((d) => d < DATE)
+  return readdirSync(dir)
+    .filter((f) => /^\d{4}-\d{2}-\d{2}-.+\.md$/.test(f) && f.slice(0, 10) < DATE)
     .sort()
-    .slice(-14)
-  const pending = dates.filter((d) => !isComplete(load(d)))
-  return pending
+    .slice(-20)
+    .map((f) => f.replace(/\.md$/, ''))
+    .filter((id) => !isComplete(load(id)))
+}
+
+/** 그 날짜의 초안 전부. 카테고리 구분 없이 파일명으로 찾는다. */
+function draftsFor(date) {
+  return readdirSync(join(process.cwd(), 'blog-posts'))
+    .filter((f) => f.startsWith(`${date}-`) && f.endsWith('.md'))
+    .sort()
+}
+
+/** 이미 예약된 시각들 — 슬롯 배정에서 제외한다 */
+async function takenSlots(frame) {
+  try {
+    const lines = await reservedTitles(frame)
+    return lines
+      .map((l) => (l.match(/(\d{4})\.(\d{2})\.(\d{2})\s+(\d{2}):(\d{2})/) || []).slice(1))
+      .filter((m) => m.length === 5)
+      .map(([y, mo, d, h, mi]) => `${y}-${mo}-${d} ${h}:${mi}`)
+  } catch { return [] }
 }
 
 function recordPublished(date, info) {
@@ -87,127 +103,148 @@ function recordPublished(date, info) {
   writeFileSync(join(dir, `${date}.json`), JSON.stringify(info, null, 2))
 }
 
+/** 초안 한 편을 조립·예약한다. 실패해도 다음 초안으로 넘어간다. */
+async function publishOne(browser, draftFile, slot, { dry }) {
+  // 초안마다 새 탭을 쓴다. 같은 탭을 재사용하면 앞 글의 네비게이션이 살아 있어
+  // 두 번째 초안에서 net::ERR_ABORTED 가 났다(2026-08-16).
+  const page = await browser.newPage()
+  await page.setViewport({ width: 1440, height: 950 })
+  try {
+    return await publishOneOn(page, draftFile, slot, { dry })
+  } finally {
+    await page.close().catch(() => {})
+  }
+}
+
+async function publishOneOn(page, draftFile, slot, { dry }) {
+  const id = draftFile.replace(/\.md$/, '')
+  const date = draftFile.slice(0, 10)
+  const state = load(id)
+  state.draft = `blog-posts/${draftFile}`
+
+  const off = await precheckOffline(date, state, draftFile)
+  printChecks(off.checks)
+  if (!off.ok) {
+    const why = off.checks.find((c) => !c.ok)?.reason || '사전 점검 실패'
+    if (/이미 (예약|발행)/.test(why)) { mark(state, 'schedule', true, { note: why, byOtherRun: true }); return { skipped: why } }
+    mark(state, 'precheck', false, { reason: why })
+    return { failed: why }
+  }
+
+  const draft = off.draft
+  const on = await precheckOnline(page, draft)
+  printChecks(on.checks)
+  if (!on.ok) {
+    const why = on.checks.find((c) => !c.ok)?.reason || '온라인 점검 실패'
+    if (/이미 (예약|발행)/.test(why)) { mark(state, 'schedule', true, { note: why, byOtherRun: true }); return { skipped: why } }
+    mark(state, 'precheck', false, { reason: why })
+    return { failed: why }
+  }
+  mark(state, 'precheck', true, { reserveBaseline: on.reserveBaseline })
+
+  // 카드 — 파일이 남아 있으면 다시 렌더하지 않는다
+  let assets
+  const prev = state.steps.images
+  if (done(state, 'images') && prev?.files?.every((f) => existsSync(f))) {
+    assets = prev.files.map((path) => ({ key: path.replace(/^.*\/\d+-|\.png$/g, ''), path }))
+    log(`  · 카드 재사용 ${assets.length}장`)
+  } else {
+    log('  · 카드 렌더')
+    assets = await renderCards(date, { draftFile })
+    mark(state, 'images', true, { files: assets.map((a) => a.path) })
+  }
+  await humanPause(800, 2000)
+
+  // 배치는 "실제로 렌더된 카드 키"로 만들어야 한다. 카드 종류(브리핑 vs 범용)에 따라
+  // 키가 다르므로 렌더 뒤에 계산한다.
+  const { placements, warnings } = buildLayout(draft, assets.map((a) => a.key))
+  if (warnings.length) state.warnings = warnings
+
+  log('  · 에디터 조립')
+  const a2 = await assemble(page, { draft, placements, assets })
+  mark(state, 'assemble', true, { blocks: a2.blocks, images: a2.images })
+  log(`    문단 ${a2.blocks} · 이미지 ${a2.images}`)
+  await humanPause(1000, 2500)
+
+  log(`  · 예약 ${slot.date} ${slot.hourValue}:${slot.minuteValue}`)
+  const frame = page.frames().find((f) => SEL.frame.test(f.url()))
+  const sc = await schedule(page, frame, slot, { confirm: !dry })
+  if (!sc.confirmed) { mark(state, 'schedule', false, { reason: '드라이런' }); return { dry: true } }
+
+  state.scheduledFor = `${slot.date} ${slot.hourValue}:${slot.minuteValue}`
+  mark(state, 'schedule', true, { reserveAfter: sc.reserveAfter })
+  recordPublished(id, { id, date, title: draft.title, scheduledFor: state.scheduledFor, images: a2.images, blocks: a2.blocks, tags: draft.tags })
+  return { scheduled: state.scheduledFor, title: draft.title }
+}
+
 async function main() {
   const sync = await syncDrafts()
   if (!sync.ok) log(`  ⚠️  초안 동기화 실패 — 로컬 초안으로 진행: ${sync.reason}`)
 
-  // 날짜를 지정하지 않았으면 오늘 것을 쓰되, 아직 안 만들어졌으면 가장 최근 초안을 쓴다.
-  // GitHub Actions는 07:00 KST에 도는데 08:30 슬롯이 그보다 빠를 수도, 워크플로가
-  // 하루 밀릴 수도 있다. 그때마다 "초안 없음"으로 종료하면 매일 빈다.
   if (!DATE) {
     const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
-    DATE = existsSync(draftPath(today)) ? today : (latestDraftDate() || today)
+    DATE = draftsFor(today).length ? today : (latestDraftDate() || today)
   }
-  log(`\n■ suzip 발행 — ${DATE}${DRY ? '  (드라이런)' : ''}\n`)
 
-  const state = load(DATE)
-  state.draft = `blog-posts/${DATE}-부동산브리핑.md`
-
-  // ── STEP 0 사전 점검 (오프라인) ─────────────────────────────
-  const off = await precheckOffline(DATE, state)
-  printChecks(off.checks)
-  if (!off.ok) {
-    const why = off.checks.find((c) => !c.ok)?.reason || '사전 점검 실패'
-    // 이미 끝난 건은 실패가 아니다. 알림을 울리지 않고, 완료로 표시한다 —
-    // 미완료로 두면 "밀린 초안" 경보가 이 글을 영영 센다. 거짓 경보가 쌓이면
-    // 진짜 경보를 무시하게 된다.
-    if (/이미 (예약|발행)/.test(why)) {
-      mark(state, 'schedule', true, { note: why, byOtherRun: true })
-      log(`\n→ 건너뜀: ${why}\n`)
-      return
-    }
-    mark(state, 'precheck', false, { reason: why })
-    await notifyFail(`${DATE} 발행 중단 — ${why}`)
-    log(`\n→ 차단됨. 글을 만들지 않고 종료.\n`)
-    return
-  }
-  const draft = off.draft
-  const { placements, warnings } = buildLayout(draft)
-  if (warnings.length) state.warnings = warnings
+  // 그날 초안 중 아직 예약 안 된 것만. 하루 슬롯 수를 넘지 않는다 —
+  // 밀린 것까지 몰아 올리면 그 자체가 대량 발행 신호다(스펙 리스크 1).
+  const all = draftsFor(DATE)
+  const todo = all.filter((f) => !isComplete(load(f.replace(/\.md$/, '')))).slice(0, SLOT_HOURS.length)
+  log(`\n■ suzip 발행 — ${DATE}${DRY ? '  (드라이런)' : ''}`)
+  log(`  초안 ${all.length}편 중 ${todo.length}편 대상 (하루 슬롯 ${SLOT_HOURS.length}개)\n`)
+  if (!todo.length) { log('→ 오늘 처리할 초안이 없다\n'); return }
 
   const { browser, close } = await connectChrome()
   const page = await newPage(browser)
   await page.setViewport({ width: 1440, height: 950 })
 
+  const results = []
   try {
-    // ── STEP 0 사전 점검 (온라인) ───────────────────────────────
-    const on = await precheckOnline(page, draft)
-    printChecks(on.checks)
-    if (!on.ok) {
-      const why = on.checks.find((c) => !c.ok)?.reason || '온라인 점검 실패'
-      if (/이미 (예약|발행)/.test(why)) {
-        mark(state, 'schedule', true, { note: why, byOtherRun: true })
-        log(`\n→ 건너뜀: ${why}\n`)
-        return
+    // 이미 잡힌 예약 시각을 한 번만 읽어 슬롯 충돌을 피한다
+    let taken = []
+    try {
+      const frame0 = await (await import('./lib/editor.mjs')).openEditor(page)
+      await openPublishPanel(frame0)
+      taken = await takenSlots(frame0)
+      if (taken.length) log(`  이미 예약된 시각: ${taken.join(', ')}`)
+    } catch { /* 못 읽으면 빈 배열로 진행 — schedule 단계가 다시 검증한다 */ }
+
+    const slots = nextSlots(new Date(), todo.length, { taken })
+    if (slots.length < todo.length) log(`  ⚠ 슬롯 ${slots.length}개뿐 — ${todo.length - slots.length}편은 다음 실행으로`)
+
+    for (let i = 0; i < Math.min(todo.length, slots.length); i++) {
+      const f = todo[i]
+      log(`\n── [${i + 1}/${slots.length}] ${f}`)
+      try {
+        results.push({ file: f, ...(await publishOne(browser, f, slots[i], { dry: DRY })) })
+      } catch (e) {
+        const st = load(f.replace(/\.md$/, ''))
+        mark(st, st.steps?.assemble?.ok ? 'schedule' : 'assemble', false, { reason: e.message })
+        log(`  ❌ ${e.message}`)
+        log(`     (스크린샷은 초안별 탭에서 남기지 않는다 — 탭이 이미 닫혔다)`)
+        results.push({ file: f, failed: e.message })
       }
-      mark(state, 'precheck', false, { reason: why })
-      await notifyFail(`${DATE} 발행 중단 — ${why}`)
-      return
+      await humanPause(2000, 5000)
     }
-    mark(state, 'precheck', true, { reserveBaseline: on.reserveBaseline })
-
-    // ── STEP 1 카드 렌더 (재개 가능) ────────────────────────────
-    let assets
-    const prev = state.steps.images
-    if (done(state, 'images') && prev?.files?.every((f) => existsSync(f))) {
-      assets = prev.files.map((path) => ({ key: path.replace(/^.*\/\d+-|\.png$/g, ''), path }))
-      log(`\n  · 카드 재사용 ${assets.length}장`)
-    } else {
-      log('\n  · 카드 렌더')
-      assets = await renderCards(DATE)
-      mark(state, 'images', true, { files: assets.map((a) => a.path) })
-    }
-    await humanPause(800, 2000)
-
-    // ── STEP 2 조립 ─────────────────────────────────────────────
-    // 조립은 재개하지 않는다. 에디터 상태를 신뢰할 수 없어서, 예약이 안 끝났으면
-    // 처음부터 다시 채우는 편이 안전하다(임시저장이 하나 더 생기는 정도의 비용).
-    log('  · 에디터 조립')
-    const a = await assemble(page, { draft, placements, assets })
-    mark(state, 'assemble', true, { blocks: a.blocks, images: a.images })
-    log(`    문단 ${a.blocks} · 이미지 ${a.images}`)
-    await humanPause(1000, 2500)
-
-    // ── STEP 3 예약 등록 ────────────────────────────────────────
-    const slot = nextSlot(new Date())
-    log(`  · 예약 ${slot.date} ${slot.hourValue}:${slot.minuteValue} (${slot.sameDay ? '당일' : '익일'})`)
-    const frame = page.frames().find((f) => SEL.frame.test(f.url()))
-    const s = await schedule(page, frame, slot, { confirm: !DRY })
-
-    if (!s.confirmed) {
-      log(`\n⏸ ${s.note}\n`)
-      mark(state, 'schedule', false, { reason: '드라이런' })
-      return
-    }
-
-    state.scheduledFor = `${slot.date} ${slot.hourValue}:${slot.minuteValue}`
-    mark(state, 'schedule', true, { at: new Date().toISOString(), reserveAfter: s.reserveAfter })
-    recordPublished(DATE, {
-      date: DATE,
-      title: draft.title,
-      scheduledFor: state.scheduledFor,
-      images: a.images,
-      blocks: a.blocks,
-      tags: draft.tags,
-    })
-    log(`\n✅ 예약 완료 — ${state.scheduledFor} (예약 ${s.reserveAfter}건)\n`)
-    await notifyOk(`${DATE} 예약 완료 — ${state.scheduledFor}`)
-
-    const pending = pendingAlert()
-    if (pending.length >= 3) {
-      log(`  ⚠ 밀린 초안 ${pending.length}편: ${pending.join(', ')}`)
-      await notifyFail(`밀린 초안 ${pending.length}편 — 소급 발행은 사람이 판단하세요`)
-    }
-  } catch (e) {
-    mark(state, state.steps.assemble?.ok ? 'schedule' : 'assemble', false, { reason: e.message })
-    save(state)
-    log(`\n❌ 실패: ${e.message}\n`)
-    await page.screenshot({ path: `.publish-assets/fail-${DATE}.png` }).catch(() => {})
-    await notifyFail(`${DATE} 발행 실패 — ${e.message.slice(0, 80)}`)
-    process.exitCode = 1
   } finally {
-    save(state)
     await close()
+  }
+
+  const okCount = results.filter((r) => r.scheduled).length
+  const failed = results.filter((r) => r.failed)
+  log(`\n■ 결과 — 예약 ${okCount}편 / 건너뜀 ${results.filter((r) => r.skipped).length} / 실패 ${failed.length}`)
+  for (const r of results) {
+    log(`  ${r.scheduled ? '✅ ' + r.scheduled : r.skipped ? '⏭  ' + r.skipped.slice(0, 40) : r.dry ? '⏸ 드라이런' : '❌ ' + String(r.failed).slice(0, 50)}  ${r.file}`)
+  }
+  log('')
+
+  if (okCount) await notifyOk(`${DATE} 예약 ${okCount}편 완료`)
+  if (failed.length) await notifyFail(`${DATE} 발행 실패 ${failed.length}편 — ${String(failed[0].failed).slice(0, 60)}`)
+
+  const pending = pendingAlert()
+  if (pending.length >= 3) {
+    log(`  ⚠ 밀린 초안 ${pending.length}편 — 소급 발행은 사람이 판단하세요`)
+    await notifyFail(`밀린 초안 ${pending.length}편`)
   }
 }
 
