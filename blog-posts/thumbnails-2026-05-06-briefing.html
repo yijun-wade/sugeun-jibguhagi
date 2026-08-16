@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>5/6 양도세 D-3 브리핑 썸네일 세트</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    padding: 48px;
+  }
+  h1 { font-size: 22px; color: #111827; margin-bottom: 8px; }
+  .meta { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+  .wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .label { font-size: 13px; color: #374151; font-weight: 600; }
+  canvas { display: block; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+  button {
+    padding: 10px 28px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button:active { opacity: 0.85; }
+  .all-btn {
+    background: #f97316;
+    padding: 14px 36px;
+    font-size: 15px;
+  }
+</style>
+</head>
+<body>
+
+<div>
+  <h1>5/6 양도세 중과 유예 D-3 브리핑 썸네일 세트</h1>
+  <div class="meta">메인 썸네일(1200×630, 네이버 OG) + 인스타 정사각(1080×1080) = 2장</div>
+</div>
+
+<button class="all-btn" onclick="downloadAll()">📦 전체 한 번에 다운로드</button>
+
+<div class="wrap">
+  <div class="label">① 메인 썸네일 — 1200×630px (네이버 블로그 OG/대표)</div>
+  <canvas id="c1" width="1200" height="630" style="width:700px;height:367px"></canvas>
+  <button onclick="dl('c1','thumb-2026-05-06-d3-main.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">② 인스타용 정사각 — 1080×1080px</div>
+  <canvas id="c2" width="1080" height="1080" style="width:540px;height:540px"></canvas>
+  <button onclick="dl('c2','thumb-2026-05-06-d3-square.png')">다운로드</button>
+</div>
+
+<script>
+function dl(id, name) {
+  const c = document.getElementById(id)
+  const link = document.createElement('a')
+  link.download = name
+  link.href = c.toDataURL('image/png')
+  link.click()
+}
+
+function downloadAll() {
+  const sets = [
+    ['c1', 'thumb-2026-05-06-d3-main.png'],
+    ['c2', 'thumb-2026-05-06-d3-square.png'],
+  ]
+  sets.forEach(([id, name], i) => setTimeout(() => dl(id, name), i * 350))
+}
+
+// ── 공통 ─────────────────────────────────────────
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.arcTo(x + w, y, x + w, y + h, r)
+  ctx.arcTo(x + w, y + h, x, y + h, r)
+  ctx.arcTo(x, y + h, x, y, r)
+  ctx.arcTo(x, y, x + w, y, r)
+  ctx.closePath()
+}
+
+// ── ① 메인 썸네일 (1200×630) ─────────────────────
+function drawMain() {
+  const c = document.getElementById('c1')
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 630
+
+  // 배경: 딥 네이비 → 검정 그라디언트 (긴급감)
+  const bg = ctx.createLinearGradient(0, 0, W, H)
+  bg.addColorStop(0, '#1e3a8a')
+  bg.addColorStop(1, '#0b1226')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  // 우측 카운트다운 디자인 영역 — 큰 D-3 원
+  ctx.save()
+  // 배경 원 (오렌지 점진)
+  const ringGrad = ctx.createRadialGradient(W - 240, H/2, 60, W - 240, H/2, 280)
+  ringGrad.addColorStop(0, 'rgba(249, 115, 22, 0.45)')
+  ringGrad.addColorStop(0.6, 'rgba(249, 115, 22, 0.15)')
+  ringGrad.addColorStop(1, 'rgba(249, 115, 22, 0)')
+  ctx.fillStyle = ringGrad
+  ctx.beginPath()
+  ctx.arc(W - 240, H/2, 280, 0, Math.PI*2)
+  ctx.fill()
+
+  // D-3 외곽 원
+  ctx.strokeStyle = 'rgba(249, 115, 22, 0.8)'
+  ctx.lineWidth = 4
+  ctx.beginPath()
+  ctx.arc(W - 240, H/2, 180, 0, Math.PI*2)
+  ctx.stroke()
+
+  // D-3 내부 원
+  ctx.fillStyle = '#f97316'
+  ctx.beginPath()
+  ctx.arc(W - 240, H/2, 165, 0, Math.PI*2)
+  ctx.fill()
+
+  // D-3 텍스트
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 140px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('D-3', W - 240, H/2 - 10)
+
+  // 5월 9일 작은 라벨
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'
+  ctx.font = 'bold 24px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('5월 9일', W - 240, H/2 + 80)
+  ctx.restore()
+
+  // 좌측 텍스트
+  const PX = 80
+
+  // 뱃지
+  ctx.save()
+  ctx.fillStyle = '#dc2626'
+  roundRect(ctx, PX, 72, 250, 52, 8)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 24px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('🔥 부동산 브리핑', PX + 20, 98)
+  ctx.restore()
+
+  // 메인 타이틀
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 92px "Apple SD Gothic Neo", sans-serif'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('양도세 중과 유예', PX, 270)
+  ctx.fillStyle = '#fbbf24'
+  ctx.fillText('5월 9일 종료', PX, 380)
+
+  // 서브
+  ctx.fillStyle = '#93c5fd'
+  ctx.font = '28px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('강남·마포 급매물 늘어나는 이유', PX, 440)
+
+  // 구분선
+  ctx.fillStyle = 'rgba(255,255,255,0.12)'
+  ctx.fillRect(PX, 510, W - PX*2 - 380, 1)
+
+  // 사이트
+  ctx.fillStyle = 'rgba(255,255,255,0.55)'
+  ctx.font = 'bold 26px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('suzip.kr', PX, 558)
+}
+
+// ── ② 인스타 정사각 (1080×1080) ─────────────────
+function drawSquare() {
+  const c = document.getElementById('c2')
+  const ctx = c.getContext('2d')
+  const W = 1080, H = 1080
+
+  // 배경
+  const bg = ctx.createLinearGradient(0, 0, W, H)
+  bg.addColorStop(0, '#1e3a8a')
+  bg.addColorStop(1, '#0b1226')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  // 상단 뱃지 (중앙)
+  ctx.save()
+  const badgeText = '🔥 부동산 브리핑'
+  ctx.font = 'bold 28px "Apple SD Gothic Neo", sans-serif'
+  const badgeW = ctx.measureText(badgeText).width + 60
+  ctx.fillStyle = '#dc2626'
+  roundRect(ctx, (W - badgeW)/2, 90, badgeW, 60, 10)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText(badgeText, W/2, 120)
+  ctx.restore()
+
+  // 중앙 D-3 큰 원
+  ctx.save()
+  // glow
+  const glow = ctx.createRadialGradient(W/2, 470, 100, W/2, 470, 320)
+  glow.addColorStop(0, 'rgba(249, 115, 22, 0.5)')
+  glow.addColorStop(0.7, 'rgba(249, 115, 22, 0.1)')
+  glow.addColorStop(1, 'rgba(249, 115, 22, 0)')
+  ctx.fillStyle = glow
+  ctx.beginPath()
+  ctx.arc(W/2, 470, 320, 0, Math.PI*2)
+  ctx.fill()
+
+  ctx.strokeStyle = 'rgba(249, 115, 22, 0.85)'
+  ctx.lineWidth = 6
+  ctx.beginPath()
+  ctx.arc(W/2, 470, 215, 0, Math.PI*2)
+  ctx.stroke()
+
+  ctx.fillStyle = '#f97316'
+  ctx.beginPath()
+  ctx.arc(W/2, 470, 195, 0, Math.PI*2)
+  ctx.fill()
+
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 180px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('D-3', W/2, 460)
+
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
+  ctx.font = 'bold 30px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('5월 9일', W/2, 575)
+  ctx.restore()
+
+  // 메인 타이틀 (하단)
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 64px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('양도세 중과 유예', W/2, 800)
+  ctx.fillStyle = '#fbbf24'
+  ctx.fillText('종료까지', W/2, 880)
+
+  // 서브
+  ctx.fillStyle = '#93c5fd'
+  ctx.font = '28px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('강남·마포에 급매물이 늘어나는 이유', W/2, 940)
+
+  // 사이트 (맨 아래)
+  ctx.fillStyle = 'rgba(255,255,255,0.55)'
+  ctx.font = 'bold 26px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('suzip.kr', W/2, 1010)
+}
+
+// 한글 폰트 로드 후 그리기
+document.fonts.ready.then(() => {
+  drawMain()
+  drawSquare()
+})
+</script>
+</body>
+</html>

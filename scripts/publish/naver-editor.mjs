@@ -196,19 +196,34 @@ async function typeBlock(page, frame, md, { standaloneSubhead = false } = {}) {
  * 이미지 삽입. 사진 버튼을 누르면 파일 선택창이 뜨고, puppeteer가 그걸 받아 처리한다.
  * 검증은 img 개수의 증가분으로 — 절대 수로 보면 앞서 넣은 것 때문에 항상 통과한다.
  */
-async function insertImage(page, frame, filePath) {
-  const before = await imageCount(frame)
-  const [chooser] = await Promise.all([
-    page.waitForFileChooser({ timeout: 15000 }),
-    frame.evaluate((s) => document.querySelector(s)?.click(), SEL.image),
-  ])
-  await chooser.accept([filePath])
+async function insertImage(page, frame, filePath, { attempts = 2 } = {}) {
+  // 업로드는 네이버 서버 왕복이라 느릴 때가 있다. 20초로는 부족해 하루치 첫 글이
+  // 통째로 실패했다(2026-08-16). 그날 다른 글은 같은 코드로 성공했으므로 로직이
+  // 아니라 시간 문제다. 넉넉히 기다리고, 그래도 안 되면 한 번 더 시도한다.
+  let lastErr = null
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    const before = await imageCount(frame)
+    try {
+      const [chooser] = await Promise.all([
+        page.waitForFileChooser({ timeout: 20000 }),
+        frame.evaluate((s) => document.querySelector(s)?.click(), SEL.image),
+      ])
+      await chooser.accept([filePath])
+    } catch (e) {
+      // 파일 선택창이 안 뜬 것과 업로드가 안 끝난 것은 원인이 다르다 — 구분해서 남긴다
+      lastErr = new Error(`파일 선택창이 열리지 않았다 (${attempt}/${attempts}): ${e.message}`)
+      await sleep(1500)
+      continue
+    }
 
-  for (let i = 0; i < 40; i++) {
-    await sleep(500)
-    if ((await imageCount(frame)) > before) return true
+    for (let i = 0; i < 120; i++) { // 최대 60초
+      await sleep(500)
+      if ((await imageCount(frame)) > before) return true
+    }
+    lastErr = new Error(`업로드가 60초 안에 끝나지 않았다 (${attempt}/${attempts}): ${filePath.split('/').pop()}`)
+    await sleep(2000)
   }
-  throw new Error(`이미지가 삽입되지 않았다: ${filePath}`)
+  throw lastErr
 }
 
 /**

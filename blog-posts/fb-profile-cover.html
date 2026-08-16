@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>페이스북 프로필 + 커버 이미지</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    padding: 48px;
+  }
+  h1 { font-size: 22px; color: #111827; margin-bottom: 8px; }
+  .meta { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+  .wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .label { font-size: 13px; color: #374151; font-weight: 600; }
+  canvas { display: block; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+  button {
+    padding: 10px 28px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .all-btn { background: #f97316; padding: 14px 36px; font-size: 15px; }
+  .preview-circle {
+    border-radius: 50% !important;
+    width: 200px !important;
+    height: 200px !important;
+  }
+</style>
+</head>
+<body>
+
+<div>
+  <h1>페이스북 페이지 이미지 세트</h1>
+  <div class="meta">프로필 1080×1080 (원형 크롭) + 커버 1640×624 (와이드 배너)</div>
+</div>
+
+<button class="all-btn" onclick="downloadAll()">📦 전체 한 번에 다운로드</button>
+
+<div class="wrap">
+  <div class="label">① 프로필 사진 — 1080×1080 (페이스북에서 원형으로 크롭됨)</div>
+  <canvas id="cP" width="1080" height="1080" style="width:300px;height:300px"></canvas>
+  <div style="display:flex;gap:24px;align-items:center;margin-top:8px">
+    <div style="text-align:center">
+      <div style="font-size:11px;color:#6b7280;margin-bottom:8px">실제 표시 (원형)</div>
+      <canvas id="cPCircle" width="1080" height="1080" class="preview-circle"></canvas>
+    </div>
+    <button onclick="dl('cP','fb-profile.png')">다운로드</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="label">② 커버 사진 — 1640×624 (페이스북 페이지 권장 사이즈)</div>
+  <canvas id="cC" width="1640" height="624" style="width:820px;height:312px"></canvas>
+  <button onclick="dl('cC','fb-cover.png')">다운로드</button>
+</div>
+
+<script>
+function measureText(ctx, text, font) {
+  ctx.save()
+  ctx.font = font + ' "Apple SD Gothic Neo", sans-serif'
+  const w = ctx.measureText(text).width
+  ctx.restore()
+  return w
+}
+
+// ── ① 프로필 사진 (원형 크롭 안전 영역 고려) ────
+function drawProfile(canvasId) {
+  const c = document.getElementById(canvasId)
+  const ctx = c.getContext('2d')
+  const W = 1080, H = 1080
+
+  // 배경 그라데이션 (브랜드 블루)
+  const bg = ctx.createRadialGradient(W/2, H/2 - 100, 100, W/2, H/2, 700)
+  bg.addColorStop(0, '#3b82f6')
+  bg.addColorStop(0.6, '#2563eb')
+  bg.addColorStop(1, '#1e3a8a')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  // 부드러운 원 데코
+  ctx.save()
+  ctx.globalAlpha = 0.08
+  ctx.fillStyle = '#fbbf24'
+  ctx.beginPath()
+  ctx.arc(W - 200, 200, 200, 0, Math.PI*2)
+  ctx.fill()
+
+  ctx.fillStyle = '#60a5fa'
+  ctx.beginPath()
+  ctx.arc(200, H - 200, 240, 0, Math.PI*2)
+  ctx.fill()
+  ctx.restore()
+
+  // 중앙 — 큰 "수" 한글
+  // 이불 모양 아래 받침
+  ctx.save()
+  ctx.globalAlpha = 0.18
+  ctx.fillStyle = '#fbbf24'
+  ctx.beginPath()
+  ctx.moveTo(W/2 - 320, H/2 + 60)
+  ctx.bezierCurveTo(W/2 - 200, H/2 - 80, W/2 + 200, H/2 - 80, W/2 + 320, H/2 + 60)
+  ctx.lineTo(W/2 + 320, H/2 + 280)
+  ctx.lineTo(W/2 - 320, H/2 + 280)
+  ctx.closePath()
+  ctx.fill()
+  ctx.restore()
+
+  // 집 아이콘 (간단한 형태)
+  ctx.save()
+  const houseX = W/2
+  const houseY = H/2 - 30
+  // 지붕
+  ctx.fillStyle = '#fbbf24'
+  ctx.beginPath()
+  ctx.moveTo(houseX - 200, houseY)
+  ctx.lineTo(houseX, houseY - 180)
+  ctx.lineTo(houseX + 200, houseY)
+  ctx.closePath()
+  ctx.fill()
+  // 본체
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(houseX - 160, houseY, 320, 220)
+  // 큰 "수" 글자
+  ctx.fillStyle = '#1e3a8a'
+  ctx.font = 'bold 220px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('수', houseX, houseY + 110)
+  ctx.restore()
+
+  // 상단 작은 텍스트 (원형 크롭 안전 영역)
+  ctx.fillStyle = 'rgba(255,255,255,0.9)'
+  ctx.font = 'bold 38px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('수군수군 우리집', W/2, 220)
+
+  // 하단 작은 도메인
+  ctx.fillStyle = 'rgba(255,255,255,0.6)'
+  ctx.font = 'bold 32px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('suzip.kr', W/2, 880)
+}
+
+// ── ② 커버 사진 ─────────────────────────────
+function drawCover() {
+  const c = document.getElementById('cC')
+  const ctx = c.getContext('2d')
+  const W = 1640, H = 624
+
+  // 배경 그라데이션
+  const bg = ctx.createLinearGradient(0, 0, W, H)
+  bg.addColorStop(0, '#1e3a8a')
+  bg.addColorStop(0.6, '#2563eb')
+  bg.addColorStop(1, '#1e3a8a')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  // 배경 데코
+  ctx.save()
+  ctx.globalAlpha = 0.08
+  ctx.fillStyle = '#fbbf24'
+  ctx.beginPath()
+  ctx.arc(W - 250, 100, 220, 0, Math.PI*2)
+  ctx.fill()
+
+  ctx.fillStyle = '#60a5fa'
+  ctx.beginPath()
+  ctx.arc(W - 400, H + 80, 320, 0, Math.PI*2)
+  ctx.fill()
+  ctx.restore()
+
+  // 우측 — 이불 + 핸드폰 일러스트
+  const cx = W - 320, cy = H/2
+
+  // 침대
+  ctx.save()
+  ctx.globalAlpha = 0.15
+  ctx.fillStyle = '#ffffff'
+  ctx.beginPath()
+  ctx.roundRect(cx - 200, cy + 30, 400, 140, 14)
+  ctx.fill()
+  ctx.restore()
+
+  // 이불 곡선
+  ctx.save()
+  ctx.globalAlpha = 0.28
+  ctx.fillStyle = '#fbbf24'
+  ctx.beginPath()
+  ctx.moveTo(cx - 200, cy + 80)
+  ctx.bezierCurveTo(cx - 100, cy - 60, cx + 100, cy - 60, cx + 200, cy + 80)
+  ctx.lineTo(cx + 200, cy + 170)
+  ctx.lineTo(cx - 200, cy + 170)
+  ctx.closePath()
+  ctx.fill()
+  ctx.restore()
+
+  // 핸드폰
+  ctx.save()
+  ctx.globalAlpha = 0.9
+  ctx.fillStyle = '#0f172a'
+  ctx.beginPath()
+  ctx.roundRect(cx - 70, cy - 30, 140, 220, 18)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.beginPath()
+  ctx.roundRect(cx - 62, cy - 22, 124, 204, 12)
+  ctx.fill()
+  // 화면 컨텐츠
+  ctx.fillStyle = '#2563eb'
+  ctx.fillRect(cx - 54, cy - 14, 108, 10)
+  ctx.fillStyle = '#fbbf24'
+  ctx.fillRect(cx - 54, cy + 8, 108, 26)
+  ctx.fillStyle = '#e5e7eb'
+  for (let i = 0; i < 5; i++) {
+    ctx.fillRect(cx - 54, cy + 44 + i*30, 108, 22)
+  }
+  ctx.restore()
+
+  // 좌측 텍스트
+  const PX = 80
+
+  // 메인 카피
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 64px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('퇴근 후 이불 속에서', PX, 180)
+  ctx.fillText('하는 임장', PX, 260)
+
+  // 서브 카피
+  ctx.fillStyle = '#fcd34d'
+  ctx.font = '30px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('발품 팔기 전에 수군수군 먼저', PX, 320)
+
+  // 칩 3개
+  const chips = ['동네 분위기', '실거주 후기', '실거래가']
+  let chipX = PX
+  chips.forEach((chip) => {
+    const w = measureText(ctx, chip, 'bold 22px') + 36
+    ctx.fillStyle = 'rgba(255,255,255,0.15)'
+    ctx.beginPath()
+    ctx.roundRect(chipX, 360, w, 44, 22)
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)'
+    ctx.lineWidth = 1
+    ctx.stroke()
+    ctx.fillStyle = '#ffffff'
+    ctx.font = 'bold 22px "Apple SD Gothic Neo", sans-serif'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(chip, chipX + 18, 382)
+    ctx.textBaseline = 'alphabetic'
+    chipX += w + 12
+  })
+
+  // 구분선
+  ctx.fillStyle = 'rgba(255,255,255,0.12)'
+  ctx.fillRect(PX, 460, 600, 1)
+
+  // suzip.kr
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 38px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('suzip.kr', PX, 510)
+}
+
+drawProfile('cP')
+drawProfile('cPCircle')
+drawCover()
+
+function dl(id, filename) {
+  const a = document.createElement('a')
+  a.download = filename
+  a.href = document.getElementById(id).toDataURL('image/png')
+  a.click()
+}
+
+function downloadAll() {
+  const list = [
+    ['cP', 'fb-profile.png'],
+    ['cC', 'fb-cover.png'],
+  ]
+  list.forEach(([id, name], i) => {
+    setTimeout(() => dl(id, name), i * 350)
+  })
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>노원구 임장 가이드 이미지 세트</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    padding: 48px;
+  }
+  h1 { font-size: 22px; color: #111827; margin-bottom: 8px; }
+  .meta { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+  .wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .label { font-size: 13px; color: #374151; font-weight: 600; }
+  canvas { display: block; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+  button {
+    padding: 10px 28px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button:active { opacity: 0.85; }
+  .all-btn {
+    background: #f97316;
+    padding: 14px 36px;
+    font-size: 15px;
+  }
+</style>
+</head>
+<body>
+
+<div>
+  <h1>노원구 임장 가이드 이미지 세트 (5/7 발행용)</h1>
+  <div class="meta">메인 썸네일 1장 + 동네 섹션 4장 + 가격 요약 1장 = 총 6장</div>
+</div>
+
+<button class="all-btn" onclick="downloadAll()">📦 전체 한 번에 다운로드</button>
+
+<div class="wrap">
+  <div class="label">① 메인 썸네일 — 1200×630px (네이버 OG/대표)</div>
+  <canvas id="c1" width="1200" height="630" style="width:700px;height:367px"></canvas>
+  <button onclick="dl('c1','thumb-노원구-메인.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">② 섹션 1: 상계·하계 (7호선 라인) — 1200×600px</div>
+  <canvas id="c2" width="1200" height="600" style="width:700px;height:350px"></canvas>
+  <button onclick="dl('c2','thumb-노원구-상계하계.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">③ 섹션 2: 중계 (학원가) — 1200×600px</div>
+  <canvas id="c3" width="1200" height="600" style="width:700px;height:350px"></canvas>
+  <button onclick="dl('c3','thumb-노원구-중계.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">④ 섹션 3: 공릉 (6·7호선 환승) — 1200×600px</div>
+  <canvas id="c4" width="1200" height="600" style="width:700px;height:350px"></canvas>
+  <button onclick="dl('c4','thumb-노원구-공릉.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">⑤ 섹션 4: 월계 (1호선·동북선 호재) — 1200×600px</div>
+  <canvas id="c5" width="1200" height="600" style="width:700px;height:350px"></canvas>
+  <button onclick="dl('c5','thumb-노원구-월계.png')">다운로드</button>
+</div>
+
+<div class="wrap">
+  <div class="label">⑥ 가격 요약 (예산별 진입점) — 1200×600px</div>
+  <canvas id="c6" width="1200" height="600" style="width:700px;height:350px"></canvas>
+  <button onclick="dl('c6','thumb-노원구-가격요약.png')">다운로드</button>
+</div>
+
+<script>
+function dl(id, name) {
+  const c = document.getElementById(id)
+  const link = document.createElement('a')
+  link.download = name
+  link.href = c.toDataURL('image/png')
+  link.click()
+}
+
+function downloadAll() {
+  const sets = [
+    ['c1', 'thumb-노원구-메인.png'],
+    ['c2', 'thumb-노원구-상계하계.png'],
+    ['c3', 'thumb-노원구-중계.png'],
+    ['c4', 'thumb-노원구-공릉.png'],
+    ['c5', 'thumb-노원구-월계.png'],
+    ['c6', 'thumb-노원구-가격요약.png'],
+  ]
+  sets.forEach(([id, name], i) => setTimeout(() => dl(id, name), i * 350))
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.arcTo(x + w, y, x + w, y + h, r)
+  ctx.arcTo(x + w, y + h, x, y + h, r)
+  ctx.arcTo(x, y + h, x, y, r)
+  ctx.arcTo(x, y, x + w, y, r)
+  ctx.closePath()
+}
+
+function measureText(ctx, text, font) {
+  ctx.save()
+  ctx.font = font + ' "Apple SD Gothic Neo", sans-serif'
+  const w = ctx.measureText(text).width
+  ctx.restore()
+  return w
+}
+
+const COLORS = {
+  blue:    { dark: '#1d4ed8', light: '#60a5fa' },  // 상계·하계 (7호선)
+  purple:  { dark: '#6d28d9', light: '#a78bfa' },  // 중계 (학원가)
+  teal:    { dark: '#0e7490', light: '#22d3ee' },  // 공릉 (6·7호선)
+  orange:  { dark: '#c2410c', light: '#fb923c' },  // 월계 (1호선·호재)
+  green:   { dark: '#15803d', light: '#4ade80' },  // 가격요약
+}
+
+// ── ① 메인 썸네일 ────────────────────────────────────
+function drawMain() {
+  const c = document.getElementById('c1')
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 630
+
+  const bg = ctx.createLinearGradient(0, 0, W, H)
+  bg.addColorStop(0, '#1e3a8a')
+  bg.addColorStop(1, '#0b1226')
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  // 우측 일러스트: 4·7호선·1호선 환승 (노원의 강점)
+  ctx.save()
+  ctx.globalAlpha = 0.08
+  ctx.fillStyle = '#60a5fa'
+  ctx.beginPath()
+  ctx.arc(W - 230, H/2, 270, 0, Math.PI*2)
+  ctx.fill()
+
+  // 지하철 노선 — 4호선 (파랑), 7호선 (올리브), 1호선 (남색), 6호선 (브라운/회색)
+  const lines = [
+    { color: '#0052a4', y: 200 },  // 1호선
+    { color: '#0066b3', y: 280 },  // 4호선
+    { color: '#747f00', y: 360 },  // 7호선
+    { color: '#cd7c2f', y: 440 },  // 6호선
+  ]
+  ctx.globalAlpha = 0.5
+  ctx.lineWidth = 10
+  ctx.lineCap = 'round'
+  lines.forEach(({ color, y }) => {
+    ctx.strokeStyle = color
+    ctx.beginPath()
+    ctx.moveTo(W - 460, y)
+    ctx.lineTo(W - 60, y)
+    ctx.stroke()
+  })
+
+  // 환승역 점들
+  ctx.globalAlpha = 0.5
+  ctx.fillStyle = '#ffffff'
+  const stationsX = [W - 400, W - 280, W - 160]
+  lines.forEach(({ y }) => {
+    stationsX.forEach(x => {
+      ctx.beginPath()
+      ctx.arc(x, y, 10, 0, Math.PI*2)
+      ctx.fill()
+    })
+  })
+
+  // 가격
+  ctx.globalAlpha = 0.22
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 56px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('7~13억', W - 230, H - 100)
+  ctx.restore()
+
+  // 좌측 텍스트
+  const PX = 80
+
+  // 뱃지
+  ctx.fillStyle = '#2563eb'
+  roundRect(ctx, PX, 72, measureText(ctx, '동네 임장 가이드', 'bold 28px') + 48, 52, 8)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 28px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('동네 임장 가이드', PX + 24, 98)
+
+  // 메인 타이틀
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 110px "Apple SD Gothic Neo", sans-serif'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText('노원구 동네별', PX, 280)
+  ctx.fillText('임장 가이드', PX, 410)
+
+  ctx.fillStyle = '#93c5fd'
+  ctx.font = '32px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('상계·중계부터 월계·공릉까지', PX, 470)
+
+  ctx.fillStyle = 'rgba(255,255,255,0.12)'
+  ctx.fillRect(PX, 530, W - PX*2, 1)
+
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = 'bold 28px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.fillText('suzip.kr', W - PX, 578)
+}
+
+// ── 섹션 공통 ──────────────────────────────────────
+function drawSection({ id, badge, title, subtitle, price, accentColor, drawDecor }) {
+  const c = document.getElementById(id)
+  const ctx = c.getContext('2d')
+  const W = 1200, H = 600
+
+  ctx.fillStyle = '#f8fafc'
+  ctx.fillRect(0, 0, W, H)
+
+  // 좌측 컬러 패널
+  const panel = ctx.createLinearGradient(0, 0, 480, H)
+  panel.addColorStop(0, accentColor.dark)
+  panel.addColorStop(1, accentColor.light)
+  ctx.fillStyle = panel
+  ctx.fillRect(0, 0, 480, H)
+
+  // 우측 데코
+  if (drawDecor) drawDecor(ctx, W, H, accentColor)
+
+  // 좌측 — 뱃지
+  const PX = 56
+  ctx.fillStyle = 'rgba(255,255,255,0.2)'
+  roundRect(ctx, PX, 56, measureText(ctx, badge, 'bold 22px') + 36, 42, 8)
+  ctx.fill()
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 22px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText(badge, PX + 18, 77)
+
+  // 타이틀
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 64px "Apple SD Gothic Neo", sans-serif'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText(title, PX, 220)
+
+  // 서브타이틀
+  ctx.fillStyle = 'rgba(255,255,255,0.85)'
+  ctx.font = '24px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText(subtitle, PX, 268)
+
+  // 가격
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 96px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText(price.value, PX, 440)
+  ctx.fillStyle = 'rgba(255,255,255,0.7)'
+  ctx.font = '22px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText(price.label, PX, 480)
+
+  // suzip.kr
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('suzip.kr', PX, 552)
+}
+
+// ── 데코: 환승역 + 노선 ──────────────────────────────
+function drawTrainStations(ctx, W, H, color, lineColors, label) {
+  ctx.save()
+  const cx = 800, cy = H/2
+
+  ctx.globalAlpha = 0.08
+  ctx.fillStyle = color.dark
+  ctx.beginPath()
+  ctx.arc(cx, cy, 240, 0, Math.PI*2)
+  ctx.fill()
+
+  // 라인들 (수평)
+  ctx.globalAlpha = 0.6
+  ctx.lineWidth = 10
+  ctx.lineCap = 'round'
+  lineColors.forEach((lc, i) => {
+    ctx.strokeStyle = lc
+    const y = cy - 60 + i * 50
+    ctx.beginPath()
+    ctx.moveTo(cx - 180, y)
+    ctx.lineTo(cx + 180, y)
+    ctx.stroke()
+
+    // 환승역 점
+    ctx.globalAlpha = 0.9
+    ctx.fillStyle = '#ffffff'
+    ctx.beginPath()
+    ctx.arc(cx, y, 10, 0, Math.PI*2)
+    ctx.fill()
+    ctx.fillStyle = lc
+    ctx.beginPath()
+    ctx.arc(cx, y, 6, 0, Math.PI*2)
+    ctx.fill()
+    ctx.globalAlpha = 0.6
+  })
+
+  ctx.globalAlpha = 0.7
+  ctx.fillStyle = '#475569'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText(label, cx, cy + 130)
+  ctx.restore()
+}
+
+// ── 데코: 학원가 (책 아이콘) ──────────────────────
+function drawAcademy(ctx, W, H, color) {
+  ctx.save()
+  const cx = 800, cy = H/2
+
+  ctx.globalAlpha = 0.08
+  ctx.fillStyle = color.dark
+  ctx.beginPath()
+  ctx.arc(cx, cy, 240, 0, Math.PI*2)
+  ctx.fill()
+
+  // 책 5권 (학원가 표현)
+  ctx.globalAlpha = 0.7
+  const books = [
+    { x: cx - 160, y: cy - 80, w: 50, h: 200, color: '#a78bfa' },
+    { x: cx - 100, y: cy - 110, w: 50, h: 230, color: '#7c3aed' },
+    { x: cx - 40,  y: cy - 90, w: 50, h: 210, color: '#6d28d9' },
+    { x: cx + 20,  y: cy - 70, w: 50, h: 190, color: '#a78bfa' },
+    { x: cx + 80,  y: cy - 100, w: 50, h: 220, color: '#7c3aed' },
+    { x: cx + 140, y: cy - 80, w: 50, h: 200, color: '#6d28d9' },
+  ]
+  books.forEach(b => {
+    ctx.fillStyle = b.color
+    ctx.fillRect(b.x, b.y, b.w, b.h)
+    // 책 등 라인
+    ctx.fillStyle = 'rgba(255,255,255,0.3)'
+    ctx.fillRect(b.x + 8, b.y + 20, b.w - 16, 4)
+    ctx.fillRect(b.x + 8, b.y + 30, b.w - 16, 2)
+  })
+
+  ctx.globalAlpha = 0.7
+  ctx.fillStyle = '#475569'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('강북 최대 학원가', cx, cy + 170)
+  ctx.restore()
+}
+
+// ── 데코: 빌딩 (신축) ────────────────────────────
+function drawBuildings(ctx, W, H, color) {
+  ctx.save()
+  const baseX = 560
+  const baseY = H - 100
+
+  ctx.globalAlpha = 0.08
+  ctx.fillStyle = color.dark
+  ctx.fillRect(baseX, 80, 580, H - 80)
+
+  const buildings = [
+    { x: baseX + 40,  w: 90, h: 320 },
+    { x: baseX + 150, w: 110, h: 380 },
+    { x: baseX + 280, w: 100, h: 280 },
+    { x: baseX + 400, w: 120, h: 420 },
+    { x: baseX + 540, w: 80,  h: 240 }
+  ]
+  ctx.globalAlpha = 0.6
+  buildings.forEach(({ x, w, h }) => {
+    ctx.fillStyle = color.light
+    ctx.fillRect(x, baseY - h, w, h)
+    ctx.fillStyle = '#fbbf24'
+    ctx.globalAlpha = 0.4
+    for (let row = 0; row < Math.floor(h / 40); row++) {
+      for (let col = 0; col < Math.floor(w / 30); col++) {
+        if (Math.random() > 0.3) {
+          ctx.fillRect(x + 8 + col*30, baseY - h + 12 + row*40, 14, 18)
+        }
+      }
+    }
+    ctx.globalAlpha = 0.6
+  })
+
+  ctx.globalAlpha = 0.7
+  ctx.fillStyle = '#475569'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('신축 라인업', baseX + 290, baseY + 38)
+  ctx.restore()
+}
+
+// ── 데코: 호재 화살표 ───────────────────────────
+function drawHosae(ctx, W, H, color) {
+  ctx.save()
+  const cx = 800, cy = H/2
+
+  ctx.globalAlpha = 0.08
+  ctx.fillStyle = color.dark
+  ctx.beginPath()
+  ctx.arc(cx, cy, 240, 0, Math.PI*2)
+  ctx.fill()
+
+  // 큰 화살표 ↑
+  ctx.globalAlpha = 0.6
+  ctx.strokeStyle = color.dark
+  ctx.lineWidth = 24
+  ctx.lineCap = 'round'
+  ctx.beginPath()
+  ctx.moveTo(cx, cy + 130)
+  ctx.lineTo(cx, cy - 100)
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.moveTo(cx - 60, cy - 50)
+  ctx.lineTo(cx, cy - 110)
+  ctx.lineTo(cx + 60, cy - 50)
+  ctx.stroke()
+
+  // 텍스트
+  ctx.globalAlpha = 0.18
+  ctx.fillStyle = color.dark
+  ctx.font = 'bold 70px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('동북선', cx, cy + 200)
+
+  ctx.globalAlpha = 0.7
+  ctx.fillStyle = '#475569'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.fillText('광운대역 + 동북선 호재', cx, cy + 250)
+  ctx.restore()
+}
+
+// ── 데코: 가격 차트 ─────────────────────────────
+function drawPriceChart(ctx, W, H, color) {
+  ctx.save()
+  const cx = 800, cy = H/2
+
+  ctx.globalAlpha = 0.08
+  ctx.fillStyle = color.dark
+  ctx.beginPath()
+  ctx.arc(cx, cy, 240, 0, Math.PI*2)
+  ctx.fill()
+
+  // 가격대 막대 5개
+  const baseY = H - 130
+  const barW = 60
+  const gap = 20
+  const startX = cx - (5 * barW + 4 * gap) / 2
+  const bars = [
+    { label: '7~8억', sub: '월계', h: 110, color: '#fbbf24' },
+    { label: '8~9억', sub: '하계', h: 150, color: '#fde047' },
+    { label: '9~10억', sub: '상계·공릉', h: 200, color: '#86efac' },
+    { label: '10~11억', sub: '신축', h: 250, color: '#34d399' },
+    { label: '12~13억', sub: '대장', h: 300, color: '#15803d' },
+  ]
+  ctx.globalAlpha = 0.85
+  bars.forEach((b, i) => {
+    const x = startX + i * (barW + gap)
+    ctx.fillStyle = b.color
+    ctx.fillRect(x, baseY - b.h, barW, b.h)
+
+    ctx.fillStyle = '#475569'
+    ctx.font = 'bold 14px "Apple SD Gothic Neo", sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(b.label, x + barW/2, baseY + 22)
+    ctx.font = '12px "Apple SD Gothic Neo", sans-serif'
+    ctx.fillStyle = '#94a3b8'
+    ctx.fillText(b.sub, x + barW/2, baseY + 42)
+  })
+
+  ctx.fillStyle = '#475569'
+  ctx.font = 'bold 18px "Apple SD Gothic Neo", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('예산별 진입점', cx, baseY + 80)
+  ctx.restore()
+}
+
+// ── 그리기 호출 ─────────────────────────────────
+document.fonts.ready.then(() => {
+  drawMain()
+
+  drawSection({
+    id: 'c2',
+    badge: '7호선·4호선 라인',
+    title: '상계·하계',
+    subtitle: '노원 본거지, 환승의 메인',
+    price: { value: '9~11억', label: '신축급 메인 가격대' },
+    accentColor: COLORS.blue,
+    drawDecor: (ctx, W, H, color) => drawTrainStations(
+      ctx, W, H, color,
+      ['#0052a4', '#747f00'], // 4호선, 7호선
+      '4호선 노원 + 7호선 마들·중계'
+    ),
+  })
+
+  drawSection({
+    id: 'c3',
+    badge: '강북 최대 학원가',
+    title: '중계',
+    subtitle: '학군 동네, 임차 수요 꾸준',
+    price: { value: '10~13억', label: '학원가 도보권 대단지' },
+    accentColor: COLORS.purple,
+    drawDecor: drawAcademy,
+  })
+
+  drawSection({
+    id: 'c4',
+    badge: '6·7호선 환승',
+    title: '공릉',
+    subtitle: '6호선 동시 강점, 신축 가성비',
+    price: { value: '9~13억', label: '신축급 9억대부터' },
+    accentColor: COLORS.teal,
+    drawDecor: drawBuildings,
+  })
+
+  drawSection({
+    id: 'c5',
+    badge: '1호선·동북선 호재',
+    title: '월계',
+    subtitle: '노원 가장 합리적인 진입점',
+    price: { value: '7~10억', label: '7억대 진입 가능' },
+    accentColor: COLORS.orange,
+    drawDecor: drawHosae,
+  })
+
+  drawSection({
+    id: 'c6',
+    badge: '예산별 정리',
+    title: '7~13억',
+    subtitle: '동네별 가격대 한 눈에',
+    price: { value: '5개 동', label: '상계·중계·공릉·하계·월계' },
+    accentColor: COLORS.green,
+    drawDecor: drawPriceChart,
+  })
+})
+</script>
+</body>
+</html>
