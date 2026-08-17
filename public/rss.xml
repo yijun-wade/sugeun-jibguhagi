@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sun, 16 Aug 2026 22:29:29 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 17 Aug 2026 22:32:32 GMT</lastBuildDate>
+    <item>
+      <title>공급 확대와 대출 규제, 이중 정책의 고민</title>
+      <link>https://www.suzip.kr/briefing/2026-08-18</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-08-18</guid>
+      <pubDate>Mon, 17 Aug 2026 22:00:00 GMT</pubDate>
+      <description>• 정부가 수도권에 23만 가구 이상 주택을 공급하겠다고 발표했지만, 전세는 월세로 빠르게 바뀌고 있다.
+• 주담대 한도를 늘렸어도 은행들의 자체 규제로 실제 대출받기는 여전히 어려운 상황이다.
+• 부동산 정책 부정평가가 30%로 올라가면서 정부와 당, 서울시 간 입장 차이가 커지고 있다.
+
+정부 의도: 집을 못 사는 사람들을 돕기 위해 새 집을 짓고 대출을 풀겠다는 것이다. 한편 과도한 빚을 막으려고 대출 규제는 유지하면서 가계부채 폭증을 제어하려는 의도도 있다.
+
+시장 변화: 가까운 미래에는 새 집이 많이 나올 것 같지만, 당장은 대출받기가 쉽지 않아 수요가 약할 수 있다. 외곽과 비선호 지역부터 가격 조정 압력을 받을 가능성이 있다.</description>
+    </item>
     <item>
       <title>대출 조이니 전세·월세로 몰려…서민 주거비 역대 최고</title>
       <link>https://www.suzip.kr/briefing/2026-08-17</link>
@@ -253,19 +266,6 @@
 정부 의도: 초고가 주택에만 세금을 강하게 물려 집값을 억제하되, 공급 부족으로 어려워하는 실수요자는 살짝 도와주려는 중이다. 동시에 대출 규제를 조정해 주택 공급이 원활해지도록 유도하는 것이 목표다.
 
 시장 변화: 높은 가격대 집들은 세금 부담이 늘어나고, 규제지역은 투기 수요가 빠지면서 안정화될 것 같다. 하지만 비규제지역과 저가 주택으로는 수요가 쏠릴 수 있다.</description>
-    </item>
-    <item>
-      <title>대출 규제에 실수요자 '핀셋 완화'…전세난 심화</title>
-      <link>https://www.suzip.kr/briefing/2026-07-29</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-07-29</guid>
-      <pubDate>Tue, 28 Jul 2026 22:00:00 GMT</pubDate>
-      <description>• 정부가 종부세(집을 많이 가진 사람에게 부과하는 세금) 3단계 차등화와 대출 규제 완화로 청년·신혼부부·무주택자를 지원하기로 했다.
-• 서울 아파트 거래가 6월 5,065건으로 급감했고, 전세값은 10년 8개월 만에 최고 상승률을 기록했다.
-• 강화된 대출 규제로 집주인이 직접 돈을 빌려주는 '셀러 파이낸싱' 같은 편법 거래가 증가하고 있다.
-
-정부 의도: 정부는 무분별한 대출로 집값이 올랐다고 보고 대출을 줄이려 한다. 하지만 집 사려는 서민들이 피해를 보니, 청년·신혼부부처럼 정말 필요한 사람들은 대출을 받을 수 있도록 규제를 선택적으로 풀겠다는 것이다.
-
-시장 변화: 매매 시장은 거래가 줄면서 관망 분위기가 짙어지고 있다. 대신 전세 시장은 더 팽팽해져서 전세금이 급올라 세입자 부담이 커지고 있다. 이 과정에서 정규 금융이 아닌 사적인 거래나 편법이 늘어날 수 있다.</description>
     </item>
   </channel>
 </rss>
