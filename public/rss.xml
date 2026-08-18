@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Mon, 17 Aug 2026 22:32:32 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 18 Aug 2026 22:31:47 GMT</lastBuildDate>
+    <item>
+      <title>전세 월세화 가속, 비아파트 정책도 '한계'</title>
+      <link>https://www.suzip.kr/briefing/2026-08-19</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-08-19</guid>
+      <pubDate>Tue, 18 Aug 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 아파트 월세 비중이 55.2%로 역대 최고를 기록했고, 전세 가구는 7년 사이 3만 가구 넘게 줄어들었다.
+• 정부가 비아파트와 4억원 이하 주택에만 지원하는 청년보금자리론을 확대했지만 실효성 논란이 일고 있다.
+• 다주택자 규제 강화로 세입자들이 집주인의 실거주 전환으로 내보내질까봐 불안해하고 있다.
+
+정부 의도: 전세 시장이 월세로 빠르게 변하면서 저소득층 주거 불안이 심해지자, 정부가 서둘러 대책을 내놓은 것이다. 비아파트에 더 많이 지어서 공급을 늘리고, 청년들을 지원하겠다는 취지인데, 현실적 제약이 많다.
+
+시장 변화: 전세 시장이 계속 축소되면서 월세 비중이 늘어날 수밖에 없는 구조다. 정부 정책도 근본적인 해결보다는 임시 처방에 가까워서, 세입자들의 불안감은 쉽게 가라앉지 않을 것 같다.</description>
+    </item>
     <item>
       <title>공급 확대와 대출 규제, 이중 정책의 고민</title>
       <link>https://www.suzip.kr/briefing/2026-08-18</link>
@@ -253,19 +266,6 @@
 정부 의도: 이재명 정부는 고가 주택 대출 규제와 가계대출 총량관리를 통해 집값 상승을 억제하고 시장 질서를 잡으려 한다. 하지만 동시에 청년층을 위한 생애최초 주택담보대출 완화를 약속하면서 실수요자들의 주거 접근성을 높이겠다는 입장이다.
 
 시장 변화: 대출 규제가 강화되면서 15억원 이하의 중·저가 아파트와 초소형 평형에 수요가 쏠리고 있다. 동시에 전세 매물이 급감하면서 전세를 원하던 사람들까지 매매 시장으로 흘러가고 있어 저가 구간 가격 상승 압력이 커지는 상황이다.</description>
-    </item>
-    <item>
-      <title>집값·전월세 동반 상승, 규제 강화까지…실수요자 '이중고'</title>
-      <link>https://www.suzip.kr/briefing/2026-07-30</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-07-30</guid>
-      <pubDate>Wed, 29 Jul 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 아파트 매매·전세·월세가 모두 동시에 올라 임차인 부담이 커지고 있다.
-• 정부가 종부세(보유세)를 강화하고 대출 규제를 재검토하며 부동산 정책 방향을 전환했다.
-• 규제지역(동탄 등)의 집값 상승이 꺾인 반면, 인접한 비규제지역으로 투기 수요가 몰려가고 있다.
-
-정부 의도: 초고가 주택에만 세금을 강하게 물려 집값을 억제하되, 공급 부족으로 어려워하는 실수요자는 살짝 도와주려는 중이다. 동시에 대출 규제를 조정해 주택 공급이 원활해지도록 유도하는 것이 목표다.
-
-시장 변화: 높은 가격대 집들은 세금 부담이 늘어나고, 규제지역은 투기 수요가 빠지면서 안정화될 것 같다. 하지만 비규제지역과 저가 주택으로는 수요가 쏠릴 수 있다.</description>
     </item>
   </channel>
 </rss>
