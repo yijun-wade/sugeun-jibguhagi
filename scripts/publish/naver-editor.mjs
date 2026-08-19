@@ -193,6 +193,49 @@ async function typeBlock(page, frame, md, { standaloneSubhead = false } = {}) {
 }
 
 /**
+ * 커서 위치에 링크를 삽입한다 (CTA용).
+ *
+ * 왜 필요한가: 초안의 "suzip.kr"은 평문이라 발행글에서도 평문으로 나갔다.
+ * 블로그의 존재 이유가 suzip.kr 유입인데 클릭할 통로가 없었다(2026-08-16 실측).
+ *
+ * 왜 이 방식인가:
+ *  - URL을 타이핑해도 네이버는 자동 링크하지 않는다(CDP 입력 기준, 실측).
+ *  - 텍스트를 선택한 뒤 링크 버튼을 누르는 경로는 실패한다. 링크 레이어로 포커스가
+ *    옮겨가며 선택이 풀려 아무 일도 일어나지 않는다.
+ *  → 빈 줄에 커서만 두고 링크를 삽입하면 URL이 링크로 들어간다.
+ *
+ * 에디터에서는 <a>가 아니라 span.se-link[data-href]로 들고 있다가 발행 시 <a>가 된다.
+ * 그래서 검증도 <a>가 아니라 data-href로 해야 한다 — 처음에 <a>로 세다가
+ * 성공한 것을 실패로 오판했다.
+ */
+async function insertLink(page, frame, url) {
+  const clickVisible = async (sel) => {
+    for (const b of await frame.$$(sel)) {
+      if (await b.evaluate((e) => e.offsetParent !== null)) { await b.click(); return true }
+    }
+    return false
+  }
+
+  if (!(await clickVisible('[data-name="text-link"]'))) throw new Error('링크 버튼을 찾지 못했다')
+  await sleep(1200)
+
+  const input = await frame.$('input.se-custom-layer-link-input')
+  if (!input) throw new Error('링크 입력칸이 열리지 않았다')
+  await input.click()
+  await sleep(200)
+  await page.keyboard.type(url, { delay: 6 })
+  await sleep(300)
+
+  if (!(await clickVisible('.se-custom-layer-link-apply-button'))) throw new Error('링크 적용 버튼을 찾지 못했다')
+  await sleep(1500)
+
+  const ok = await frame.$$eval(`${SEL.bodyComponent} ${SEL.paragraph}`, (els) =>
+    els.some((e) => e.querySelector('[data-href]')))
+  if (!ok) throw new Error('링크가 삽입되지 않았다 (data-href 없음)')
+  return true
+}
+
+/**
  * 이미지 삽입. 사진 버튼을 누르면 파일 선택창이 뜨고, puppeteer가 그걸 받아 처리한다.
  * 검증은 img 개수의 증가분으로 — 절대 수로 보면 앞서 넣은 것 때문에 항상 통과한다.
  */
@@ -230,7 +273,7 @@ async function insertImage(page, frame, filePath, { attempts = 2 } = {}) {
  * 본문 + 이미지 조립.
  * placements는 afterBlockIndex 오름차순이어야 한다 — 앞에 끼워 넣으면 뒤 인덱스가 밀린다.
  */
-async function assembleBody(page, frame, draft, placements, assets) {
+async function assembleBody(page, frame, draft, placements, assets, campaign) {
   const byIndex = new Map(placements.map((p) => [p.afterBlockIndex, p]))
   const pathOf = (card) => assets.find((a) => a.key === card)?.path
 
@@ -278,8 +321,21 @@ async function assembleBody(page, frame, draft, placements, assets) {
       await humanPause()
       prevWasImage = true
     }
+
+    // CTA 문단 바로 뒤에 클릭 가능한 링크를 한 줄 넣는다.
+    // 초안의 "suzip.kr"은 평문이라 발행돼도 클릭이 안 됐다 — 유입 통로가 없었다.
+    if (blk.type === 'cta' && campaign) {
+      await page.keyboard.press('Enter')
+      await sleep(250)
+      await insertLink(page, frame, ctaUrl(campaign))
+      await humanPause()
+    }
   }
 }
+
+/** 유입 출처를 글 단위로 가르는 CTA 링크. Amplitude가 attribution으로 UTM을 잡는다. */
+export const ctaUrl = (campaign) =>
+  `https://suzip.kr/?utm_source=naver_blog&utm_medium=post&utm_campaign=${encodeURIComponent(campaign)}`
 
 /** 태그 입력 */
 async function typeTags(page, frame, tags) {
@@ -316,7 +372,7 @@ async function saveDraft(frame) {
  * 조립 본체.
  * @returns {{title:string, blocks:number, images:number, saved:object}}
  */
-export async function assemble(page, { draft, placements, assets }) {
+export async function assemble(page, { draft, placements, assets, campaign = null }) {
   const frame = await openEditor(page)
   await assertAccount(page)
   await dismissHelpPanel(frame)
@@ -330,7 +386,7 @@ export async function assemble(page, { draft, placements, assets }) {
   const title = await typeTitle(page, frame, draft.title)
 
   console.log(`  · 본문 ${draft.blocks.length}블록 + 이미지 ${placements.length}장`)
-  await assembleBody(page, frame, draft, placements, assets)
+  await assembleBody(page, frame, draft, placements, assets, campaign)
 
   // 블록이 통째로 뭉치지 않았는지 — 통짜 붙여넣기 사고의 신호
   const paras = await bodyParagraphs(frame)
@@ -341,6 +397,13 @@ export async function assemble(page, { draft, placements, assets }) {
 
   const imgs = await imageCount(frame)
   if (imgs < placements.length) throw new Error(`이미지 ${placements.length}장 중 ${imgs}장만 들어갔다`)
+
+  // CTA 링크가 실제로 들어갔는지 — 이게 없으면 글은 나가도 유입이 0이다
+  if (campaign) {
+    const linked = await frame.$$eval(`${SEL.bodyComponent} ${SEL.paragraph}`, (els) =>
+      els.some((e) => e.querySelector('[data-href*="suzip.kr"]')))
+    if (!linked) throw new Error('CTA 링크가 들어가지 않았다')
+  }
 
   // 본문 텍스트가 실제로 들어갔는지 — 첫 블록과 마지막 블록으로 표본 검사
   const joined = nonEmpty.join('\n')

@@ -21,6 +21,33 @@ if (AMP_KEY) {
   })
 }
 
+/**
+ * 유입 출처를 이벤트로 남긴다.
+ *
+ * Amplitude의 autocapture attribution이 UTM을 "유저 속성"으로 잡아주긴 하지만,
+ * 그것만으로는 "블로그에서 몇 명이 왔고 그중 몇 명이 저장까지 갔나"를 보기 번거롭다.
+ * 첫 진입에 이벤트를 한 번 찍어두면 퍼널 시작점이 명확해진다.
+ *
+ * 세션당 1회만 찍는다 — 새로고침마다 쌓이면 유입 수가 부풀려진다.
+ */
+function trackReferral() {
+  if (typeof window === 'undefined') return
+  try {
+    const q = new URLSearchParams(window.location.search)
+    const source = q.get('utm_source')
+    if (!source) return
+    const KEY = 'suzip_referral_tracked'
+    if (sessionStorage.getItem(KEY) === source) return
+    sessionStorage.setItem(KEY, source)
+    track('referral_landing', {
+      utm_source: source,
+      utm_medium: q.get('utm_medium') || null,
+      utm_campaign: q.get('utm_campaign') || null,
+      landing_path: window.location.pathname,
+    })
+  } catch { /* 스토리지 차단 등 — 계측 실패가 앱을 멈추면 안 된다 */ }
+}
+
 // Meta Pixel 표준 이벤트 매핑 — 핵심 전환만 표준 이벤트로, 나머지는 Custom
 const META_STANDARD_EVENTS = {
   saju_start: 'Lead',           // 사주 시작 = 리드
@@ -47,3 +74,6 @@ export function track(eventName, params = {}) {
     }
   }
 }
+
+// track() 정의 이후에 호출한다 — 첫 진입 1회
+trackReferral()

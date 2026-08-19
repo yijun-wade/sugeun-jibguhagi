@@ -161,7 +161,7 @@ async function publishOneOn(page, draftFile, slot, { dry }) {
   if (warnings.length) state.warnings = warnings
 
   log('  · 에디터 조립')
-  const a2 = await assemble(page, { draft, placements, assets })
+  const a2 = await assemble(page, { draft, placements, assets, campaign: id })
   mark(state, 'assemble', true, { blocks: a2.blocks, images: a2.images })
   log(`    문단 ${a2.blocks} · 이미지 ${a2.images}`)
   await humanPause(1000, 2500)
