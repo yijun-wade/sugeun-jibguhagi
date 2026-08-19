@@ -59,9 +59,11 @@ function buildPools() {
   try {
     const apts = readJson('seoul-apt-enriched.json')
     const prices = readJson('apt-prices.json')
+    let trend = {}
+    try { trend = readJson('apt-price-trend.json') } catch { /* 없어도 진행 */ }
     const withPrice = apts
       .filter((a) => a.sigungu && a.dong && prices[a.kaptCode]?.avg)
-      .map((a) => ({ ...a, price: prices[a.kaptCode] }))
+      .map((a) => ({ ...a, price: prices[a.kaptCode], series: trend[a.kaptCode] || null }))
 
     // ── 임장가이드: 동 단위 ──────────────────────────────────
     // 구 단위(25개)는 한 달이면 소진된다. 동으로 쪼개면 117개가 나오고,
@@ -177,7 +179,15 @@ ${TONE}`
     // 상위만 보여주면 "저렴한 곳은 6억대"처럼 실제보다 비싸게 말한다(실측: 5.1억 단지를
     // 못 봄). 가격대 분포를 말하는 글이므로 위·아래를 모두 실어야 한다.
     const sorted = d.list.slice().sort((a, b) => b.price.avg - a.price.avg)
-    const fmt = (a) => `  - ${a.kaptName}: ${(a.price.avg / 10000).toFixed(1)}억, 평당 ${a.price.perPy}만원 (${a.kaptdaCnt}세대${a.useAprDay ? `, ${a.useAprDay.slice(0, 4)}년 준공` : ''})`
+    // 단지 대표값만 쓰면 어느 평형인지 모른 채 "이 단지 12억"이 된다.
+    // 대표 면적을 함께 밝히고, 평형이 여럿이면 폭도 같이 준다.
+    const fmt = (a) => {
+      const ar = a.price.areas || []
+      const span = ar.length >= 2
+        ? `, ${ar[0].area}~${ar[ar.length - 1].area}㎡ ${(ar[0].median / 10000).toFixed(1)}~${(ar[ar.length - 1].median / 10000).toFixed(1)}억`
+        : ''
+      return `  - ${a.kaptName}: ${(a.price.avg / 10000).toFixed(1)}억(${a.price.mainArea}㎡ 기준), 평당 ${a.price.perPy}만원${span} (${a.kaptdaCnt}세대${a.useAprDay ? `, ${a.useAprDay.slice(0, 4)}년` : ''})`
+    }
     const top = sorted.length <= 12
       ? sorted.map(fmt)
       : [...sorted.slice(0, 7).map(fmt), `  … (중간 ${sorted.length - 12}개 생략)`, ...sorted.slice(-5).map(fmt)]
@@ -193,6 +203,7 @@ ${top.join('\n')}
 이 동네를 처음 보는 사람이 "여기 나한테 맞나"를 판단할 수 있게 써줘.
 가격대 분포(제일 비싼 곳과 저렴한 곳의 차이가 왜 나는지), 연식과 세대수로 본 성격,
 어떤 사람에게 맞는 동네인지. 단지명·가격·세대수·연식은 위 목록에서만 인용할 것.
+가격을 말할 때는 반드시 면적을 함께 밝혀라 — 같은 단지도 평형마다 값이 크게 다르다.
 지하철·학군처럼 데이터에 없는 사실은 단정하지 말고 일반적으로 알려진 수준에서만.
 ${TONE}`
   }
@@ -200,7 +211,23 @@ ${TONE}`
   if (topic.category === '실거래가분석') {
     const a = d.apt
     const diff = d.dongAvg ? Math.round(((a.price.avg - d.dongAvg) / d.dongAvg) * 100) : null
-    return `"${a.kaptName}" 실거래가를 분석하는 블로그 글을 써줘. 1200자 내외.
+    const 억 = (v) => (v / 10000).toFixed(1)
+
+    // 면적별 분포. 예전에는 평형을 섞은 평균 하나만 줘서, 어느 평형도 아닌
+    // 숫자를 "이 단지 가격"으로 쓰게 됐다. 같은 단지에서 9억 벌어지는 경우도 있다.
+    const areaLines = (a.price.areas || []).map((x) =>
+      `  ${x.area}㎡(${x.py}평): 중앙값 ${억(x.median)}억, 범위 ${억(x.min)}~${억(x.max)}억, 평당 ${x.perPy}만원 (${x.count}건)`)
+
+    // 추세. "비싼가 싼가"만 말하고 "오르는 중인가"를 못 말하던 빈칸을 채운다.
+    let trendLine = '추세 데이터 없음'
+    if (a.series && a.series.length >= 3) {
+      const f = a.series[0], l = a.series[a.series.length - 1]
+      const pct = Math.round(((l.avg - f.avg) / f.avg) * 100)
+      const pts = a.series.map((s2) => `${s2.ym.slice(2, 4)}.${s2.ym.slice(4)} ${억(s2.avg)}억(${s2.count}건)`).join(' → ')
+      trendLine = `${f.ym} ${억(f.avg)}억 → ${l.ym} ${억(l.avg)}억 (${pct > 0 ? '+' : ''}${pct}%)\n월별: ${pts}`
+    }
+
+    return `"${a.kaptName}" 실거래가를 분석하는 블로그 글을 써줘. 1400자 내외.
 
 [근거 데이터 — 여기 없는 수치를 지어내지 말 것]
 단지명: ${a.kaptName}
@@ -208,14 +235,23 @@ ${TONE}`
 세대수: ${a.kaptdaCnt}세대${a.kaptDongCnt ? ` / ${a.kaptDongCnt}개 동` : ''}
 준공: ${a.useAprDay ? `${a.useAprDay.slice(0, 4)}년 ${Number(a.useAprDay.slice(4, 6))}월` : '미상'}
 난방: ${a.codeHeatNm || '미상'}
-최근 실거래 평균: ${(a.price.avg / 10000).toFixed(1)}억 (평당 ${a.price.perPy}만원, ${a.price.ym} 기준 ${a.price.count}건)
-같은 동(${a.dong}) 평균: ${d.dongAvg ? `${(d.dongAvg / 10000).toFixed(1)}억 (단지 ${d.dongCount}개)` : '비교 불가'}
+
+■ 면적별 실거래 (최근 12개월, 총 ${a.price.totalCount}건)
+${areaLines.join('\n')}
+
+■ 가격 추세
+${trendLine}
+
+■ 동네 비교
+같은 동(${a.dong}) 평균: ${d.dongAvg ? `${억(d.dongAvg)}억 (단지 ${d.dongCount}개)` : '비교 불가'}
 동네 평균 대비: ${diff === null ? '비교 불가' : `${diff > 0 ? '+' : ''}${diff}%`}
 단지 소개: ${a.summary || '없음'}
 
-"이 단지가 동네 평균 대비 어떤 위치인지"를 중심으로 써줘.
-거래 건수가 ${a.price.count}건뿐이라는 점을 숨기지 말고, 표본이 적다는 한계를 분명히 밝힐 것.
-세대수·연식이 가격에 어떻게 작용하는지도 짚어줘.
+[반드시 지킬 것]
+- "이 단지 얼마"라고 뭉뚱그리지 마라. 평형마다 값이 다르므로 면적을 반드시 밝혀라.
+- 추세가 있으면 "오르는 중인지 내리는 중인지"를 말해라. 없으면 없다고 해라.
+- 거래 건수가 적은 면적은 그 사실을 밝혀라. 2~3건짜리는 우연일 수 있다.
+- 예산을 가진 사람이 "나는 어느 평형을 봐야 하나"를 판단할 수 있게 써라.
 ${TONE}`
   }
 
