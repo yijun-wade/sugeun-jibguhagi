@@ -28,3 +28,17 @@ export function matchRegion(text, gu, dong) {
   const s = String(text)
   return !!((gu && s.includes(gu)) || (dong && s.includes(dong)))
 }
+
+// 관심 목록 병합: kaptCode 중복 제거·최신순 맨앞·상한.
+// 같은 집 재조회 시 직전 avg/ts를 prevAvg/prevTs로 승계(변동 추적용).
+export function mergeInterest(list, item, max = 10) {
+  const arr = Array.isArray(list) ? list.filter(a => a && a.kaptCode) : []
+  const existing = arr.find(a => a.kaptCode === item.kaptCode)
+  const merged = { ...item }
+  if (existing && Number(existing.avg) > 0) {
+    merged.prevAvg = existing.avg
+    merged.prevTs = existing.ts
+  }
+  const base = arr.filter(a => a.kaptCode !== item.kaptCode)
+  return [merged, ...base].slice(0, max)
+}
