@@ -139,6 +139,9 @@ export default function AptDetailPage() {
       aptNm: evalData.aptNm,
       dong: evalData.dong,
       gu: evalData.regionName,
+      avg: evalData.recentAvg,
+      direction: evalData.direction,
+      verdict: evalData.verdict,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [evalData?.kaptCode])
