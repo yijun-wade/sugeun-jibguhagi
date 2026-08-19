@@ -209,21 +209,33 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           type="button"
           className="viewed-compare-bar"
           onClick={() => {
-            track('compare_open', { from: 'apt_detail_viewed', count: otherViewed.length + 1 })
+            track('compare_open', { from: 'apt_detail_viewed', count: Math.min(otherViewed.length + 1, 5) })
             setShowCompare(true)
           }}
         >
           <span className="viewed-compare-icon" aria-hidden="true">🗂</span>
-          <span className="viewed-compare-text">최근 본 집 {otherViewed.length + 1}곳 비교</span>
+          <span className="viewed-compare-text">최근 본 집 {Math.min(otherViewed.length + 1, 5)}곳 비교</span>
           <span className="viewed-compare-arrow" aria-hidden="true">→</span>
         </button>
       )}
       {showCompare && (
         <ViewedCompare
-          apts={[
-            { kaptCode: apt.kaptCode, aptNm: apt.aptNm, dong: apt.dong, gu: apt.regionName, avg: apt.recentAvg, direction: apt.direction, verdict: apt.verdict, ts: Date.now() },
-            ...otherViewed,
-          ]}
+          apts={(() => {
+            const stored = getInterest().find(a => a.kaptCode === apt.kaptCode)
+            const current = {
+              kaptCode: apt.kaptCode,
+              aptNm: apt.aptNm,
+              dong: apt.dong,
+              gu: apt.regionName,
+              avg: apt.recentAvg,
+              direction: apt.direction,
+              verdict: apt.verdict,
+              ts: stored?.ts || Date.now(),
+              prevAvg: stored?.prevAvg,
+              prevTs: stored?.prevTs,
+            }
+            return [current, ...otherViewed]
+          })()}
           onClose={() => setShowCompare(false)}
         />
       )}
