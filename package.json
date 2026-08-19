@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "deploy": "ait deploy",
     "test": "node --test api/__tests__/*.test.js",
+    "build:trade-index": "node scripts/build-trade-index.mjs",
     "publish": "node scripts/publish/run.mjs"
   },
   "dependencies": {
