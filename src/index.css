@@ -1126,26 +1126,6 @@ header { text-align: center; padding: 4px 0 2px; }
   text-align: center;
 }
 
-/* 평형 분포 */
-.area-breakdown { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
-.area-bucket { flex: 1 1 80px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; text-align: center; }
-.area-bucket-btn {
-  cursor: pointer; font-family: inherit;
-  transition: border-color 0.15s, background 0.15s;
-}
-.area-bucket-btn:hover { border-color: var(--blue); background: var(--blue-lt); }
-.area-bucket-active {
-  border-color: var(--blue) !important;
-  background: var(--blue-md) !important;
-}
-.area-bucket-active .area-bucket-label,
-.area-bucket-active .area-bucket-avg,
-.area-bucket-active .area-bucket-count { color: #1d4ed8; }
-.area-bucket-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
-.area-bucket-avg { font-size: 14px; font-weight: 700; color: var(--text); }
-.area-bucket-count { font-size: 11px; color: var(--muted); margin-top: 2px; }
-.area-bucket-unit { font-size: 10px; font-weight: 400; color: var(--muted); margin-left: 1px; }
-
 .story-card {
   display: block; text-decoration: none;
   background: var(--card); border: 1px solid var(--border);
@@ -1907,11 +1887,6 @@ header { text-align: center; padding: 4px 0 2px; }
 
   /* 탭 — 터치 타겟 충분히 */
   .detail-tab { padding: 14px 0; font-size: 15px; }
-
-  /* 평형 분포 */
-  .area-breakdown { gap: 6px; }
-  .area-bucket { padding: 8px 10px; }
-  .area-bucket-avg { font-size: 13px; }
 
   /* 거래 내역 */
   .trade-row { padding: 10px 12px; }
@@ -3013,3 +2988,36 @@ header { text-align: center; padding: 4px 0 2px; }
   font-size: 18px; color: #f97316;
 }
 .report-cta-btn:hover { background: linear-gradient(135deg, #fed7aa, #fef3c7); }
+
+/* ── 평형별 실거래 분포 ───────────────────────────
+   예전 area-bucket(10평 버킷·평당가)을 대체한다. 예산으로 평형을 고르려면
+   평당가가 아니라 총액과 폭이 필요하다. */
+.area-dist { margin: 16px 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--card); }
+.area-dist-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 10px 14px; background: var(--bg); border-bottom: 1px solid var(--border);
+  font-size: 13px; font-weight: 700; color: var(--text);
+}
+.area-dist-hint { font-size: 11px; font-weight: 500; color: var(--muted); }
+.area-dist-row {
+  display: grid; grid-template-columns: 4.6rem 1fr auto 3.1rem;
+  align-items: center; gap: 8px;
+  width: 100%; padding: 11px 14px; border: 0; border-top: 1px solid var(--border);
+  background: var(--card); text-align: left; cursor: pointer; font: inherit;
+}
+.area-dist-row:first-of-type { border-top: 0; }
+.area-dist-row:hover { background: var(--bg); }
+.area-dist-row.on { background: var(--blue-lt); box-shadow: inset 3px 0 0 var(--blue); }
+.adr-area { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; }
+.adr-area em { display: block; font-style: normal; font-size: 11px; font-weight: 500; color: var(--muted); }
+.adr-mid { font-size: 15px; font-weight: 800; color: var(--blue); letter-spacing: -0.3px; }
+.adr-range { font-size: 11.5px; color: var(--sub, #6b7280); white-space: nowrap; }
+.adr-count { font-size: 11.5px; color: var(--muted); text-align: right; white-space: nowrap; }
+/* 표본이 적으면 눈에 띄게 — 2건짜리를 대표값처럼 읽으면 안 된다 */
+.adr-count.few { color: var(--orange); font-weight: 700; }
+
+@media (max-width: 380px) {
+  .area-dist-row { grid-template-columns: 4.2rem 1fr auto; row-gap: 2px; }
+  .adr-count { grid-column: 3; }
+  .adr-range { grid-column: 2 / 4; font-size: 11px; }
+}

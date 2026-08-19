@@ -543,12 +543,15 @@ function PriceTab({ apt }) {
     return () => { controller.abort(); clearTimeout(timer) }
   }, [apt?.bjdCode, apt?.aptNm, months])
 
-  const [areaFilter, setAreaFilter] = useState(null) // null = 전체, "30평형대" 등
+  // null = 전체. 값이 있으면 전용면적(반올림 ㎡).
+  // 예전에는 "30평형대" 같은 10평 버킷이었는데, 그 안에서도 억 단위로 갈려
+  // "내 예산에 맞는 평형"을 고르는 데 쓸 수 없었다.
+  const [areaFilter, setAreaFilter] = useState(null)
 
   const filteredTrades = useMemo(() => {
     if (!trades) return trades
     if (!areaFilter) return trades
-    return trades.filter(t => `${Math.floor(t.pyeong / 10) * 10}평형대` === areaFilter)
+    return trades.filter(t => Math.round(t.area) === areaFilter)
   }, [trades, areaFilter])
 
   const avgAmt   = filteredTrades?.length ? Math.round(filteredTrades.reduce((s, t) => s + t.amt,   0) / filteredTrades.length) : 0
@@ -612,7 +615,7 @@ function PriceTab({ apt }) {
               <div className="price-hero-sub">{months}개월 평균 계산 중...</div>
             ) : avgAmt > 0 ? (
               <div className="price-hero-sub">
-                {months}개월 {areaFilter || '전체'} 평균 {fP(avgAmt)}
+                {months}개월 {areaFilter ? `${areaFilter}㎡` : '전체'} 평균 {fP(avgAmt)}
                 {avgPerPy > 0 && <> · 평당 {fP(avgPerPy)}</>}
               </div>
             ) : null}
@@ -669,7 +672,7 @@ function PriceTab({ apt }) {
 
           <AreaBreakdown trades={trades} selected={areaFilter} onSelect={b => setAreaFilter(b === areaFilter ? null : b)} />
 
-          <Accordion label={`실거래 내역 ${areaFilter ? `(${areaFilter})` : ''}`} count={filteredTrades.length} defaultOpen={filteredTrades.length <= 10}>
+          <Accordion label={`실거래 내역 ${areaFilter ? `(${areaFilter}㎡)` : ''}`} count={filteredTrades.length} defaultOpen={filteredTrades.length <= 10}>
             <div className="trade-list">
               {filteredTrades.map((t, i) => (
                 <div key={i} className="trade-row">
@@ -983,31 +986,57 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
 
 /* ── 평형 분포 ───────────────────────────── */
 function AreaBreakdown({ trades, selected, onSelect }) {
+  // 전용면적을 반올림해 묶는다. 59.94·59.82처럼 미세하게 다르게 들어오지만
+  // 같은 평형이므로 정수로 모으면 하나가 된다.
+  // 10평 버킷("30평형대")은 그 안에서도 억 단위로 갈려 예산 매칭에 못 쓴다.
   const groups = {}
   trades.forEach(t => {
-    const bucket = `${Math.floor(t.pyeong / 10) * 10}평형대`
-    if (!groups[bucket]) groups[bucket] = { count: 0, totalPerPy: 0 }
-    groups[bucket].count++
-    groups[bucket].totalPerPy += t.perPy
+    const band = Math.round(t.area)
+    if (!band) return
+    if (!groups[band]) groups[band] = []
+    groups[band].push(t.amt)
   })
 
-  const sorted = Object.entries(groups).sort((a, b) => {
-    const na = parseInt(a[0], 10), nb = parseInt(b[0], 10)
-    return (isNaN(na) ? 0 : na) - (isNaN(nb) ? 0 : nb)
-  })
-  if (sorted.length === 0) return null
+  const median = arr => {
+    const a = [...arr].sort((x, y) => x - y)
+    const m = Math.floor(a.length / 2)
+    return a.length % 2 ? a[m] : Math.round((a[m - 1] + a[m]) / 2)
+  }
+
+  const rows = Object.entries(groups)
+    .map(([band, amts]) => ({
+      band: Number(band),
+      py: Math.round(Number(band) / SQM_TO_PYEONG),
+      count: amts.length,
+      // 평균은 특이 거래 하나에 끌려간다. 면적당 표본이 한 자릿수인 경우가 흔해
+      // 중앙값이 더 정직하고, 폭은 min~max로 따로 보여준다.
+      mid: median(amts),
+      min: Math.min(...amts),
+      max: Math.max(...amts),
+    }))
+    .sort((a, b) => a.band - b.band)
+
+  if (rows.length === 0) return null
 
   return (
-    <div className="area-breakdown">
-      {sorted.map(([bucket, { count, totalPerPy }]) => (
+    <div className="area-dist">
+      <div className="area-dist-head">
+        <span>평형별 실거래</span>
+        <span className="area-dist-hint">중앙값 · 최저~최고</span>
+      </div>
+      {rows.map(r => (
         <button
-          key={bucket}
-          className={`area-bucket area-bucket-btn${selected === bucket ? ' area-bucket-active' : ''}`}
-          onClick={() => onSelect(bucket)}
+          key={r.band}
+          className={`area-dist-row${selected === r.band ? ' on' : ''}`}
+          onClick={() => onSelect(r.band)}
         >
-          <div className="area-bucket-label">{bucket}</div>
-          <div className="area-bucket-avg">{fP(Math.round(totalPerPy / count))}<span className="area-bucket-unit">/평</span></div>
-          <div className="area-bucket-count">{count}건</div>
+          <span className="adr-area">{r.band}㎡<em>{r.py}평</em></span>
+          <span className="adr-mid">{fP(r.mid)}</span>
+          <span className="adr-range">
+            {r.count >= 2 ? `${fP(r.min)}~${fP(r.max)}` : '단일 거래'}
+          </span>
+          {/* 표본이 적으면 숨기지 않고 드러낸다 — 2~3건은 우연일 수 있다 */}
+          <span className={`adr-count${r.count <= 2 ? ' few' : ''}`}>{r.count}건</span>
         </button>
       ))}
     </div>
