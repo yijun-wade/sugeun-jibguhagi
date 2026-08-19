@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { pushInterest, rankRegions, matchRegion } from '../../src/interest-core.js'
+import { pushInterest, rankRegions, matchRegion, mergeInterest } from '../../src/interest-core.js'
 
 test('pushInterest: 최신 항목을 맨 앞에 넣는다', () => {
   const out = pushInterest([{ kaptCode: 'A' }], { kaptCode: 'B' })
@@ -48,4 +48,35 @@ test('matchRegion: gu 또는 dong 언급 시 true', () => {
   assert.equal(matchRegion('상계동 재건축 이슈', '노원구', '상계동'), true)
   assert.equal(matchRegion('강남 대치동 학군', '노원구', '상계동'), false)
   assert.equal(matchRegion('', '노원구', '상계동'), false)
+})
+
+test('mergeInterest: 새 항목을 맨 앞에 넣는다', () => {
+  const out = mergeInterest([{ kaptCode: 'A', avg: 100 }], { kaptCode: 'B', avg: 200 })
+  assert.deepEqual(out.map(a => a.kaptCode), ['B', 'A'])
+})
+
+test('mergeInterest: 재조회 시 직전 avg/ts를 prevAvg/prevTs로 승계', () => {
+  const prev = [{ kaptCode: 'A', avg: 100, ts: 1000 }]
+  const out = mergeInterest(prev, { kaptCode: 'A', avg: 120, ts: 2000 })
+  assert.equal(out.length, 1)
+  assert.equal(out[0].avg, 120)
+  assert.equal(out[0].prevAvg, 100)
+  assert.equal(out[0].prevTs, 1000)
+})
+
+test('mergeInterest: 직전 avg가 0/없음이면 prevAvg를 승계하지 않는다', () => {
+  const out = mergeInterest([{ kaptCode: 'A', avg: 0, ts: 1000 }], { kaptCode: 'A', avg: 120, ts: 2000 })
+  assert.equal(out[0].prevAvg, undefined)
+})
+
+test('mergeInterest: 상한 max를 지킨다', () => {
+  const list = Array.from({ length: 10 }, (_, i) => ({ kaptCode: `K${i}`, avg: i + 1 }))
+  const out = mergeInterest(list, { kaptCode: 'NEW', avg: 999 }, 10)
+  assert.equal(out.length, 10)
+  assert.equal(out[0].kaptCode, 'NEW')
+  assert.equal(out.at(-1).kaptCode, 'K8')
+})
+
+test('mergeInterest: 비배열/빈 입력 안전', () => {
+  assert.deepEqual(mergeInterest(null, { kaptCode: 'A', avg: 1 }).map(a => a.kaptCode), ['A'])
 })
