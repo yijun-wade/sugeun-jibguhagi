@@ -39,9 +39,20 @@ function buildPools() {
     }
   } catch (e) { console.warn(`  glossary 로드 실패: ${e.message}`) }
 
+  // 큐레이션(policies.json)과 자동 수집(policies-auto.json)을 합친다.
+  // 전자는 서비스 페이지(PolicyPage)가 쓰는 검수된 데이터, 후자는 블로그 소재 전용이다.
+  // 자동 수집분을 서비스 페이지에 섞지 않는 이유는 collect-policies.mjs 주석 참조.
   try {
-    for (const p of readJson('policies.json').policies) {
-      pools.정책.push({ category: '정책', subject: p.name, data: p })
+    const seen = new Set()
+    for (const file of ['policies.json', 'policies-auto.json']) {
+      let list = []
+      try { list = readJson(file).policies || [] } catch { continue }
+      for (const p of list) {
+        const k = String(p.name || '').replace(/\s+/g, '')
+        if (!k || seen.has(k)) continue
+        seen.add(k)
+        pools.정책.push({ category: '정책', subject: p.name, data: p })
+      }
     }
   } catch (e) { console.warn(`  policies 로드 실패: ${e.message}`) }
 

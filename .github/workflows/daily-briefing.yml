@@ -36,6 +36,14 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node scripts/generate-category-posts.mjs --count=1
 
+      - name: Collect new policies
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+        run: node scripts/collect-policies.mjs
+        continue-on-error: true
+
       - name: Track index and rank
         env:
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
@@ -56,6 +64,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/briefings/ public/sitemap.xml public/rss.xml public/naver-pack.html blog-posts/ published/
+          git add public/briefings/ public/policies-auto.json public/sitemap.xml public/rss.xml public/naver-pack.html blog-posts/ published/
           git diff --cached --quiet || git commit -m "chore: daily briefing $(date -u +'%Y-%m-%d')"
           git push
