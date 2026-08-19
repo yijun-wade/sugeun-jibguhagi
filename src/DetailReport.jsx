@@ -5,8 +5,9 @@ import { FETCH_TIMEOUT, MIN_AREA_SQM, SQM_TO_PYEONG, KR_LAT, KR_LON } from './co
 import { track } from './analytics.js'
 import { isCollected, toggleCollection, getCollection } from './collection.js'
 import { buildDelta } from './collection-delta.js'
-import { isSubscribed, subscribeRegion } from './interest.js'
+import { isSubscribed, subscribeRegion, getInterest } from './interest.js'
 import SimilarApts from './SimilarApts.jsx'
+import ViewedCompare from './ViewedCompare.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 
 function isValidUrl(url) {
@@ -27,6 +28,9 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
   const [justSaved, setJustSaved] = useState(false)
   const [subscribed, setSubscribed] = useState(() => isSubscribed(apt.dong))
   const [subFull, setSubFull] = useState(false)
+  const [showCompare, setShowCompare] = useState(false)
+  // 현재 집 제외 본 집(마운트 스냅샷). 진입 바 노출 판정 + 모달 공급.
+  const [otherViewed] = useState(() => getInterest().filter(a => a.kaptCode !== apt.kaptCode))
   const [collected, setCollected] = useState(() => isCollected(apt.kaptCode))
   // 이전 페이지들에서 이미 담은 '다른' 집 — 착지자 심리 분기용(마운트 시점 스냅샷).
   // 0곳=그 단지만 검색해 온 신규(결정 유보 프레이밍), 1곳+=여러 집 둘러보는 중(비교 완성 프레이밍).
@@ -197,6 +201,31 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           </span>
           <span className="discover-nudge-arrow" aria-hidden="true">↓</span>
         </button>
+      )}
+
+      {/* 최근 본 집 비교 진입 — 리텐션 게이트(자동 캐처 기반). 본 집 2곳↑(현재 포함)일 때. */}
+      {otherViewed.length >= 1 && (
+        <button
+          type="button"
+          className="viewed-compare-bar"
+          onClick={() => {
+            track('compare_open', { from: 'apt_detail_viewed', count: otherViewed.length + 1 })
+            setShowCompare(true)
+          }}
+        >
+          <span className="viewed-compare-icon" aria-hidden="true">🗂</span>
+          <span className="viewed-compare-text">최근 본 집 {otherViewed.length + 1}곳 비교</span>
+          <span className="viewed-compare-arrow" aria-hidden="true">→</span>
+        </button>
+      )}
+      {showCompare && (
+        <ViewedCompare
+          apts={[
+            { kaptCode: apt.kaptCode, aptNm: apt.aptNm, dong: apt.dong, gu: apt.regionName, avg: apt.recentAvg, direction: apt.direction, verdict: apt.verdict, ts: Date.now() },
+            ...otherViewed,
+          ]}
+          onClose={() => setShowCompare(false)}
+        />
       )}
 
       {/* 동네 구독(리텐션 관문) — 스크롤 없이 보이는 상단으로 끌어올림.
