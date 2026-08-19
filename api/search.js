@@ -17,6 +17,11 @@ function loadAptList() {
   } catch {
     aptList = []
   }
+  // 실거래가 기반 보강분 (K-apt 미등록 소규모 주상복합 등) — scripts/build-trade-index.mjs 생성
+  try {
+    const extraPath = join(process.cwd(), 'public', 'apt-list-extra.json')
+    aptList = aptList.concat(JSON.parse(readFileSync(extraPath, 'utf-8')))
+  } catch { /* 파일 없으면 K-apt 목록만 사용 */ }
   return aptList
 }
 

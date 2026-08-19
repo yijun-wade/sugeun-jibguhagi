@@ -8,7 +8,8 @@
     "build": "ait build",
     "preview": "vite preview",
     "deploy": "ait deploy",
-    "test": "node --test api/__tests__/*.test.js"
+    "test": "node --test api/__tests__/*.test.js",
+    "build:trade-index": "node scripts/build-trade-index.mjs"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.41.0",

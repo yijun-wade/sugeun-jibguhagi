@@ -9,3 +9,6 @@ dist/
 .env.local.backup
 .env.local.*
 .worktrees/
+
+# 실거래가 인덱스 원본 캐시 (scripts/build-trade-index.mjs)
+.cache/
