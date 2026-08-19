@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   const { bjdCode, aptName } = req.query
   if (!bjdCode) return res.status(400).json({ error: 'bjdCode 필요' })
 
-  const key = process.env.MOLIT_API_KEY
+  const key = (process.env.MOLIT_API_KEY || '').trim()
   if (!key) return res.status(500).json({ error: 'API 키 없음' })
 
   // bjdCode 10자리 → sigunguCd(5) + bjdongCd(5)
@@ -20,7 +20,17 @@ export default async function handler(req, res) {
     const r = await fetch(url)
     if (!r.ok) return res.status(502).json({ error: `API ${r.status}` })
 
-    const data = await r.json()
+    // 공공데이터포털은 인증 실패도 200 + 본문 오류로 준다. 그대로 두면
+    // "데이터 없음(null)"과 구분되지 않아 조용히 빈 화면이 나간다.
+    // 실제로 744세대 단지에도 null이 나가고 있었다(2026-08-20).
+    const text = await r.text()
+    if (/SERVICE_KEY|등록되지 않은|SERVICE_ACCESS_DENIED|LIMITED_NUMBER/.test(text)) {
+      console.error('[building] 공공데이터포털 인증 실패')
+      return res.status(502).json({ error: '데이터 제공처 인증 실패' })
+    }
+    let data
+    try { data = JSON.parse(text) }
+    catch { return res.status(502).json({ error: '데이터 제공처 응답 형식 오류' }) }
     const items = data?.response?.body?.items?.item
     if (!items) return res.json(null)
 
