@@ -1523,6 +1523,36 @@ header { text-align: center; padding: 4px 0 2px; }
   white-space: nowrap;
 }
 
+/* ── 최근 본 집 비교 진입 바 ─── */
+.viewed-compare-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 14px 0 4px;
+  padding: 13px 15px;
+  background: var(--card);
+  border: 1.5px solid var(--blue);
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+.viewed-compare-bar:active { transform: scale(0.99); }
+.viewed-compare-icon { font-size: 20px; flex-shrink: 0; }
+.viewed-compare-text { flex: 1; min-width: 0; font-size: 14.5px; font-weight: 700; color: var(--text); }
+.viewed-compare-arrow { font-size: 17px; font-weight: 700; color: var(--blue); flex-shrink: 0; }
+
+/* ── ViewedCompare 보조(기존 .compare-* 재사용) ─── */
+.compare-apt-link {
+  display: flex; flex-direction: column; gap: 2px;
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: inherit; text-align: center; width: 100%;
+}
+.compare-apt-link .compare-apt-name { font-size: 13px; font-weight: 700; color: var(--blue); }
+.compare-apt-link .compare-apt-loc { font-size: 11px; color: var(--muted); }
+.compare-verdict { font-size: 12px; line-height: 1.4; }
+
 /* ── 상단 discovery 넛지 (막다른길 탈출구를 상단으로) ─── */
 .discover-nudge {
   display: flex;
