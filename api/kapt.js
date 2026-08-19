@@ -26,7 +26,10 @@ export default async function handler(req, res) {
     let data
     try { data = JSON.parse(text) }
     catch { return res.status(502).json({ error: '데이터 제공처 응답 형식 오류' }) }
-    const item = data?.response?.body?.items?.item
+    // K-APT(AptBasisInfoService)는 body.item(단수)로 준다. 다른 공공데이터 API가
+    // body.items.item(복수 래퍼)인 것과 달라서, 후자만 읽으면 항상 undefined가 되고
+    // "데이터 없음(null)"으로 나간다. 키와 무관하게 계속 null이었다(2026-08-20 확인).
+    const item = data?.response?.body?.items?.item ?? data?.response?.body?.item
 
     if (!item) return res.json(null)
 
