@@ -298,6 +298,18 @@ for (const c of complexes.values()) {
     .digest('hex').slice(0, 8).toUpperCase()
 
   const region = sggName.get(c.sggCd) || ''
+
+  // 실거래는 단지명을 지역명 없이 적는다(잠실동 "주공아파트 5단지").
+  // 사람은 "잠실주공5단지"라고 검색하므로 그대로 두면 못 찾는다.
+  // 동·구 이름을 붙인 검색용 별칭을 만들어 둔다.
+  const bare = c.aptNm.replace(/\s+/g, '').replace(/아파트/g, '')
+  const aliases = [...new Set(
+    [stem(c.umdNm), stem(guFull)]
+      .filter(Boolean)
+      .map(pre => `${pre}${bare}`)
+      .filter(alias => alias !== c.aptNm.replace(/\s+/g, ''))
+  )].filter(alias => !c.aptNm.replace(/\s+/g, '').includes(alias))
+
   extras.push({
     kaptCode: `T${hash}`,                                  // T = trade 유래 (K-apt는 A 시작)
     kaptName: c.aptNm,
@@ -306,6 +318,7 @@ for (const c of complexes.values()) {
     kaptBuldYy: c.buildYear || null,
     jibun: c.jibun || null,
     source: 'trade',
+    aliases,
     dealCount: c.dealCount,
     lastDealYm: c.lastYm,
   })

@@ -84,12 +84,19 @@ export default function handler(req, res) {
       const nmNorm = nm.replace(/\s+/g, '')
       let score = 0
 
+      // 실거래 유래 단지의 검색용 별칭 (잠실동 "주공아파트 5단지" → "잠실주공5단지")
+      const aliases = i.aliases || []
+
       if (nm === query) {
         score = 5  // 아파트명 정확 일치
+      } else if (aliases.some(a => a === normalQ)) {
+        score = 4.5  // 별칭 정확 일치
       } else if (nm.includes(query)) {
         score = 4  // 아파트명 포함
       } else if (nmNorm.includes(normalQ)) {
         score = 3  // 아파트명 공백제거 포함
+      } else if (aliases.some(a => a.includes(normalQ))) {
+        score = 3  // 별칭 포함
       } else {
         const units = extractAdminUnits(addr)
         const strongUnitMatch = query.length >= 2 && units.some(unit => unit.startsWith(query))
