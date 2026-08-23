@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-22T22:31:05.874Z",
+  "updatedAt": "2026-08-23T22:30:59.842Z",
   "entries": {
     "224378921883": {
       "logNo": "224378921883",
@@ -61,6 +61,13 @@
           "titleRank": 4,
           "keyword": "정부주택정책",
           "kwRank": null
+        },
+        {
+          "day": 7,
+          "at": "2026-08-23T22:30:59.842Z",
+          "titleRank": 4,
+          "keyword": "정부주택정책",
+          "kwRank": null
         }
       ]
     },
@@ -72,6 +79,13 @@
         {
           "day": 3,
           "at": "2026-08-19T22:32:58.571Z",
+          "titleRank": 1,
+          "keyword": "근저당권",
+          "kwRank": null
+        },
+        {
+          "day": 7,
+          "at": "2026-08-23T22:30:59.842Z",
           "titleRank": 1,
           "keyword": "근저당권",
           "kwRank": null
