@@ -15,7 +15,7 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { fetchPublished, normalizeDate, normalizeTitle } from './publish/lib/published.mjs'
-import { stripTags, findOurRank, isDue, currentCheckpoint, indexRate, CHECKPOINTS } from './publish/lib/rank.mjs'
+import { stripTags, findOurRank, isDue, currentCheckpoint, exposureRate, CHECKPOINTS } from './publish/lib/rank.mjs'
 
 const BLOG_ID = 'kaimex'
 const DRY = process.argv.includes('--dry')
@@ -34,7 +34,8 @@ async function searchBlog(query) {
     signal: AbortSignal.timeout(10000),
   })
   if (!r.ok) throw new Error(`검색 실패 HTTP ${r.status}`)
-  return (await r.json()).items || []
+  const d = await r.json()
+  return { items: d.items || [], total: d.total || 0 }
 }
 
 const loadLog = () => {
@@ -74,9 +75,11 @@ async function main() {
     const day = currentCheckpoint(date, now)
 
     // 1) 제목 검색 — 색인 여부
-    let titleRank = null, kwRank = null, keyword = null
+    let titleRank = null, kwRank = null, keyword = null, competitors = 0
     try {
-      titleRank = findOurRank(await searchBlog(p.title), BLOG_ID)
+      const res = await searchBlog(p.title)
+      titleRank = findOurRank(res.items, BLOG_ID)
+      competitors = res.total
     } catch (e) {
       console.log(`  ⚠ ${p.title.slice(0, 24)} — 제목 검색 실패: ${e.message}`)
       continue
@@ -87,15 +90,19 @@ async function main() {
     const rec = records.find((r) => normalizeTitle(r.title) === normalizeTitle(p.title))
     keyword = rec?.tags?.[0] || null
     if (keyword) {
-      try { kwRank = findOurRank(await searchBlog(keyword), BLOG_ID) } catch { /* 키워드 실패는 치명적이지 않다 */ }
+      try { kwRank = findOurRank((await searchBlog(keyword)).items, BLOG_ID) } catch { /* 키워드 실패는 치명적이지 않다 */ }
       await sleep(300)
     }
 
-    entry.checks.push({ day, at: now.toISOString(), titleRank, keyword, kwRank })
+    // 경쟁 문서 수를 함께 남긴다. 이게 없으면 "30위 밖"이 저품질 때문인지
+    // 그냥 일반적인 제목이라 그런지 구분할 수 없다.
+    entry.checks.push({ day, at: now.toISOString(), titleRank, competitors, keyword, kwRank })
     log.entries[key] = entry
     checked++
 
-    const mark = titleRank === null ? '❌ 미색인' : `✅ 제목 ${titleRank}위`
+    const mark = titleRank === null
+      ? `— 30위 밖 (경쟁 ${competitors.toLocaleString()}건)`
+      : `✅ 제목 ${titleRank}위 (경쟁 ${competitors.toLocaleString()}건)`
     const kw = keyword ? ` / "${keyword}" ${kwRank === null ? `${DISPLAY}위 밖` : `${kwRank}위`}` : ''
     console.log(`  D+${String(day).padEnd(2)} ${mark}${kw}  ${stripTags(p.title).slice(0, 30)}`)
   }
@@ -104,15 +111,19 @@ async function main() {
 
   // ── 색인률 요약 ─────────────────────────────────────────────
   const entries = Object.values(log.entries)
-  console.log('\n■ 색인률')
+  console.log('\n■ 노출률 (자기 제목 검색 30위 이내)')
   for (const d of CHECKPOINTS) {
-    const r = indexRate(entries, d)
+    const r = exposureRate(entries, d)
     if (!r) continue
-    const pct = Math.round(r.rate * 100)
-    console.log(`  D+${String(d).padEnd(2)} ${String(pct).padStart(3)}%  (${r.indexed}/${r.checked}편)`)
-    // 표본이 쌓인 뒤에도 절반을 밑돌면 발행량을 줄여야 한다는 신호다
-    if (r.checked >= 5 && r.rate < 0.5) console.log(`       ⚠ 색인률이 낮다 — 발행 편수를 줄이는 것을 검토할 것`)
+    console.log(`  D+${String(d).padEnd(2)} 전체 ${String(Math.round(r.rate * 100)).padStart(3)}% (${r.shown}/${r.checked})` +
+      (r.easyRate !== null ? `   경쟁 20건 이하 ${Math.round(r.easyRate * 100)}% (${r.easyShown}/${r.easyChecked})` : ''))
+    // 경쟁이 적은데도 밀리는 것이 진짜 위험 신호다. 일반적인 제목이 30위 밖인 건
+    // 뉴스 기사와 경쟁해서 그런 것이라 정상이다.
+    if (r.easyChecked >= 4 && r.easyRate < 0.5) {
+      console.log(`       ⚠ 경쟁이 적은 글도 밀린다 — 계정 노출 제한을 의심할 것`)
+    }
   }
+  console.log('\n  ※ "30위 밖"은 미색인이 아니라 순위다. 제목이 일반적이면 뉴스와 경쟁해 밀린다.')
 
   log.updatedAt = now.toISOString()
   if (!DRY) {

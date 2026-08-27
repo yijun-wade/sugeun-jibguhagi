@@ -59,14 +59,34 @@ export function currentCheckpoint(publishedDate, now) {
 }
 
 /**
- * 색인률 — 확인한 글 중 검색에 잡힌 비율.
- * 이 값이 꺾이면 발행을 줄여야 한다는 신호다.
+ * 노출률 — 확인한 글 중 자기 제목 검색 상위 30위에 든 비율.
+ *
+ * ⚠ 이건 "색인 여부"가 아니라 "순위"다. 처음에 둘을 뭉개서 오판했다(2026-08-27):
+ * 제목이 일반적이면 뉴스 기사 수천 건과 경쟁해 30위 밖으로 밀리는데,
+ * 그걸 "미색인"으로 읽고 저품질 판정을 의심했다. 실제로는 정상 색인 상태였다.
+ *
+ * 그래서 경쟁 문서 수(competitors)를 함께 봐야 한다. 경쟁이 적은데도 밀리면
+ * 그때가 진짜 이상 신호다.
  */
-export function indexRate(entries, day = 1) {
+export function exposureRate(entries, day = 1) {
   const rows = (entries || [])
     .map((e) => (e.checks || []).find((c) => c.day === day))
     .filter(Boolean)
   if (!rows.length) return null
-  const indexed = rows.filter((c) => c.titleRank !== null).length
-  return { day, checked: rows.length, indexed, rate: indexed / rows.length }
+  const shown = rows.filter((c) => c.titleRank !== null).length
+  // 경쟁이 적은(≤20건) 글만 따로 본다 — 이 표본에서 밀리는 것이 진짜 위험 신호다
+  const easy = rows.filter((c) => (c.competitors ?? 0) > 0 && c.competitors <= 20)
+  const easyShown = easy.filter((c) => c.titleRank !== null).length
+  return {
+    day,
+    checked: rows.length,
+    shown,
+    rate: shown / rows.length,
+    easyChecked: easy.length,
+    easyShown,
+    easyRate: easy.length ? easyShown / easy.length : null,
+  }
 }
+
+/** 하위 호환 */
+export const indexRate = exposureRate
