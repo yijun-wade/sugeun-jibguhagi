@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Tue, 25 Aug 2026 22:36:13 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 27 Aug 2026 03:04:31 GMT</lastBuildDate>
+    <item>
+      <title>기준금리 3%, 15억 이하 주택 매수자 직격탄</title>
+      <link>https://www.suzip.kr/briefing/2026-08-27</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-08-27</guid>
+      <pubDate>Wed, 26 Aug 2026 22:00:00 GMT</pubDate>
+      <description>• 한은이 기준금리를 3%까지 올리면서 대출 부담이 커져 저가 주택 매수자들이 어려워질 전망
+• 강북구 전세가율이 81개월 만에 최고치인 63.8%로 올라 전세 구하기가 점점 힘들어지는 중
+• 정부가 오피스텔도 생애 첫 취득세 감면 대상으로 추가했으나 전세 시장 안정엔 한계가 있다는 평가
+
+정부 의도: 금리 인상과 규제 강화로 과열된 부동산 시장을 식히려는 것. 동시에 청년과 중저신용자를 위한 대환대출과 같은 지원책을 내놓으면서 시장 충격을 완화하려 하고 있음.
+
+시장 변화: 금리 인상으로 대출받기가 어려워지면서 15억 원 이하 저가 주택의 매매 속도가 둔화할 것으로 예상. 전세 시장에선 전세금이 월세로 바뀌는 현상(전세의 월세화)이 더 빨라질 가능성이 높음.</description>
+    </item>
     <item>
       <title>전세난 심화, 대출 규제 강화로 2030 실수요자 '이중고'</title>
       <link>https://www.suzip.kr/briefing/2026-08-26</link>
@@ -253,19 +266,6 @@
 정부 의도: 급등하는 집값을 억제하기 위해 강한 약을 쓰겠다는 것이다. 세금을 높이고 대출을 줄여서 투기를 막고, 동시에 공급을 늘려서 수급 불균형을 해소하려고 한다.
 
 시장 변화: 대출이 줄면서 집 사는 사람들의 자금 확보가 어려워지고 있다. 전세 물건이 줄어들면서 전세 세입자들이 매매로 몰리거나 월세로 밀려나가는 '풍선효과'가 일어나고 있다.</description>
-    </item>
-    <item>
-      <title>정부, 실거주 주택 세금 완화…전세난 심화 우려</title>
-      <link>https://www.suzip.kr/briefing/2026-08-07</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-08-07</guid>
-      <pubDate>Thu, 06 Aug 2026 22:00:00 GMT</pubDate>
-      <description>• 구윤철 부총리가 실거주 30억 이하 주택은 보유세와 양도세를 모두 완화하기로 발표했다.
-• 매수자 실거주 의무를 추가로 완화해 전세 시장 활성화를 도모하고 있다.
-• 청년·신혼부부·무주택 서민 대출 규제도 단계적으로 풀기로 했다.
-
-정부 의도: 지난번 세제개편안으로 인한 '세금폭탄' 논란을 수습하려는 움직임이다. 특히 1주택자들의 세 부담을 줄이고, 집주인들이 자신의 집에 들어갈 수 있도록 해서 경직된 전세 시장을 풀려고 한다. 건설업계 자금 사정도 나아지도록 금융 규제를 조정하고 있다.
-
-시장 변화: 실거주 의무가 완화되면서 기존 세입자들이 내몰릴 가능성이 높아진다. 잔금대출 같은 금융 규제가 풀리면서 비규제 지역 투자수요가 늘어날 것으로 보인다. 다만 다주택자들의 매물 방출이 부진하면 전세난은 계속될 수 있다.</description>
     </item>
   </channel>
 </rss>
