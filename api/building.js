@@ -36,12 +36,32 @@ export default async function handler(req, res) {
 
     const list = Array.isArray(items) ? items : [items]
 
-    // 아파트 이름으로 필터링 (부분 일치)
-    const nm = (aptName || '').replace(/\s/g, '')
-    const matched = list.find(i => {
-      const bldNm = (i.bldNm || '').replace(/\s/g, '')
-      return bldNm.includes(nm) || nm.includes(bldNm)
-    }) || list[0]  // fallback: 첫 번째 항목
+    // 아파트 이름으로 매칭.
+    //
+    // 예전 로직은 `bldNm.includes(nm) || nm.includes(bldNm)` 였는데,
+    // bldNm이 빈 문자열이면 nm.includes('')가 항상 true라 건물명 없는 레코드가
+    // 무조건 먼저 잡혔다. 신천동은 10건 중 5건이 무명이라, 6864세대 파크리오
+    // 데이터가 멀쩡히 있는데도 전부 null이 나갔다(2026-08-27 확인).
+    const norm = (v) => String(v || '').replace(/\s|아파트|단지/g, '')
+    const nm = norm(aptName)
+    const named = list.filter((i) => norm(i.bldNm))
+
+    let matched = null
+    if (nm) {
+      matched = named.find((i) => {
+        const b = norm(i.bldNm)
+        return b === nm || b.includes(nm) || nm.includes(b)
+      }) || null
+    }
+
+    // 이름으로 못 찾으면 세대수가 가장 많은 레코드를 쓴다.
+    // 무조건 list[0]을 집으면 학교·상가 같은 엉뚱한 건물이 나온다.
+    if (!matched) {
+      matched = list
+        .slice()
+        .sort((a, b) => (parseInt(b.hhldCnt) || 0) - (parseInt(a.hhldCnt) || 0))
+        .find((i) => (parseInt(i.hhldCnt) || 0) > 0) || null
+    }
 
     if (!matched) return res.json(null)
 
@@ -61,7 +81,10 @@ export default async function handler(req, res) {
       건폐율:   (bcRat && bcRat > 0) ? Math.round(bcRat) : null,
       주차대수:  parking || null,
       세대수_건축:  matched.hhldCnt ? parseInt(matched.hhldCnt) : null,
-      건물명:   matched.bldNm  || null,
+      건물명:   (matched.bldNm || '').trim() || null,
+      // 이름으로 찾은 것인지 세대수로 추정한 것인지 밝힌다.
+      // 추정값을 확정처럼 보여주면 사용자가 다른 건물 정보를 믿게 된다.
+      매칭:     nm && norm(matched.bldNm) && (norm(matched.bldNm).includes(nm) || nm.includes(norm(matched.bldNm))) ? '이름' : '추정',
     })
   } catch (e) {
     return res.status(500).json({ error: e.message })
