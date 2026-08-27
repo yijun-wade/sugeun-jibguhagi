@@ -11,7 +11,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const KEY = process.env.MOLIT_API_KEY
 if (!KEY) { console.error('MOLIT_API_KEY 환경변수를 설정해주세요'); process.exit(1) }
 
-const BASE = 'https://apis.data.go.kr/1613000/AptBasisInfoServiceV4/getAphusBassInfoV4'
+const BASE = 'https://apis.data.go.kr/1613000/AptBasisInfoServiceV5/getAphusBassInfoV5'
 
 const srcPath = path.join(__dirname, '../public/seoul-apt.json')
 const outPath = path.join(__dirname, '../public/seoul-apt-enriched.json')

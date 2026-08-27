@@ -9,7 +9,11 @@ export default async function handler(req, res) {
   if (!key) return res.status(500).json({ error: 'API 키 없음' })
 
   try {
-    const url = `https://apis.data.go.kr/1613000/AptBasisInfoServiceV4/getAphusBassInfoV4` +
+    // 버전이 올라가면 옛 버전은 폐기된다. V4가 NO_OPENAPI_SERVICE_ERROR("해당 오픈API
+    // 서비스가 없거나 폐기됨")로 죽어 상세페이지 세대수·난방이 통째로 빠졌다(2026-08-27).
+    // 같은 날 오전까지 멀쩡했으므로 예고 없이 끊긴다고 보는 게 맞다.
+    // check-keys.mjs가 이 엔드포인트를 함께 감시한다.
+    const url = `https://apis.data.go.kr/1613000/AptBasisInfoServiceV5/getAphusBassInfoV5` +
       `?serviceKey=${key}&kaptCode=${kaptCode}&_type=json`
 
     const r = await fetch(url)

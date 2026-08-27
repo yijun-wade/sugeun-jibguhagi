@@ -54,7 +54,7 @@ const CHECKS = [
   {
     name: '공동주택 기본정보(K-APT)',
     keys: ['MOLIT_API_KEY'],
-    run: dataGoKr('kapt', 'https://apis.data.go.kr/1613000/AptBasisInfoServiceV4/getAphusBassInfoV4?serviceKey=__KEY__&kaptCode=A11005401&_type=json'),
+    run: dataGoKr('kapt', 'https://apis.data.go.kr/1613000/AptBasisInfoServiceV5/getAphusBassInfoV5?serviceKey=__KEY__&kaptCode=A11005401&_type=json'),
     impact: '상세페이지 세대수·난방·건축연도 (/api/kapt)',
   },
   {
