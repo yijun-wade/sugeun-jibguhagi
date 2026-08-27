@@ -1,56 +1,18 @@
 {
   "updatedAt": "2026-08-27T13:49:09.319Z",
   "entries": {
-    "224380308186": {
-      "logNo": "224380308186",
-      "title": "양도세 강화, 1주택자인 저도 세금 더 내나요?",
-      "publishedAt": "2026-08-18",
-      "checks": [
-        {
-          "day": 7,
-          "at": "2026-08-27T13:49:09.319Z",
-          "titleRank": null,
-          "competitors": 10300,
-          "keyword": "양도소득세",
-          "kwRank": null
-        }
-      ]
-    },
-    "224380307064": {
-      "logNo": "224380307064",
-      "title": "정부 10만가구 공급해도 강남은 왜 여전히 차갑나",
-      "publishedAt": "2026-08-17",
-      "checks": [
-        {
-          "day": 7,
-          "at": "2026-08-27T13:49:09.319Z",
-          "titleRank": null,
-          "competitors": 147,
-          "keyword": "정부주택정책",
-          "kwRank": null
-        }
-      ]
-    },
-    "224380303055": {
-      "logNo": "224380303055",
-      "title": "등기부등본 보다가 깜짝 놀란 이유, 근저당권이 뭐길래?",
-      "publishedAt": "2026-08-17",
-      "checks": [
-        {
-          "day": 7,
-          "at": "2026-08-27T13:49:09.319Z",
-          "titleRank": null,
-          "competitors": 142,
-          "keyword": "근저당권",
-          "kwRank": null
-        }
-      ]
-    },
     "224380301785": {
       "logNo": "224380301785",
       "title": "DSR 몰라서 대출 2억 덜 받았던 썰 풉니다",
       "publishedAt": "2026-08-16",
       "checks": [
+        {
+          "day": 3,
+          "at": "2026-08-19T22:32:58.571Z",
+          "titleRank": 1,
+          "keyword": "DSR",
+          "kwRank": null
+        },
         {
           "day": 7,
           "at": "2026-08-27T13:49:09.319Z",
@@ -67,11 +29,98 @@
       "publishedAt": "2026-08-15",
       "checks": [
         {
+          "day": 1,
+          "at": "2026-08-16T06:51:10.452Z",
+          "titleRank": 1,
+          "keyword": null,
+          "kwRank": null
+        },
+        {
+          "day": 3,
+          "at": "2026-08-19T22:32:58.571Z",
+          "titleRank": 3,
+          "keyword": null,
+          "kwRank": null
+        },
+        {
           "day": 7,
           "at": "2026-08-27T13:49:09.319Z",
           "titleRank": null,
           "competitors": 238,
           "keyword": null,
+          "kwRank": null
+        }
+      ]
+    },
+    "224380303055": {
+      "logNo": "224380303055",
+      "title": "등기부등본 보다가 깜짝 놀란 이유, 근저당권이 뭐길래?",
+      "publishedAt": "2026-08-17",
+      "checks": [
+        {
+          "day": 3,
+          "at": "2026-08-19T22:32:58.571Z",
+          "titleRank": 1,
+          "keyword": "근저당권",
+          "kwRank": null
+        },
+        {
+          "day": 7,
+          "at": "2026-08-27T13:49:09.319Z",
+          "titleRank": null,
+          "competitors": 142,
+          "keyword": "근저당권",
+          "kwRank": null
+        }
+      ]
+    },
+    "224380307064": {
+      "logNo": "224380307064",
+      "title": "정부 10만가구 공급해도 강남은 왜 여전히 차갑나",
+      "publishedAt": "2026-08-17",
+      "checks": [
+        {
+          "day": 3,
+          "at": "2026-08-19T22:32:58.571Z",
+          "titleRank": 4,
+          "keyword": "정부주택정책",
+          "kwRank": null
+        },
+        {
+          "day": 7,
+          "at": "2026-08-27T13:49:09.319Z",
+          "titleRank": null,
+          "competitors": 147,
+          "keyword": "정부주택정책",
+          "kwRank": null
+        }
+      ]
+    },
+    "224380308186": {
+      "logNo": "224380308186",
+      "title": "양도세 강화, 1주택자인 저도 세금 더 내나요?",
+      "publishedAt": "2026-08-18",
+      "checks": [
+        {
+          "day": 1,
+          "at": "2026-08-19T22:32:58.571Z",
+          "titleRank": null,
+          "keyword": "양도소득세",
+          "kwRank": null
+        },
+        {
+          "day": 3,
+          "at": "2026-08-20T22:37:06.405Z",
+          "titleRank": null,
+          "keyword": "양도소득세",
+          "kwRank": null
+        },
+        {
+          "day": 7,
+          "at": "2026-08-27T13:49:09.319Z",
+          "titleRank": null,
+          "competitors": 10300,
+          "keyword": "양도소득세",
           "kwRank": null
         }
       ]
