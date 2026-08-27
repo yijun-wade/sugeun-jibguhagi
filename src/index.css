@@ -3035,4 +3035,3 @@ header { text-align: center; padding: 4px 0 2px; }
   .adr-count { grid-column: 3; grid-row: 1; }
   .adr-range { grid-column: 2 / 4; grid-row: 2; font-size: 11px; text-align: left; }
 }
-}
