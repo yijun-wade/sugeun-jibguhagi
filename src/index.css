@@ -1204,7 +1204,12 @@ header { text-align: center; padding: 4px 0 2px; }
   z-index: 100;
   /* overflow:hidden 이면 항목이 많을 때 잘려서 아예 못 본다.
      높이를 제한하고 스크롤을 허용한다. -webkit-overflow-scrolling은 iOS 관성 스크롤. */
+  /* dvh는 키보드가 올라와 줄어든 실제 보이는 높이를 따른다.
+     vh는 키보드를 무시해서 목록 아래쪽이 화면 밖으로 밀린다 — 사용자가
+     "모바일에서 내려 볼 수 없다"고 한 상황이 이것이었다.
+     dvh를 모르는 브라우저를 위해 vh를 먼저 둔다. */
   max-height: min(52vh, 380px);
+  max-height: min(52dvh, 380px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
@@ -2911,7 +2916,9 @@ header { text-align: center; padding: 4px 0 2px; }
   position: absolute; top: 100%; left: 0; right: 0;
   background: #fff; border: 1px solid #cbd5e1; border-radius: 8px;
   margin: 4px 0 0; padding: 0; list-style: none; z-index: 10;
-  max-height: min(46vh, 240px); overflow-y: auto;
+  max-height: min(46vh, 240px);
+  max-height: min(46dvh, 240px);
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
 }
 .report-sugg-item {
