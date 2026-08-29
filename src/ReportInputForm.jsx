@@ -26,7 +26,8 @@ export default function ReportInputForm({ initial, onSubmit }) {
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(aptQuery)}`, { signal: controller.signal })
         const data = await res.json()
-        setSuggestions(Array.isArray(data) ? data.slice(0, 5) : [])
+        // 리포트 입력은 목록 높이가 더 작으므로(46dvh) 10개로 둔다
+        setSuggestions(Array.isArray(data) ? data.slice(0, 10) : [])
         setShowSugg(true)
       } catch {}
     }, 200)

@@ -399,7 +399,9 @@ function SearchApp() {
         .then(r => r.json())
         .catch(e => (e.name === 'AbortError' ? null : []))
       if (res !== null) {
-        setSuggestions(Array.isArray(res) ? res.slice(0, 6) : [])
+        // 6개는 "래미안"처럼 흔한 이름에서 원하는 단지가 안 걸린다.
+        // API가 이미 20개를 주고, 목록은 dvh로 화면 안에 맞춰 스크롤되므로 늘려도 안전하다.
+        setSuggestions(Array.isArray(res) ? res.slice(0, 15) : [])
         setShowSugg(true)
       }
     }, 200)
