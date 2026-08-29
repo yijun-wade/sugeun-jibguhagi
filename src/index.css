@@ -1201,7 +1201,13 @@ header { text-align: center; padding: 4px 0 2px; }
   background: var(--card); border: 1.5px solid var(--border);
   border-radius: 14px; list-style: none; padding: 6px 0;
   box-shadow: 0 8px 24px rgba(0,0,0,0.10);
-  z-index: 100; overflow: hidden;
+  z-index: 100;
+  /* overflow:hidden 이면 항목이 많을 때 잘려서 아예 못 본다.
+     높이를 제한하고 스크롤을 허용한다. -webkit-overflow-scrolling은 iOS 관성 스크롤. */
+  max-height: min(52vh, 380px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 .sugg-item {
   display: flex; justify-content: space-between; align-items: center;
@@ -2905,7 +2911,8 @@ header { text-align: center; padding: 4px 0 2px; }
   position: absolute; top: 100%; left: 0; right: 0;
   background: #fff; border: 1px solid #cbd5e1; border-radius: 8px;
   margin: 4px 0 0; padding: 0; list-style: none; z-index: 10;
-  max-height: 240px; overflow-y: auto;
+  max-height: min(46vh, 240px); overflow-y: auto;
+  -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
 }
 .report-sugg-item {
   padding: 10px 12px; cursor: pointer; display: flex; flex-direction: column;

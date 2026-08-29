@@ -90,7 +90,12 @@ export default function ReportInputForm({ initial, onSubmit }) {
                 <li
                   key={apt.kaptCode}
                   className="report-sugg-item"
-                  onPointerDown={(e) => { e.preventDefault(); pickApt(apt) }}
+                  // pointerdown은 손가락이 닿는 순간 발생해, 목록을 스크롤하려고 터치만 해도
+                  // 즉시 선택돼버린다(모바일에서 목록을 내려볼 수 없었다).
+                  // preventDefault만 남겨 입력창 blur로 목록이 닫히는 것을 막고,
+                  // 실제 선택은 click에서 한다 — 스크롤한 손가락에는 click이 발생하지 않는다.
+                  onPointerDown={(e) => e.preventDefault()}
+                  onClick={() => pickApt(apt)}
                 >
                   <span className="report-sugg-name">{apt.kaptName}</span>
                   <span className="report-sugg-addr">{apt.addr?.split(' ').slice(1, 4).join(' ')}</span>
