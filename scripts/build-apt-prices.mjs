@@ -33,7 +33,17 @@ function getYM(n) {
 }
 
 // 이름 유사도 (utils.js와 동일 로직 — 단지/차 마커 검증 포함)
-function normNm(s) { return (s || '').replace(/[\s()（）]/g, '').replace(/아파트$/, '') }
+// 표기 차이 흡수. 실거래는 "에스케이", 공동주택대장은 "SK"처럼 갈린다.
+const ALIAS = [
+  [/에스케이/g, 'sk'], [/엘지/g, 'lg'], [/지에스/g, 'gs'], [/케이티/g, 'kt'],
+  [/현대산업개발/g, '현대'], [/주식회사|㈜/g, ''],
+]
+function normNm(s) {
+  let v = (s || '').toLowerCase().replace(/[\s()（）·.\-]/g, '')
+  for (const [re, to] of ALIAS) v = v.replace(re, to)
+  return v.replace(/아파트/g, '')
+}
+
 function extractMarkers(s) {
   const out = []
   const re = /(\d+)(단지|차)/g
@@ -41,21 +51,62 @@ function extractMarkers(s) {
   while ((m = re.exec(s)) !== null) out.push(m[1])
   return out
 }
-function nameSim(a, b) {
-  const na = normNm(a), nb = normNm(b)
+
+/** 단지번호를 뗀 몸통 — "마포래미안푸르지오1단지" → "마포래미안푸르지오" */
+const stripMarkers = (s) => s.replace(/\d+(단지|차)/g, '')
+
+// 실거래는 번지수를 괄호로 달고 들어온다 — "한진(609-1)".
+const stripBunji = (s) => s.replace(/\(?\d+[-‑]\d+\)?$/, '')
+
+/**
+ * 지역명 접두를 뗀다 — 대장은 "신천장미1차2차", 실거래는 "장미1"이다.
+ * 실거래는 이미 동 단위로 조회하므로 동 이름을 다시 적지 않는다.
+ * 몸통이 2자 미만으로 줄면 과도한 제거이므로 원본을 유지한다.
+ */
+function stripRegion(s, dong, gu) {
+  for (const r of [dong, gu]) {
+    if (!r) continue
+    const base = String(r).replace(/[동구]$/, '')
+    if (base.length >= 2 && s.startsWith(base) && s.length - base.length >= 2) {
+      return s.slice(base.length)
+    }
+  }
+  return s
+}
+
+function nameSim(a, b, region = {}) {
+  let na = normNm(a), nb = normNm(b)
+  na = stripRegion(stripBunji(na), region.dong, region.gu)
+  nb = stripRegion(stripBunji(nb), region.dong, region.gu)
   if (!na || !nb) return 0
   if (na === nb) return 1
+
   const ma = extractMarkers(na), mb = extractMarkers(nb)
-  if (ma.length || mb.length) {
-    if (ma.length !== mb.length) return 0
-    if (!ma.every(x => mb.includes(x))) return 0
+
+  // 양쪽 다 단지번호가 있으면 반드시 같아야 한다 — 1단지와 2단지는 다른 단지다.
+  if (ma.length && mb.length) {
+    if (ma.length !== mb.length || !ma.every((x) => mb.includes(x))) return 0
   }
-  const shorter = na.length <= nb.length ? na : nb
-  if (shorter.length >= 4 && (na.includes(nb) || nb.includes(na))) return 1
-  const setB = new Set(nb)
+
+  // 한쪽에만 단지번호가 있는 경우를 막으면 안 된다.
+  // 공동주택대장은 "마포래미안푸르지오" 통합명 하나인데 실거래는 1단지·2단지로
+  // 쪼개 들어온다. 예전 코드는 개수가 다르면 0점이라 대단지일수록 반드시 실패했다.
+  // 실제로 500세대 이상 469개 단지(55만 세대)에 가격이 안 붙었다(2026-08-29).
+  // 다만 정확히 일치하는 후보가 있으면 그쪽이 이기도록 점수를 살짝 낮춘다.
+  const onlyOneHasMarker = Boolean(ma.length) !== Boolean(mb.length)
+  const penalty = onlyOneHasMarker ? 0.9 : 1
+
+  const sa = onlyOneHasMarker ? stripMarkers(na) : na
+  const sb = onlyOneHasMarker ? stripMarkers(nb) : nb
+  if (sa === sb) return penalty
+
+  const shorter = sa.length <= sb.length ? sa : sb
+  if (shorter.length >= 4 && (sa.includes(sb) || sb.includes(sa))) return penalty
+
+  const setB = new Set(sb)
   let overlap = 0
-  for (const ch of na) if (setB.has(ch)) overlap++
-  return overlap / Math.max(na.length, nb.length)
+  for (const ch of sa) if (setB.has(ch)) overlap++
+  return (overlap / Math.max(sa.length, sb.length)) * penalty
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms))
@@ -114,7 +165,7 @@ for (const lawdCd of Object.keys(tradesByLawd)) {
     const candidates = aptsByDong[`${lawdCd}|${umd}`] || []
     let best = null, bestSim = 0
     for (const apt of candidates) {
-      const sim = nameSim(nm, apt.kaptName)
+      const sim = nameSim(nm, apt.kaptName, { dong: umd, gu: apt.sigungu })
       if (sim > bestSim) { bestSim = sim; best = apt }
     }
     if (best && bestSim >= 0.6) {
