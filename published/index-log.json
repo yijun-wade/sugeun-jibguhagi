@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-28T06:05:11.128Z",
+  "updatedAt": "2026-08-29T03:38:54.753Z",
   "entries": {
     "224380301785": {
       "logNo": "224380301785",
@@ -47,6 +47,14 @@
           "at": "2026-08-27T13:49:09.319Z",
           "titleRank": null,
           "competitors": 238,
+          "keyword": null,
+          "kwRank": null
+        },
+        {
+          "day": 14,
+          "at": "2026-08-29T03:38:54.753Z",
+          "titleRank": null,
+          "competitors": 239,
           "keyword": null,
           "kwRank": null
         }
@@ -121,6 +129,21 @@
           "titleRank": null,
           "competitors": 10300,
           "keyword": "양도소득세",
+          "kwRank": null
+        }
+      ]
+    },
+    "224392511986": {
+      "logNo": "224392511986",
+      "title": "금리 3% 시대, 15억 이하 주택 매수자들 한숨 쉬다",
+      "publishedAt": "2026-08-28",
+      "checks": [
+        {
+          "day": 1,
+          "at": "2026-08-29T03:38:54.753Z",
+          "titleRank": 25,
+          "competitors": 27,
+          "keyword": "기준금리",
           "kwRank": null
         }
       ]
