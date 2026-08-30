@@ -24,7 +24,10 @@ export default function EvalCard({ apt, onDetail, onCollectionChange }) {
     const next = toggleCollection(apt)
     const saving = !collected
     setCollected(saving)
-    track(saving ? 'collect_save' : 'collect_remove', { apt_name: apt.aptNm, region: apt.regionName })
+    // from을 반드시 함께 보낸다. 상세 페이지도 같은 이벤트를 쏘는데 이게 없으면
+    // 목록에서 저장한 건지 상세에서 저장한 건지 구분이 안 되고, 목록 카드 카피를
+    // 바꿔도 효과를 잴 수 없다.
+    track(saving ? 'collect_save' : 'collect_remove', { apt_name: apt.aptNm, region: apt.regionName, from: 'result_card' })
     onCollectionChange?.(next)
   }
 
@@ -83,7 +86,13 @@ export default function EvalCard({ apt, onDetail, onCollectionChange }) {
       })()}
 
       {/* CTA */}
-      <button className="eval-detail-btn" onClick={onDetail}>
+      {/* 검색 → 상세는 이 제품의 핵심 퍼널 한 칸인데 계측이 없었다.
+          page_view(apt_detail)로는 대신할 수 없다 — 유입의 95%가 네이버에서
+          상세로 바로 착지해서, 검색으로 들어온 사람과 뒤섞여 구분이 안 된다. */}
+      <button
+        className="eval-detail-btn"
+        onClick={() => { track('result_detail_click', { apt_name: apt.aptNm, region: apt.regionName, collected }); onDetail?.() }}
+      >
         실거래 · 동네 후기 확인하기 →
       </button>
     </div>

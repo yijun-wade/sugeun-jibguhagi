@@ -319,10 +319,11 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
               if (!dir) return
               e.preventDefault()
               const next = (i + dir + TABS.length) % TABS.length
+              track('tab_switch', { tab_name: TABS[next], apt_name: apt.aptNm, method: 'keyboard' })
               setTab(TABS[next])
               document.getElementById(`detail-tab-${next}`)?.focus()
             }}
-            onClick={() => { track('tab_switch', { tab_name: t, apt_name: apt.aptNm }); setTab(t) }}
+            onClick={() => { track('tab_switch', { tab_name: t, apt_name: apt.aptNm, method: 'click' }); setTab(t) }}
           >
             {t}
           </button>
@@ -695,7 +696,7 @@ function PriceTab({ apt }) {
       ) : tradeError ? (
         <div className="detail-empty">
           거래 데이터를 불러오지 못했어요.
-          <button className="detail-empty-action" onClick={() => setReloadKey(k => k + 1)}>다시 시도</button>
+          <button className="detail-empty-action" onClick={() => { track('trade_retry_click', { apt_name: apt.aptNm, months }); setReloadKey(k => k + 1) }}>다시 시도</button>
         </div>
       ) : !trades ? null : trades.length === 0 ? (
         // 막다른 길이 아니라 출구를 준다 — 기간만 넓히면 거래가 나오는 경우가 대부분이고,

@@ -723,13 +723,13 @@ function SearchApp() {
 
       {cards.length > 0 && (
         <div className="result-section">
-          {/* 탭: 검색결과 / 수집 */}
-          <div className="result-tabs">
+          {/* 탭: 검색결과 / 저장 */}
+          <div className="result-tabs" role="tablist" aria-label="검색 결과 · 저장한 집">
             <button className={`result-tab${resultTab === 'search' ? ' active' : ''}`} onClick={() => { setResultTab('search'); track('result_tab_switch', { tab: 'search' }) }}>
               검색결과
             </button>
             <button className={`result-tab${resultTab === 'collection' ? ' active' : ''}`} onClick={() => { setResultTab('collection'); track('result_tab_switch', { tab: 'collection', collection_count: collection.length }) }}>
-              수집 {collection.length > 0 ? `${collection.length}개` : ''}
+              저장 {collection.length > 0 ? `${collection.length}개` : ''}
             </button>
           </div>
 
