@@ -80,10 +80,51 @@ body {
 .app-home { justify-content: center; min-height: 80vh; padding-top: 0; gap: 20px; }
 
 /* ─── HERO OG 이미지 ─── */
-.hero-og-img {
-  width: 100%;
+/* 홈 히어로 — 첫 검색을 만들어내는 것이 목표.
+   장식 이미지 대신 "무엇을 얻는지"와 "바로 해보기"만 남긴다. */
+.hero-value {
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 16px;
-  display: block;
+  padding: 22px 20px;
+  margin-top: 16px;
+}
+.hero-value-title {
+  font-size: 20px; font-weight: 800; color: var(--text);
+  line-height: 1.35; letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.hero-value-sub {
+  margin-top: 6px;
+  font-size: 14px; color: var(--text2);
+}
+.hero-value-list {
+  list-style: none;
+  margin: 16px 0 0;
+  display: flex; flex-direction: column; gap: 9px;
+}
+.hero-value-list li {
+  display: flex; align-items: flex-start; gap: 9px;
+  font-size: 14px; color: var(--text); line-height: 1.5;
+}
+/* 2차 위계. 이 화면의 1차 행동은 검색창(주황 '검색')이고, 이건 뭘 쳐야 할지
+   모르는 사람을 위한 우회로다. 채운 색을 둘로 늘리면 어느 쪽이 본길인지 흐려진다. */
+.hero-value-cta {
+  display: block; width: 100%;
+  margin-top: 18px;
+  background: var(--blue-lt); color: var(--blue);
+  border: 1px solid var(--blue-md); border-radius: 12px;
+  padding: 14px; font-size: 15px; font-weight: 700;
+  font-family: inherit; cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.hero-value-cta:hover { background: var(--blue-md); border-color: var(--blue); }
+.hero-value-cta:active { scale: 0.98; }
+
+@media (min-width: 560px) {
+  .hero-value { padding: 28px 26px; }
+  .hero-value-title { font-size: 24px; }
+  .hero-value-cta { width: auto; padding: 14px 24px; }
 }
 
 /* ─── HERO SPLIT (홈) ─── */

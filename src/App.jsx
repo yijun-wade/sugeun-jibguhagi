@@ -3,6 +3,10 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Routes, Route, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { DONG, HINT_SEARCHES } from './data.js'
+
+// 히어로 예시 검색어. 5,600세대 대단지라 후기·실거래가 모두 풍부해
+// "검색하면 이런 게 나온다"를 빈 화면 없이 보여줄 수 있다.
+const HERO_SAMPLE = '잠실엘스'
 import { getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim, buildPriceJudgment } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM } from './constants.js'
 import EvalCard from './EvalCard.jsx'
@@ -576,13 +580,29 @@ function SearchApp() {
         </div>
       )}
 
-      {/* 홈: OG 이미지 히어로 — 검색창 아래에서 컨텍스트 제공 */}
+      {/* 홈 히어로.
+          이 화면의 UX 목표는 "첫 검색"이다. 전에는 OG 공유 이미지(1.3MB PNG)를
+          그대로 깔았는데, 헤더에 이미 있는 브랜드명을 반복할 뿐 검색할 이유를 주지
+          못했고 화면에서 가장 큰 덩어리로 다음 행동을 아래로 밀어냈다.
+          대신 (1) 무엇을 얻는지 제품의 실제 출력 용어로 보여주고
+              (2) 예시 검색을 바로 실행하는 버튼으로 끝낸다. */}
       {isHome && (
-        <img
-          src="/ogimage.png"
-          alt="퇴근 후 이불 속에서 하는 임장 — 수군수군 우리집"
-          className="hero-og-img"
-        />
+        <section className="hero-value">
+          <h2 className="hero-value-title">퇴근 후, 이불 속에서 하는 임장</h2>
+          <p className="hero-value-sub">발품 팔기 전에 아파트 이름만 넣어보세요.</p>
+          <ul className="hero-value-list">
+            <li><span aria-hidden="true">🗣</span> 그 동네 사람들이 실제로 하는 이야기</li>
+            <li><span aria-hidden="true">📈</span> 최근 실거래가와 가격 흐름</li>
+            <li><span aria-hidden="true">✅</span> 이 집 살만한지 한 줄 평가</li>
+          </ul>
+          <button
+            type="button"
+            className="hero-value-cta"
+            onClick={() => { track('hero_sample_click', { sample: HERO_SAMPLE }); setQuery(HERO_SAMPLE); handleSearch(HERO_SAMPLE) }}
+          >
+            {HERO_SAMPLE}로 예시 결과 보기 →
+          </button>
+        </section>
       )}
 
       {/* Discovery 모드 */}
