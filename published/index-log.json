@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-29T03:38:54.753Z",
+  "updatedAt": "2026-08-30T00:06:21.135Z",
   "entries": {
     "224380301785": {
       "logNo": "224380301785",
@@ -16,6 +16,14 @@
         {
           "day": 7,
           "at": "2026-08-27T13:49:09.319Z",
+          "titleRank": 6,
+          "competitors": 6,
+          "keyword": "DSR",
+          "kwRank": null
+        },
+        {
+          "day": 14,
+          "at": "2026-08-30T00:06:21.135Z",
           "titleRank": 6,
           "competitors": 6,
           "keyword": "DSR",
@@ -144,6 +152,21 @@
           "titleRank": 25,
           "competitors": 27,
           "keyword": "기준금리",
+          "kwRank": null
+        }
+      ]
+    },
+    "224392513368": {
+      "logNo": "224392513368",
+      "title": "중개수수료 몰랐다가 200만 원 더 낸 친구 이야기",
+      "publishedAt": "2026-08-28",
+      "checks": [
+        {
+          "day": 1,
+          "at": "2026-08-30T00:06:21.135Z",
+          "titleRank": null,
+          "competitors": 912,
+          "keyword": "중개수수료",
           "kwRank": null
         }
       ]
