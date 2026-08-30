@@ -178,7 +178,7 @@ function SearchApp() {
   const [nearbyState, setNearbyState] = useState('idle') // 'idle' | 'loading' | 'done' | 'error' | 'denied'
   const [nearbyApts, setNearbyApts] = useState([])
   const [collection, setCollection] = useState(() => getCollection())
-  // 상세페이지에서 '수집 목록에서 비교하기'로 넘어오면 수집 탭을 연 채 착지
+  // 상세페이지에서 '저장한 집 비교하기'로 넘어오면 수집 탭을 연 채 착지
   const [resultTab, setResultTab] = useState(() => (location.state?.openTab === 'collection' ? 'collection' : 'search')) // 'search' | 'collection'
   const [compareSelected, setCompareSelected] = useState([])
   const [compareOpen, setCompareOpen] = useState(false)
@@ -520,14 +520,29 @@ function SearchApp() {
             onKeyDown={handleKeyDown}
             onFocus={() => suggestions.length > 0 && setShowSugg(true)}
             autoComplete="off"
+            // ARIA 1.2 combobox 패턴. 화살표·Enter로 고르는 동작은 이미 있었지만
+            // 스크린리더에는 후보 목록이 아예 존재하지 않았다(role·aria 전무).
+            // aria-activedescendant는 포커스를 입력창에 둔 채 "지금 몇 번째"를 읽어준다.
+            role="combobox"
+            aria-expanded={showSugg && suggestions.length > 0}
+            aria-controls="sugg-listbox"
+            aria-autocomplete="list"
+            aria-activedescendant={activeSugg >= 0 ? `sugg-opt-${suggestions[activeSugg]?.kaptCode}` : undefined}
           />
           <button className="search-btn" onClick={() => { setShowSugg(false); handleSearch(query) }}>검색</button>
         </div>
+        {/* 후보 개수를 알리는 폴라이트 리전. 비어 있어도 항상 렌더해야 갱신이 일관되게 읽힌다. */}
+        <div className="sr-only" role="status">
+          {showSugg && suggestions.length > 0 ? `검색 후보 ${suggestions.length}개` : ''}
+        </div>
         {showSugg && suggestions.length > 0 && (
-          <ul className="sugg-list" ref={suggRef}>
+          <ul className="sugg-list" id="sugg-listbox" role="listbox" aria-label="아파트 검색 후보" ref={suggRef}>
             {suggestions.map((apt, i) => (
               <li
                 key={apt.kaptCode}
+                id={`sugg-opt-${apt.kaptCode}`}
+                role="option"
+                aria-selected={i === activeSugg}
                 className={`sugg-item${i === activeSugg ? ' active' : ''}`}
                 // pointerdown은 손가락이 닿는 순간 발생해, 목록을 스크롤하려고 터치만 해도
                 // 즉시 선택돼버린다(모바일에서 목록을 내려볼 수 없었다).
@@ -550,6 +565,9 @@ function SearchApp() {
       {/* 홈: hint chips → 검색창 바로 아래 (한 번 더 검색 의도 유도) */}
       {isHome && searchMode === 'name' && (
         <div className="hint-searches">
+          {/* 칩만 덩그러니 있으면 태그처럼 보여 아무도 안 누른다(유저테스트).
+              눌러도 된다는 것과 누르면 무슨 일이 생기는지를 한 줄로 말해준다. */}
+          <span className="hint-searches-lead">눌러서 바로 검색해보세요</span>
           {HINT_SEARCHES.map(h => (
             <button key={h} className="hint-chip" onClick={() => { track('hint_click', { hint_text: h }); setQuery(h); handleSearch(h) }}>
               {h}
@@ -589,7 +607,7 @@ function SearchApp() {
           {collection.length > 0 && (
             <div className="collection-section">
               <div className="collection-header">
-                <span className="collection-title">★ 내가 수집한 단지</span>
+                <span className="collection-title">★ 내가 저장한 집</span>
                 <span className="collection-count">{collection.length}개</span>
               </div>
               <CollectionList
@@ -708,6 +726,13 @@ function SearchApp() {
                   검색 결과가 더 있어요. 아파트명이나 도로명을 함께 입력하면 더 정확하게 찾을 수 있어요.
                 </div>
               )}
+              {/* 결과 카드에 버튼이 둘(저장·상세)이라 뭘 눌러야 할지 모른다는 유저테스트 결과.
+                  각각 누르면 뭐가 되는지를 목록 위에서 한 줄로 먼저 말해준다. */}
+              {cards.length > 0 && (
+                <div className="search-result-guide">
+                  <strong>후기 · 실거래 보기</strong>를 누르면 상세로 가고, <strong>★ 저장</strong>을 누르면 가격 변동을 알려드려요.
+                </div>
+              )}
               <div className="card-list">
                 {cards.map((apt, i) => (
                   <>
@@ -723,11 +748,11 @@ function SearchApp() {
           ) : (
             <div className="collection-tab-body">
               {collection.length === 0 ? (
-                <div className="collection-empty">아직 수집한 단지가 없어요.<br/>검색 결과에서 <strong>수집</strong> 버튼을 눌러보세요.</div>
+                <div className="collection-empty">아직 저장한 집이 없어요.<br/>검색 결과에서 <strong>★ 저장</strong>을 눌러보세요. 저장해두면 가격이 움직일 때 알려드려요.</div>
               ) : (
                 <>
                   <div className="collection-header">
-                    <span className="collection-title">★ 내가 수집한 단지</span>
+                    <span className="collection-title">★ 내가 저장한 집</span>
                     <span className="collection-count">{collection.length}개</span>
                   </div>
                   <CollectionList

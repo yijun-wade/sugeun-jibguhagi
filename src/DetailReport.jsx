@@ -109,11 +109,19 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
 
   return (
     <div className="detail-report">
+      {/* 토스트는 눈으로만 보였고 스크린리더에는 저장·해제·공유 결과가 전혀 안 읽혔다.
+          리전을 조건부로 만들면 갱신이 일관되게 안 읽히므로, 빈 채로 항상 두고 안쪽 글만 바꾼다.
+          긴급한 오류가 아니므로 alert가 아니라 polite(role="status")다. */}
+      <div className="sr-only" role="status">
+        {toast === 'share' ? '링크를 복사했습니다.'
+          : toast === 'uncollect' ? `${apt.aptNm}을(를) 저장 목록에서 뺐습니다.`
+          : justSaved ? `${apt.aptNm}을(를) 저장했습니다.` : ''}
+      </div>
       {toast === 'share' && (
-        <div className="collect-toast">링크 복사 완료! 원하는 곳에 공유하세요.</div>
+        <div className="collect-toast" aria-hidden="true">링크 복사 완료! 원하는 곳에 공유하세요.</div>
       )}
       {toast === 'uncollect' && (
-        <div className="collect-toast">수집 목록에서 제거했어요</div>
+        <div className="collect-toast" aria-hidden="true">저장 목록에서 뺐어요</div>
       )}
       <div className="detail-header">
         <button className="detail-back" aria-label="목록으로 돌아가기" onClick={onBack}>← 뒤로</button>
@@ -122,7 +130,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           <div className="detail-apt-loc">{apt.dong} · {apt.regionName}</div>
         </div>
         <div className="detail-header-actions">
-          <button className={`collect-btn${collected ? ' collected' : ''}`} aria-label={collected ? '저장 취소' : '저장하기'} onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm, from: 'header' }); handleCollect() }}>
+          <button className={`collect-btn${collected ? ' collected' : ''}`} aria-label={collected ? `${apt.aptNm} 저장 취소` : `${apt.aptNm} 저장`} onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm, from: 'header' }); handleCollect() }}>
             {collected ? '✓ 저장됨' : '★ 저장'}
           </button>
         </div>
@@ -293,12 +301,27 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
         </Link>
       )}
 
-      <div className="detail-tabs">
-        {TABS.map(t => (
+      {/* APG 탭 패턴. 전에는 aria-pressed라 토글 버튼 3개로 읽혔고,
+          "3개 중 몇 번째"도 "고르면 아래가 바뀐다"도 전달되지 않았다.
+          roving tabindex — 선택된 탭만 Tab 순서에 들어가고, 좌우 화살표로 이동한다. */}
+      <div className="detail-tabs" role="tablist" aria-label="단지 정보 분류">
+        {TABS.map((t, i) => (
           <button
             key={t}
+            id={`detail-tab-${i}`}
+            role="tab"
+            aria-selected={tab === t}
+            aria-controls={`detail-panel-${i}`}
+            tabIndex={tab === t ? 0 : -1}
             className={`detail-tab${tab === t ? ' on' : ''}`}
-            aria-pressed={tab === t}
+            onKeyDown={(e) => {
+              const dir = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0
+              if (!dir) return
+              e.preventDefault()
+              const next = (i + dir + TABS.length) % TABS.length
+              setTab(TABS[next])
+              document.getElementById(`detail-tab-${next}`)?.focus()
+            }}
             onClick={() => { track('tab_switch', { tab_name: t, apt_name: apt.aptNm }); setTab(t) }}
           >
             {t}
@@ -306,7 +329,13 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
         ))}
       </div>
 
-      <div className="detail-body">
+      <div
+        className="detail-body"
+        role="tabpanel"
+        id={`detail-panel-${TABS.indexOf(tab)}`}
+        aria-labelledby={`detail-tab-${TABS.indexOf(tab)}`}
+        tabIndex={0}
+      >
         {tab === '시세'       && <PriceTab apt={apt} />}
         {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} apt={apt} />}
       </div>
@@ -334,7 +363,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
                 <span className="collect-cta-title">
                   {otherSaved[0].aptNm}{otherSaved.length > 1 ? ` 외 ${otherSaved.length - 1}곳` : ''} 담는 중 · 이 집도 같이 볼까요?
                 </span>
-                <span className="collect-cta-sub">수집한 집끼리 나란히 비교돼요</span>
+                <span className="collect-cta-sub">저장한 집끼리 나란히 비교돼요</span>
               </>
             ) : (
               <>
@@ -394,6 +423,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       <div className="detail-mobile-actions">
         <button
           className={`mobile-collect-btn${collected ? ' collected' : ''}`}
+          aria-label={collected ? `${apt.aptNm} 저장 취소` : `${apt.aptNm} 저장`}
           onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm, from: 'mobile_sticky' }); handleCollect() }}
         >
           {collected ? '✓ 저장됨 · 변동 지켜보는 중' : '★ 저장 · 새 거래 뜨면 알려드려요'}
@@ -493,6 +523,8 @@ function PriceTrendChart({ data }) {
 function PriceTab({ apt }) {
   const [trades, setTrades] = useState(null)
   const [months, setMonths] = useState(12)
+  // 재시도용. months를 같은 값으로 다시 넣으면 React가 리렌더를 건너뛰어 재조회가 안 된다.
+  const [reloadKey, setReloadKey] = useState(0)
   const [loading, setLoading] = useState(false)
   const [tradeError, setTradeError] = useState(false)
 
@@ -541,7 +573,7 @@ function PriceTab({ apt }) {
       setLoading(false)
     })
     return () => { controller.abort(); clearTimeout(timer) }
-  }, [apt?.bjdCode, apt?.aptNm, months])
+  }, [apt?.bjdCode, apt?.aptNm, months, reloadKey])
 
   // null = 전체. 값이 있으면 전용면적(반올림 ㎡).
   // 예전에는 "30평형대" 같은 10평 버킷이었는데, 그 안에서도 억 단위로 갈려
@@ -661,9 +693,24 @@ function PriceTab({ apt }) {
       {loading ? (
         <div className="detail-loading">실거래 데이터 불러오는 중...</div>
       ) : tradeError ? (
-        <div className="detail-empty">거래 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</div>
+        <div className="detail-empty">
+          거래 데이터를 불러오지 못했어요.
+          <button className="detail-empty-action" onClick={() => setReloadKey(k => k + 1)}>다시 시도</button>
+        </div>
       ) : !trades ? null : trades.length === 0 ? (
-        <div className="detail-empty">최근 {months}개월 거래 내역이 없습니다</div>
+        // 막다른 길이 아니라 출구를 준다 — 기간만 넓히면 거래가 나오는 경우가 대부분이고,
+        // 위쪽 기간 버튼을 못 본 사람은 여기서 되돌아갈 방법이 없었다.
+        <div className="detail-empty">
+          최근 {months}개월 거래가 없어요.
+          {months < 24 && (
+            <button
+              className="detail-empty-action"
+              onClick={() => { const next = months === 6 ? 12 : 24; track('price_months_change', { months: next, apt_name: apt.aptNm, from: 'empty' }); setMonths(next) }}
+            >
+              {months === 6 ? 12 : 24}개월로 넓혀보기
+            </button>
+          )}
+        </div>
       ) : (
         <>
           {trades.length <= 2 && (
@@ -855,6 +902,8 @@ function NeighborhoodQnA({ aptNm, dong }) {
       <form className="qna-form" onSubmit={(e) => { e.preventDefault(); ask(q, 'free') }}>
         <input
           className="qna-input"
+          // placeholder는 입력을 시작하면 사라지므로 라벨이 될 수 없다.
+          aria-label="이 단지에 대해 궁금한 점"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="예: 초품아인가요? 전세 물량 많아요?"
