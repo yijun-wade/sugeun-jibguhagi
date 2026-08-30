@@ -183,7 +183,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
             <span className="psb-price">{fP(apt.recentAvg)}</span>
             {apt.direction && <span className={`psb-dir ${dirClass(apt.direction)}`}>{apt.direction}</span>}
           </span>
-          <span className="psb-more">실거래 자세히 ›</span>
+          <span className="psb-more">실거래 확인하기 ›</span>
         </button>
       )}
 

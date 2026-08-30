@@ -84,7 +84,7 @@ export default function EvalCard({ apt, onDetail, onCollectionChange }) {
 
       {/* CTA */}
       <button className="eval-detail-btn" onClick={onDetail}>
-        후기 · 실거래 보기 →
+        실거래 · 동네 후기 확인하기 →
       </button>
     </div>
   )

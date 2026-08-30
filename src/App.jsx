@@ -3,10 +3,6 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Routes, Route, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { DONG, HINT_SEARCHES } from './data.js'
-
-// 히어로 예시 검색어. 5,600세대 대단지라 후기·실거래가 모두 풍부해
-// "검색하면 이런 게 나온다"를 빈 화면 없이 보여줄 수 있다.
-const HERO_SAMPLE = '잠실엘스'
 import { getYM, getLifeConditions, getVerdict, calcPriceSignal, nameSim, buildPriceJudgment } from './utils.js'
 import { FETCH_TIMEOUT, MIN_AREA_SQM } from './constants.js'
 import EvalCard from './EvalCard.jsx'
@@ -25,6 +21,10 @@ import AdFitBanner from './AdFitBanner.jsx'
 import CoupangBanner from './CoupangBanner.jsx'
 import { getCollection, toggleCollection } from './collection.js'
 import CompareView from './CompareView.jsx'
+
+// 히어로 예시 검색어. 5,600세대 대단지라 후기·실거래가 모두 풍부해
+// "검색하면 이런 게 나온다"를 빈 화면 없이 보여줄 수 있다.
+const HERO_SAMPLE = '잠실엘스'
 
 async function buildEvalData(apt) {
   const bjdCode = apt.bjdCode || null
@@ -600,7 +600,7 @@ function SearchApp() {
             className="hero-value-cta"
             onClick={() => { track('hero_sample_click', { sample: HERO_SAMPLE }); setQuery(HERO_SAMPLE); handleSearch(HERO_SAMPLE) }}
           >
-            {HERO_SAMPLE}로 예시 결과 보기 →
+            {HERO_SAMPLE} 결과 확인하기 →
           </button>
         </section>
       )}
@@ -750,7 +750,7 @@ function SearchApp() {
                   각각 누르면 뭐가 되는지를 목록 위에서 한 줄로 먼저 말해준다. */}
               {cards.length > 0 && (
                 <div className="search-result-guide">
-                  <strong>후기 · 실거래 보기</strong>를 누르면 상세로 가고, <strong>★ 저장</strong>을 누르면 가격 변동을 알려드려요.
+                  <strong>실거래 · 동네 후기 확인하기</strong>를 누르면 상세로 가고, <strong>★ 저장</strong>을 누르면 가격이 바뀔 때 알려드려요.
                 </div>
               )}
               <div className="card-list">
