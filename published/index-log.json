@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-30T00:06:21.135Z",
+  "updatedAt": "2026-08-31T00:24:20.104Z",
   "entries": {
     "224380301785": {
       "logNo": "224380301785",
@@ -87,6 +87,14 @@
           "competitors": 142,
           "keyword": "근저당권",
           "kwRank": null
+        },
+        {
+          "day": 14,
+          "at": "2026-08-31T00:24:20.104Z",
+          "titleRank": null,
+          "competitors": 143,
+          "keyword": "근저당권",
+          "kwRank": null
         }
       ]
     },
@@ -107,6 +115,14 @@
           "at": "2026-08-27T13:49:09.319Z",
           "titleRank": null,
           "competitors": 147,
+          "keyword": "정부주택정책",
+          "kwRank": null
+        },
+        {
+          "day": 14,
+          "at": "2026-08-31T00:24:20.104Z",
+          "titleRank": null,
+          "competitors": 148,
           "keyword": "정부주택정책",
           "kwRank": null
         }
@@ -153,6 +169,14 @@
           "competitors": 27,
           "keyword": "기준금리",
           "kwRank": null
+        },
+        {
+          "day": 3,
+          "at": "2026-08-31T00:24:20.104Z",
+          "titleRank": 26,
+          "competitors": 27,
+          "keyword": "기준금리",
+          "kwRank": null
         }
       ]
     },
@@ -166,6 +190,14 @@
           "at": "2026-08-30T00:06:21.135Z",
           "titleRank": null,
           "competitors": 912,
+          "keyword": "중개수수료",
+          "kwRank": null
+        },
+        {
+          "day": 3,
+          "at": "2026-08-31T00:24:20.104Z",
+          "titleRank": null,
+          "competitors": 913,
           "keyword": "중개수수료",
           "kwRank": null
         }

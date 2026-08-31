@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sun, 30 Aug 2026 00:06:25 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 31 Aug 2026 00:24:27 GMT</lastBuildDate>
+    <item>
+      <title>정부, 주택공급 촉진·강남조정·외곽상승 시대</title>
+      <link>https://www.suzip.kr/briefing/2026-08-31</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-08-31</guid>
+      <pubDate>Sun, 30 Aug 2026 22:00:00 GMT</pubDate>
+      <description>• 금융위와 국토부가 손잡고 건설사 자금난을 풀면서 주택공급을 늘리려고 한다.
+• 강남은 세금 부담으로 매수세가 줄었지만, 외곽 중저가 아파트는 수요가 몰려 계속 올라가고 있다.
+• LH가 매입임대 조건을 완화해서 서민 주택 공급을 늘리는 후속 조치를 진행 중이다.
+
+정부 의도: 지지율이 떨어지자 부동산이 핵심 정책으로 떠올랐다. 정부는 한쪽으로는 고급주택에 세금을 때려 투기를 억제하면서, 다른 한쪽으로는 일반인이 살 수 있는 저가 주택을 빠르게 지어야 한다는 압박에 있다. 건설사와 금융기관을 움직여서 주택 부족 문제를 풀려는 것이다.
+
+시장 변화: 강남의 고가주택 시장은 위축되지만, 서울 외곽과 지방의 중저가 아파트는 수요 이동으로 계속 가격이 오를 가능성이 크다. 임대차 시장에선 전세 수급이 악화되면서 월세로 전환하는 추세가 계속될 것 같다.</description>
+    </item>
     <item>
       <title>아파트 규제에 빌라 몰려, 정부는 금융지원 48조 투입</title>
       <link>https://www.suzip.kr/briefing/2026-08-30</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 집값 상승을 억제하고 가계부채를 줄이기 위해 대출을 엄격하게 통제하고 있습니다. 특히 부동산 투기를 막겠다는 취지로 강한 규제 정책을 밀어붙이고 있는 상황입니다.
 
 시장 변화: 금융권 대출이 줄어들면서 실제로 집을 사거나 전세 계약을 해야 하는 사람들이 자금 마련에 어려움을 겪고 있습니다. 이에 따라 전세 시장이 위축되고 세입자들이 더 비싼 월세로 몰리는 악순환이 생기고 있습니다.</description>
-    </item>
-    <item>
-      <title>실수요자 중심 정책, 강남은 매물↑ 비강남은 가격↑</title>
-      <link>https://www.suzip.kr/briefing/2026-08-11</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-08-11</guid>
-      <pubDate>Mon, 10 Aug 2026 22:00:00 GMT</pubDate>
-      <description>• 정부 부동산 세제 개편으로 강남 고가 아파트 매물이 늘고 있는 반면 거래는 잠잠한 상태
-• 강북·중구·중랑 등 비강남권 아파트값이 강남보다 더 빠르게 올라가는 추세
-• 월세 부담이 커지자 신혼부부들이 아파트 대신 빌라나 연립주택으로 눈을 돌리고 있음
-
-정부 의도: 지지율 하락으로 몰린 정부가 실제 집이 필요한 사람들 중심으로 부동산 시장을 정상화하려고 한다. 특히 투기 목적의 고가 아파트 매각을 유도해서 가격을 안정시키고, 그 과정에서 실수요자들은 보호하겠다는 취지다.
-
-시장 변화: 강남의 고가 아파트는 팔려고 나오는 매물이 많아져서 경쟁이 심해질 것 같다. 대신 강북이나 신축 빌라 같은 다른 지역·유형의 부동산은 수요가 몰리면서 가격이 계속 오를 가능성이 높다.</description>
     </item>
   </channel>
 </rss>
