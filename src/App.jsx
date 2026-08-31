@@ -308,6 +308,11 @@ function SearchApp() {
     }
   }, [navigate])
 
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get('q')
+    if (q) { setQuery(q); handleSearch(q) }
+  }, [handleSearch])
+
   const goHome = useCallback(() => {
     setCards([])
     setQuery('')
