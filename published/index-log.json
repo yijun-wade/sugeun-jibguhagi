@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-31T00:24:20.104Z",
+  "updatedAt": "2026-09-01T01:12:49.581Z",
   "entries": {
     "224380301785": {
       "logNo": "224380301785",
@@ -152,6 +152,14 @@
           "at": "2026-08-27T13:49:09.319Z",
           "titleRank": null,
           "competitors": 10300,
+          "keyword": "양도소득세",
+          "kwRank": null
+        },
+        {
+          "day": 14,
+          "at": "2026-09-01T01:12:49.581Z",
+          "titleRank": null,
+          "competitors": 10337,
           "keyword": "양도소득세",
           "kwRank": null
         }
