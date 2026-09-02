@@ -2,6 +2,8 @@
 // 셀렉터는 2026-08-12 실측(scripts/publish/probe*.mjs)으로 확보한 것들이다.
 // 네이버가 에디터를 고치면 여기가 먼저 깨진다. 깨질 때 "조용히"가 아니라 예외로 깨지게 한다.
 
+import { reachable } from './net.mjs'
+
 export const BLOG_ID = 'kaimex'
 export const WRITE_URL = `https://blog.naver.com/${BLOG_ID}?Redirect=Write`
 
@@ -52,7 +54,13 @@ export async function openEditor(page, { timeout = 90000, attempts = 2 } = {}) {
       // 프레임 등장을 직접 기다리므로 goto는 domcontentloaded면 충분하다.
       await page.goto(WRITE_URL, { waitUntil: 'domcontentloaded', timeout })
     } catch (e) {
-      lastErr = new Error(`페이지 이동 실패(${attempt}/${attempts}): ${e.message}`)
+      // ERR_NETWORK_CHANGED / 타임아웃은 대개 "맥이 자다 깨는 중"이지 네이버 문제가 아니다.
+      const net = await reachable()
+      lastErr = new Error(
+        `페이지 이동 실패(${attempt}/${attempts}): ${e.message}` +
+        (net ? '' : ' — 네트워크가 끊겨 있다(세션 문제 아님)'),
+      )
+      if (attempt < attempts) await sleep(net ? 3000 : 15000)
       continue
     }
 
@@ -68,10 +76,21 @@ export async function openEditor(page, { timeout = 90000, attempts = 2 } = {}) {
     }
 
     // 로그인 페이지로 튕겼는지로 사유를 가른다
+    //
+    // 세션 만료를 선언하기 전에 네트워크부터 확인한다. 네이버는 에디터를 열 때 nid로 한 번
+    // 튕겼다가 4초쯤 뒤 돌아오는데, 그 왕복 도중 네트워크가 끊기면 페이지가 로그인 화면에
+    // 멈춘다. URL만 보면 "로그아웃"과 구분이 안 된다 — 2026-08월 이 오진으로 멀쩡한
+    // 로그인을 17번 의심했다.
     const url = page.url()
-    lastErr = /nidlogin|nid\.naver/.test(url)
-      ? new Error('네이버가 로그인 페이지로 보냈다 — 세션 만료. 사람이 1회 로그인해야 한다')
-      : new Error(`에디터 프레임이 ${timeout / 1000}초 안에 뜨지 않았다 (현재 ${url.slice(0, 60)}) — 느린 것이지 로그아웃이 아닐 수 있다`)
+    const onLogin = /nidlogin|nid\.naver/.test(url)
+    const net = await reachable()
+    if (!net) {
+      lastErr = new Error(`네트워크가 끊겨 에디터를 열지 못했다 (현재 ${url.slice(0, 60)}) — 세션 문제 아님`)
+    } else if (onLogin) {
+      lastErr = new Error('네이버가 로그인 페이지로 보냈다 — 세션 만료. 사람이 1회 로그인해야 한다')
+    } else {
+      lastErr = new Error(`에디터 프레임이 ${timeout / 1000}초 안에 뜨지 않았다 (현재 ${url.slice(0, 60)}) — 느린 것이지 로그아웃이 아닐 수 있다`)
+    }
   }
   throw lastErr
 }

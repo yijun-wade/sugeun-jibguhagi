@@ -19,6 +19,14 @@
     올리므로 07:30이 첫 실행, 13:00이 재시도(16:00 슬롯 전)다.
   - 하루 2회인 이유는 맥이 자고 있을 수 있어서다. 두 실행 모두 멱등이라
     이미 예약된 날은 크롬도 켜지 않고 즉시 종료한다.
+  - launchd는 맥을 깨우지 못한다. 자고 있으면 작업이 "다음 깨어남"으로 밀리는데,
+    배터리 딥슬립 중인 맥은 15분마다 2초짜리 DarkWake만 반복한다. 그 2초 창에서
+    네이버로 이동하다 와이파이가 내려가 ERR_NETWORK_CHANGED로 죽는다.
+    2026-08-17~09-02, 17일 연속 0편이 이것 때문이었다. 대책 셋:
+      1) caffeinate -i 로 감싸 실행 중 다시 잠들지 않게 한다 (아래 ProgramArguments)
+      2) run.mjs 가 네트워크가 살아난 뒤에만 시작한다 (lib/net.mjs)
+      3) 맥을 슬롯 전에 진짜로 깨운다 — 이건 launchd 밖이라 사람이 1회 실행해야 한다:
+           sudo pmset repeat wakeorpoweron MTWRFSU 07:25:00
   - 발행 자체는 네이버 서버가 하므로, 예약만 걸리면 맥이 꺼져 있어도 글은 나간다.
 -->
 <plist version="1.0">
@@ -28,6 +36,9 @@
 
   <key>ProgramArguments</key>
   <array>
+    <string>/usr/bin/caffeinate</string>
+    <string>-i</string>
+    <string>-m</string>
     <string>/opt/homebrew/bin/node</string>
     <string>scripts/publish/run.mjs</string>
   </array>

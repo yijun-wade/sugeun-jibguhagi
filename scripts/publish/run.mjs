@@ -18,6 +18,7 @@ import { nextSlots, SLOT_HOURS } from './lib/slot.mjs'
 import { load, save, mark, done, isComplete } from './lib/state.mjs'
 import { notifyFail, notifyOk } from './lib/notify.mjs'
 import { connectChrome, newPage } from './lib/chrome.mjs'
+import { waitForNetwork } from './lib/net.mjs'
 import { SEL, humanPause, reservedTitles, openPublishPanel } from './lib/editor.mjs'
 import { renderCards } from './render-cards.mjs'
 import { assemble } from './naver-editor.mjs'
@@ -178,6 +179,18 @@ async function publishOneOn(page, draftFile, slot, { dry }) {
 }
 
 async function main() {
+  // 실행 시각을 남긴다. 없으면 "언제 돌았는지"를 로그 파일 mtime으로 역추적해야 한다 —
+  // 17일치 실패 원인을 찾는 데 이것 때문에 한참 돌아갔다.
+  log(`\n─────────  실행 ${new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Seoul' })}`)
+
+  // 네트워크부터. 자다 깬 직후엔 와이파이가 아직 안 붙어 있다.
+  const net = await waitForNetwork({ onWait: () => log('  · 네트워크 대기 — 깨어난 직후로 보인다') })
+  if (!net.ok) {
+    log(`  ❌ 네트워크 없음 — ${net.attempt}회 시도 후 포기. 발행을 시작하지 않는다(세션 문제 아님)\n`)
+    return
+  }
+  if (net.attempt > 1) log(`  ✅ 네트워크 확보 (${net.attempt}회째)`)
+
   const sync = await syncDrafts()
   if (!sync.ok) log(`  ⚠️  초안 동기화 실패 — 로컬 초안으로 진행: ${sync.reason}`)
 
