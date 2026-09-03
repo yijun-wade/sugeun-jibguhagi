@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-03T00:01:53.807Z",
+  "updatedAt": "2026-09-03T23:57:03.989Z",
   "entries": {
     "224380301785": {
       "logNo": "224380301785",
@@ -185,6 +185,14 @@
           "competitors": 27,
           "keyword": "기준금리",
           "kwRank": null
+        },
+        {
+          "day": 7,
+          "at": "2026-09-03T23:57:03.989Z",
+          "titleRank": 26,
+          "competitors": 27,
+          "keyword": "기준금리",
+          "kwRank": null
         }
       ]
     },
@@ -206,6 +214,14 @@
           "at": "2026-08-31T00:24:20.104Z",
           "titleRank": null,
           "competitors": 913,
+          "keyword": "중개수수료",
+          "kwRank": null
+        },
+        {
+          "day": 7,
+          "at": "2026-09-03T23:57:03.989Z",
+          "titleRank": null,
+          "competitors": 916,
           "keyword": "중개수수료",
           "kwRank": null
         }
