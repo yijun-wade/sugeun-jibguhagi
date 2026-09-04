@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Thu, 03 Sep 2026 23:57:08 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 04 Sep 2026 23:56:19 GMT</lastBuildDate>
+    <item>
+      <title>강남 약세·강북 강세, 세제 개편이 바꾼 부동산 지도</title>
+      <link>https://www.suzip.kr/briefing/2026-09-05</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-09-05</guid>
+      <pubDate>Fri, 04 Sep 2026 22:00:00 GMT</pubDate>
+      <description>• 강남 아파트는 4주 연속 하락하고 있는데, 강북·경기는 0.6~0.7% 올라 지역별 격차가 4배까지 벌어졌다.
+• 정부가 종합부동산세와 양도소득세 강화로 고가주택을 겨냥한 결과, 투자자들이 강남에서 손을 떼고 있다.
+• 정부는 주택 공급 속도전에 나서며 금융 지원과 규제 완화로 건설·개발 활성화를 추진 중이다.
+
+정부 의도: 고가주택 투기를 잡으면서 동시에 주택 공급을 늘려 시장을 안정시키려는 거다. 강남 투자자들의 자금이 강북과 경기로 흘러가게 해서 전국적인 수급 균형을 맞추려는 전략이다.
+
+시장 변화: 앞으로 한동안 강남과 강북의 가격 차이는 줄어들고, 대신 강북·경기·중저가 지역이 매력적인 투자처가 될 것 같다. 공급이 늘어나면서 전세보다 매매 선호 현상도 강해질 걸로 예상된다.</description>
+    </item>
     <item>
       <title>서울 집값 상승 계속, 대출규제로 중저가층 진입장벽 높아져</title>
       <link>https://www.suzip.kr/briefing/2026-09-04</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 집값 상승을 막으면서도 실제로 집이 필요한 사람들에게는 돈을 빌려주려고 한다. 대출 총량을 늘렸지만, 은행들이 여전히 대출을 까다롭게 하니까 어려운 상황이다.
 
 시장 변화: 집을 못 사는 사람들이 전세나 월세로 내려앉으면서 임차인의 월세 부담이 계속 올라간다. 동시에 서울 외곽 같은 저가 지역의 집값까지 뛰어올라서, 결국 어디서도 주거비가 싸지지 않는 악순환이 벌어지고 있다.</description>
-    </item>
-    <item>
-      <title>정부 10만가구 공급·청년대출 완화, 강남은 여전히 '관망'</title>
-      <link>https://www.suzip.kr/briefing/2026-08-16</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-08-16</guid>
-      <pubDate>Sat, 15 Aug 2026 22:00:00 GMT</pubDate>
-      <description>• 정부가 주택 10만가구를 공급하고 신혼부부 대출 조건을 완화했지만, 강남·용산 등 핵심 입지 확보가 관건이다.
-• 청년 금융지원으로 결혼 페널티가 없어지고 보금자리론 소득 기준이 낮아지지만, 시장에선 실효성을 의심한다.
-• 강남 집값은 13주 만에 보합세로 접어든 반면 강북과 전세값은 계속 오르는 등 지역별 편차가 벌어지고 있다.
-
-정부 의도: 수도권 주택 부족으로 치솟는 집값을 잡기 위해 공급을 늘리고, 청년·신혼부부가 집을 살 수 있도록 대출 문턱을 낮추려는 것. 일반인들이 체감할 수 있는 주택 시장 안정이 목표다.
-
-시장 변화: 공급 물량이 늘어나면서 강북과 신규 택지 지역 중심으로 가격 안정이 이루어질 가능성이 높다. 다만 강남 같은 선호 지역은 여전히 관망 분위기가 지속될 수 있다.</description>
     </item>
   </channel>
 </rss>
