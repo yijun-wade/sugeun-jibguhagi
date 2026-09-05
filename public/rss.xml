@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Fri, 04 Sep 2026 23:56:19 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 05 Sep 2026 23:46:23 GMT</lastBuildDate>
+    <item>
+      <title>공급 촉진하되 대출은 조인다… 정부 부동산 정책의 딜레마</title>
+      <link>https://www.suzip.kr/briefing/2026-09-06</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-09-06</guid>
+      <pubDate>Sat, 05 Sep 2026 22:00:00 GMT</pubDate>
+      <description>• 정부가 8·13 부동산 대책으로 PF(프로젝트파이낸싱, 부동산 프로젝트 대출) 관리를 완화해 주택 공급을 늘리려 하고 있다.
+• 반면 금융당국은 가계부채 억제를 위해 주택담보대출 한도를 제한하고 대출 심사를 강화하고 있다.
+• 서울 전세 시장이 토허제(실거주 의무화) 영향으로 전세 매물이 줄어들면서 세입자들의 보증금 부담이 증가하고 있다.
+
+정부 의도: 주택 공급 부족으로 집값이 오르는 악순환을 끊기 위해 건설사 대출을 풀고 재건축 같은 프로젝트를 지원하려는 것이다. 그런데 동시에 가계가 빚을 너무 많이 지는 것을 막으려고 주담대(주택 구매 대출)는 조이고 있어서 정책 방향이 엇갈리고 있다.
+
+시장 변화: 향후 새 아파트는 더 많이 나올 가능성이 높지만, 그걸 사려는 사람의 대출 여력은 줄어들 수 있다. 특히 전세 시장이 타이트해지면서 월세로 돌아서는 세입자들이 많아질 것으로 보인다.</description>
+    </item>
     <item>
       <title>강남 약세·강북 강세, 세제 개편이 바꾼 부동산 지도</title>
       <link>https://www.suzip.kr/briefing/2026-09-05</link>
@@ -253,19 +266,6 @@
 정부 의도: 집을 못 사는 사람들을 돕기 위해 새 집을 짓고 대출을 풀겠다는 것이다. 한편 과도한 빚을 막으려고 대출 규제는 유지하면서 가계부채 폭증을 제어하려는 의도도 있다.
 
 시장 변화: 가까운 미래에는 새 집이 많이 나올 것 같지만, 당장은 대출받기가 쉽지 않아 수요가 약할 수 있다. 외곽과 비선호 지역부터 가격 조정 압력을 받을 가능성이 있다.</description>
-    </item>
-    <item>
-      <title>대출 조이니 전세·월세로 몰려…서민 주거비 역대 최고</title>
-      <link>https://www.suzip.kr/briefing/2026-08-17</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-08-17</guid>
-      <pubDate>Sun, 16 Aug 2026 22:00:00 GMT</pubDate>
-      <description>• 주택담보대출 규제로 은행 가산금리(추가 금리)가 역대 최고 수준이 됐고, 선착순 대출 게임이 벌어지고 있다.
-• 전세 매물이 급감하면서 월세로 눈을 돌리는 수요가 늘어나고 있고, 서울 아파트의 38% 이상이 월세다.
-• 대출을 못 받은 사람들이 중저가 지역과 오피스텔로 몰리면서 그 지역 집값까지 올라가고 있다.
-
-정부 의도: 정부는 집값 상승을 막으면서도 실제로 집이 필요한 사람들에게는 돈을 빌려주려고 한다. 대출 총량을 늘렸지만, 은행들이 여전히 대출을 까다롭게 하니까 어려운 상황이다.
-
-시장 변화: 집을 못 사는 사람들이 전세나 월세로 내려앉으면서 임차인의 월세 부담이 계속 올라간다. 동시에 서울 외곽 같은 저가 지역의 집값까지 뛰어올라서, 결국 어디서도 주거비가 싸지지 않는 악순환이 벌어지고 있다.</description>
     </item>
   </channel>
 </rss>
