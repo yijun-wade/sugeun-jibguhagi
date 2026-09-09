@@ -353,7 +353,7 @@ async function typeTags(page, frame, tags) {
 /** 임시저장. 저장 건수의 증가분으로 확인한다. */
 async function saveDraft(frame) {
   const readCount = () => frame.evaluate(() => {
-    const b = document.querySelector('button.save_count_btn__ZTLNa')
+    const b = document.querySelector('button[class*="save_count_btn__"]')
     return b ? parseInt((b.innerText || '0').trim(), 10) : null
   })
   const before = await readCount()

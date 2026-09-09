@@ -62,7 +62,7 @@ async function main() {
   ok('제목 비어 있음 — 발행 불가 상태 확인')
 
   console.log('\n[1] 발행 패널 열기')
-  const publishBtn = await frame.$('button.publish_btn__m9KHH')
+  const publishBtn = await frame.$('button[class*="publish_btn__"]')
   if (!publishBtn) { no('발행 버튼 못 찾음'); await browser.disconnect(); return }
   await publishBtn.click()
   await sleep(2000)
@@ -143,9 +143,9 @@ async function main() {
 
   // 시·분이 select라면 선택 가능한 값이 유한하다. 예약 시각 정책이 여기 걸린다.
   const opts = await frame.evaluate(() => {
-    const h = document.querySelector('select.hour_option__J_heO')
-    const m = document.querySelector('select.minute_option__Vb3xB')
-    const d = document.querySelector('input.input_date__QmA0s')
+    const h = document.querySelector('select[class*="hour_option__"]')
+    const m = document.querySelector('select[class*="minute_option__"]')
+    const d = document.querySelector('input[class*="input_date__"]')
     return {
       hours: h ? [...h.options].map((o) => o.value) : null,
       minutes: m ? [...m.options].map((o) => o.value) : null,
@@ -164,7 +164,7 @@ async function main() {
   console.log(`  ■ React 내부키: ${JSON.stringify(opts.reactish)}`)
 
   const reserveCount = await frame.evaluate(() =>
-    document.querySelector('button.reserve_btn__Km5Xh')?.innerText.trim() || null)
+    document.querySelector('button[class*="reserve_btn__"]')?.innerText.trim() || null)
   console.log(`\n  ■ 예약 건수 기준선: "${reserveCount}"  ← 등록 검증은 이 숫자의 증가분으로`)
 
   await page.screenshot({ path: '.publish-assets/probe-publish.png' })

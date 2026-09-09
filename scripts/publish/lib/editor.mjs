@@ -1,6 +1,10 @@
 // 네이버 스마트에디터 ONE 조작 공통부.
 // 셀렉터는 2026-08-12 실측(scripts/publish/probe*.mjs)으로 확보한 것들이다.
 // 네이버가 에디터를 고치면 여기가 먼저 깨진다. 깨질 때 "조용히"가 아니라 예외로 깨지게 한다.
+//
+// CSS 모듈 해시(save_btn__bzc5B)는 네이버가 배포할 때마다 바뀐다. 실제로 해시가 통째로
+// 갈리면서 저장·발행 버튼을 못 찾아 발행이 멈췄다(2026-09-09). 해시를 박지 말고
+// 접두사만 부분 일치시킨다 — [class*="save_btn__"].
 
 import { reachable } from './net.mjs'
 
@@ -17,16 +21,16 @@ export const SEL = {
   bold: 'button[data-name="bold"]',
   image: 'button[data-name="image"]',
   textFormat: 'button[data-name="text-format"]',
-  save: 'button.save_btn__bzc5B',
-  publish: 'button.publish_btn__m9KHH',
-  confirm: 'button.confirm_btn__WEaBq',
-  reserveBtn: 'button.reserve_btn__Km5Xh',
+  save: 'button[class*="save_btn__"]',
+  publish: 'button[class*="publish_btn__"]',
+  confirm: 'button[class*="confirm_btn__"]',
+  reserveBtn: 'button[class*="reserve_btn__"]',
   reserveLayer: '[class*="layer_popup__"]',
   timeNow: '#radio_time1',
   timeReserve: '#radio_time2',
-  dateInput: 'input.input_date__QmA0s',
-  hourSelect: 'select.hour_option__J_heO',
-  minuteSelect: 'select.minute_option__Vb3xB',
+  dateInput: 'input[class*="input_date__"]',
+  hourSelect: 'select[class*="hour_option__"]',
+  minuteSelect: 'select[class*="minute_option__"]',
   openPublic: '#open_public',
   optionSearch: '#publish-option-search',
   tagInput: '#tag-input',
@@ -147,12 +151,22 @@ export async function ensureBlankEditor(page, frame) {
   const read = () => frame.evaluate((s) => {
     const t = document.querySelector(s.title)
     const bodies = [...document.querySelectorAll(`${s.bodyComponent} ${s.paragraph}`)]
-    const clean = (e) => (e?.innerText || '')
-      .replace(/​/g, '')
-      // 플레이스홀더가 innerText에 섞여 나온다
-      .replace(/^제목$/, '')
-      .replace(/나를 돌아보는 회고.*$/s, '')
-      .trim()
+    // 플레이스홀더가 텍스트에 섞여 나온다. 문구로 거르면 네이버가 문구를 바꾸는 날
+    // 빈 에디터가 "안 비워졌다"로 잡힌다 — 실제로 본문 안내가 "나를 돌아보는 회고…"에서
+    // "글감과 함께 나의 일상을 기록해보세요!"로 바뀌며 발행이 통째로 멈췄다(2026-09-09).
+    // 문구가 아니라 플레이스홀더 노드 자체를 지우고 읽는다.
+    // innerText로 읽는다 — textContent로 바꾸면 제목 컴포넌트에 숨어 있는 버튼 라벨
+    // ("위치이동 제목 배경 사진 삭제 취소 확인")까지 본문으로 딸려와 또 오판한다.
+    // 지울 문구는 하드코딩하지 않고 플레이스홀더 노드에서 그때그때 읽어 뺀다.
+    const clean = (e) => {
+      if (!e) return ''
+      let t = e.innerText || ''
+      for (const ph of e.querySelectorAll('.se-placeholder, .__se_placeholder')) {
+        const s = (ph.textContent || '').trim()
+        if (s) t = t.split(s).join('')
+      }
+      return t.replace(/​/g, '').trim()
+    }
     return { title: clean(t), body: bodies.map(clean).filter(Boolean).join('\n') }
   }, SEL)
 
