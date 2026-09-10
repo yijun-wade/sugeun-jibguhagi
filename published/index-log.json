@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-10T00:03:51.926Z",
+  "updatedAt": "2026-09-10T23:59:06.384Z",
   "entries": {
     "224380301785": {
       "logNo": "224380301785",
@@ -193,6 +193,14 @@
           "competitors": 27,
           "keyword": "기준금리",
           "kwRank": null
+        },
+        {
+          "day": 14,
+          "at": "2026-09-10T23:59:06.384Z",
+          "titleRank": 26,
+          "competitors": 26,
+          "keyword": "기준금리",
+          "kwRank": null
         }
       ]
     },
@@ -223,6 +231,29 @@
           "titleRank": null,
           "competitors": 916,
           "keyword": "중개수수료",
+          "kwRank": null
+        },
+        {
+          "day": 14,
+          "at": "2026-09-10T23:59:06.384Z",
+          "titleRank": null,
+          "competitors": 924,
+          "keyword": "중개수수료",
+          "kwRank": null
+        }
+      ]
+    },
+    "224406475359": {
+      "logNo": "224406475359",
+      "title": "대출 2억7천만원 줄었는데, 집값은 82주 계속 오르네요",
+      "publishedAt": "2026-09-10",
+      "checks": [
+        {
+          "day": 1,
+          "at": "2026-09-10T23:59:06.384Z",
+          "titleRank": 4,
+          "competitors": 4,
+          "keyword": "집값",
           "kwRank": null
         }
       ]
