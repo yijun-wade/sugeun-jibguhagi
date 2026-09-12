@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-10T23:59:06.384Z",
+  "updatedAt": "2026-09-12T00:05:59.538Z",
   "entries": {
     "224380301785": {
       "logNo": "224380301785",
@@ -254,6 +254,21 @@
           "titleRank": 4,
           "competitors": 4,
           "keyword": "집값",
+          "kwRank": null
+        }
+      ]
+    },
+    "224406476666": {
+      "logNo": "224406476666",
+      "title": "분양가 상한제 몰라서 청약 포기했다가 3억 날린 썰",
+      "publishedAt": "2026-09-10",
+      "checks": [
+        {
+          "day": 1,
+          "at": "2026-09-12T00:05:59.538Z",
+          "titleRank": 3,
+          "competitors": 3,
+          "keyword": "분양가상한제",
           "kwRank": null
         }
       ]
