@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sat, 12 Sep 2026 00:06:02 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 12 Sep 2026 23:55:51 GMT</lastBuildDate>
+    <item>
+      <title>유동성 풍부한데 정책은 제한적…집값 상승 계속될 듯</title>
+      <link>https://www.suzip.kr/briefing/2026-09-13</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-09-13</guid>
+      <pubDate>Sat, 12 Sep 2026 22:00:00 GMT</pubDate>
+      <description>• 수도권 아파트 매매가가 계속 오르고 있고, 전세·월세도 함께 올라 3중 강세가 이어지고 있다.
+• 정부가 공급 확대와 규제 완화를 시도하지만, 시중에 풀려 있는 돈이 워낙 많아서 집값을 억누르기 어려운 상황이다.
+• 기준금리가 3.25% 근처에서 결정될 것으로 보이며, 금리 정책만으로는 부동산 가격을 조절하기 힘들어 보인다.
+
+정부 의도: 정부는 주택 공급을 늘리고 규제를 풀어서 집값을 잡으려고 하고 있다. 하지만 주식 시장이 호황이고 자산이 많아진 사람들이 부동산으로 돈을 몰리게 하는 것을 정책으로 막기가 쉽지 않은 상황이다.
+
+시장 변화: 공급 확대 정책에도 불구하고 시중 유동성(돈)이 워낙 많아서 집값이 계속 오를 가능성이 크다. 특히 강남은 주춤하지만 강북과 외곽 지역의 상승이 두드러지고 있다.</description>
+    </item>
     <item>
       <title>서울 83주 연속 상승, 금리·규제 속 수급 불균형 심화</title>
       <link>https://www.suzip.kr/briefing/2026-09-12</link>
@@ -253,19 +266,6 @@
 정부 의도: 경제를 살리려고 돈을 푼 것이다. 부동산 시장을 부양하고 대출을 받기 어려웠던 사람들이 자금을 쓸 수 있게 하려는 것인데, 동시에 전세 위기 같은 문제는 새로운 임대차 방식으로 풀려고 한다.
 
 시장 변화: 돈이 풀리니까 집값이 계속 오르는 중이다. 하지만 금리가 높아서 대출을 받아도 월 이자 부담이 크다. 결과적으로 자금이 많은 사람은 이득을 보고, 일반인은 더 비싼 집값만 보게 되는 상황이 벌어지고 있다.</description>
-    </item>
-    <item>
-      <title>서울 아파트값 16억 돌파, 세제 개편안 완화 수순</title>
-      <link>https://www.suzip.kr/briefing/2026-08-24</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-08-24</guid>
-      <pubDate>Sun, 23 Aug 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 아파트 평균값이 16억 원을 넘었고, 중랑구는 2.25% 상승률로 1위를 기록했다.
-• 정부가 비거주 1주택 종부세를 낮추고 양도세 예외를 넓히는 수정안을 이번 주에 발표할 예정이다.
-• 세법 개편 이후 강남·송파는 매물이 11.8% 늘었지만, 중저가 지역은 매입 수요가 몰리면서 오히려 집값이 올랐다.
-
-정부 의도: 부동산 정책에 대한 국민 불만과 여당 지지율 하락이 심해지자, 정부가 세제 개편안을 손질하기로 결정했다. 실제로 사는 집에 대한 세금 혜택을 늘려서 일반 주택 소유자들의 부담을 덜어주려는 의도다.
-
-시장 변화: 세제 부담이 줄어들 가능성에 매도 매물이 늘어났고, 상대적으로 저가 지역에 매수 수요가 쏠리는 양극화 현상이 심해지고 있다. 전세 물량은 줄어드는 추세가 계속될 것 같다.</description>
     </item>
   </channel>
 </rss>
