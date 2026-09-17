@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-16T00:07:37.015Z",
+  "updatedAt": "2026-09-17T00:18:30.098Z",
   "entries": {
     "224380301785": {
       "logNo": "224380301785",
@@ -263,6 +263,14 @@
           "competitors": 3,
           "keyword": "집값",
           "kwRank": null
+        },
+        {
+          "day": 7,
+          "at": "2026-09-17T00:18:30.098Z",
+          "titleRank": 4,
+          "competitors": 4,
+          "keyword": "집값",
+          "kwRank": null
         }
       ]
     },
@@ -282,6 +290,14 @@
         {
           "day": 3,
           "at": "2026-09-12T23:55:47.658Z",
+          "titleRank": 3,
+          "competitors": 3,
+          "keyword": "분양가상한제",
+          "kwRank": null
+        },
+        {
+          "day": 7,
+          "at": "2026-09-17T00:18:30.098Z",
           "titleRank": 3,
           "competitors": 3,
           "keyword": "분양가상한제",
