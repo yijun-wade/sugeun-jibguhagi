@@ -16,6 +16,7 @@ import SajuPage from './SajuPage.jsx'
 import PrivacyPage from './PrivacyPage.jsx'
 import TermsPage from './TermsPage.jsx'
 import { track } from './analytics.js'
+import { parseAddr } from './addr.js'
 import AdUnit from './AdUnit.jsx'
 import AdFitBanner from './AdFitBanner.jsx'
 import CoupangBanner from './CoupangBanner.jsx'
@@ -29,9 +30,9 @@ const HERO_SAMPLE = '잠실엘스'
 async function buildEvalData(apt) {
   const bjdCode = apt.bjdCode || null
 
-  const addrParts = (apt.addr || '').split(' ')
-  const dong = addrParts.find(p => p.endsWith('동') || p.endsWith('읍') || p.endsWith('면')) || addrParts[addrParts.length - 1] || ''
-  const regionName = addrParts.find(p => p.endsWith('구') || p.endsWith('시') || p.endsWith('군')) || addrParts[addrParts.length - 2] || ''
+  // regionName은 '구'(없으면 시·군). 전에는 '서울특별시'가 먼저 걸려 서울 전 단지가 같은 값이었다 — src/addr.js 참고.
+  const { gu: regionName, dong: parsedDong } = parseAddr(apt.addr)
+  const dong = parsedDong || (apt.addr || '').split(' ').pop() || ''
 
   // stories는 bjdCode 유무와 무관하게 한 번만 호출 (#35)
   const storiesRes = await fetch(`/api/stories?aptName=${encodeURIComponent(apt.kaptName)}&location=${encodeURIComponent(dong)}`)

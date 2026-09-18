@@ -2,6 +2,7 @@
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { setCors } from './_utils.js'
+import { parseAddr } from './_addr.js'
 
 let aptList = null
 let enrichMap = null
@@ -46,9 +47,7 @@ const esc = (s) =>
 function buildPrerenderHtml(apt) {
   const name = apt.kaptName || '아파트'
   const addr = apt.addr || ''
-  const parts = addr.split(' ')
-  const dong = parts.find(p => /[동읍면]$/.test(p)) || ''
-  const region = parts.find(p => /[구시군]$/.test(p)) || ''
+  const { gu: region, dong } = parseAddr(addr)
   const buildYear = apt.kaptBuldYy ? `${apt.kaptBuldYy}년` : ''
   const households = apt.kaptdaCnt ? `${apt.kaptdaCnt}세대` : ''
   const url = `https://www.suzip.kr/apt/${apt.kaptCode}`
