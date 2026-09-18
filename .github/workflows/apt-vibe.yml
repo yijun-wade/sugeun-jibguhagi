@@ -1,0 +1,43 @@
+name: Apt Vibe Pre-generation
+
+# 수근수근 요약 사전 생성(public/vibe/*.json + public/apt-vibe.json).
+# 요약은 30일이 지나야 다시 만든다 — 주 1회, 상한 120곳이면 임대 단지 약 390곳이 4주에 한 바퀴 돈다.
+#
+# 비용이 드는 작업이라(Opus 5, 단지당 약 $0.018 → 주 최대 약 $2) 자동 실행은 꺼 두었다.
+# 켜려면 아래 schedule 주석을 푼다. 그 전까지는 Actions 탭에서 수동 실행.
+on:
+  # schedule:
+  #   - cron: '0 18 * * 0'  # 매주 월요일 03:00 KST
+  workflow_dispatch:
+    inputs:
+      target:
+        description: '대상 (--type=rental | --top=300 | --all)'
+        default: '--type=rental'
+      max:
+        description: '이번 실행 상한(곳)'
+        default: '120'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Generate summaries
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+        run: node scripts/build-apt-vibe.mjs ${{ inputs.target || '--type=rental' }} --max=${{ inputs.max || '120' }}
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/vibe/ public/apt-vibe.json
+          git diff --cached --quiet || git commit -m "chore: apt vibe $(date -u +'%Y-%m-%d')"
+          git pull --rebase --autostash && git push
