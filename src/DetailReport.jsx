@@ -47,16 +47,21 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
   // 0곳=그 단지만 검색해 온 신규(결정 유보 프레이밍), 1곳+=여러 집 둘러보는 중(비교 완성 프레이밍).
   const [otherSaved] = useState(() => getCollection().filter(a => a.kaptCode !== apt.kaptCode))
   // 저장 시점 스냅샷 대비 변동. 마운트 시 1회 고정(저장/해제로 재계산되면 방금 저장한 값과 비교하게 됨).
-  const [delta] = useState(() => {
-    const saved = getCollection().find(a => a.kaptCode === apt.kaptCode)
-    return buildDelta(saved, apt.recentAvg)
-  })
+  // 저장 스냅샷은 마운트 시점 것을 쓰고, 계산은 실거래 조회가 끝난 뒤 한 번 한다
+  // (페이지가 가격보다 먼저 그려지므로 마운트 때의 recentAvg는 0이다).
+  const [savedAtMount] = useState(() => getCollection().find(a => a.kaptCode === apt.kaptCode))
+  const delta = useMemo(
+    () => (apt.priceLoading ? null : buildDelta(savedAtMount, apt.recentAvg)),
+    [apt.priceLoading, apt.recentAvg, savedAtMount]
+  )
   // 유사단지 데이터를 상단에서 미리 조회 → 상단 넛지 + 하단 리스트가 공유(중복 fetch 없음).
   const [similarItems, setSimilarItems] = useState(null) // null=로딩, []=없음
   const similarRef = useRef(null)
 
   useEffect(() => {
     if (!apt.kaptCode) return
+    // 분양 단지는 가격이 기준이라 실거래 조회를 기다린다. 임대 단지는 유형 기준이라 바로 간다.
+    if (apt.priceLoading && !isRental) return
     let alive = true
     const params = new URLSearchParams({ kaptCode: apt.kaptCode })
     if (apt.recentAvg) params.set('avg', String(apt.recentAvg))
@@ -67,7 +72,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       .then(data => { if (alive) setSimilarItems(Array.isArray(data) ? data : []) })
       .catch(() => { if (alive) setSimilarItems([]) })
     return () => { alive = false }
-  }, [apt.kaptCode, apt.recentAvg, apt.regionName, rentalNoPrice])
+  }, [apt.kaptCode, apt.recentAvg, apt.regionName, rentalNoPrice, apt.priceLoading, isRental])
 
   useEffect(() => {
     if (!toast) return
@@ -142,7 +147,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           <div className="detail-apt-loc">{apt.dong} · {apt.regionName}</div>
         </div>
         <div className="detail-header-actions">
-          <button className={`collect-btn${collected ? ' collected' : ''}`} aria-label={collected ? `${apt.aptNm} 저장 취소` : `${apt.aptNm} 저장`} onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm, from: 'header' }); handleCollect() }}>
+          <button disabled={!!apt.priceLoading} className={`collect-btn${collected ? ' collected' : ''}`} aria-label={collected ? `${apt.aptNm} 저장 취소` : `${apt.aptNm} 저장`} onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm, from: 'header' }); handleCollect() }}>
             {collected ? '✓ 저장됨' : '★ 저장'}
           </button>
         </div>
@@ -184,6 +189,19 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       )}
 
       {/* 가격신호 바 — 검색의도(실거래가) 첫 화면 매칭. 탭과 무관하게 항상 노출 */}
+      {/* 가격보다 페이지가 먼저 그려진다 — 자리를 잡아둬 아래 블록이 밀리지 않게 한다 */}
+      {apt.priceLoading && !isRental && (
+        <div className="price-signal-bar is-loading" aria-hidden="true">
+          <span className="psb-left"><span className="psb-label">최근 실거래가</span><span className="psb-price psb-skeleton">확인 중…</span></span>
+        </div>
+      )}
+      {/* 조회가 전부 실패한 것을 "거래 없는 단지"로 읽히게 두지 않는다 */}
+      {!apt.priceLoading && apt.priceFailed && !isRental && (
+        <div className="price-signal-bar is-failed" role="status">
+          <span className="psb-left"><span className="psb-label">실거래 데이터를 지금 불러오지 못했어요</span></span>
+          <button type="button" className="psb-more psb-retry" onClick={() => window.location.reload()}>다시 시도 ›</button>
+        </div>
+      )}
       {apt.recentAvg > 0 && (
         <button
           type="button"
@@ -367,7 +385,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
 
       {/* 콘텐츠 끝 큰 수집 CTA — 미수집 상태에서만 노출.
           착지자 맥락으로 카피 분기: 담은 집 0곳=결정 유보, 1곳+=비교 완성. */}
-      {!collected && !rentalNoPrice && (
+      {!collected && !rentalNoPrice && !apt.priceLoading && (
         <button
           type="button"
           className="collect-cta-card"
@@ -448,6 +466,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       {!rentalNoPrice && (
       <div className="detail-mobile-actions">
         <button
+          disabled={!!apt.priceLoading}
           className={`mobile-collect-btn${collected ? ' collected' : ''}`}
           aria-label={collected ? `${apt.aptNm} 저장 취소` : `${apt.aptNm} 저장`}
           onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm, from: 'mobile_sticky' }); handleCollect() }}
