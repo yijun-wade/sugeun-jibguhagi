@@ -7,6 +7,8 @@ import { isCollected, toggleCollection, getCollection } from './collection.js'
 import { buildDelta } from './collection-delta.js'
 import { isSubscribed, subscribeRegion, getInterest } from './interest.js'
 import SimilarApts from './SimilarApts.jsx'
+import { isRentalName } from './apt-type.js'
+import { useImpression } from './useImpression.js'
 import ViewedCompare from './ViewedCompare.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -22,7 +24,16 @@ const dirClass = (d) => d?.includes('상승') ? 'up' : d?.includes('하락') ? '
 
 export default function DetailReport({ apt, onBack, onCollectionChange }) {
   const navigate = useNavigate()
+  // 공공임대·행복주택·청년안심주택 — 실거래가 없고, 보러 온 사람의 질문도 매수가 아니라 입주다.
+  // 유입 상위 단지의 다수가 이 유형인데(2026-09 실측) 화면은 매수자용 블록으로 채워져 있었다.
+  // 검색 카드 경로로 오면 aptType이 없을 수 있어 단지명으로 한 번 더 본다.
+  const isRental = apt.aptType === 'rental' || (!apt.aptType || apt.aptType === 'unknown') && isRentalName(apt.aptNm)
+  const hasPrice = apt.recentAvg > 0
+  // 실거래가 없는 임대 단지에서는 시세 탭·거래 알림 약속·저장 고정 바를 내보내지 않는다.
+  const rentalNoPrice = isRental && !hasPrice
   const [tab, setTab] = useState('동네·이야기')
+  const aptTypeProp = isRental ? 'rental' : (apt.aptType || 'unknown')
+  const heroRef = useImpression('verdict_hero_view', { apt_name: apt.aptNm, apt_type: aptTypeProp, has_price: hasPrice }, !!apt.verdict)
   const [toast, setToast] = useState(null) // 'share' | 'uncollect' | null
   // 저장 직후 인라인 확인 블록 — 토스트와 달리 사라지지 않는다(즉시 보상 노출).
   const [justSaved, setJustSaved] = useState(false)
@@ -50,12 +61,13 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
     const params = new URLSearchParams({ kaptCode: apt.kaptCode })
     if (apt.recentAvg) params.set('avg', String(apt.recentAvg))
     if (apt.regionName) params.set('gu', apt.regionName)
+    if (rentalNoPrice) params.set('type', 'rental')
     fetch(`/api/nearby?${params.toString()}`)
       .then(r => r.json())
       .then(data => { if (alive) setSimilarItems(Array.isArray(data) ? data : []) })
       .catch(() => { if (alive) setSimilarItems([]) })
     return () => { alive = false }
-  }, [apt.kaptCode, apt.recentAvg, apt.regionName])
+  }, [apt.kaptCode, apt.recentAvg, apt.regionName, rentalNoPrice])
 
   useEffect(() => {
     if (!toast) return
@@ -159,7 +171,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
 
       {/* 살만해요? 종합 버디트 히어로 — SEO 착지 첫 화면 훅 + 공유 유도 */}
       {apt.verdict && apt.verdict !== '실거래 데이터 없음' && (
-        <div className="verdict-hero">
+        <div className="verdict-hero" ref={heroRef}>
           <div className="verdict-badge">이 단지, 살만해요?</div>
           <p className="verdict-line">{apt.verdict}</p>
           {apt.priceJudgment?.sentence && (
@@ -194,17 +206,25 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           type="button"
           className="discover-nudge"
           onClick={() => {
-            track('discover_nudge_click', { apt_name: apt.aptNm, from: 'detail_top', count: similarItems.length })
+            track('discover_nudge_click', { apt_name: apt.aptNm, from: 'detail_top', count: similarItems.length, mode: rentalNoPrice ? 'rental' : hasPrice ? 'price' : 'units' })
             similarRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
           }}
         >
           <span className="discover-nudge-icon" aria-hidden="true">🏘</span>
           <span className="discover-nudge-text">
-            <span className="discover-nudge-title">이 근처 비슷한 값 단지 {similarItems.length}곳</span>
+            <span className="discover-nudge-title">
+              {rentalNoPrice
+                ? `${apt.regionName || '이 근처'} 다른 공공임대·청년주택 ${similarItems.length}곳`
+                : hasPrice
+                  ? `이 근처 비슷한 값 단지 ${similarItems.length}곳`
+                  : `${apt.regionName || '이 근처'} 다른 단지 ${similarItems.length}곳`}
+            </span>
             <span className="discover-nudge-sub">
-              {apt.recentAvg > 0
-                ? `${apt.regionName || '이 근처'} · 이 집과 값이 비슷한 순`
-                : `같은 ${apt.regionName || '이 근처'} · 규모 큰 단지 순`}
+              {rentalNoPrice
+                ? '같은 구 먼저 · 세대수 큰 순'
+                : hasPrice
+                  ? `${apt.regionName || '이 근처'} · 이 집과 값이 비슷한 순`
+                  : `같은 ${apt.regionName || '이 근처'} · 규모 큰 단지 순`}
             </span>
           </span>
           <span className="discover-nudge-arrow" aria-hidden="true">↓</span>
@@ -304,6 +324,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       {/* APG 탭 패턴. 전에는 aria-pressed라 토글 버튼 3개로 읽혔고,
           "3개 중 몇 번째"도 "고르면 아래가 바뀐다"도 전달되지 않았다.
           roving tabindex — 선택된 탭만 Tab 순서에 들어가고, 좌우 화살표로 이동한다. */}
+      {!rentalNoPrice && (
       <div className="detail-tabs" role="tablist" aria-label="단지 정보 분류">
         {TABS.map((t, i) => (
           <button
@@ -329,13 +350,16 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           </button>
         ))}
       </div>
+      )}
 
       <div
         className="detail-body"
-        role="tabpanel"
-        id={`detail-panel-${TABS.indexOf(tab)}`}
-        aria-labelledby={`detail-tab-${TABS.indexOf(tab)}`}
-        tabIndex={0}
+        {...(rentalNoPrice ? {} : {
+          role: 'tabpanel',
+          id: `detail-panel-${TABS.indexOf(tab)}`,
+          'aria-labelledby': `detail-tab-${TABS.indexOf(tab)}`,
+          tabIndex: 0,
+        })}
       >
         {tab === '시세'       && <PriceTab apt={apt} />}
         {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} apt={apt} />}
@@ -343,7 +367,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
 
       {/* 콘텐츠 끝 큰 수집 CTA — 미수집 상태에서만 노출.
           착지자 맥락으로 카피 분기: 담은 집 0곳=결정 유보, 1곳+=비교 완성. */}
-      {!collected && (
+      {!collected && !rentalNoPrice && (
         <button
           type="button"
           className="collect-cta-card"
@@ -417,10 +441,11 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       {/* 이 근처 비슷한 값 단지 — 막다른 페이지 탈출구(2nd 페이지뷰 + 내부링크 SEO).
           items를 상단에서 내려줘 넛지와 데이터 공유(중복 fetch 방지). ref는 넛지 스크롤 타겟. */}
       <div ref={similarRef}>
-        <SimilarApts kaptCode={apt.kaptCode} avg={apt.recentAvg} gu={apt.regionName} aptNm={apt.aptNm} items={similarItems} />
+        <SimilarApts kaptCode={apt.kaptCode} avg={apt.recentAvg} gu={apt.regionName} aptNm={apt.aptNm} items={similarItems} mode={rentalNoPrice ? 'rental' : hasPrice ? 'price' : 'units'} />
       </div>
 
-      {/* 모바일 sticky — 페이지의 유일한 1차 CTA. 공유(획득 지표)와 경쟁시키지 않는다. */}
+      {/* 모바일 sticky — 임대·무가격 단지에서는 "새 거래 뜨면 알려드려요"가 지킬 수 없는 약속이라 뺀다. */}
+      {!rentalNoPrice && (
       <div className="detail-mobile-actions">
         <button
           className={`mobile-collect-btn${collected ? ' collected' : ''}`}
@@ -430,6 +455,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           {collected ? '✓ 저장됨 · 변동 지켜보는 중' : '★ 저장 · 새 거래 뜨면 알려드려요'}
         </button>
       </div>
+      )}
     </div>
   )
 }
@@ -522,6 +548,7 @@ function PriceTrendChart({ data }) {
 }
 
 function PriceTab({ apt }) {
+  const reportCtaRef = useImpression('report_cta_view', { apt_name: apt.aptNm, source: 'price_tab' })
   const [trades, setTrades] = useState(null)
   const [months, setMonths] = useState(12)
   // 재시도용. months를 같은 값으로 다시 넣으면 React가 리렌더를 건너뛰어 재조회가 안 된다.
@@ -746,7 +773,7 @@ function PriceTab({ apt }) {
       )}
 
       {/* 살까말까 보고서 CTA — 시세 탭 하단 */}
-      <div className="report-cta-wrap">
+      <div className="report-cta-wrap" ref={reportCtaRef}>
         <a
           href={`/report?kaptCode=${apt.kaptCode}&aptName=${encodeURIComponent(apt.aptNm)}&price=${(typeof apt.recentAvg !== 'undefined' && apt.recentAvg) ? Math.round(apt.recentAvg / 10000) * 10000 : 50000}&years=5&savings=10000&source=apt_detail_cta`}
           className="report-cta-btn"
@@ -866,7 +893,8 @@ function AptInfoCard({ apt }) {
 }
 
 /* ── 동네 Q&A — 수집된 이야기에 AI가 답 (저장 없는 대화형 v1) ── */
-function NeighborhoodQnA({ aptNm, dong }) {
+function NeighborhoodQnA({ aptNm, dong, gu }) {
+  const chipsRef = useImpression('qna_chip_view', { apt_name: aptNm })
   const SUGGESTED = ['주차 어때요?', '초등학교 배정은요?', '밤에 조용한 편이에요?', '주변에 뭐가 있어요?']
   const [q, setQ] = useState('')
   const [answer, setAnswer] = useState(null)
@@ -880,7 +908,7 @@ function NeighborhoodQnA({ aptNm, dong }) {
     setLoading(true); setError(false); setAnswer(null); setAsked(text)
     track('qna_ask', { apt_name: aptNm, question: text, source })
     try {
-      const res = await fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}&question=${encodeURIComponent(text)}`)
+      const res = await fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}&gu=${encodeURIComponent(gu || '')}&question=${encodeURIComponent(text)}`)
       const data = await res.json()
       if (data?.answer) { setAnswer(data.answer); track('qna_answer', { apt_name: aptNm, question: text }) }
       else { setError(true); track('qna_error', { apt_name: aptNm, question: text }) }
@@ -895,7 +923,7 @@ function NeighborhoodQnA({ aptNm, dong }) {
         <span className="qna-title">더 궁금한 건 직접 물어보세요</span>
         <span className="qna-sub">모아둔 이야기에서 AI가 답을 찾아드려요</span>
       </div>
-      <div className="qna-chips">
+      <div className="qna-chips" ref={chipsRef}>
         {SUGGESTED.map((s) => (
           <button key={s} className="qna-chip" onClick={() => ask(s, 'chip')} disabled={loading}>{s}</button>
         ))}
@@ -928,6 +956,39 @@ function NeighborhoodQnA({ aptNm, dong }) {
   )
 }
 
+/* ── 요약 신고 — "이 요약, 이 단지 얘기가 아니에요" ─────────────
+   AI 요약이 동명 단지 글을 섞었을 때 사용자가 항의할 곳이 없어 Q&A 입력창에 적었다
+   ("엉터리 수근수근이네, 수정해라"). 저장소가 없으므로 이벤트로만 받는다 — 주 1회
+   vibe_report를 단지별로 모아 보면 어느 단지 요약이 틀렸는지 알 수 있다. */
+function VibeReport({ aptNm, kaptCode }) {
+  const REASONS = ['다른 단지 이야기예요', '사실과 달라요', '오래된 정보예요']
+  const [open, setOpen] = useState(false)
+  const [sent, setSent] = useState(false)
+  if (sent) return <div className="vibe-report-done" role="status">알려주셔서 고마워요. 확인하고 고칠게요.</div>
+  return (
+    <div className="vibe-report">
+      {!open ? (
+        <button type="button" className="vibe-report-open" onClick={() => { setOpen(true); track('vibe_report_open', { apt_name: aptNm }) }}>
+          이 요약이 틀렸나요?
+        </button>
+      ) : (
+        <div className="vibe-report-reasons" role="group" aria-label="요약이 틀린 이유">
+          {REASONS.map(r => (
+            <button
+              key={r}
+              type="button"
+              className="qna-chip"
+              onClick={() => { track('vibe_report', { apt_name: aptNm, kapt_code: kaptCode, reason: r }); setSent(true) }}
+            >
+              {r}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 /* ── 동네·이야기 통합 탭 ─────────────────── */
 function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
   const [vibe, setVibe] = useState(null)
@@ -940,16 +1001,26 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
     const controller = new AbortController()
     const { signal } = controller
     setVibe(null); setVibeSummary(null); setVibeLoading(true)
-    fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
+    // 핵심 가치가 뜨기까지 걸린 시간. 2026-09 라이브 계측은 5.4~6.2초였고 평균 세션이 15~27초다.
+    const t0 = performance.now()
+    const ready = (ok, data) => track('vibe_ready', {
+      apt_name: aptNm,
+      apt_type: apt?.aptType || 'unknown',
+      ok,
+      ms: Math.round(performance.now() - t0),
+      has_summary: !!data?.summary,
+      lines: (data?.categories || []).reduce((n, c) => n + (c.lines?.length || 0), 0),
+    })
+    fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}&gu=${encodeURIComponent(apt?.regionName || '')}`, { signal })
       .then(r => r.json())
-      .then(data => { setVibe(data?.categories || []); setVibeSummary(data?.summary || null); setVibeLoading(false) })
-      .catch(e => { if (e.name !== 'AbortError') { setVibe([]); setVibeLoading(false) } })
+      .then(data => { setVibe(data?.categories || []); setVibeSummary(data?.summary || null); setVibeLoading(false); ready(true, data) })
+      .catch(e => { if (e.name !== 'AbortError') { setVibe([]); setVibeLoading(false); ready(false) } })
     // fetch(`/api/stories?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
     //   .then(r => r.json())
     //   .then(data => { setStories(Array.isArray(data) ? data : []); setStoriesLoading(false) })
     //   .catch(e => { if (e.name !== 'AbortError') { setStories([]); setStoriesLoading(false) } })
     return () => controller.abort()
-  }, [aptNm, dong])
+  }, [aptNm, dong, apt?.regionName])
 
   return (
     <div className="neighborhood-tab">
@@ -987,6 +1058,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
             <div className="vibe-source-note">
               직접 임장 가보는 게 제일 정확해요 😊
             </div>
+            <VibeReport aptNm={aptNm} kaptCode={apt?.kaptCode} />
           </>
         ) : (
           <div className="vibe-empty">아직 소문이 없네요</div>
@@ -994,7 +1066,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
       </div>
 
       {/* 동네 Q&A */}
-      <NeighborhoodQnA aptNm={aptNm} dong={dong} />
+      <NeighborhoodQnA aptNm={aptNm} dong={dong} gu={apt?.regionName} />
 
       {/* 단지 인포 카드 */}
       <AptInfoCard apt={apt} />
@@ -1106,12 +1178,23 @@ function KakaoMap({ aptNm, addr }) {
   const [coords, setCoords] = useState(null)
   const [failed, setFailed] = useState(false)
   const [mapError, setMapError] = useState(false)
+  const [sdkReady, setSdkReady] = useState(0)
 
   useEffect(() => {
     const cacheKey = `${aptNm}|${addr}`
     if (coordCache.has(cacheKey)) { setCoords(coordCache.get(cacheKey)); return }
 
-    if (!window.kakao?.maps?.services) { setFailed(true); return }
+    // SDK가 아직 안 왔으면 기다린다. 전에는 마운트 시점에 없으면 곧바로 실패 처리해서,
+    // 검색에서 바로 착지한 첫 방문(=유입의 99%)에서 스크립트보다 React가 빨리 뜨면
+    // "지도를 불러올 수 없습니다"가 나갔다. AptInfoCard는 이미 같은 방식으로 기다리고 있었다.
+    if (!window.kakao?.maps?.services) {
+      let tries = 0
+      const wait = setInterval(() => {
+        if (window.kakao?.maps?.services) { clearInterval(wait); setSdkReady(n => n + 1) }
+        else if (++tries > 40) { clearInterval(wait); setFailed(true) } // 12초
+      }, 300)
+      return () => clearInterval(wait)
+    }
     const places = new window.kakao.maps.services.Places()
 
     const tryKeyword = (q, cb) => {
@@ -1136,7 +1219,7 @@ function KakaoMap({ aptNm, addr }) {
         else setFailed(true)
       })
     })
-  }, [aptNm, addr])
+  }, [aptNm, addr, sdkReady])
 
   useEffect(() => {
     if (!coords || !mapRef.current) return
@@ -1147,7 +1230,8 @@ function KakaoMap({ aptNm, addr }) {
     new kakao.maps.Marker({ position: center, map })
   }, [coords])
 
-  if (failed || mapError) return <div className="osm-map osm-map-loading">지도를 불러올 수 없습니다</div>
+  // 실패하면 빈 상자 대신 아무것도 그리지 않는다 — 바로 아래 카카오·네이버 지도 링크가 대신한다.
+  if (failed || mapError) return null
   if (!coords) return <div className="osm-map osm-map-loading">지도 불러오는 중...</div>
 
   return <div ref={mapRef} className="osm-map" />

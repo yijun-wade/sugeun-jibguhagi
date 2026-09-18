@@ -1227,6 +1227,15 @@ header { text-align: center; padding: 4px 0 2px; }
   text-align: center;
 }
 
+.vibe-report { margin-top: 10px; text-align: center; }
+.vibe-report-open {
+  background: none; border: 0; padding: 10px 12px; min-height: 44px;
+  font-size: 12px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}
+.vibe-report-open:hover { color: var(--text, inherit); }
+.vibe-report-reasons { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.vibe-report-done { margin-top: 10px; font-size: 12px; color: var(--muted); text-align: center; }
+
 .story-card {
   display: block; text-decoration: none;
   background: var(--card); border: 1px solid var(--border);

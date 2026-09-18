@@ -7,15 +7,17 @@ import { FETCH_TIMEOUT, MIN_AREA_SQM } from './constants.js'
 import { DONG } from './data.js'
 import DetailReport from './DetailReport.jsx'
 import { track } from './analytics.js'
+import { parseAddr } from './addr.js'
+import { isRentalName } from './apt-type.js'
 import { getCollection } from './collection.js'
 import { recordInterest } from './interest.js'
 
 async function buildEvalData(apt) {
   const bjdCode = apt.bjdCode || null
 
-  const addrParts = (apt.addr || '').split(' ')
-  const dong = addrParts.find(p => p.endsWith('동') || p.endsWith('읍') || p.endsWith('면')) || addrParts[addrParts.length - 1] || ''
-  const regionName = addrParts.find(p => p.endsWith('구') || p.endsWith('시') || p.endsWith('군')) || addrParts[addrParts.length - 2] || ''
+  // regionName은 '구'(없으면 시·군). 전에는 '서울특별시'가 먼저 걸려 서울 전 단지가 같은 값이었다 — src/addr.js 참고.
+  const { gu: regionName, dong: parsedDong } = parseAddr(apt.addr)
+  const dong = parsedDong || (apt.addr || '').split(' ').pop() || ''
 
   const storiesRes = await fetch(`/api/stories?aptName=${encodeURIComponent(apt.kaptName)}&location=${encodeURIComponent(dong)}`)
     .then(r => r.json()).catch(() => [])
@@ -39,7 +41,8 @@ async function buildEvalData(apt) {
       direction: '-',
       priceJudgment: { level: null, trend: null, sentence: null },
       lifeConditions: getLifeConditions(dong),
-      verdict: '실거래 데이터 없음',
+      verdict: apt.summary || null,
+      aptType: apt.aptType || 'unknown',
       voice,
     }
   }
@@ -94,7 +97,9 @@ async function buildEvalData(apt) {
     direction,
     priceJudgment,
     lifeConditions: getLifeConditions(dong),
-    verdict: getVerdict(tag, dong),
+    // 단지별 한 줄 요약(3,345단지 전수 보유)이 동 단위 문장보다 먼저다. App.jsx 카드 경로와 동일.
+    verdict: apt.summary || getVerdict(tag, dong),
+    aptType: apt.aptType || 'unknown',
     voice,
   }
 }
@@ -129,9 +134,18 @@ export default function AptDetailPage() {
   // (카드 클릭 유입은 location.state.evalData 존재 → entry='card', 직접 착지 → 'direct')
   useEffect(() => {
     if (!evalData) return
+    // apt_type·has_price는 세그먼트 판정용. 전에는 임대 단지 비중을 단지명 키워드로 추정할 수밖에 없었다.
+    // region은 2026-09-19 이전까지 서울 전 단지가 '서울특별시'였다(addr.js) — 그 이후 값만 구 단위다.
+    const rental = evalData.aptType === 'rental' ||
+      ((!evalData.aptType || evalData.aptType === 'unknown') && isRentalName(evalData.aptNm))
     track('apt_view', {
       apt_name: evalData.aptNm,
+      kapt_code: evalData.kaptCode,
       region: evalData.regionName,
+      dong: evalData.dong,
+      apt_type: rental ? 'rental' : (evalData.aptType || 'unknown'),
+      has_price: evalData.recentAvg > 0,
+      has_verdict: !!evalData.verdict,
       entry: location.state?.evalData ? 'card' : 'direct',
     })
     recordInterest({

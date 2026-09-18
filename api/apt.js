@@ -2,9 +2,12 @@
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { setCors } from './_utils.js'
+import { parseAddr } from './_addr.js'
+import { classifyAptType } from './_apt-type.js'
 
 let aptList = null
 let enrichMap = null
+let typeMap = null
 
 function loadAptList() {
   if (aptList) return aptList
@@ -27,11 +30,32 @@ function loadEnrichMap() {
   try {
     const filePath = join(process.cwd(), 'public', 'seoul-apt-enriched.json')
     const data = JSON.parse(readFileSync(filePath, 'utf-8'))
-    enrichMap = new Map(data.map(a => [a.kaptCode, { kaptdaCnt: a.kaptdaCnt, useAprDay: a.useAprDay }]))
+    enrichMap = new Map(data.map(a => [a.kaptCode, { kaptdaCnt: a.kaptdaCnt, useAprDay: a.useAprDay, summary: a.summary }]))
   } catch {
     enrichMap = new Map()
   }
   return enrichMap
+}
+
+// 단지 유형(임대·혼합) — scripts/build-apt-types.mjs가 K-APT 분양형태로 만든 정적 파일.
+// 파일이 없거나 단지가 빠져 있으면 단지명 키워드로 추정한다(_apt-type.js).
+function loadTypeMap() {
+  if (typeMap) return typeMap
+  try {
+    typeMap = JSON.parse(readFileSync(join(process.cwd(), 'public', 'apt-types.json'), 'utf-8'))
+  } catch {
+    typeMap = {}
+  }
+  return typeMap
+}
+
+export function resolveAptType(apt, types = loadTypeMap()) {
+  const known = types[apt.kaptCode]
+  if (known) return known
+  // 정적 파일은 임대·혼합만 담는다. 파일이 있는데 없으면 분양, 파일 자체가 없으면 이름으로 추정.
+  const byName = classifyAptType({ name: apt.kaptName })
+  if (byName === 'rental') return 'rental'
+  return Object.keys(types).length > 0 ? 'sale' : 'unknown'
 }
 
 const esc = (s) =>
@@ -46,9 +70,7 @@ const esc = (s) =>
 function buildPrerenderHtml(apt) {
   const name = apt.kaptName || '아파트'
   const addr = apt.addr || ''
-  const parts = addr.split(' ')
-  const dong = parts.find(p => /[동읍면]$/.test(p)) || ''
-  const region = parts.find(p => /[구시군]$/.test(p)) || ''
+  const { gu: region, dong } = parseAddr(addr)
   const buildYear = apt.kaptBuldYy ? `${apt.kaptBuldYy}년` : ''
   const households = apt.kaptdaCnt ? `${apt.kaptdaCnt}세대` : ''
   const url = `https://www.suzip.kr/apt/${apt.kaptCode}`
@@ -124,7 +146,11 @@ export default function handler(req, res) {
 
   const enrich = loadEnrichMap()
   const extra = enrich.get(kaptCode)
-  const full = extra ? { ...apt, kaptdaCnt: extra.kaptdaCnt, useAprDay: extra.useAprDay } : apt
+  const full = {
+    ...apt,
+    ...(extra ? { kaptdaCnt: extra.kaptdaCnt, useAprDay: extra.useAprDay, summary: extra.summary } : {}),
+    aptType: resolveAptType(apt),
+  }
 
   // 크롤러 프리렌더 모드 (vercel.json UA rewrite로만 진입)
   if (prerender) {
