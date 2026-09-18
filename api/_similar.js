@@ -1,4 +1,5 @@
 // 비슷한 가격대 단지 매칭 (순수 함수) — apt-discovery.json 기반
+import { isRentalName } from './_apt-type.js'
 // 기준가(anchorAvg, 만원)에 가장 가까운 단지를, 같은 구를 우선해 정렬한다.
 
 const SLIM = a => ({
@@ -46,4 +47,34 @@ export function pickSimilarApts(list, anchor = {}, limit = 6) {
   const sameGu = candidates.filter(a => a.gu === anchorGu).sort(byUnits)
   const otherGu = candidates.filter(a => a.gu !== anchorGu).sort(byUnits)
   return [...sameGu, ...otherGu].slice(0, limit).map(SLIM)
+}
+
+// ── 임대 단지용 ─────────────────────────────────────────────────────────────
+// 실거래가 없는 공공임대·청년주택에 "비슷한 값 단지"를 붙이면 세대수 큰 순 폴백을 타서
+// 행복주택 페이지에 올림픽파크포레온(30억)·디에이치(77억)가 나갔다. 임대를 보러 온 사람에게
+// 의미 있는 다음 페이지는 "같은 구의 다른 임대 단지"다.
+
+/**
+ * @param {Array} seoulList  seoul-apt-enriched.json ({kaptCode,kaptName,sigungu,dong,kaptdaCnt,useAprDay})
+ * @param {Object} types     apt-types.json ({kaptCode: 'rental'|'mixed'})
+ * @param {{kaptCode?:string, gu?:string}} anchor
+ */
+export function pickSameTypeApts(seoulList, types = {}, anchor = {}, limit = 6) {
+  if (!Array.isArray(seoulList) || seoulList.length === 0) return []
+  const isRental = a => types[a.kaptCode] === 'rental' || (!types[a.kaptCode] && isRentalName(a.kaptName))
+  const byUnits = (x, y) => (y.kaptdaCnt || 0) - (x.kaptdaCnt || 0)
+  const rentals = seoulList.filter(a => a.kaptCode !== anchor.kaptCode && isRental(a))
+  const sameGu = rentals.filter(a => a.sigungu === anchor.gu).sort(byUnits)
+  const otherGu = rentals.filter(a => a.sigungu !== anchor.gu).sort(byUnits)
+  return [...sameGu, ...otherGu].slice(0, limit).map(a => ({
+    code: a.kaptCode,
+    name: a.kaptName,
+    gu: a.sigungu,
+    dong: a.dong,
+    avg: 0,
+    perPy: 0,
+    year: a.useAprDay ? String(a.useAprDay).slice(0, 4) : '',
+    units: a.kaptdaCnt || 0,
+    rental: true,
+  }))
 }

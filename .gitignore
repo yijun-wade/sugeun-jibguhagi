@@ -18,3 +18,4 @@ dist/
 .publish-assets/
 .chrome-publish-profile/
 .chrome-render-profile/
+public/apt-types.json.raw

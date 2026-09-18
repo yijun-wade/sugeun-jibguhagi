@@ -7,6 +7,7 @@ import { isCollected, toggleCollection, getCollection } from './collection.js'
 import { buildDelta } from './collection-delta.js'
 import { isSubscribed, subscribeRegion, getInterest } from './interest.js'
 import SimilarApts from './SimilarApts.jsx'
+import { isRentalName } from './apt-type.js'
 import ViewedCompare from './ViewedCompare.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -22,6 +23,13 @@ const dirClass = (d) => d?.includes('상승') ? 'up' : d?.includes('하락') ? '
 
 export default function DetailReport({ apt, onBack, onCollectionChange }) {
   const navigate = useNavigate()
+  // 공공임대·행복주택·청년안심주택 — 실거래가 없고, 보러 온 사람의 질문도 매수가 아니라 입주다.
+  // 유입 상위 단지의 다수가 이 유형인데(2026-09 실측) 화면은 매수자용 블록으로 채워져 있었다.
+  // 검색 카드 경로로 오면 aptType이 없을 수 있어 단지명으로 한 번 더 본다.
+  const isRental = apt.aptType === 'rental' || (!apt.aptType || apt.aptType === 'unknown') && isRentalName(apt.aptNm)
+  const hasPrice = apt.recentAvg > 0
+  // 실거래가 없는 임대 단지에서는 시세 탭·거래 알림 약속·저장 고정 바를 내보내지 않는다.
+  const rentalNoPrice = isRental && !hasPrice
   const [tab, setTab] = useState('동네·이야기')
   const [toast, setToast] = useState(null) // 'share' | 'uncollect' | null
   // 저장 직후 인라인 확인 블록 — 토스트와 달리 사라지지 않는다(즉시 보상 노출).
@@ -50,12 +58,13 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
     const params = new URLSearchParams({ kaptCode: apt.kaptCode })
     if (apt.recentAvg) params.set('avg', String(apt.recentAvg))
     if (apt.regionName) params.set('gu', apt.regionName)
+    if (rentalNoPrice) params.set('type', 'rental')
     fetch(`/api/nearby?${params.toString()}`)
       .then(r => r.json())
       .then(data => { if (alive) setSimilarItems(Array.isArray(data) ? data : []) })
       .catch(() => { if (alive) setSimilarItems([]) })
     return () => { alive = false }
-  }, [apt.kaptCode, apt.recentAvg, apt.regionName])
+  }, [apt.kaptCode, apt.recentAvg, apt.regionName, rentalNoPrice])
 
   useEffect(() => {
     if (!toast) return
@@ -194,17 +203,25 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           type="button"
           className="discover-nudge"
           onClick={() => {
-            track('discover_nudge_click', { apt_name: apt.aptNm, from: 'detail_top', count: similarItems.length })
+            track('discover_nudge_click', { apt_name: apt.aptNm, from: 'detail_top', count: similarItems.length, mode: rentalNoPrice ? 'rental' : hasPrice ? 'price' : 'units' })
             similarRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
           }}
         >
           <span className="discover-nudge-icon" aria-hidden="true">🏘</span>
           <span className="discover-nudge-text">
-            <span className="discover-nudge-title">이 근처 비슷한 값 단지 {similarItems.length}곳</span>
+            <span className="discover-nudge-title">
+              {rentalNoPrice
+                ? `${apt.regionName || '이 근처'} 다른 공공임대·청년주택 ${similarItems.length}곳`
+                : hasPrice
+                  ? `이 근처 비슷한 값 단지 ${similarItems.length}곳`
+                  : `${apt.regionName || '이 근처'} 다른 단지 ${similarItems.length}곳`}
+            </span>
             <span className="discover-nudge-sub">
-              {apt.recentAvg > 0
-                ? `${apt.regionName || '이 근처'} · 이 집과 값이 비슷한 순`
-                : `같은 ${apt.regionName || '이 근처'} · 규모 큰 단지 순`}
+              {rentalNoPrice
+                ? '같은 구 먼저 · 세대수 큰 순'
+                : hasPrice
+                  ? `${apt.regionName || '이 근처'} · 이 집과 값이 비슷한 순`
+                  : `같은 ${apt.regionName || '이 근처'} · 규모 큰 단지 순`}
             </span>
           </span>
           <span className="discover-nudge-arrow" aria-hidden="true">↓</span>
@@ -304,6 +321,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       {/* APG 탭 패턴. 전에는 aria-pressed라 토글 버튼 3개로 읽혔고,
           "3개 중 몇 번째"도 "고르면 아래가 바뀐다"도 전달되지 않았다.
           roving tabindex — 선택된 탭만 Tab 순서에 들어가고, 좌우 화살표로 이동한다. */}
+      {!rentalNoPrice && (
       <div className="detail-tabs" role="tablist" aria-label="단지 정보 분류">
         {TABS.map((t, i) => (
           <button
@@ -329,13 +347,16 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           </button>
         ))}
       </div>
+      )}
 
       <div
         className="detail-body"
-        role="tabpanel"
-        id={`detail-panel-${TABS.indexOf(tab)}`}
-        aria-labelledby={`detail-tab-${TABS.indexOf(tab)}`}
-        tabIndex={0}
+        {...(rentalNoPrice ? {} : {
+          role: 'tabpanel',
+          id: `detail-panel-${TABS.indexOf(tab)}`,
+          'aria-labelledby': `detail-tab-${TABS.indexOf(tab)}`,
+          tabIndex: 0,
+        })}
       >
         {tab === '시세'       && <PriceTab apt={apt} />}
         {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} apt={apt} />}
@@ -343,7 +364,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
 
       {/* 콘텐츠 끝 큰 수집 CTA — 미수집 상태에서만 노출.
           착지자 맥락으로 카피 분기: 담은 집 0곳=결정 유보, 1곳+=비교 완성. */}
-      {!collected && (
+      {!collected && !rentalNoPrice && (
         <button
           type="button"
           className="collect-cta-card"
@@ -417,10 +438,11 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       {/* 이 근처 비슷한 값 단지 — 막다른 페이지 탈출구(2nd 페이지뷰 + 내부링크 SEO).
           items를 상단에서 내려줘 넛지와 데이터 공유(중복 fetch 방지). ref는 넛지 스크롤 타겟. */}
       <div ref={similarRef}>
-        <SimilarApts kaptCode={apt.kaptCode} avg={apt.recentAvg} gu={apt.regionName} aptNm={apt.aptNm} items={similarItems} />
+        <SimilarApts kaptCode={apt.kaptCode} avg={apt.recentAvg} gu={apt.regionName} aptNm={apt.aptNm} items={similarItems} mode={rentalNoPrice ? 'rental' : hasPrice ? 'price' : 'units'} />
       </div>
 
-      {/* 모바일 sticky — 페이지의 유일한 1차 CTA. 공유(획득 지표)와 경쟁시키지 않는다. */}
+      {/* 모바일 sticky — 임대·무가격 단지에서는 "새 거래 뜨면 알려드려요"가 지킬 수 없는 약속이라 뺀다. */}
+      {!rentalNoPrice && (
       <div className="detail-mobile-actions">
         <button
           className={`mobile-collect-btn${collected ? ' collected' : ''}`}
@@ -430,6 +452,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           {collected ? '✓ 저장됨 · 변동 지켜보는 중' : '★ 저장 · 새 거래 뜨면 알려드려요'}
         </button>
       </div>
+      )}
     </div>
   )
 }

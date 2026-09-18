@@ -40,7 +40,8 @@ async function buildEvalData(apt) {
       direction: '-',
       priceJudgment: { level: null, trend: null, sentence: null },
       lifeConditions: getLifeConditions(dong),
-      verdict: '실거래 데이터 없음',
+      verdict: apt.summary || null,
+      aptType: apt.aptType || 'unknown',
       voice,
     }
   }
@@ -95,7 +96,9 @@ async function buildEvalData(apt) {
     direction,
     priceJudgment,
     lifeConditions: getLifeConditions(dong),
-    verdict: getVerdict(tag, dong),
+    // 단지별 한 줄 요약(3,345단지 전수 보유)이 동 단위 문장보다 먼저다. App.jsx 카드 경로와 동일.
+    verdict: apt.summary || getVerdict(tag, dong),
+    aptType: apt.aptType || 'unknown',
     voice,
   }
 }
