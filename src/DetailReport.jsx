@@ -889,7 +889,7 @@ function AptInfoCard({ apt }) {
 }
 
 /* ── 동네 Q&A — 수집된 이야기에 AI가 답 (저장 없는 대화형 v1) ── */
-function NeighborhoodQnA({ aptNm, dong }) {
+function NeighborhoodQnA({ aptNm, dong, gu }) {
   const SUGGESTED = ['주차 어때요?', '초등학교 배정은요?', '밤에 조용한 편이에요?', '주변에 뭐가 있어요?']
   const [q, setQ] = useState('')
   const [answer, setAnswer] = useState(null)
@@ -903,7 +903,7 @@ function NeighborhoodQnA({ aptNm, dong }) {
     setLoading(true); setError(false); setAnswer(null); setAsked(text)
     track('qna_ask', { apt_name: aptNm, question: text, source })
     try {
-      const res = await fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}&question=${encodeURIComponent(text)}`)
+      const res = await fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}&gu=${encodeURIComponent(gu || '')}&question=${encodeURIComponent(text)}`)
       const data = await res.json()
       if (data?.answer) { setAnswer(data.answer); track('qna_answer', { apt_name: aptNm, question: text }) }
       else { setError(true); track('qna_error', { apt_name: aptNm, question: text }) }
@@ -963,7 +963,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
     const controller = new AbortController()
     const { signal } = controller
     setVibe(null); setVibeSummary(null); setVibeLoading(true)
-    fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
+    fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}&gu=${encodeURIComponent(apt?.regionName || '')}`, { signal })
       .then(r => r.json())
       .then(data => { setVibe(data?.categories || []); setVibeSummary(data?.summary || null); setVibeLoading(false) })
       .catch(e => { if (e.name !== 'AbortError') { setVibe([]); setVibeLoading(false) } })
@@ -972,7 +972,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
     //   .then(data => { setStories(Array.isArray(data) ? data : []); setStoriesLoading(false) })
     //   .catch(e => { if (e.name !== 'AbortError') { setStories([]); setStoriesLoading(false) } })
     return () => controller.abort()
-  }, [aptNm, dong])
+  }, [aptNm, dong, apt?.regionName])
 
   return (
     <div className="neighborhood-tab">
@@ -1017,7 +1017,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
       </div>
 
       {/* 동네 Q&A */}
-      <NeighborhoodQnA aptNm={aptNm} dong={dong} />
+      <NeighborhoodQnA aptNm={aptNm} dong={dong} gu={apt?.regionName} />
 
       {/* 단지 인포 카드 */}
       <AptInfoCard apt={apt} />
