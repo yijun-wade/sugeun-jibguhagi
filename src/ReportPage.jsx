@@ -63,11 +63,8 @@ export default function ReportPage() {
     if (cached) {
       setSubmittedInput(input)
       setReport({ ...cached, cacheHit: true })
-      track('report_complete', {
-        apt_name: input.aptName,
-        cache_hit: true,
-        source: 'local',
-      })
+      // report_complete는 ReportResult가 마운트될 때 한 번 쏜다(cache_hit 포함).
+      // 여기서도 쏘면 캐시 히트 건이 두 번 세어져 완료율이 부풀었다.
       return
     }
 

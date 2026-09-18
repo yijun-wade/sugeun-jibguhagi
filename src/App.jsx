@@ -142,7 +142,9 @@ function PageViewTracker() {
       : path === '/terms' ? 'terms'
       : 'other'
     track('page_view', { page_path: path, page_type: pageType, search_query: searchParams.get('q') || undefined })
-  }, [location.pathname])
+    // search도 본다 — /search?q=A → ?q=B 처럼 경로는 같고 검색어만 바뀌는 이동이 페이지뷰로 안 잡혔다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname, location.search])
   return null
 }
 

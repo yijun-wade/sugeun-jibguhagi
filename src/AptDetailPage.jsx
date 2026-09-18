@@ -8,6 +8,7 @@ import { DONG } from './data.js'
 import DetailReport from './DetailReport.jsx'
 import { track } from './analytics.js'
 import { parseAddr } from './addr.js'
+import { isRentalName } from './apt-type.js'
 import { getCollection } from './collection.js'
 import { recordInterest } from './interest.js'
 
@@ -133,9 +134,18 @@ export default function AptDetailPage() {
   // (카드 클릭 유입은 location.state.evalData 존재 → entry='card', 직접 착지 → 'direct')
   useEffect(() => {
     if (!evalData) return
+    // apt_type·has_price는 세그먼트 판정용. 전에는 임대 단지 비중을 단지명 키워드로 추정할 수밖에 없었다.
+    // region은 2026-09-19 이전까지 서울 전 단지가 '서울특별시'였다(addr.js) — 그 이후 값만 구 단위다.
+    const rental = evalData.aptType === 'rental' ||
+      ((!evalData.aptType || evalData.aptType === 'unknown') && isRentalName(evalData.aptNm))
     track('apt_view', {
       apt_name: evalData.aptNm,
+      kapt_code: evalData.kaptCode,
       region: evalData.regionName,
+      dong: evalData.dong,
+      apt_type: rental ? 'rental' : (evalData.aptType || 'unknown'),
+      has_price: evalData.recentAvg > 0,
+      has_verdict: !!evalData.verdict,
       entry: location.state?.evalData ? 'card' : 'direct',
     })
     recordInterest({
