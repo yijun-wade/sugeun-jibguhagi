@@ -78,7 +78,8 @@ export default async function handler(req, res) {
       result = await generateVibe({ aptName, location, gu, aptType: type === 'rental' ? 'rental' : undefined })
     } catch (e) {
       console.error('vibe generate error:', e.message)
-      return res.json({ categories: [] })
+      // 실패와 '글 없음'을 구분해 준다 — 전에는 둘 다 빈 배열이라 화면이 똑같이 "아직 소문이 없네요"였다.
+      return res.json({ categories: [], error: true })
     }
     // 같은 단지를 열 때마다 네이버 5쿼리 + Haiku를 다시 돌 이유가 없다. 엣지에 하루 두고,
     // 만료 뒤에도 일주일은 옛 응답을 먼저 주고 뒤에서 갱신한다.
