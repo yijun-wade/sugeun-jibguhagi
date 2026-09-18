@@ -14,7 +14,7 @@
 // 운영과 키를 같이 쓴다(네이버 검색 일 25,000콜, 초당 10콜). 한 번에 한 단지씩 돈다.
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
-import { generateVibe } from '../api/_vibe-core.js'
+import { generateVibe, callClaude, BATCH_MODEL } from '../api/_vibe-core.js'
 import { isRentalName } from '../api/_apt-type.js'
 
 const arg = (k) => { const a = process.argv.find(x => x === `--${k}` || x.startsWith(`--${k}=`)); return a ? (a.split('=')[1] ?? true) : null }
@@ -27,6 +27,9 @@ const OUT_DIR = join(PUB, 'vibe')
 const COMBINED = join(PUB, 'apt-vibe.json')
 const FRESH_DAYS = 30
 const GAP_MS = 400
+// --model=claude-sonnet-5 처럼 바꿀 수 있다. 기본은 BATCH_MODEL(_vibe-core.js).
+const MODEL = arg('model') || process.env.VIBE_BATCH_MODEL || BATCH_MODEL
+const usage = { in: 0, out: 0 }
 const load = (f, fb) => { try { return JSON.parse(readFileSync(join(PUB, f), 'utf8')) } catch { return fb } }
 
 const seoul = load('seoul-apt-enriched.json', [])
@@ -56,15 +59,16 @@ const isFresh = (code) => {
 
 const max = Number(arg('max')) || Infinity
 const targets = pickTargets().filter(a => !isFresh(a.kaptCode)).slice(0, max)
-console.log(`생성 대상 ${targets.length}곳${arg('dry') ? ' (dry)' : ''}`)
+console.log(`생성 대상 ${targets.length}곳 · 모델 ${MODEL}${arg('dry') ? ' (dry)' : ''}`)
 if (arg('dry')) { targets.slice(0, 30).forEach(a => console.log(' ', a.kaptCode, a.kaptName, a.sigungu, a.dong)); process.exit(0) }
 
 mkdirSync(OUT_DIR, { recursive: true })
 let ok = 0, empty = 0, fail = 0
 for (const [i, a] of targets.entries()) {
   try {
-    const r = await generateVibe({ aptName: a.kaptName, location: a.dong, gu: a.sigungu })
-    const doc = { kaptCode: a.kaptCode, aptNm: a.kaptName, generatedAt: new Date().toISOString(), ...r }
+    const r = await generateVibe({ aptName: a.kaptName, location: a.dong, gu: a.sigungu, aptType: isRental(a) ? 'rental' : undefined }, { model: MODEL })
+    if (!r.empty && callClaude.lastUsage) { usage.in += callClaude.lastUsage.input_tokens || 0; usage.out += callClaude.lastUsage.output_tokens || 0 }
+    const doc = { kaptCode: a.kaptCode, aptNm: a.kaptName, generatedAt: new Date().toISOString(), model: MODEL, ...r }
     writeFileSync(join(OUT_DIR, `${a.kaptCode}.json`), JSON.stringify(doc))
     r.empty ? empty++ : ok++
   } catch (e) {
@@ -88,4 +92,5 @@ for (const f of readdirSync(OUT_DIR)) {
   } catch { /* 깨진 파일은 건너뜀 */ }
 }
 writeFileSync(COMBINED, JSON.stringify(combined))
+console.log(`모델 ${MODEL} · 입력 ${usage.in.toLocaleString()} · 출력 ${usage.out.toLocaleString()} 토큰`)
 console.log(`완료 · 요약 ${ok} · 글 부족 ${empty} · 실패 ${fail} · 합본 ${Object.keys(combined).length}곳`)

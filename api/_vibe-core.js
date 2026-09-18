@@ -76,21 +76,41 @@ export async function collectSources({ aptName, location, gu }, deps = {}) {
   return { sections, count: all.length, links }
 }
 
-export function buildSummaryPrompt({ aptName, location, gu, sections }) {
+export function buildSummaryPrompt({ aptName, location, gu, sections, aptType }) {
   const where = [gu, location].filter(Boolean).join(' ')
-  return `다음은 "${aptName}"${where ? ` (${where})` : ''} 관련 인터넷 글이야. 블로그 후기, 카페 글, 뉴스, 지식인 Q&A를 포함해.\n\n${sections}\n\n이 내용을 바탕으로, 이 동네에 실제로 살거나 이사를 고민하는 사람들이 카페에서 소곤소곤 나눌 법한 말투로 요약해줘.\n딱딱한 분석이나 리포트 말투 금지. 친한 친구한테 귓속말로 알려주는 느낌으로.\n\n출력 형식 (반드시 지켜줘):\n[교통]\n한 줄 내용\n한 줄 내용\n[학군]\n한 줄 내용\n한 줄 내용\n[분위기]\n한 줄 내용\n한 줄 내용\n[이슈]\n한 줄 내용\n한 줄 내용\n[총평]\n한 줄 종합 평가\n\n말투 규칙:\n- "~대요", "~래요", "~다고들 해요", "~다네요", "~는 편이에요" 같은 전달 말투 사용\n- 숫자나 구체적 사실은 살려줘 (예: "지하철역까지 걸어서 5분이래요", "학교가 도보 10분이래요")\n- 이모지 사용 금지\n- 각 줄은 15~45자 이내\n- 총평은 이 동네를 한 줄로 — 친구한테 "거기 살 만해?" 물어봤을 때 대답하듯이\n- 교통은 지하철·버스 접근성, 출퇴근 혼잡도 중심\n- 학군은 초·중·고 학교 수준, 학원가, 교육 환경 중심\n- 분위기는 동네 성격·주민층·거리 느낌·상권 중심\n- 이슈는 최근 개발 소식·주민 불만·핫토픽 중심\n- 이름이 같은 다른 지역 단지 이야기는 버려. 이 단지는 ${where || '위에 적힌 곳'}에 있어\n- 동네 전체 소식과 이 단지의 일을 구분해. 옆 단지·동네의 재건축이나 분양 소식을 이 단지 일처럼 쓰지 마\n- 정보가 부족한 카테고리는 "정보 없음"으로 채워줘\n- 다른 설명 없이 위 형식만 출력`
+  // 임대 단지를 보러 오는 사람은 매수자가 아니라 입주 예정자다(2026-09 실측: 질문이 소음·주차·관리비·내부 구조).
+  // 실제로 "청년·저소득층 중심의 동네 같은데"라는 총평이 나왔다 — 읽는 사람이 바로 그 입주자다.
+  const rentalRule = aptType === 'rental'
+    ? `\n- 이 단지는 공공임대·청년주택이야. 당첨됐거나 신청을 고민하는 사람이 읽어. 입주해서 살기에 어떤지(소음·주차·관리비·내부 구조·수납·주변 편의) 중심으로 써줘\n- 거주자의 소득·계층을 평가하거나 짐작하는 말은 쓰지 마. 매매가·투자 가치 이야기도 하지 마`
+    : ''
+  return `다음은 "${aptName}"${where ? ` (${where})` : ''} 관련 인터넷 글이야. 블로그 후기, 카페 글, 뉴스, 지식인 Q&A를 포함해.\n\n${sections}\n\n이 내용을 바탕으로, 이 동네에 실제로 살거나 이사를 고민하는 사람들이 카페에서 소곤소곤 나눌 법한 말투로 요약해줘.\n딱딱한 분석이나 리포트 말투 금지. 친한 친구한테 귓속말로 알려주는 느낌으로.\n\n출력 형식 (반드시 지켜줘):\n[교통]\n한 줄 내용\n한 줄 내용\n[학군]\n한 줄 내용\n한 줄 내용\n[분위기]\n한 줄 내용\n한 줄 내용\n[이슈]\n한 줄 내용\n한 줄 내용\n[총평]\n한 줄 종합 평가\n\n말투 규칙:\n- "~대요", "~래요", "~다고들 해요", "~다네요", "~는 편이에요" 같은 전달 말투 사용\n- 숫자나 구체적 사실은 살려줘 (예: "지하철역까지 걸어서 5분이래요", "학교가 도보 10분이래요")\n- 이모지 사용 금지\n- 각 줄은 15~45자 이내\n- 총평은 이 동네를 한 줄로 — 친구한테 "거기 살 만해?" 물어봤을 때 대답하듯이\n- 교통은 지하철·버스 접근성, 출퇴근 혼잡도 중심\n- 학군은 초·중·고 학교 수준, 학원가, 교육 환경 중심\n- 분위기는 동네 성격·주민층·거리 느낌·상권 중심\n- 이슈는 최근 개발 소식·주민 불만·핫토픽 중심\n- 이름이 같은 다른 지역 단지 이야기는 버려. 이 단지는 ${where || '위에 적힌 곳'}에 있어\n- 동네 전체 소식과 이 단지의 일을 구분해. 옆 단지·동네의 재건축이나 분양 소식을 이 단지 일처럼 쓰지 마\n- 정보가 부족한 카테고리는 "정보 없음"으로 채워줘${rentalRule}\n- 다른 설명 없이 위 형식만 출력`
 }
 
-export async function callClaude(prompt, maxTokens = 800) {
-  const r = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': process.env.ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({ model: VIBE_MODEL, max_tokens: maxTokens, messages: [{ role: 'user', content: prompt }] }),
-  })
+// 실시간 API는 지연 때문에 Haiku, 사전 생성 배치는 상위 모델을 쓴다(한 달에 한 번 도는 일이라
+// 단지당 몇 원 차이고, Haiku는 "공덕역 2호선"(실제 5·6호선) 같은 사실 오류를 냈다).
+export const BATCH_MODEL = 'claude-opus-5'
+
+export async function callClaude(prompt, { model = VIBE_MODEL, maxTokens } = {}) {
+  const isHaiku = model.startsWith('claude-haiku')
+  const body = { model, messages: [{ role: 'user', content: prompt }] }
+  const headers = {
+    'x-api-key': process.env.ANTHROPIC_API_KEY,
+    'anthropic-version': '2023-06-01',
+    'content-type': 'application/json',
+  }
+  if (isHaiku) {
+    body.max_tokens = maxTokens || 800
+  } else {
+    // Opus 5·Sonnet 5는 생각이 기본으로 켜져 있고 그 토큰도 max_tokens에 든다. 요약은 가벼운 일이라 effort는 낮게.
+    body.max_tokens = maxTokens || 6000
+    body.output_config = { effort: 'low' }
+    if (model === 'claude-opus-5') {
+      // 안전 분류기가 요청을 거절하면 서버가 권장 모델로 같은 요청을 다시 돌린다.
+      body.fallbacks = 'default'
+      headers['anthropic-beta'] = 'server-side-fallback-2026-07-01'
+    }
+  }
+  const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers, body: JSON.stringify(body) })
   if (!r.ok) {
     const err = await r.json().catch(() => ({}))
     const e = new Error(`Anthropic ${r.status}: ${err?.error?.message || ''}`)
@@ -98,14 +118,18 @@ export async function callClaude(prompt, maxTokens = 800) {
     throw e
   }
   const data = await r.json()
-  return data?.content?.[0]?.text || ''
+  if (data?.stop_reason === 'refusal') throw new Error('Anthropic refusal')
+  // 생각 블록이 앞에 올 수 있다 — content[0]이 아니라 text 블록을 찾는다.
+  const text = (data?.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n')
+  callClaude.lastUsage = data?.usage || null
+  return text
 }
 
 /**
  * @returns {{empty:true, sourceCount:number} | {categories:Array, summary:string|null, sourceCount:number, links:Array}}
  */
 export async function generateVibe(ctx, deps = {}) {
-  const callModel = deps.callModel || callClaude
+  const callModel = deps.callModel || ((prompt) => callClaude(prompt, { model: deps.model }))
   const { sections, count, links } = await collectSources(ctx, deps)
   if (count < MIN_SOURCES) return { empty: true, sourceCount: count }
   const text = await callModel(buildSummaryPrompt({ ...ctx, sections }))

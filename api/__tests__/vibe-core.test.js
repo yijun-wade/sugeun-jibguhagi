@@ -67,3 +67,11 @@ test('collectSources: 동 이름으로 검색한 결과라도 그 동을 말하�
   assert.equal(r.count, 1)
   assert.ok(!r.sections.includes('길상사'))
 })
+
+import { buildSummaryPrompt } from '../_vibe-core.js'
+test('임대 단지 프롬프트: 입주자 관점, 계층 평가 금지', () => {
+  const rental = buildSummaryPrompt({ aptName: 'X행복주택', gu: '마포구', location: '공덕동', sections: 's', aptType: 'rental' })
+  assert.ok(rental.includes('공공임대·청년주택') && rental.includes('소득·계층'))
+  const sale = buildSummaryPrompt({ aptName: 'X', gu: '마포구', location: '공덕동', sections: 's' })
+  assert.ok(!sale.includes('소득·계층'))
+})

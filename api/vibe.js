@@ -13,7 +13,7 @@ function formatItems(items, tag) {
 
 export default async function handler(req, res) {
   if (setCors(req, res)) return
-  const { aptName, location, question, gu } = req.query
+  const { aptName, location, question, gu, type } = req.query
   // 같은 이름의 다른 단지 글을 거른다(_vibe-filter.js). 단지명으로 검색한 결과에만 적용 —
   // 동 이름으로 검색한 글은 애초에 그 동네 이야기다.
   const own = (items) => filterRelevant(items, { aptName, gu, dong: location, requireSubject: true })
@@ -75,7 +75,7 @@ export default async function handler(req, res) {
     // 요약 본체는 _vibe-core.js — 사전 생성 배치(scripts/build-apt-vibe.mjs)와 같은 코드를 쓴다.
     let result
     try {
-      result = await generateVibe({ aptName, location, gu })
+      result = await generateVibe({ aptName, location, gu, aptType: type === 'rental' ? 'rental' : undefined })
     } catch (e) {
       console.error('vibe generate error:', e.message)
       return res.json({ categories: [] })
