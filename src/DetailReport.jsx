@@ -19,6 +19,10 @@ function isValidUrl(url) {
 
 const TABS = ['동네·이야기', '시세']
 
+// 동네 구독(씨앗 훅 0/163)·본 집 비교(1/1,209)는 2026-09-14에 기각됐다. 회고의 결정대로 코드는
+// 지우지 않고 노출만 끈다. 첫 화면에서 판단 요소 7개가 경쟁하던 것을 줄이는 목적.
+const SHOW_RETENTION_ENTRY = false
+
 // 가격 방향(↑상승/→보합/↓하락) → 색상 클래스
 const dirClass = (d) => d?.includes('상승') ? 'up' : d?.includes('하락') ? 'down' : 'flat'
 
@@ -33,7 +37,8 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
   const rentalNoPrice = isRental && !hasPrice
   const [tab, setTab] = useState('동네·이야기')
   const aptTypeProp = isRental ? 'rental' : (apt.aptType || 'unknown')
-  const heroRef = useImpression('verdict_hero_view', { apt_name: apt.aptNm, apt_type: aptTypeProp, has_price: hasPrice }, !!apt.verdict)
+  // has_price는 싣지 않는다 — 히어로는 실거래 조회보다 먼저 그려져서 이 시점엔 늘 false다(apt_view에 있음).
+  const heroRef = useImpression('verdict_hero_view', { apt_name: apt.aptNm, apt_type: aptTypeProp }, !!apt.verdict)
   const [toast, setToast] = useState(null) // 'share' | 'uncollect' | null
   // 저장 직후 인라인 확인 블록 — 토스트와 달리 사라지지 않는다(즉시 보상 노출).
   const [justSaved, setJustSaved] = useState(false)
@@ -217,6 +222,13 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
         </button>
       )}
 
+      {/* 임대 단지: 시세 대신 입주 정보. 실거래가 없는 단지에서 가격 바가 비는 자리를 채운다. */}
+      {isRental && <RentalInfoCard aptNm={apt.aptNm} hasPrice={hasPrice} />}
+
+      {/* 동네 Q&A — 탭 아래 세 번째 블록에 있을 때도 1.5%가 썼다(저장의 3배, 보고서의 15배).
+          방문자가 가져온 질문(소음·주차·관리비·내부)에 바로 닿도록 첫 화면으로 올린다. */}
+      <NeighborhoodQnA aptNm={apt.aptNm} dong={apt.dong} gu={apt.regionName} rental={isRental} />
+
       {/* 상단 discovery 넛지 — SEO 착지자가 실제 보는 위치에서 '막다른길' 탈출구를 노출.
           리스트 자체는 SEO 내부링크 위해 하단 유지, 여기선 진입 통로만 끌어올림. */}
       {similarItems && similarItems.length > 0 && (
@@ -250,7 +262,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       )}
 
       {/* 최근 본 집 비교 진입 — 리텐션 게이트(자동 캐처 기반). 본 집 2곳↑(현재 포함)일 때. */}
-      {otherViewed.length >= 1 && (
+      {SHOW_RETENTION_ENTRY && otherViewed.length >= 1 && (
         <button
           type="button"
           className="viewed-compare-bar"
@@ -288,7 +300,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
 
       {/* 동네 구독(리텐션 관문) — 스크롤 없이 보이는 상단으로 끌어올림.
           기존엔 유사단지 아래 맨 밑에 묻혀 seed CTR ~1%였음. post-save 구독 경로(save-confirm)는 별도 유지. */}
-      {apt.dong ? (
+      {!SHOW_RETENTION_ENTRY ? null : apt.dong ? (
         <div className={`region-sub${subscribed ? ' on' : ''}`}>
           <span className="region-sub-icon" aria-hidden="true">📰</span>
           <span className="region-sub-text">
@@ -912,9 +924,14 @@ function AptInfoCard({ apt }) {
 }
 
 /* ── 동네 Q&A — 수집된 이야기에 AI가 답 (저장 없는 대화형 v1) ── */
-function NeighborhoodQnA({ aptNm, dong, gu }) {
-  const chipsRef = useImpression('qna_chip_view', { apt_name: aptNm })
-  const SUGGESTED = ['주차 어때요?', '초등학교 배정은요?', '밤에 조용한 편이에요?', '주변에 뭐가 있어요?']
+function NeighborhoodQnA({ aptNm, dong, gu, rental = false }) {
+  const aptType = rental ? 'rental' : 'sale'
+  const chipsRef = useImpression('qna_chip_view', { apt_name: aptNm, apt_type: aptType, placement: 'top' })
+  // 임대 단지 칩은 실제로 들어온 자유 질문에서 골랐다(2026-09, 90일): 관리비 5건, 층간소음·방음 5건,
+  // "39m²는 내부가 어때요" 등. 분양 단지는 기존 칩 유지(밤 소음 24·주차 22·주변 16·초등 배정 16).
+  const SUGGESTED = rental
+    ? ['관리비는 어느 정도예요?', '층간소음 어때요?', '주차 어때요?', '집 내부는 어때요?']
+    : ['주차 어때요?', '초등학교 배정은요?', '밤에 조용한 편이에요?', '주변에 뭐가 있어요?']
   const [q, setQ] = useState('')
   const [answer, setAnswer] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -925,7 +942,7 @@ function NeighborhoodQnA({ aptNm, dong, gu }) {
     const text = (question || '').trim()
     if (!text || loading) return
     setLoading(true); setError(false); setAnswer(null); setAsked(text)
-    track('qna_ask', { apt_name: aptNm, question: text, source })
+    track('qna_ask', { apt_name: aptNm, question: text, source, apt_type: aptType, placement: 'top' })
     try {
       const res = await fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}&gu=${encodeURIComponent(gu || '')}&question=${encodeURIComponent(text)}`)
       const data = await res.json()
@@ -939,7 +956,7 @@ function NeighborhoodQnA({ aptNm, dong, gu }) {
   return (
     <div className="qna-card">
       <div className="qna-head">
-        <span className="qna-title">더 궁금한 건 직접 물어보세요</span>
+        <span className="qna-title">궁금한 것부터 물어보세요</span>
         <span className="qna-sub">모아둔 이야기에서 AI가 답을 찾아드려요</span>
       </div>
       <div className="qna-chips" ref={chipsRef}>
@@ -954,7 +971,7 @@ function NeighborhoodQnA({ aptNm, dong, gu }) {
           aria-label="이 단지에 대해 궁금한 점"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="예: 초품아인가요? 전세 물량 많아요?"
+          placeholder={rental ? '예: 39㎡ 구조는 어때요? 방음은요?' : '예: 초품아인가요? 전세 물량 많아요?'}
           maxLength={100}
         />
         <button type="submit" className="qna-submit" disabled={loading || !q.trim()}>물어보기</button>
@@ -971,6 +988,46 @@ function NeighborhoodQnA({ aptNm, dong, gu }) {
           ) : null}
         </div>
       )}
+    </div>
+  )
+}
+
+/* ── 임대 단지 안내 — 시세 대신 입주 정보로 가는 길 ─────────────
+   공공임대·행복주택·청년안심주택을 찾아온 사람의 다음 행동은 "매물 보기"가 아니라 "공고 확인"이다.
+   단지별 임대료·모집 일정은 우리에게 없으므로 지어내지 않고 공고처로 보낸다. */
+const NOTICE_LINKS = [
+  { key: 'youth', label: '청년안심주택', href: 'https://soco.seoul.go.kr/youth/main/main.do' },
+  { key: 'sh',    label: 'SH 인터넷청약', href: 'https://www.i-sh.co.kr/app/index.do' },
+  { key: 'lh',    label: 'LH 청약플러스', href: 'https://apply.lh.or.kr' },
+  { key: 'myhome', label: '마이홈 포털',   href: 'https://www.myhome.go.kr' },
+]
+function RentalInfoCard({ aptNm, hasPrice }) {
+  const ref = useImpression('rental_info_view', { apt_name: aptNm })
+  // 단지명으로 가장 그럴듯한 공고처를 앞에 둔다.
+  const first = /청년/.test(aptNm) ? 'youth' : /LH|엘에이치|휴먼시아/i.test(aptNm) ? 'lh' : 'sh'
+  const links = [...NOTICE_LINKS].sort((a, b) => (b.key === first) - (a.key === first))
+  return (
+    <div className="rental-info" ref={ref}>
+      <div className="rental-info-title">공공임대·청년주택 단지예요</div>
+      <p className="rental-info-sub">
+        {hasPrice
+          ? '입주 자격·임대료·모집 일정은 공고에서 확인하세요.'
+          : '매매 실거래가 없는 단지라 시세 대신 살아본 이야기를 모았어요. 입주 자격·임대료·모집 일정은 공고에서 확인하세요.'}
+      </p>
+      <div className="rental-info-links">
+        {links.map(l => (
+          <a
+            key={l.key}
+            className="rental-info-link"
+            href={l.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => track('notice_link_click', { apt_name: aptNm, target: l.key })}
+          >
+            {l.label} <span aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </div>
     </div>
   )
 }
@@ -1084,8 +1141,6 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
         )}
       </div>
 
-      {/* 동네 Q&A */}
-      <NeighborhoodQnA aptNm={aptNm} dong={dong} gu={apt?.regionName} />
 
       {/* 단지 인포 카드 */}
       <AptInfoCard apt={apt} />
