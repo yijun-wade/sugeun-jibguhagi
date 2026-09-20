@@ -184,7 +184,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       <div className="detail-header">
         <button className="detail-back" aria-label="목록으로 돌아가기" onClick={onBack}>← 뒤로</button>
         <div className="detail-title">
-          <div className="detail-apt-name">{apt.aptNm}</div>
+          <h1 className="detail-apt-name">{apt.aptNm}</h1>
           <div className="detail-apt-loc">{apt.dong} · {apt.regionName}</div>
         </div>
         <div className="detail-header-actions">
@@ -218,7 +218,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       {/* 살만해요? 종합 버디트 히어로 — SEO 착지 첫 화면 훅 + 공유 유도 */}
       {(heroSummary || (apt.verdict && apt.verdict !== '실거래 데이터 없음')) && (
         <div className="verdict-hero" ref={heroRef}>
-          <div className="verdict-badge">이 단지, 살만해요?</div>
+          <h2 className="verdict-badge">이 단지, 살만해요?</h2>
           <p className="verdict-line">{heroSummary || apt.verdict}</p>
           {apt.priceJudgment?.sentence && (
             <p className="verdict-price">{apt.priceJudgment.sentence}</p>
@@ -862,7 +862,7 @@ function AptInfoCard({ apt }) {
 
   return (
     <div className="apt-info-card">
-      <div className="apt-info-title">단지 정보</div>
+      <h2 className="apt-info-title">단지 정보</h2>
       <div className="apt-info-grid">
         {items.map(({ label, value }) => (
           <div key={label} className="apt-info-item">
@@ -908,7 +908,7 @@ function NeighborhoodQnA({ aptNm, dong, gu, rental = false }) {
   return (
     <div className="qna-card">
       <div className="qna-head">
-        <span className="qna-title">더 궁금한 게 있나요?</span>
+        <h2 className="qna-title">더 궁금한 게 있나요?</h2>
         <span className="qna-sub">모아둔 이야기에서 AI가 답을 찾아드려요</span>
       </div>
       <div className="qna-chips" ref={chipsRef}>
@@ -1063,7 +1063,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt, onVibe, rental = false
       {/* 수군수군 — 동네 이야기 */}
       <div className="vibe-card">
         <div className="vibe-card-header">
-          <span className="vibe-card-badge">수군수군</span>
+          <h2 className="vibe-card-badge">수군수군</h2>
           <span className="vibe-card-sub">인터넷에 떠도는 이야기를 AI가 모아봤어요</span>
         </div>
         {vibeLoading ? (
@@ -1079,10 +1079,10 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt, onVibe, rental = false
                 const CAT_ICON = { 교통: '🚇', 학군: '📚', 분위기: '🏘️', 이슈: '📣' }
                 return cat.lines.length > 0 && (
                   <div key={cat.label} className="vibe-feed-item">
-                    <div className="vibe-feed-label">
-                      <span className="vibe-feed-icon">{CAT_ICON[cat.label] || '💬'}</span>
+                    <h3 className="vibe-feed-label">
+                      <span className="vibe-feed-icon" aria-hidden="true">{CAT_ICON[cat.label] || '💬'}</span>
                       {cat.label}
-                    </div>
+                    </h3>
                     <div className="vibe-feed-lines">
                       {cat.lines.map((line, i) => (
                         <p key={i} className="vibe-feed-line">{line}</p>

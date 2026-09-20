@@ -20,7 +20,14 @@
   --text2:    #374151;
   /* #9ca3af에서 올림 — 흰 배경 위 2.54:1이라 본문·라벨 기준(4.5:1)에 크게 미달했다.
      비활성 탭 라벨이 이 토큰이라 탭이 있다는 것 자체가 잘 안 보였다. 현재 4.83:1. */
-  --muted:    #6b7280;
+  /* 틴트 배경(--bg #f2f5fb) 위에서 #6b7280은 4.4:1로 기준(4.5)에 못 미쳤다. 한 단계 어둡게. */
+  --muted:    #5b6472;
+  /* 타입 스케일 — 새 스타일은 이 넷 중에서 고른다. 11px은 법적 고지에만 남겼다.
+     전에는 9~19px이 컴포넌트마다 제각각이었고 상세페이지 텍스트의 21%가 12px 미만이었다. */
+  --fs-caption: 12px;
+  --fs-body:    14px;
+  --fs-lead:    16px;
+  --fs-title:   19px;
   --gold:     #d97706;
 }
 
@@ -161,7 +168,7 @@ body {
 }
 .hero-sub-white em {
   font-style: normal;
-  color: #f97316 !important;
+  color: var(--orange-strong) !important;
   background: rgba(249,115,22,0.15) !important;
   padding: 2px 8px !important;
   border-radius: 6px !important;
@@ -248,14 +255,14 @@ body {
 /* ─── HEADER (결과/상세 화면) ─── */
 header { text-align: center; padding: 4px 0 2px; }
 .brand { font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.4px; }
-.brand-en { font-size: 11px; font-weight: 700; color: var(--blue); letter-spacing: 0.1em; margin-top: 2px; }
+.brand-en { font-size: 12px; font-weight: 700; color: var(--blue); letter-spacing: 0.1em; margin-top: 2px; }
 .brand-tags {
   display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-top: 8px;
 }
 .brand-tag {
   display: inline-flex; align-items: center; gap: 3px;
   padding: 3px 10px; border-radius: 20px;
-  font-size: 11px; font-weight: 600;
+  font-size: 12px; font-weight: 600;
   background: var(--blue-md); color: var(--blue); border: 1px solid #bfdbfe;
 }
 .brand-tag.apt { background: var(--orange-lt); color: #c2410c; border-color: var(--orange-md); }
@@ -288,14 +295,14 @@ header { text-align: center; padding: 4px 0 2px; }
 .ss + .ss { border-top: 1px solid var(--border); }
 .ss-q { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
 .ss-label {
-  font-size: 11px; font-weight: 700; color: var(--muted);
+  font-size: 12px; font-weight: 700; color: var(--muted);
   text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 10px;
 }
 
 /* ─── QUICK SELECT ROW ─── */
 .quick-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .qlabel {
-  font-size: 11px; font-weight: 700; color: var(--muted);
+  font-size: 12px; font-weight: 700; color: var(--muted);
   letter-spacing: 0.5px; padding: 5px 2px; white-space: nowrap;
 }
 .qbtn {
@@ -316,7 +323,7 @@ header { text-align: center; padding: 4px 0 2px; }
   font-family: inherit; transition: color 0.13s;
 }
 .expand-toggle:hover { color: var(--blue); }
-.expand-toggle .arr { display: inline-block; transition: transform 0.2s; font-size: 11px; }
+.expand-toggle .arr { display: inline-block; transition: transform 0.2s; font-size: 12px; }
 .expand-toggle.open .arr { transform: rotate(180deg); }
 
 /* ─── CHIP SECTION ─── */
@@ -366,13 +373,13 @@ header { text-align: center; padding: 4px 0 2px; }
 .pill.rec::before {
   content: '\2728 \CD94\CC9C';
   position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
-  font-size: 11px; font-weight: 700;
+  font-size: 12px; font-weight: 700;
   background: #fef3c7; color: #b45309; border: 1px solid #fde68a;
   padding: 1px 6px; border-radius: 8px; white-space: nowrap; pointer-events: none;
 }
 .ppill:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-lt); }
 .ppill.on { background: var(--blue); border-color: var(--blue); color: #fff; }
-.pill-hint { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.4; }
+.pill-hint { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.4; }
 
 /* ─── CTA ─── */
 .sc-cta { padding: 14px 22px; background: #f7f9ff; border-top: 1px solid var(--border); }
@@ -418,7 +425,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .search-result-item:hover { border-color: var(--blue); background: var(--blue-lt); }
 .search-result-item.selected { border-color: var(--blue); background: var(--blue-md); }
 .search-result-name { font-size: 14px; font-weight: 700; color: var(--text); }
-.search-result-code { font-size: 11px; color: var(--muted); }
+.search-result-code { font-size: 12px; color: var(--muted); }
 
 /* ─── LOADING ─── */
 .loading { text-align: center; padding: 40px 20px; }
@@ -448,7 +455,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .res-summary-info { color: var(--text2); }
 .res-summary-count { font-size: 14px; font-weight: 800; color: var(--blue); }
 .sec-title {
-  font-size: 11px; font-weight: 700; color: var(--muted);
+  font-size: 12px; font-weight: 700; color: var(--muted);
   letter-spacing: 0.6px; text-transform: uppercase; padding: 0 2px;
 }
 
@@ -469,7 +476,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .rcard[data-r="1"] .rcard-score-n { color: #d97706; }
 .rcard[data-r="2"] .rcard-score-n { color: #6b7280; }
 .rcard[data-r="3"] .rcard-score-n { color: #92400e; }
-.rcard-score-s { font-size: 11px; color: var(--muted); }
+.rcard-score-s { font-size: 12px; color: var(--muted); }
 .rcard-name { font-size: 21px; font-weight: 800; color: var(--text); letter-spacing: -0.4px; line-height: 1.15; }
 .rcard-loc { font-size: 12px; color: var(--muted); margin-top: 2px; margin-bottom: 12px; }
 .price-box {
@@ -479,7 +486,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .price-range { font-size: 18px; font-weight: 800; color: var(--orange); }
 .price-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; font-size: 12px; color: #78350f; }
 .price-meta .avg { font-weight: 700; }
-.price-meta .vol { background: var(--orange-md); padding: 1px 8px; border-radius: 10px; font-size: 11px; }
+.price-meta .vol { background: var(--orange-md); padding: 1px 8px; border-radius: 10px; font-size: 12px; }
 .divider { height: 1px; background: var(--border); margin: 12px 0; }
 .reasons { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
 .reason { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--text2); line-height: 1.45; }
@@ -500,10 +507,10 @@ header { text-align: center; padding: 4px 0 2px; }
 .apt-row:hover { border-color: #93c5fd; box-shadow: 0 2px 8px rgba(37,99,235,0.07); }
 .apt-rank { font-size: 13px; font-weight: 800; color: var(--muted); padding-top: 1px; }
 .apt-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 1px; }
-.apt-loc  { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.apt-loc  { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
 .apt-info { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 3px; }
 .apt-info .pr { color: var(--orange); font-weight: 700; }
-.apt-rev { font-size: 11px; font-style: italic; color: #6b7280; line-height: 1.4; }
+.apt-rev { font-size: 12px; font-style: italic; color: #6b7280; line-height: 1.4; }
 .apt-score { font-size: 14px; font-weight: 800; color: var(--gold); white-space: nowrap; padding-top: 1px; }
 .no-res { text-align: center; padding: 48px 20px; color: var(--muted); font-size: 14px; }
 
@@ -516,7 +523,7 @@ header { text-align: center; padding: 4px 0 2px; }
   padding: 12px 16px;
 }
 .vibe-title {
-  font-size: 11px; font-weight: 700; color: #6d28d9;
+  font-size: 12px; font-weight: 700; color: #6d28d9;
   letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 8px;
 }
 .vibe-lines { display: flex; flex-direction: column; gap: 6px; }
@@ -533,7 +540,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .story-item:hover { border-color: #93c5fd; box-shadow: 0 2px 8px rgba(37,99,235,0.07); }
 .story-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
 .story-desc { font-size: 12px; color: var(--muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.story-meta { font-size: 11px; color: #93c5fd; margin-top: 4px; }
+.story-meta { font-size: 12px; color: #93c5fd; margin-top: 4px; }
 
 /* ─── APT DETAIL ─── */
 .apt-detail-card {
@@ -563,7 +570,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .trade-row-item:last-child { border-bottom: none; }
 .trade-row-date { color: var(--text2); font-size: 12px; }
 .trade-row-price { font-weight: 700; color: var(--orange); }
-.trade-row-area { font-size: 11px; color: var(--muted); }
+.trade-row-area { font-size: 12px; color: var(--muted); }
 
 /* ─── MOBILE ─── */
 @media (max-width: 560px) {
@@ -639,7 +646,7 @@ header { text-align: center; padding: 4px 0 2px; }
   padding: 0 10px 0 4px; flex-shrink: 0;
 }
 .collection-compare-btn {
-  font-size: 11px; font-weight: 700; font-family: inherit;
+  font-size: 12px; font-weight: 700; font-family: inherit;
   padding: 4px 9px; border-radius: 20px; cursor: pointer;
   background: none; border: 1.5px solid var(--border); color: var(--muted);
   white-space: nowrap; transition: background 0.13s, border-color 0.13s, color 0.13s, box-shadow 0.13s, transform 0.13s;
@@ -697,7 +704,7 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .compare-bar-chip-remove:hover { color: #fff; }
 .compare-bar-hint {
-  font-size: 11px; color: rgba(255,255,255,0.45); white-space: nowrap;
+  font-size: 12px; color: rgba(255,255,255,0.45); white-space: nowrap;
 }
 
 .compare-bar-go {
@@ -751,9 +758,9 @@ header { text-align: center; padding: 4px 0 2px; }
 .compare-label-col { width: 52px; }
 .compare-apt-col   { width: 120px; padding: 0 8px 12px; vertical-align: top; }
 .compare-apt-name  { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.35; word-break: keep-all; }
-.compare-apt-loc   { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.compare-apt-loc   { font-size: 12px; color: var(--muted); margin-top: 2px; }
 .compare-row-label {
-  font-size: 11px; font-weight: 700; color: var(--muted);
+  font-size: 12px; font-weight: 700; color: var(--muted);
   padding: 10px 0; vertical-align: middle; white-space: nowrap;
   border-top: 1px solid var(--border);
 }
@@ -763,7 +770,7 @@ header { text-align: center; padding: 4px 0 2px; }
   border-top: 1px solid var(--border);
 }
 .compare-disclaimer {
-  font-size: 11px; color: var(--muted);
+  font-size: 12px; color: var(--muted);
   text-align: center; padding: 0 20px;
 }
 .price-trend-wrap {
@@ -774,7 +781,7 @@ header { text-align: center; padding: 4px 0 2px; }
   margin-bottom: 12px;
 }
 .price-trend-label {
-  font-size: 11px; font-weight: 700; color: var(--muted);
+  font-size: 12px; font-weight: 700; color: var(--muted);
   letter-spacing: 0.04em; margin-bottom: 8px;
 }
 .price-trend-svg {
@@ -796,7 +803,7 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .compare-legend-item {
   display: flex; align-items: center; gap: 5px;
-  font-size: 11px; color: var(--text2);
+  font-size: 12px; color: var(--text2);
 }
 .compare-legend-dot {
   width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
@@ -811,7 +818,7 @@ header { text-align: center; padding: 4px 0 2px; }
   text-align: center; font-size: 13px; color: var(--muted); padding: 16px 0;
 }
 .compare-chart-note {
-  font-size: 11px; color: var(--muted); margin-top: 8px; text-align: center;
+  font-size: 12px; color: var(--muted); margin-top: 8px; text-align: center;
 }
 
 .eval-verdict {
@@ -826,7 +833,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .eval-price-avg  { font-size: 14px; color: var(--text2); }
 .eval-price-avg strong { color: var(--text); }
 .eval-price-label {
-  font-size: 11px; font-weight: 700;
+  font-size: 12px; font-weight: 700;
   padding: 3px 10px; border-radius: 20px;
   white-space: nowrap;
 }
@@ -979,7 +986,7 @@ header { text-align: center; padding: 4px 0 2px; }
   background: var(--card); border: 1px solid var(--border);
   border-radius: 12px; padding: 16px 16px 14px; margin-bottom: 16px;
 }
-.price-hero-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+.price-hero-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
 .price-hero-main  { font-size: 28px; font-weight: 900; color: var(--text); line-height: 1.15; }
 .price-hero-sub   { font-size: 13px; color: var(--muted); margin-top: 4px; }
 .price-hero-loading { font-size: 13px; color: var(--muted); padding: 8px 0; }
@@ -998,7 +1005,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .price-dir-badge.down { background: #dbeafe; color: #2563eb; }
 .price-dir-badge.flat { background: #f3f4f6; color: #6b7280; }
 .price-interpret-change { font-size: 13px; color: var(--text2); }
-.price-interpret-basis  { font-size: 11px; color: var(--muted); margin-top: 6px; }
+.price-interpret-basis  { font-size: 12px; color: var(--muted); margin-top: 6px; }
 .price-sparse-warn { font-size: 12px; color: #b45309; background: #fffbeb; border: 1px solid #f59e0b; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; }
 
 .trade-list { display: flex; flex-direction: column; gap: 8px; }
@@ -1010,14 +1017,14 @@ header { text-align: center; padding: 4px 0 2px; }
 .trade-date { font-size: 12px; color: var(--muted); }
 .trade-col-right { text-align: right; }
 .trade-amt  { font-size: 15px; font-weight: 800; color: var(--text); }
-.trade-per-py { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.trade-per-py { font-size: 12px; color: var(--muted); margin-top: 1px; }
 .trade-meta { font-size: 12px; color: var(--muted); }
 
 /* 아코디언 */
 .accordion { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-top: 12px; }
 .accordion-toggle { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: var(--card); border: none; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text2); }
 .accordion-toggle:hover { background: var(--blue-lt); }
-.accordion-arrow { font-size: 11px; color: var(--muted); }
+.accordion-arrow { font-size: 12px; color: var(--muted); }
 .accordion-body { padding: 12px 16px 16px; border-top: 1px solid var(--border); }
 
 .price-ai-label { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
@@ -1049,7 +1056,7 @@ header { text-align: center; padding: 4px 0 2px; }
   margin-bottom: 12px;
 }
 .apt-info-title {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--muted, #6b7280);
   text-transform: uppercase;
@@ -1067,7 +1074,7 @@ header { text-align: center; padding: 4px 0 2px; }
   gap: 2px;
 }
 .apt-info-label {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted, #6b7280);
 }
 .apt-info-value {
@@ -1099,7 +1106,7 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .verdict-badge {
   display: inline-block;
-  font-size: 11px; font-weight: 800; letter-spacing: 0.02em;
+  font-size: 12px; font-weight: 800; letter-spacing: 0.02em;
   color: var(--blue); background: var(--card);
   border: 1px solid var(--blue-md);
   padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
@@ -1130,7 +1137,7 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .qna-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 12px; }
 .qna-title { font-size: 15px; font-weight: 700; color: var(--text); }
-.qna-sub { font-size: 11px; color: var(--muted); }
+.qna-sub { font-size: 12px; color: var(--muted); }
 .qna-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
 /* 실측 29px였다. 1차 행동으로 세운 요소인데 기준(44px)의 2/3. 칩의 생김새는 두고
    터치 영역만 넓힌다 — 버튼은 투명 44px, 안쪽 span이 칩 모양을 그린다. */
@@ -1178,13 +1185,13 @@ header { text-align: center; padding: 4px 0 2px; }
   display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
 }
 .vibe-card-badge {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
   color: var(--blue); background: var(--blue-lt);
   border: 1px solid var(--blue-md);
   padding: 3px 8px; border-radius: 20px;
 }
 .vibe-card-sub {
-  font-size: 11px; color: var(--muted);
+  font-size: 12px; color: var(--muted);
 }
 
 /* 총평 */
@@ -1210,7 +1217,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .vibe-feed-label {
   display: flex; flex-direction: column; align-items: center; gap: 4px;
   min-width: 36px;
-  font-size: 11px; font-weight: 700; color: var(--text2);
+  font-size: 12px; font-weight: 700; color: var(--text2);
   padding-top: 2px;
 }
 .vibe-feed-icon { font-size: 18px; line-height: 1; }
@@ -1247,13 +1254,13 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .vibe-links a:hover { background: var(--blue-lt); }
 .vibe-link-tag {
-  flex: 0 0 auto; font-size: 11px; font-weight: 700; color: var(--blue);
+  flex: 0 0 auto; font-size: 12px; font-weight: 700; color: var(--blue);
   background: var(--blue-lt); border-radius: 4px; padding: 1px 6px;
 }
 
 .vibe-source-note {
   margin-top: 14px;
-  font-size: 11px; color: var(--muted); line-height: 1.6;
+  font-size: 12px; color: var(--muted); line-height: 1.6;
   text-align: center;
 }
 
@@ -1275,7 +1282,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .story-card-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
 .story-card-desc  { font-size: 13px; color: var(--text2); margin-bottom: 6px; line-height: 1.5;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.story-card-meta  { font-size: 11px; color: var(--muted); }
+.story-card-meta  { font-size: 12px; color: var(--muted); }
 
 /* ─── SEARCH ─── */
 .search-wrap { position: relative; }
@@ -1365,7 +1372,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .sugg-name { font-size: 15px; font-weight: 600; color: var(--text); }
 .sugg-meta { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .sugg-addr { font-size: 12px; color: var(--muted); white-space: nowrap; }
-.sugg-cnt  { font-size: 11px; color: var(--blue); background: var(--blue-lt); padding: 2px 7px; border-radius: 10px; white-space: nowrap; font-weight: 600; }
+.sugg-cnt  { font-size: 12px; color: var(--blue); background: var(--blue-lt); padding: 2px 7px; border-radius: 10px; white-space: nowrap; font-weight: 600; }
 
 .hint-searches { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 /* 칩이 무엇인지 알려주는 한 줄. 줄 전체를 차지해 칩 위에 놓인다. */
@@ -1506,7 +1513,7 @@ header { text-align: center; padding: 4px 0 2px; }
 /* 카드의 두 버튼이 각각 뭘 하는지 미리 알려주는 줄. 안내문이지 컨트롤이 아니므로
    배경 도형 없이 두되, 강조한 단어가 버튼 라벨과 글자까지 일치해야 눈으로 이어진다. */
 .search-result-guide {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--text2);
   background: var(--blue-lt);
   border-radius: 10px;
@@ -1534,7 +1541,7 @@ header { text-align: center; padding: 4px 0 2px; }
   margin: 0 0 14px;
   padding: 11px 14px;
   border-radius: 12px;
-  font-size: 13.5px;
+  font-size: 14px;
   line-height: 1.45;
   background: #f8fafc;
   border: 1px solid var(--border);
@@ -1556,7 +1563,7 @@ header { text-align: center; padding: 4px 0 2px; }
   border: 1.5px solid #86efac;
   border-radius: 16px;
 }
-.save-confirm-head { font-size: 14.5px; font-weight: 700; color: #15803d; }
+.save-confirm-head { font-size: 15px; font-weight: 700; color: #15803d; }
 .save-confirm-hint { margin-top: 8px; font-size: 13px; color: var(--muted); }
 .save-confirm-action {
   display: block;
@@ -1564,7 +1571,7 @@ header { text-align: center; padding: 4px 0 2px; }
   margin-top: 11px;
   padding: 11px 14px;
   font-family: inherit;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 700;
   text-align: left;
   color: var(--text);
@@ -1598,7 +1605,7 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .collect-cta-icon {
   font-size: 32px;
-  color: #f97316;
+  color: var(--orange-strong);
   flex-shrink: 0;
   line-height: 1;
 }
@@ -1648,7 +1655,7 @@ header { text-align: center; padding: 4px 0 2px; }
   min-width: 0;
 }
 .psb-label {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--muted);
 }
@@ -1693,7 +1700,7 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .viewed-compare-bar:active { transform: scale(0.99); }
 .viewed-compare-icon { font-size: 20px; flex-shrink: 0; }
-.viewed-compare-text { flex: 1; min-width: 0; font-size: 14.5px; font-weight: 700; color: var(--text); }
+.viewed-compare-text { flex: 1; min-width: 0; font-size: 15px; font-weight: 700; color: var(--text); }
 .viewed-compare-arrow { font-size: 17px; font-weight: 700; color: var(--blue); flex-shrink: 0; }
 
 /* ── ViewedCompare 보조(기존 .compare-* 재사용) ─── */
@@ -1703,7 +1710,7 @@ header { text-align: center; padding: 4px 0 2px; }
   font-family: inherit; text-align: center; width: 100%;
 }
 .compare-apt-link .compare-apt-name { font-size: 13px; font-weight: 700; color: var(--blue); }
-.compare-apt-link .compare-apt-loc { font-size: 11px; color: var(--muted); }
+.compare-apt-link .compare-apt-loc { font-size: 12px; color: var(--muted); }
 .compare-verdict { font-size: 12px; line-height: 1.4; }
 
 /* ── 상단 discovery 넛지 (막다른길 탈출구를 상단으로) ─── */
@@ -1727,11 +1734,11 @@ header { text-align: center; padding: 4px 0 2px; }
 .discover-nudge-icon { font-size: 24px; flex-shrink: 0; }
 .discover-nudge-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
 .discover-nudge-title { font-size: 15px; font-weight: 700; color: var(--text); }
-.discover-nudge-sub { font-size: 12.5px; color: var(--muted); }
+.discover-nudge-sub { font-size: 13px; color: var(--muted); }
 .discover-nudge-arrow {
   font-size: 18px;
   font-weight: 700;
-  color: #f97316;
+  color: var(--orange-strong);
   flex-shrink: 0;
   animation: nudge-bounce 1.6s ease-in-out infinite;
 }
@@ -1759,8 +1766,8 @@ header { text-align: center; padding: 4px 0 2px; }
 .briefing-seed:hover { border-color: var(--blue); background: var(--blue-lt); }
 .briefing-seed-icon { font-size: 22px; flex-shrink: 0; }
 .briefing-seed-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
-.briefing-seed-title { font-size: 14.5px; font-weight: 700; color: var(--text); }
-.briefing-seed-sub { font-size: 12.5px; color: var(--muted); }
+.briefing-seed-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.briefing-seed-sub { font-size: 13px; color: var(--muted); }
 .briefing-seed-arrow { font-size: 18px; font-weight: 700; color: var(--blue); flex-shrink: 0; }
 
 /* ─── 동네 구독 (빈도 높은 저장 단위) ─── */
@@ -1777,13 +1784,13 @@ header { text-align: center; padding: 4px 0 2px; }
 .region-sub.on { background: var(--blue-lt); border-color: #bfdbfe; }
 .region-sub-icon { font-size: 22px; flex-shrink: 0; }
 .region-sub-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
-.region-sub-title { font-size: 14.5px; font-weight: 700; color: var(--text); }
-.region-sub-sub { font-size: 12.5px; color: var(--muted); }
+.region-sub-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.region-sub-sub { font-size: 13px; color: var(--muted); }
 .region-sub-btn {
   flex-shrink: 0;
   padding: 9px 16px;
   font-family: inherit;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 700;
   color: #fff;
   background: var(--blue);
@@ -1794,7 +1801,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .region-sub-btn:hover { filter: brightness(1.08); }
 .region-sub-go {
   flex-shrink: 0;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--blue);
   text-decoration: none;
@@ -1859,7 +1866,7 @@ header { text-align: center; padding: 4px 0 2px; }
   text-overflow: ellipsis;
 }
 .similar-apt-loc {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--muted);
 }
 .similar-apt-price {
@@ -1876,7 +1883,7 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .collect-cta-arrow {
   font-size: 28px;
-  color: #f97316;
+  color: var(--orange-strong);
   font-weight: 300;
   flex-shrink: 0;
   line-height: 1;
@@ -1900,7 +1907,7 @@ header { text-align: center; padding: 4px 0 2px; }
      라벨이 길어져(★ 저장 · 새 거래 뜨면 알려드려요) 좁은 화면 줄바꿈 방지로 15→14px. */
   .mobile-collect-btn {
     flex: 1;
-    background: #f97316;
+    background: var(--orange-strong);
     color: #fff;
     border: none;
     border-radius: 12px;
@@ -2222,10 +2229,10 @@ header { text-align: center; padding: 4px 0 2px; }
 .site-nav-link:hover { background: var(--bg); }
 .nav-bubble {
   display: inline-block;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: #fff;
-  background: #f97316;
+  background: var(--orange-strong);
   padding: 1px 5px;
   border-radius: 6px;
   margin-right: 2px;
@@ -2264,7 +2271,7 @@ header { text-align: center; padding: 4px 0 2px; }
     flex-shrink: 0;
   }
   .nav-bubble {
-    font-size: 11px;
+    font-size: 12px;
     padding: 1px 4px;
   }
 }
@@ -2344,7 +2351,7 @@ header { text-align: center; padding: 4px 0 2px; }
 
 .briefing-today-badge {
   display: inline-block;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
   color: var(--blue); background: var(--blue-lt);
   border: 1px solid var(--blue-md);
   padding: 2px 9px; border-radius: 20px;
@@ -2410,7 +2417,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .glossary-item-left { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .glossary-term { font-size: 15px; font-weight: 700; color: var(--text); }
 .glossary-cat-badge {
-  font-size: 11px;
+  font-size: 12px;
   padding: 2px 6px;
   border-radius: 8px;
   background: rgba(37,99,235,0.1);
@@ -2444,7 +2451,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .policy-item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
 .policy-name { font-size: 14px; font-weight: 600; color: var(--text); }
 .policy-status {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   padding: 2px 7px;
   border-radius: 10px;
@@ -2472,7 +2479,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .briefing-nav-older { align-items: flex-start; }
 .briefing-nav-newer { align-items: flex-end; text-align: right; }
 .briefing-nav-label {
-  font-size: 11px; font-weight: 700; color: var(--muted);
+  font-size: 12px; font-weight: 700; color: var(--muted);
   letter-spacing: 0.04em;
 }
 .briefing-nav-date {
@@ -2494,7 +2501,7 @@ header { text-align: center; padding: 4px 0 2px; }
   border: 1.5px solid #bfdbfe;
   border-radius: 14px;
 }
-.briefing-personal-hi { font-size: 14.5px; color: var(--text); }
+.briefing-personal-hi { font-size: 15px; color: var(--text); }
 .briefing-personal-hi b { color: var(--blue); }
 .briefing-personal-apts { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 11px; }
 .briefing-personal-chip {
@@ -2505,12 +2512,12 @@ header { text-align: center; padding: 4px 0 2px; }
 .briefing-personal-chip:hover { border-color: var(--blue); color: var(--blue); }
 .briefing-personal-match { margin-top: 13px; }
 .briefing-personal-badge {
-  display: inline-block; font-size: 11px; font-weight: 700; color: #fff;
+  display: inline-block; font-size: 12px; font-weight: 700; color: #fff;
   background: var(--blue); padding: 2px 8px; border-radius: 6px; margin-bottom: 7px;
 }
 .briefing-personal-list { margin: 0; padding-left: 18px; }
-.briefing-personal-list li { font-size: 13.5px; color: var(--text); line-height: 1.5; }
-.briefing-personal-none { margin-top: 11px; font-size: 12.5px; color: var(--muted); }
+.briefing-personal-list li { font-size: 14px; color: var(--text); line-height: 1.5; }
+.briefing-personal-none { margin-top: 11px; font-size: 13px; color: var(--muted); }
 
 .briefing-archive {
   margin-top: 40px;
@@ -2543,7 +2550,7 @@ header { text-align: center; padding: 4px 0 2px; }
   display: inline-flex; align-items: center; gap: 8px;
   font-size: 12px; font-weight: 600; color: var(--muted);
 }
-.briefing-month-arrow { font-size: 11px; color: var(--muted); }
+.briefing-month-arrow { font-size: 12px; color: var(--muted); }
 .briefing-month-body {
   padding: 4px 15px 14px;
   border-top: 1px solid var(--border);
@@ -2558,7 +2565,7 @@ header { text-align: center; padding: 4px 0 2px; }
   margin-bottom: 7px; letter-spacing: 0.02em;
 }
 .briefing-week-tag {
-  font-size: 11px; font-weight: 700; color: var(--blue);
+  font-size: 12px; font-weight: 700; color: var(--blue);
   background: var(--blue-lt);
   padding: 2px 7px; border-radius: 6px;
 }
@@ -2577,7 +2584,7 @@ header { text-align: center; padding: 4px 0 2px; }
   font-size: 12px; font-weight: 700; color: var(--muted);
   white-space: nowrap; flex-shrink: 0; min-width: 52px;
 }
-.briefing-day-dow { font-size: 11px; font-weight: 600; opacity: 0.7; }
+.briefing-day-dow { font-size: 12px; font-weight: 600; opacity: 0.7; }
 .briefing-day-title {
   font-size: 14px; font-weight: 500; color: var(--text);
   line-height: 1.4;
@@ -2641,7 +2648,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .discovery-apt-meta { font-size: 12px; color: var(--muted); }
 .discovery-apt-right { text-align: right; flex-shrink: 0; }
 .discovery-apt-price { font-size: 15px; font-weight: 800; color: var(--orange); }
-.discovery-apt-perpy { font-size: 11px; color: var(--muted); }
+.discovery-apt-perpy { font-size: 12px; color: var(--muted); }
 .discovery-more { text-align: center; font-size: 12px; color: var(--muted); padding: 8px; }
 
 /* ─── 쿠팡 배너 ─── */
@@ -2650,7 +2657,7 @@ header { text-align: center; padding: 4px 0 2px; }
   gap: 6px; margin: 8px 0;
 }
 .coupang-disclosure {
-  font-size: 11px; color: var(--muted); text-align: center; line-height: 1.4;
+  font-size: 12px; color: var(--muted); text-align: center; line-height: 1.4;
 }
 
 /* ─── 사주 지역 궁합 ─── */
@@ -2670,7 +2677,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .saju-btn-main { height: 56px; background: var(--blue); color: #fff; border: none; border-radius: 12px; font-size: 17px; font-weight: 800; font-family: inherit; cursor: pointer; width: 100%; }
 .saju-btn-main:disabled { opacity: 0.4; cursor: not-allowed; }
 .saju-btn-main:active { opacity: 0.85; }
-.saju-btn-pay { height: 60px; background: #f97316; color: #fff; border: none; border-radius: 14px; font-size: 18px; font-weight: 900; font-family: inherit; cursor: pointer; width: 100%; margin-top: 4px; }
+.saju-btn-pay { height: 60px; background: var(--orange-strong); color: #fff; border: none; border-radius: 14px; font-size: 18px; font-weight: 900; font-family: inherit; cursor: pointer; width: 100%; margin-top: 4px; }
 .saju-btn-pay:disabled { opacity: 0.6; cursor: not-allowed; }
 .saju-btn-home { display: block; height: 52px; line-height: 52px; text-align: center; background: #EFF6FF; color: var(--blue); border: 1.5px solid #BFDBFE; border-radius: 12px; font-size: 15px; font-weight: 700; text-decoration: none; margin-bottom: 16px; }
 .saju-pay-note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 10px; }
@@ -2680,7 +2687,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .saju-pillar-col { flex: 1; border-radius: 10px; padding: 10px 4px; text-align: center; }
 .saju-pillar-col.free { background: rgba(255,255,255,0.18); }
 .saju-pillar-col.locked { background: rgba(255,255,255,0.06); }
-.saju-pillar-label { font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 6px; }
+.saju-pillar-label { font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 6px; }
 .saju-pillar-val { font-size: 20px; font-weight: 900; }
 .saju-pillar-col.free .saju-pillar-val { color: #fff; }
 .saju-pillar-col.locked .saju-pillar-val { color: rgba(255,255,255,0.2); }
@@ -2697,13 +2704,13 @@ header { text-align: center; padding: 4px 0 2px; }
 .saju-sample-card { border: 1.5px solid #E5E7EB; border-radius: 16px; overflow: hidden; }
 .saju-sample-hero { background: linear-gradient(135deg, #1e3a8a, #2563eb); padding: 16px 18px; display: flex; align-items: center; gap: 12px; }
 .saju-sample-ilgan { font-size: 36px; font-weight: 900; color: #fff; flex-shrink: 0; }
-.saju-sample-score { margin-left: auto; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7); flex-shrink: 0; }
+.saju-sample-score { margin-left: auto; text-align: center; font-size: 12px; color: rgba(255,255,255,0.7); flex-shrink: 0; }
 .saju-sample-score b { display: block; font-size: 18px; font-weight: 900; color: #fff; }
 .saju-sample-region { padding: 14px 16px; display: flex; align-items: flex-start; gap: 10px; border-bottom: 1px solid #E5E7EB; }
-.saju-sample-rank { font-size: 11px; color: var(--muted); flex-shrink: 0; padding-top: 4px; }
+.saju-sample-rank { font-size: 12px; color: var(--muted); flex-shrink: 0; padding-top: 4px; }
 .saju-sample-scores { display: flex; gap: 6px; margin-top: 8px; }
 .saju-sample-blur { padding: 10px 16px; display: flex; gap: 8px; filter: blur(3px); }
-.saju-sample-more { padding: 10px 16px; background: #F9FAFB; font-size: 11px; color: var(--muted); text-align: center; }
+.saju-sample-more { padding: 10px 16px; background: #F9FAFB; font-size: 12px; color: var(--muted); text-align: center; }
 .saju-result { padding-bottom: 60px; }
 .saju-result-hero { background: url(/saju-hero-bg.png) center/cover, linear-gradient(135deg, #1e3a8a, #2563eb); padding: 32px 24px; text-align: center; border-radius: 20px; margin-bottom: 20px; }
 .saju-glossary { background: #F9FAFB; border: 1.5px solid #E5E7EB; border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; }
@@ -2754,9 +2761,9 @@ header { text-align: center; padding: 4px 0 2px; }
 .saju-promo-left { flex: 1; }
 .saju-promo-badge {
   display: inline-block;
-  background: #f97316;
+  background: var(--orange-strong);
   color: #fff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   padding: 3px 10px;
   border-radius: 20px;
@@ -2791,8 +2798,8 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .saju-top-banner:active { opacity: 0.88; }
 .saju-top-badge {
-  background: #f97316; color: #fff;
-  font-size: 11px; font-weight: 800;
+  background: var(--orange-strong); color: #fff;
+  font-size: 12px; font-weight: 800;
   padding: 2px 8px; border-radius: 20px; flex-shrink: 0;
 }
 .saju-top-text { font-size: 13px; font-weight: 700; color: #fff; }
@@ -2808,7 +2815,7 @@ header { text-align: center; padding: 4px 0 2px; }
 
 /* ─── Beta 뱃지 ─── */
 .logo-beta {
-  font-size: 11px; font-weight: 800; color: #2563eb;
+  font-size: 12px; font-weight: 800; color: #2563eb;
   background: #EFF6FF; border: 1px solid #BFDBFE;
   padding: 2px 6px; border-radius: 6px;
   margin-left: 6px; vertical-align: middle;
@@ -2865,7 +2872,7 @@ header { text-align: center; padding: 4px 0 2px; }
   line-height: 1.5;
 }
 .report-scenario-unit {
-  font-size: 11px;
+  font-size: 12px;
   color: #94a3b8;
   margin: 8px 0 0;
   text-align: right;
@@ -2912,7 +2919,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .report-score-axis-bar { flex: 1; height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden; }
 .report-score-axis-bar-fill { height: 100%; border-radius: 4px; }
 .report-score-axis-value { width: 36px; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
-.report-score-axis-weight { width: 36px; font-size: 11px; color: #94a3b8; }
+.report-score-axis-weight { width: 36px; font-size: 12px; color: #94a3b8; }
 
 /* ── 보고서 결과 — suzip 톤 (따뜻한 오렌지 + 깔끔한 카드) ── */
 .report-result {
@@ -2933,7 +2940,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .report-identity::before {
   content: '이 집의 정체';
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   color: #c2410c;
   letter-spacing: 1.5px;
@@ -3021,7 +3028,7 @@ header { text-align: center; padding: 4px 0 2px; }
   .report-identity { padding: 28px 22px; }
   .report-identity-text { font-size: 19px; }
   .report-section { padding: 22px 20px 18px; }
-  .report-section-body p { font-size: 14.5px; }
+  .report-section-body p { font-size: 15px; }
   .report-conclusion { padding: 28px 24px; }
   .report-conclusion-text { font-size: 19px; }
 }
@@ -3067,7 +3074,7 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .report-label-value {
   display: inline-block; margin-left: 6px;
-  font-size: 16px; font-weight: 700; color: #f97316;
+  font-size: 16px; font-weight: 700; color: var(--orange-strong);
   font-variant-numeric: tabular-nums;
 }
 .report-hint {
@@ -3101,14 +3108,14 @@ header { text-align: center; padding: 4px 0 2px; }
   padding: 8px 16px; border: 1px solid #cbd5e1; border-radius: 8px;
   cursor: pointer; font-size: 14px;
 }
-.report-radio.on { background: #fff7ed; border-color: #f97316; color: #9a3412; font-weight: 600; }
+.report-radio.on { background: #fff7ed; border-color: var(--orange-strong); color: #9a3412; font-weight: 600; }
 .report-radio input { display: none; }
 .report-submit-btn {
-  width: 100%; padding: 14px; background: #f97316; color: #fff;
+  width: 100%; padding: 14px; background: var(--orange-strong); color: #fff;
   border: none; border-radius: 8px; font-size: 15px; font-weight: 600;
   cursor: pointer; margin-top: 8px;
 }
-.report-submit-btn:hover { background: #ea580c; }
+.report-submit-btn:hover { background: #9a3412; }
 
 /* /report 페이지는 .app 680px 제한 풀고 더 넓게 */
 .app.app-report { max-width: 920px; padding: 0 24px; }
@@ -3122,7 +3129,7 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .report-page-subtitle-strong {
   display: inline-block; margin-top: 4px;
-  font-size: 16px; color: #f97316; font-weight: 700;
+  font-size: 16px; color: var(--orange-strong); font-weight: 700;
 }
 
 /* 로딩 카드 — 보고서 전용 */
@@ -3166,7 +3173,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .report-cta-subtitle { font-size: 12px; color: #b45309; margin-top: 4px; }
 .report-cta-arrow {
   position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
-  font-size: 18px; color: #f97316;
+  font-size: 18px; color: var(--orange-strong);
 }
 .report-cta-btn:hover { background: linear-gradient(135deg, #fed7aa, #fef3c7); }
 
@@ -3179,7 +3186,7 @@ header { text-align: center; padding: 4px 0 2px; }
   padding: 10px 14px; background: var(--bg); border-bottom: 1px solid var(--border);
   font-size: 13px; font-weight: 700; color: var(--text);
 }
-.area-dist-hint { font-size: 11px; font-weight: 500; color: var(--muted); }
+.area-dist-hint { font-size: 12px; font-weight: 500; color: var(--muted); }
 .area-dist-row {
   /* 중앙값 열을 고정폭으로 잡는다. auto로 두면 "35억 6,000만"처럼 자릿수가 긴 값이
      두 줄로 깨진다(잠실파크리오 145㎡에서 실제 발생). */
@@ -3194,11 +3201,11 @@ header { text-align: center; padding: 4px 0 2px; }
 .area-dist-row:hover { background: var(--bg); }
 .area-dist-row.on { background: var(--blue-lt); box-shadow: inset 3px 0 0 var(--blue); }
 .adr-area { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; }
-.adr-area em { display: block; font-style: normal; font-size: 11px; font-weight: 500; color: var(--muted); }
+.adr-area em { display: block; font-style: normal; font-size: 12px; font-weight: 500; color: var(--muted); }
 .adr-mid { font-size: 15px; font-weight: 800; color: var(--blue); letter-spacing: -0.4px; white-space: nowrap; }
-.adr-range { font-size: 11.5px; color: var(--sub, #6b7280); white-space: nowrap; text-align: right;
+.adr-range { font-size: 12px; color: var(--sub, #6b7280); white-space: nowrap; text-align: right;
   overflow: hidden; text-overflow: ellipsis; }
-.adr-count { font-size: 11.5px; color: var(--muted); text-align: right; white-space: nowrap; }
+.adr-count { font-size: 12px; color: var(--muted); text-align: right; white-space: nowrap; }
 /* 표본이 적으면 눈에 띄게 — 2건짜리를 대표값처럼 읽으면 안 된다 */
 .adr-count.few { color: var(--orange); font-weight: 700; }
 
@@ -3212,9 +3219,9 @@ header { text-align: center; padding: 4px 0 2px; }
     row-gap: 2px; padding: 10px 12px;
   }
   .adr-area  { grid-column: 1; grid-row: 1 / 3; align-self: center; }
-  .adr-mid   { grid-column: 2; grid-row: 1; font-size: 14.5px; }
+  .adr-mid   { grid-column: 2; grid-row: 1; font-size: 15px; }
   .adr-count { grid-column: 3; grid-row: 1; }
-  .adr-range { grid-column: 2 / 4; grid-row: 2; font-size: 11px; text-align: left; }
+  .adr-range { grid-column: 2 / 4; grid-row: 2; font-size: 12px; text-align: left; }
 }
 
 /* 가격 조회 중 자리표시 / 조회 실패 안내 — 버튼이 아니라 정적 블록이라 커서·호버를 끈다 */
@@ -3281,7 +3288,7 @@ header { text-align: center; padding: 4px 0 2px; }
 
   /* 읽는 거리에 맞춰 답과 본문만 조금 키운다 */
   .verdict-line { font-size: 19px; }
-  .vibe-feed-line { font-size: 14.5px; }
+  .vibe-feed-line { font-size: 15px; }
   .osm-map { height: 360px; }
 }
 
@@ -3301,3 +3308,20 @@ header { text-align: center; padding: 4px 0 2px; }
 /* 검색 결과 저장 — 24px에 카드 모서리라 가장 누르기 어려운 자리에 가장 작은 크기였다 */
 .eval-collect-btn { min-height: 44px; padding: 0 14px; font-size: 13px; }
 .result-tab, .eval-detail-btn { min-height: 44px; }
+
+/* ─── 제목 구조 ───
+   검색 결과엔 제목이 0개, 홈엔 h1이 없었고, 상세의 h1은 화면 밖에 숨겨져 있었다.
+   보이는 단지명 = h1, 섹션 = h2, 요약 카테고리 = h3. 프리렌더 HTML(api/_prerender.js)과 같은 구조다.
+   생김새는 기존 클래스가 정하므로 브라우저 기본 여백·굵기만 지운다. */
+h1.detail-apt-name, h2.verdict-badge, h2.vibe-card-badge, h2.qna-title, h2.apt-info-title,
+h3.vibe-feed-label, h1.hero-value-title, h1.search-result-title, h2.eval-name { margin: 0; }
+h2.verdict-badge, h2.vibe-card-badge { display: inline-block; }
+h1.search-result-title { font-size: inherit; font-weight: inherit; display: inline; }
+/* 교통·분위기·이슈는 요약을 훑어 읽게 해 주는 길잡이인데 본문보다 작은 11px이었다 */
+.vibe-feed-label { font-size: 13px; }
+
+/* 재측정에서 남은 것 — 보고서 부제 4.4:1, 보고서 입력 38px·슬라이더 16px, 브리핑 개인화 칩 35px */
+.report-page-subtitle { color: var(--muted); }
+.report-input { min-height: 44px; }
+.report-slider { min-height: 44px; }
+.briefing-personal-chip { min-height: 44px; display: inline-flex; align-items: center; }

@@ -19,7 +19,7 @@ export default function TermsPage() {
         <a href="/" style={{ display: 'inline-block', marginBottom: 24, color: '#2563eb', textDecoration: 'none', fontSize: 14 }}>← 홈으로</a>
 
         <h1 style={{ fontSize: 26, fontWeight: 900, color: '#111827', marginBottom: 6 }}>이용약관</h1>
-        <p style={{ fontSize: 13, color: '#6B7280', marginBottom: 24 }}>시행일: 2026년 5월 11일</p>
+        <p style={{ fontSize: 13, color: '#5b6472', marginBottom: 24 }}>시행일: 2026년 5월 11일</p>
 
         <section style={SECTION_STYLE}>
           <h2 style={H2_STYLE}>제1조 (목적)</h2>

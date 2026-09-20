@@ -580,7 +580,7 @@ function SearchApp() {
               (2) 예시 검색을 바로 실행하는 버튼으로 끝낸다. */}
       {isHome && (
         <section className="hero-value">
-          <h2 className="hero-value-title">퇴근 후, 이불 속에서 하는 임장</h2>
+          <h1 className="hero-value-title">퇴근 후, 이불 속에서 하는 임장</h1>
           <p className="hero-value-sub">발품 팔기 전에 아파트 이름만 넣어보세요.</p>
           <ul className="hero-value-list">
             <li><span aria-hidden="true">🗣</span> 그 동네 사람들이 실제로 하는 이야기</li>
@@ -728,7 +728,7 @@ function SearchApp() {
           {resultTab === 'search' ? (
             <>
               <div className="search-result-header">
-                <span className="search-result-title">'{searchedQuery}' 검색 결과</span>
+                <h1 className="search-result-title">'{searchedQuery}' 검색 결과</h1>
                 <span className="search-result-count">
                   {totalCount <= cards.length ? `${cards.length}개` : `${cards.length}개 / 전체 ${totalCount}개`}
                 </span>
