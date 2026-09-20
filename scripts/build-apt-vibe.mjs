@@ -25,7 +25,9 @@ for (const k of ['NAVER_CLIENT_ID', 'NAVER_CLIENT_SECRET', 'ANTHROPIC_API_KEY'])
 const PUB = join(process.cwd(), 'public')
 const OUT_DIR = join(PUB, 'vibe')
 const COMBINED = join(PUB, 'apt-vibe.json')
-const FRESH_DAYS = 30
+// 클라이언트는 60일 지난 요약을 안 쓴다(src/vibe-loader.js STALE_DAYS).
+// 주 150곳씩 4주에 한 바퀴를 도니, 25일 기준으로 잡아야 만료 전에 순번이 돌아온다.
+const FRESH_DAYS = 25
 const GAP_MS = 400
 // --model=claude-sonnet-5 처럼 바꿀 수 있다. 기본은 BATCH_MODEL(_vibe-core.js).
 const MODEL = arg('model') || process.env.VIBE_BATCH_MODEL || BATCH_MODEL
@@ -58,7 +60,15 @@ const isFresh = (code) => {
 }
 
 const max = Number(arg('max')) || Infinity
-const targets = pickTargets().filter(a => !isFresh(a.kaptCode)).slice(0, max)
+// 오래된 것부터 — 상한(--max)에 걸려 매번 앞쪽만 갱신되면 뒤쪽은 영영 만료된다.
+const generatedAt = (code) => {
+  try { return new Date(JSON.parse(readFileSync(join(OUT_DIR, `${code}.json`), 'utf8')).generatedAt).getTime() }
+  catch { return 0 }  // 없는 것이 가장 먼저
+}
+const targets = pickTargets()
+  .filter(a => !isFresh(a.kaptCode))
+  .sort((x, y) => generatedAt(x.kaptCode) - generatedAt(y.kaptCode))
+  .slice(0, max)
 console.log(`생성 대상 ${targets.length}곳 · 모델 ${MODEL}${arg('dry') ? ' (dry)' : ''}`)
 if (arg('dry')) { targets.slice(0, 30).forEach(a => console.log(' ', a.kaptCode, a.kaptName, a.sigungu, a.dong)); process.exit(0) }
 

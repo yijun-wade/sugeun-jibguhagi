@@ -5,6 +5,7 @@ import { setCors } from './_utils.js'
 import { parseAddr } from './_addr.js'
 import { classifyAptType } from './_apt-type.js'
 import { buildPrerenderHtml } from './_prerender.js'
+import { buildHomeHtml } from './_prerender-home.js'
 import { pickSimilarApts, pickSameTypeApts } from './_similar.js'
 
 let aptList = null
@@ -93,7 +94,22 @@ function prerenderData(apt) {
 
 export default function handler(req, res) {
   if (setCors(req, res)) return
-  const { kaptCode, prerender } = req.query
+  const { kaptCode, prerender, home } = req.query
+
+  // 크롤러용 홈 (vercel.json이 UA로 분기). 새 함수를 만들지 않으려고 여기에 얹었다 — 12개 한도.
+  if (home) {
+    // '많이 찾는 단지' = 요약을 만들어 둔 단지 중 세대수 상위. 사람이 보는 목록과 같은 기준이다.
+    const vibe = loadPublic('apt-vibe.json', {})
+    const featured = loadPublic('seoul-apt-enriched.json', [])
+      .filter(a => vibe[a.kaptCode])
+      .sort((x, y) => (y.kaptdaCnt || 0) - (x.kaptdaCnt || 0))
+      .slice(0, 60)
+      .map(a => ({ kaptCode: a.kaptCode, kaptName: a.kaptName, sigungu: a.sigungu, dong: a.dong }))
+    res.setHeader('Content-Type', 'text/html; charset=utf-8')
+    res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400')
+    return res.status(200).send(buildHomeHtml(featured))
+  }
+
   if (!kaptCode) return res.status(400).json({ error: 'kaptCode required' })
 
   const list = loadAptList()
