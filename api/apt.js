@@ -96,7 +96,11 @@ export default function handler(req, res) {
   if (setCors(req, res)) return
   const { kaptCode, prerender, home } = req.query
 
-  // 크롤러용 홈 (vercel.json이 UA로 분기). 새 함수를 만들지 않으려고 여기에 얹었다 — 12개 한도.
+  // 크롤러용 홈 전체 HTML. 지금은 라우팅에서 여기로 오지 않는다 —
+  // vercel.json의 rewrites는 파일 시스템 확인 뒤에 적용되고 `/`는 dist/index.html이 있어
+  // UA 분기가 실행되지 않기 때문이다(배포해서 확인함). 대신 scripts/inject-home-shell.mjs가
+  // 같은 본문을 dist/index.html의 #root에 넣는다. 이 분기는 점검용으로 남긴다:
+  //   curl 'https://www.suzip.kr/api/apt?prerender=1&home=1'
   if (home) {
     // '많이 찾는 단지' = 요약을 만들어 둔 단지 중 세대수 상위. 사람이 보는 목록과 같은 기준이다.
     const vibe = loadPublic('apt-vibe.json', {})
