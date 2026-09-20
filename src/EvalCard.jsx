@@ -45,7 +45,7 @@ export default function EvalCard({ apt, onDetail, onCollectionChange }) {
       </div>
 
       {/* 한줄 판단 */}
-      <div className="eval-verdict">💬 {apt.verdict}</div>
+      {apt.verdict && <div className="eval-verdict">💬 {apt.verdict}</div>}
 
       {/* 가격 판단 — 절대 신호(가격대) + 상대 신호(거래 흐름) */}
       {apt.priceJudgment?.sentence ? (

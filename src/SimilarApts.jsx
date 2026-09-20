@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { track } from './analytics.js'
+import { useImpression } from './useImpression.js'
 
 const fmtEok = (man) => {
   if (!Number.isFinite(man) || man <= 0) return '-'
@@ -10,7 +11,7 @@ const fmtEok = (man) => {
   return `${eok % 1 === 0 ? eok : eok.toFixed(1)}억`
 }
 
-export default function SimilarApts({ kaptCode, avg, gu, aptNm, items: itemsProp }) {
+export default function SimilarApts({ kaptCode, avg, gu, aptNm, items: itemsProp, mode = 'price' }) {
   const navigate = useNavigate()
   const [fetched, setFetched] = useState(null) // null=로딩, []=없음
   // 부모가 items를 내려주면 그걸 신뢰(상단 넛지와 데이터 공유·중복 fetch 방지),
@@ -31,6 +32,9 @@ export default function SimilarApts({ kaptCode, avg, gu, aptNm, items: itemsProp
     return () => { alive = false }
   }, [kaptCode, avg, gu, itemsProp])
 
+  const hasItems = Array.isArray(items) && items.length > 0
+  const viewRef = useImpression('similar_view', { apt_name: aptNm, mode, count: items?.length || 0 }, hasItems)
+
   // 로딩 중이거나 결과 없으면 섹션 자체를 감춘다(깨진 빈 섹션 방지)
   if (!items || items.length === 0) return null
 
@@ -40,15 +44,16 @@ export default function SimilarApts({ kaptCode, avg, gu, aptNm, items: itemsProp
       apt_name: aptNm,
       target_name: target.name,
       target_code: target.code,
+      mode,
     })
     navigate(`/apt/${target.code}`)
   }
 
   return (
-    <section className="similar-apts" aria-label="비슷한 가격대 단지">
+    <section className="similar-apts" ref={viewRef} aria-label={mode === 'rental' ? '다른 공공임대·청년주택' : '이 근처 다른 단지'}>
       <h2 className="similar-apts-title">
-        이 근처 비슷한 값 단지
-        {gu ? <span className="similar-apts-sub"> · {gu}</span> : null}
+        {mode === 'rental' ? '다른 공공임대·청년주택' : mode === 'units' ? '이 근처 다른 단지' : '이 근처 비슷한 값 단지'}
+        {gu ? <span className="similar-apts-sub"> · {gu} 먼저</span> : null}
       </h2>
       <ul className="similar-apts-list">
         {items.map(a => (
@@ -58,7 +63,10 @@ export default function SimilarApts({ kaptCode, avg, gu, aptNm, items: itemsProp
                 <span className="similar-apt-name">{a.name}</span>
                 <span className="similar-apt-loc">{a.dong}{a.year ? ` · ${a.year}년` : ''}</span>
               </span>
-              <span className="similar-apt-price">{fmtEok(a.avg)}</span>
+              {/* 임대 단지는 값이 없다 — '-' 대신 세대수를 보여준다 */}
+              <span className="similar-apt-price">
+                {a.avg > 0 ? fmtEok(a.avg) : a.units ? `${Number(a.units).toLocaleString()}세대` : ''}
+              </span>
               <span className="similar-apt-arrow" aria-hidden="true">›</span>
             </button>
           </li>

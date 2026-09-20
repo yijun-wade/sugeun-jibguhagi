@@ -3,12 +3,18 @@
 //  2) kaptCode=... : 비슷한 가격대 단지(같은 구 우선) apt-discovery.json 기반 (상세페이지 하단)
 import { readFileSync } from 'fs'
 import { join } from 'path'
-import { pickSimilarApts } from './_similar.js'
+import { pickSimilarApts, pickSameTypeApts } from './_similar.js'
 
 export const config = { regions: ['icn1'] }
 
 let aptList = null
 let discovery = null
+let seoulList = null
+let typeMap = null
+
+function loadJson(name, fallback) {
+  try { return JSON.parse(readFileSync(join(process.cwd(), 'public', name), 'utf-8')) } catch { return fallback }
+}
 
 function loadAptList() {
   if (aptList) return aptList
@@ -35,10 +41,16 @@ function loadDiscovery() {
 const normalize = (s) => (s || '').replace(/\s/g, '').toLowerCase()
 
 export default function handler(req, res) {
-  const { names, kaptCode, avg, gu } = req.query
+  const { names, kaptCode, avg, gu, type } = req.query
 
   // 모드 2: 비슷한 가격대 단지
   if (kaptCode) {
+    // 임대 단지는 가격이 아니라 유형으로 묶는다 — 같은 구의 다른 공공임대·청년주택.
+    if (type === 'rental') {
+      seoulList ??= loadJson('seoul-apt-enriched.json', [])
+      typeMap ??= loadJson('apt-types.json', {})
+      return res.json(pickSameTypeApts(seoulList, typeMap, { kaptCode, gu }, 6))
+    }
     const anchorAvg = avg != null && avg !== '' ? Number(avg) : undefined
     const result = pickSimilarApts(loadDiscovery(), { kaptCode, avg: anchorAvg, gu }, 6)
     return res.json(result)
