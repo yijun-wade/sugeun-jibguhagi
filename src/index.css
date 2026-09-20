@@ -3291,3 +3291,13 @@ header { text-align: center; padding: 4px 0 2px; }
 .collect-btn { min-height: 44px; }
 .qna-input, .qna-submit { min-height: 44px; }
 .map-deeplink-btn { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+
+/* ─── 홈·검색 터치 영역 44px (실측: nav 29 · 로고 30 · 힌트칩 33 · 서브탭 38 · 검색결과 저장 24 · 푸터 13~19px) ─── */
+.site-header-logo { min-height: 44px; display: inline-flex; align-items: center; }
+.site-nav-link { min-height: 44px; display: inline-flex; align-items: center; }
+.home-sub-tab { min-height: 44px; }
+.hint-chip { min-height: 44px; padding-top: 0; padding-bottom: 0; display: inline-flex; align-items: center; }
+.site-footer-links a, .site-footer-biz a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 4px; }
+/* 검색 결과 저장 — 24px에 카드 모서리라 가장 누르기 어려운 자리에 가장 작은 크기였다 */
+.eval-collect-btn { min-height: 44px; padding: 0 14px; font-size: 13px; }
+.result-tab, .eval-detail-btn { min-height: 44px; }

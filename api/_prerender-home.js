@@ -19,7 +19,7 @@ const NAV = [
   ['/glossary', '이불 속 사전'],
   ['/report', '살까말까 보고서'],
 ]
-const HINTS = ['반포자이', '잠실엘스', '상계주공', '강남구', '망원동', '분당구', '목동']
+const HINTS = ['잠실엘스', '상계주공', '망원동', '강남구'] // src/data.js HINT_SEARCHES와 같게
 
 /**
  * @param {Array} featured  [{kaptCode, kaptName, sigungu, dong}] — 홈 '많이 찾는 단지'와 같은 목록

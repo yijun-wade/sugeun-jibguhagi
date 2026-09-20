@@ -14,7 +14,7 @@ test('홈 프리렌더는 실제 홈과 같은 문구를 낸다', () => {
 test('내부 링크가 실린다 — 전에는 0개였다', () => {
   const html = buildHomeHtml([{ kaptCode: 'A1', kaptName: '헬리오시티아파트', sigungu: '송파구', dong: '가락동' }])
   const links = [...html.matchAll(/href="([^"]+)"/g)].map(m => m[1])
-  assert.ok(links.length >= 12, `링크 ${links.length}개`)
+  assert.ok(links.length >= 10, `링크 ${links.length}개`) // nav 5 + 예시 4 + 단지 1 + canonical
   // 상대 경로 — 크롤러용 HTML은 /에서 서빙되고, 셸 주입도 같은 도메인이라 그대로 맞는다.
   assert.ok(links.includes('/briefing'))
   assert.ok(links.includes('/apt/A1'))
