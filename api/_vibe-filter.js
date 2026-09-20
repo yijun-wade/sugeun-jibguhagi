@@ -23,12 +23,39 @@ function guTokens(gu) {
   return NO_SHORT.has(gu) || short.length < 2 ? [gu] : [gu, short]
 }
 
+// 단지명에서 검색어로 쓸 만한 토큰을 뽑는다. '행복주택'·'아파트' 같은 일반어는 주제가 아니다.
+const GENERIC = new Set(['아파트', '행복주택', '청년주택', '청년안심주택', '임대', '임대아파트', '주상복합', '오피스텔', '단지'])
+function nameTokens(aptName) {
+  const raw = String(aptName || '').replace(/\(.*?\)/g, ' ')
+  const parts = raw.split(/\s+/).filter(Boolean)
+  const whole = strip(raw).replace(/아파트$/, '')
+  // 붙여 쓴 이름은 단지 번호 앞까지를 핵심으로 본다: '위례포레샤인13단지아파트' → '위례포레샤인'
+  const core = whole.replace(/\d+단지.*$/, '').replace(/\d+차.*$/, '')
+  const tokens = [whole, core, ...parts.map(p => p.replace(/아파트$/, ''))]
+  // 앞 지명이 붙은 이름('위례포레샤인')은 글에서 띄어 쓰는 일이 많다('위례 포레샤인') — 뒤쪽 4글자 이상도 본다.
+  if (core.length >= 6) tokens.push(core.slice(2))
+  const uniq = [...new Set(tokens)].filter(t => t.length >= 2 && !GENERIC.has(t))
+  // 이름 앞에 붙은 행정동('공덕동 크로시티 행복주택'의 '공덕동')은 단지가 아니라 동네를 가리킨다.
+  // 다른 토큰이 있으면 뺀다 — 안 그러면 "공덕동의 장가방(중국집)"이 이 단지 글로 잡힌다.
+  const specific = uniq.filter(t => !/^[가-힣]{1,4}[동구]$/.test(t))
+  return specific.length ? specific : uniq
+}
+
+/** 글이 이 단지(또는 이 동)를 한 번이라도 말하는가 */
+export function mentionsSubject(it, { aptName, dong } = {}) {
+  const text = strip(`${it?.title || ''} ${it?.description || ''}`)
+  if (dong && text.includes(dong)) return true
+  return nameTokens(aptName).some(t => text.includes(t))
+}
+
 /**
  * @param {Array<{title?:string, description?:string}>} items
  * @param {{aptName?:string, gu?:string, dong?:string}} ctx
  */
-export function filterRelevant(items, { aptName, gu, dong } = {}) {
+export function filterRelevant(items, { aptName, gu, dong, requireSubject = false } = {}) {
   if (!Array.isArray(items)) return []
+  // 검색 노이즈(단지명도 동 이름도 없는 글)를 먼저 버린다 — 단지명으로 검색한 결과에만 켠다.
+  if (requireSubject) items = items.filter(it => mentionsSubject(it, { aptName, dong }))
   if (!gu || !SEOUL_GU.includes(gu)) return items
 
   const name = strip(aptName)

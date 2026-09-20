@@ -9,6 +9,7 @@ import { isSubscribed, subscribeRegion, getInterest } from './interest.js'
 import SimilarApts from './SimilarApts.jsx'
 import { isRentalName } from './apt-type.js'
 import { useImpression } from './useImpression.js'
+import { loadVibe } from './vibe-loader.js'
 import ViewedCompare from './ViewedCompare.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -37,8 +38,10 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
   const rentalNoPrice = isRental && !hasPrice
   const [tab, setTab] = useState('동네·이야기')
   const aptTypeProp = isRental ? 'rental' : (apt.aptType || 'unknown')
+  // 수근수근 총평 — 오면 히어로 문장을 대신한다(사전 생성분은 첫 화면에 바로 뜬다).
+  const [heroSummary, setHeroSummary] = useState(null)
   // has_price는 싣지 않는다 — 히어로는 실거래 조회보다 먼저 그려져서 이 시점엔 늘 false다(apt_view에 있음).
-  const heroRef = useImpression('verdict_hero_view', { apt_name: apt.aptNm, apt_type: aptTypeProp }, !!apt.verdict)
+  const heroRef = useImpression('verdict_hero_view', { apt_name: apt.aptNm, apt_type: aptTypeProp }, !!(heroSummary || apt.verdict))
   const [toast, setToast] = useState(null) // 'share' | 'uncollect' | null
   // 저장 직후 인라인 확인 블록 — 토스트와 달리 사라지지 않는다(즉시 보상 노출).
   const [justSaved, setJustSaved] = useState(false)
@@ -180,10 +183,10 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       )}
 
       {/* 살만해요? 종합 버디트 히어로 — SEO 착지 첫 화면 훅 + 공유 유도 */}
-      {apt.verdict && apt.verdict !== '실거래 데이터 없음' && (
+      {(heroSummary || (apt.verdict && apt.verdict !== '실거래 데이터 없음')) && (
         <div className="verdict-hero" ref={heroRef}>
           <div className="verdict-badge">이 단지, 살만해요?</div>
-          <p className="verdict-line">{apt.verdict}</p>
+          <p className="verdict-line">{heroSummary || apt.verdict}</p>
           {apt.priceJudgment?.sentence && (
             <p className="verdict-price">{apt.priceJudgment.sentence}</p>
           )}
@@ -392,7 +395,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
         })}
       >
         {tab === '시세'       && <PriceTab apt={apt} />}
-        {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} apt={apt} />}
+        {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} apt={apt} onVibe={(v) => setHeroSummary(v.summary || null)} />}
       </div>
 
       {/* 콘텐츠 끝 큰 수집 CTA — 미수집 상태에서만 노출.
@@ -1066,9 +1069,11 @@ function VibeReport({ aptNm, kaptCode }) {
 }
 
 /* ── 동네·이야기 통합 탭 ─────────────────── */
-function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
+function NeighborhoodStoriesTab({ dong, aptNm, addr, apt, onVibe }) {
   const [vibe, setVibe] = useState(null)
   const [vibeSummary, setVibeSummary] = useState(null)
+  const [vibeLinks, setVibeLinks] = useState([])
+  const [vibeFailed, setVibeFailed] = useState(false)
   const [vibeLoading, setVibeLoading] = useState(true)
   // stories 비노출 중 — API 호출도 중단 (복구 시 아래 주석 해제 + 위 UI 주석도 해제)
   const [stories, setStories] = useState([])
@@ -1076,27 +1081,33 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
   useEffect(() => {
     const controller = new AbortController()
     const { signal } = controller
-    setVibe(null); setVibeSummary(null); setVibeLoading(true)
-    // 핵심 가치가 뜨기까지 걸린 시간. 2026-09 라이브 계측은 5.4~6.2초였고 평균 세션이 15~27초다.
-    const t0 = performance.now()
-    const ready = (ok, data) => track('vibe_ready', {
-      apt_name: aptNm,
-      apt_type: apt?.aptType || 'unknown',
-      ok,
-      ms: Math.round(performance.now() - t0),
-      has_summary: !!data?.summary,
-      lines: (data?.categories || []).reduce((n, c) => n + (c.lines?.length || 0), 0),
-    })
-    fetch(`/api/vibe?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}&gu=${encodeURIComponent(apt?.regionName || '')}`, { signal })
-      .then(r => r.json())
-      .then(data => { setVibe(data?.categories || []); setVibeSummary(data?.summary || null); setVibeLoading(false); ready(true, data) })
-      .catch(e => { if (e.name !== 'AbortError') { setVibe([]); setVibeLoading(false); ready(false) } })
+    setVibe(null); setVibeSummary(null); setVibeLinks([]); setVibeFailed(false); setVibeLoading(true)
+    // 미리 만들어 둔 정적 요약 먼저, 없으면 실시간 API (vibe-loader.js).
+    loadVibe({ kaptCode: apt?.kaptCode, aptNm, dong, gu: apt?.regionName, aptType: apt?.aptType }, { signal })
+      .then(v => {
+        setVibe(v.categories); setVibeSummary(v.summary); setVibeLinks(v.links); setVibeFailed(v.source === 'error'); setVibeLoading(false)
+        onVibe?.(v)
+        // 핵심 가치가 뜨기까지 걸린 시간 — 사전 생성의 효과를 재는 선행 지표(목표: 중앙값 1초 미만).
+        // 2026-09 라이브 계측은 5.4~6.2초였고 평균 세션이 15~27초다.
+        track('vibe_ready', {
+          apt_name: aptNm,
+          apt_type: apt?.aptType || 'unknown',
+          source: v.source,               // static(사전 생성) | live(실시간) | error
+          ok: v.source !== 'error',
+          ms: v.ms,
+          has_summary: !!v.summary,
+          lines: v.categories.reduce((n, c) => n + (c.lines?.length || 0), 0),
+          empty: v.empty || v.categories.every(c => !c.lines?.length),
+        })
+      })
+      .catch(e => { if (e.name !== 'AbortError') { setVibe([]); setVibeFailed(true); setVibeLoading(false) } })
     // fetch(`/api/stories?aptName=${encodeURIComponent(aptNm)}&location=${encodeURIComponent(dong || '')}`, { signal })
     //   .then(r => r.json())
     //   .then(data => { setStories(Array.isArray(data) ? data : []); setStoriesLoading(false) })
     //   .catch(e => { if (e.name !== 'AbortError') { setStories([]); setStoriesLoading(false) } })
     return () => controller.abort()
-  }, [aptNm, dong, apt?.regionName])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [aptNm, dong, apt?.regionName, apt?.kaptCode])
 
   return (
     <div className="neighborhood-tab">
@@ -1110,7 +1121,8 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
           <div className="vibe-loading">소문 수집 중이에요...</div>
         ) : vibe && vibe.length > 0 ? (
           <>
-            {vibeSummary && (
+            {/* 총평은 첫 화면 히어로가 가져간다. 히어로에 못 올리는 경우에만 여기서 보여준다. */}
+            {vibeSummary && !onVibe && (
               <div className="vibe-summary">{vibeSummary}</div>
             )}
             <div className="vibe-feed">
@@ -1131,13 +1143,29 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt }) {
                 )
               })}
             </div>
+            {/* 요약의 근거가 된 글 — 이 단지를 직접 말한 글만 온다(_vibe-core.js). */}
+            {vibeLinks.filter(l => isValidUrl(l.link)).length > 0 && (
+              <ul className="vibe-links" aria-label="요약에 쓰인 글">
+                {vibeLinks.filter(l => isValidUrl(l.link)).map((l) => (
+                  <li key={l.link}>
+                    <a href={l.link} target="_blank" rel="noopener noreferrer nofollow" onClick={() => track('story_link_click', { apt_name: aptNm, source: l.tag, from: 'vibe_links' })}>
+                      <span className="vibe-link-tag">{l.tag}</span>{l.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
             <div className="vibe-source-note">
               직접 임장 가보는 게 제일 정확해요 😊
             </div>
             <VibeReport aptNm={aptNm} kaptCode={apt?.kaptCode} />
           </>
         ) : (
-          <div className="vibe-empty">아직 소문이 없네요</div>
+          <div className="vibe-empty">
+            {vibeFailed
+              ? '지금은 이야기를 불러오지 못했어요. 잠시 뒤 다시 열어 주세요.'
+              : '이 단지를 직접 다룬 글이 아직 많지 않아요. 아래에서 궁금한 걸 물어보거나 단지 정보를 확인해 보세요.'}
+          </div>
         )}
       </div>
 
