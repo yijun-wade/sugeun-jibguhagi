@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npx vite build",
+  "buildCommand": "npx vite build && node scripts/inject-home-shell.mjs",
   "devCommand": "npx vite --port $PORT",
   "installCommand": "npm install",
   "outputDirectory": "dist",
@@ -50,17 +50,6 @@
         }
       ],
       "destination": "/api/apt?kaptCode=:kaptCode&prerender=1"
-    },
-    {
-      "source": "/",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": "(?i).*(facebookexternalhit|meta-externalagent|kakaotalk|kakaotalk-scrap|twitterbot|telegrambot|whatsapp|slackbot|discordbot|skypeuripreview|linkedinbot|bingbot|googlebot|naverbot|yeti|duckduckbot|applebot|msnbot|baiduspider|yandexbot).*"
-        }
-      ],
-      "destination": "/api/apt?prerender=1&home=1"
     },
     {
       "source": "/((?!api/|.well-known/).*)",

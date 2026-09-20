@@ -24,17 +24,32 @@ const HINTS = ['반포자이', '잠실엘스', '상계주공', '강남구', '망
 /**
  * @param {Array} featured  [{kaptCode, kaptName, sigungu, dong}] — 홈 '많이 찾는 단지'와 같은 목록
  */
+/**
+ * 홈 본문만. 두 곳에서 쓴다.
+ *  - buildHomeHtml(): 크롤러용 전체 HTML
+ *  - scripts/inject-home-shell.mjs: 빌드된 dist/index.html의 #root에 주입
+ * 주입이 필요한 이유는 그 스크립트 주석에 적어 두었다(vercel rewrites는 파일 시스템 뒤에 적용된다).
+ * 경로는 상대로 둔다 — 셸에 주입될 때도 같은 도메인이다.
+ */
+export function buildHomeShell(featured = []) {
+  const navHtml = NAV.map(([href, label]) => `<li><a href="${href}">${esc(label)}</a></li>`).join('')
+  const hintHtml = HINTS.map(h => `<li><a href="/search?q=${encodeURIComponent(h)}">${esc(h)}</a></li>`).join('')
+  const featuredHtml = featured.length
+    ? `<h2>많이 찾는 단지</h2><ul>${featured.map(a =>
+        `<li><a href="/apt/${esc(a.kaptCode)}">${esc(a.kaptName)}</a>${
+          a.sigungu ? ` · ${esc(a.sigungu)} ${esc(a.dong || '')}`.trimEnd() : ''}</li>`).join('')}</ul>`
+    : ''
+  return `<h1>퇴근 후, 이불 속에서 하는 임장</h1>
+<p>발품 팔기 전에 아파트 이름만 넣어보세요.</p>
+<ul><li>그 동네 사람들이 실제로 하는 이야기</li><li>최근 실거래가와 가격 흐름</li><li>이 집 살만한지 한 줄 평가</li></ul>
+<h2>둘러보기</h2><ul>${navHtml}</ul>
+<h2>이런 걸 검색해요</h2><ul>${hintHtml}</ul>
+${featuredHtml}`
+}
+
 export function buildHomeHtml(featured = []) {
   const title = '수군수군 우리집 — 퇴근 후 이불 속에서 하는 임장'
   const description = '아파트 이름만 넣으면 그 동네 사람들이 실제로 하는 이야기, 최근 실거래가와 가격 흐름, 이 집 살만한지 한 줄 평가를 한눈에 보여드려요.'
-
-  const navHtml = NAV.map(([href, label]) => `<li><a href="${BASE}${href}">${esc(label)}</a></li>`).join('')
-  const hintHtml = HINTS.map(h => `<li><a href="${BASE}/search?q=${encodeURIComponent(h)}">${esc(h)}</a></li>`).join('')
-  const featuredHtml = featured.length
-    ? `<h2>많이 찾는 단지</h2><ul>${featured.map(a =>
-        `<li><a href="${BASE}/apt/${esc(a.kaptCode)}">${esc(a.kaptName)}</a>${
-          a.sigungu ? ` · ${esc(a.sigungu)} ${esc(a.dong || '')}`.trimEnd() : ''}</li>`).join('')}</ul>`
-    : ''
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -68,18 +83,7 @@ export function buildHomeHtml(featured = []) {
 <script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>
 </head>
 <body>
-<h1>퇴근 후, 이불 속에서 하는 임장</h1>
-<p>발품 팔기 전에 아파트 이름만 넣어보세요.</p>
-<ul>
-<li>그 동네 사람들이 실제로 하는 이야기</li>
-<li>최근 실거래가와 가격 흐름</li>
-<li>이 집 살만한지 한 줄 평가</li>
-</ul>
-<h2>둘러보기</h2>
-<ul>${navHtml}</ul>
-<h2>이런 걸 검색해요</h2>
-<ul>${hintHtml}</ul>
-${featuredHtml}
+${buildHomeShell(featured)}
 <p>현재 서울 아파트 중심으로 운영되는 베타 서비스예요.</p>
 </body>
 </html>`
