@@ -12,42 +12,41 @@ import { isRentalName } from './apt-type.js'
 import { getCollection } from './collection.js'
 import { recordInterest } from './interest.js'
 
-async function buildEvalData(apt) {
-  const bjdCode = apt.bjdCode || null
-
+// 실거래 없이 바로 그릴 수 있는 부분. /api/apt 응답만으로 만든다.
+// 전에는 stories(네이버 5쿼리)와 trade 6회가 모두 끝나야 페이지 전체가 한 번에 그려졌다.
+// stories 결과(voice)는 화면 어디에도 쓰이지 않는 순수 대기였다. 그동안 방문자는
+// 단지명도 없는 "불러오는 중..." 한 줄을 봤다 — 평균 세션이 15~27초인 페이지에서.
+function buildBaseData(apt) {
   // regionName은 '구'(없으면 시·군). 전에는 '서울특별시'가 먼저 걸려 서울 전 단지가 같은 값이었다 — src/addr.js 참고.
   const { gu: regionName, dong: parsedDong } = parseAddr(apt.addr)
   const dong = parsedDong || (apt.addr || '').split(' ').pop() || ''
-
-  const storiesRes = await fetch(`/api/stories?aptName=${encodeURIComponent(apt.kaptName)}&location=${encodeURIComponent(dong)}`)
-    .then(r => r.json()).catch(() => [])
-  const voice = Array.isArray(storiesRes) && storiesRes.length > 0
-    ? storiesRes.reduce((best, s) =>
-        (s.description?.length || 0) > (best.description?.length || 0) ? s : best
-      , storiesRes[0])
-    : null
-
-  if (!bjdCode) {
-    return {
-      kaptCode: apt.kaptCode,
-      aptNm: apt.kaptName,
-      dong,
-      regionName,
-      buildYear: apt.kaptBuldYy || '-',
-      bjdCode: null,
-      addr: apt.addr,
-      recentAvg: 0,
-      olderAvg: 0,
-      direction: '-',
-      priceJudgment: { level: null, trend: null, sentence: null },
-      lifeConditions: getLifeConditions(dong),
-      verdict: apt.summary || null,
-      aptType: apt.aptType || 'unknown',
-      voice,
-    }
+  const tag = (DONG[dong] || {}).tag || ''
+  return {
+    kaptCode: apt.kaptCode,
+    aptNm: apt.kaptName,
+    dong,
+    regionName,
+    buildYear: apt.kaptBuldYy || '-',
+    bjdCode: apt.bjdCode || null,
+    addr: apt.addr,
+    kaptdaCnt: apt.kaptdaCnt,
+    useAprDay: apt.useAprDay,
+    recentAvg: 0,
+    olderAvg: 0,
+    direction: '-',
+    priceJudgment: { level: null, trend: null, sentence: null },
+    lifeConditions: getLifeConditions(dong),
+    // 단지별 한 줄 요약(3,345단지 전수 보유)이 동 단위 문장보다 먼저다. App.jsx 카드 경로와 동일.
+    verdict: apt.summary || getVerdict(tag, dong),
+    aptType: apt.aptType || 'unknown',
+    // 실거래 조회가 끝나기 전. 이 동안은 "가격 없음"으로 단정하면 안 된다(저장 스냅샷·계측·유사단지 기준).
+    priceLoading: !!apt.bjdCode,
   }
+}
 
-  const lawdCd = bjdCode.slice(0, 5)
+async function loadPriceData(base) {
+  if (!base.bjdCode) return { ...base, priceLoading: false }
+  const lawdCd = base.bjdCode.slice(0, 5)
   const ymList = getYM(6)
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT)
@@ -70,7 +69,7 @@ async function buildEvalData(apt) {
       const nm   = (item.aptNm || '').trim()
       const amt  = parseInt((item.dealAmount || '').replace(/,/g, ''), 10)
       const area = parseFloat(item.excluUseAr) || 0
-      if (nameSim(nm, apt.kaptName) < 0.6 || isNaN(amt) || area < MIN_AREA_SQM) return
+      if (nameSim(nm, base.aptNm) < 0.6 || isNaN(amt) || area < MIN_AREA_SQM) return
       const dealYmd = `${item.dealYear}${String(item.dealMonth || 0).padStart(2,'0')}${String(item.dealDay || 0).padStart(2,'0')}`
       allTrades.push({ amt, area, dealYmd })
     })
@@ -81,26 +80,15 @@ async function buildEvalData(apt) {
   const recentTrades = allTrades.filter(t => t.dealYmd.slice(0, 6) >= cutoff)
   const olderTrades  = allTrades.filter(t => t.dealYmd.slice(0, 6) <  cutoff)
   const { recentAvg, olderAvg, direction } = calcPriceSignal(recentTrades, olderTrades)
-  const priceJudgment = buildPriceJudgment(recentAvg, direction)
-  const tag = (DONG[dong] || {}).tag || ''
-
   return {
-    kaptCode: apt.kaptCode,
-    aptNm: apt.kaptName,
-    dong,
-    regionName,
-    buildYear: apt.kaptBuldYy || '-',
-    bjdCode,
-    addr: apt.addr,
+    ...base,
     recentAvg,
     olderAvg,
     direction,
-    priceJudgment,
-    lifeConditions: getLifeConditions(dong),
-    // 단지별 한 줄 요약(3,345단지 전수 보유)이 동 단위 문장보다 먼저다. App.jsx 카드 경로와 동일.
-    verdict: apt.summary || getVerdict(tag, dong),
-    aptType: apt.aptType || 'unknown',
-    voice,
+    priceJudgment: buildPriceJudgment(recentAvg, direction),
+    // 조회가 전부 실패했는지 — 실패를 "거래 없는 단지"로 읽히게 두지 않는다.
+    priceFailed: tradeResults.every(d => !d),
+    priceLoading: false,
   }
 }
 
@@ -120,20 +108,27 @@ export default function AptDetailPage() {
     }
     // 직접 URL 접근 시: kaptCode로 apt 정보 조회 후 buildEvalData
     setLoadError(false)
+    setEvalData(null)
+    let alive = true
     fetch(`/api/apt?kaptCode=${kaptCode}`)
       .then(r => r.json())
       .then(apt => {
         if (apt.error) throw new Error(apt.error)
-        return buildEvalData(apt)
+        // 1단계: 단지명·위치·한 줄 요약을 바로 그린다. 2단계: 실거래가 오면 가격을 얹는다.
+        const base = buildBaseData(apt)
+        if (alive) setEvalData(base)
+        return loadPriceData(base)
       })
-      .then(data => setEvalData(data))
-      .catch(() => setLoadError(true))
+      .then(data => { if (alive) setEvalData(data) })
+      .catch(() => { if (alive) setLoadError(true) })
+    return () => { alive = false }
   }, [kaptCode, location.state])
 
   // apt_view는 상세페이지 마운트 시 1회 발화 — SEO 직접 착지 방문자까지 포착.
   // (카드 클릭 유입은 location.state.evalData 존재 → entry='card', 직접 착지 → 'direct')
   useEffect(() => {
-    if (!evalData) return
+    // 가격 조회가 끝난 뒤에 쏜다 — 먼저 쏘면 has_price가 전부 false로 찍힌다.
+    if (!evalData || evalData.priceLoading) return
     // apt_type·has_price는 세그먼트 판정용. 전에는 임대 단지 비중을 단지명 키워드로 추정할 수밖에 없었다.
     // region은 2026-09-19 이전까지 서울 전 단지가 '서울특별시'였다(addr.js) — 그 이후 값만 구 단위다.
     const rental = evalData.aptType === 'rental' ||
@@ -158,7 +153,7 @@ export default function AptDetailPage() {
       verdict: evalData.verdict,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [evalData?.kaptCode])
+  }, [evalData?.kaptCode, evalData?.priceLoading])
 
   const goBack = useCallback(() => {
     if (window.history.length > 1) {

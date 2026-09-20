@@ -3185,3 +3185,13 @@ header { text-align: center; padding: 4px 0 2px; }
   .adr-count { grid-column: 3; grid-row: 1; }
   .adr-range { grid-column: 2 / 4; grid-row: 2; font-size: 11px; text-align: left; }
 }
+
+/* 가격 조회 중 자리표시 / 조회 실패 안내 — 버튼이 아니라 정적 블록이라 커서·호버를 끈다 */
+.price-signal-bar.is-loading, .price-signal-bar.is-failed { cursor: default; }
+.price-signal-bar.is-loading .psb-skeleton { color: var(--muted); font-weight: 500; }
+.price-signal-bar.is-failed .psb-retry { background: none; border: 0; cursor: pointer; min-height: 44px; padding: 0 4px; }
+@media (prefers-reduced-motion: no-preference) {
+  .price-signal-bar.is-loading .psb-skeleton { animation: psb-pulse 1.2s ease-in-out infinite; }
+}
+@keyframes psb-pulse { 0%, 100% { opacity: 1 } 50% { opacity: .45 } }
+.collect-btn:disabled, .mobile-collect-btn:disabled { opacity: .55; cursor: default; }
