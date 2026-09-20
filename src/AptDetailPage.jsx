@@ -11,6 +11,7 @@ import { parseAddr } from './addr.js'
 import { isRentalName } from './apt-type.js'
 import { getCollection } from './collection.js'
 import { recordInterest } from './interest.js'
+import NotFoundPage from './NotFoundPage.jsx'
 
 // 실거래 없이 바로 그릴 수 있는 부분. /api/apt 응답만으로 만든다.
 // 전에는 stories(네이버 5쿼리)와 trade 6회가 모두 끝나야 페이지 전체가 한 번에 그려졌다.
@@ -97,7 +98,7 @@ export default function AptDetailPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const [evalData, setEvalData] = useState(null)
-  const [loadError, setLoadError] = useState(false)
+  const [loadError, setLoadError] = useState(false) // false | 'notfound' | 'error'
   const [collection, setCollection] = useState(() => getCollection())
 
   useEffect(() => {
@@ -111,8 +112,10 @@ export default function AptDetailPage() {
     setEvalData(null)
     let alive = true
     fetch(`/api/apt?kaptCode=${kaptCode}`)
-      .then(r => r.json())
-      .then(apt => {
+      // 없는 단지(404)와 일시적 장애를 구분한다 — 전자는 색인에서 빼야 하고, 후자는 재시도 대상이다.
+      .then(r => r.json().then(body => ({ ok: r.ok, status: r.status, body })))
+      .then(({ status, body: apt }) => {
+        if (status === 404) { const e = new Error('notfound'); e.notFound = true; throw e }
         if (apt.error) throw new Error(apt.error)
         // 1단계: 단지명·위치·한 줄 요약을 바로 그린다. 2단계: 실거래가 오면 가격을 얹는다.
         const base = buildBaseData(apt)
@@ -120,7 +123,7 @@ export default function AptDetailPage() {
         return loadPriceData(base)
       })
       .then(data => { if (alive) setEvalData(data) })
-      .catch(() => { if (alive) setLoadError(true) })
+      .catch((e) => { if (alive) setLoadError(e?.notFound ? 'notfound' : 'error') })
     return () => { alive = false }
   }, [kaptCode, location.state])
 
@@ -162,6 +165,8 @@ export default function AptDetailPage() {
       navigate('/')
     }
   }, [navigate])
+
+  if (loadError === 'notfound') return <NotFoundPage reason="apt" />
 
   if (loadError) {
     return (
