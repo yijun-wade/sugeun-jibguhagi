@@ -886,6 +886,7 @@ header { text-align: center; padding: 4px 0 2px; }
   display: flex; align-items: center; gap: 12px;
   padding: 12px 0 16px;
 }
+.detail-header-actions { flex: 0 0 auto; }
 .detail-back {
   background: none; border: none; font-size: 14px;
   color: var(--blue); cursor: pointer; font-family: inherit;
@@ -895,21 +896,25 @@ header { text-align: center; padding: 4px 0 2px; }
 .detail-apt-name { font-size: 17px; font-weight: 800; }
 .detail-apt-loc  { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
+/* 저장은 30일 사용자 11명(0.5%)짜리 보조 행동인데, 화면에서 가장 강한 요소였다
+   — 꽉 찬 브랜드 오렌지에 그림자까지. 답(요약 히어로)보다 눈에 먼저 들어왔다.
+   외곽선 버튼으로 낮춘다. 위계는 답 > 근거 > 행동 순이어야 한다. */
 .collect-btn {
   flex-shrink: 0;
-  background: var(--orange-strong); border: none;
-  color: #fff; border-radius: 22px;
-  padding: 9px 16px; font-size: 13px; font-weight: 700;
+  min-height: 40px;
+  background: var(--card); border: 1.5px solid var(--border);
+  color: var(--muted); border-radius: 20px;
+  padding: 0 14px; font-size: 13px; font-weight: 600;
   cursor: pointer; font-family: inherit; white-space: nowrap;
-  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
-  box-shadow: 0 2px 10px rgba(234,88,12,0.30);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
   letter-spacing: -0.2px;
 }
-.collect-btn:hover  { background: #9a3412; box-shadow: 0 4px 16px rgba(234,88,12,0.40); }
-.collect-btn:active { transform: scale(0.95); }
+.collect-btn:hover  { border-color: var(--blue); color: var(--blue); background: var(--blue-lt); }
+.collect-btn:active { transform: scale(0.97); }
+.collect-btn:disabled { opacity: 0.5; cursor: default; }
 .collect-btn.collected {
-  background: #f0fdf4; border: 1.5px solid #86efac;
-  color: var(--green); box-shadow: none;
+  background: #f0fdf4; border-color: #86efac;
+  color: var(--green);
 }
 .collect-btn.collected:hover { background: #dcfce7; }
 
@@ -2661,7 +2666,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .saju-btn-pay:disabled { opacity: 0.6; cursor: not-allowed; }
 .saju-btn-home { display: block; height: 52px; line-height: 52px; text-align: center; background: #EFF6FF; color: var(--blue); border: 1.5px solid #BFDBFE; border-radius: 12px; font-size: 15px; font-weight: 700; text-decoration: none; margin-bottom: 16px; }
 .saju-pay-note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 10px; }
-.saju-disclaimer { font-size: 11px; color: #9CA3AF; text-align: center; line-height: 1.6; margin-top: 16px; }
+.saju-disclaimer { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.6; margin-top: 16px; }
 .saju-pillar-card { background: linear-gradient(135deg, #1e3a8a, #2563eb); border-radius: 20px; padding: 28px 24px; text-align: center; margin-bottom: 16px; }
 .saju-pillars { display: flex; gap: 8px; margin-top: 20px; justify-content: center; }
 .saju-pillar-col { flex: 1; border-radius: 10px; padding: 10px 4px; text-align: center; }
@@ -2787,11 +2792,11 @@ header { text-align: center; padding: 4px 0 2px; }
 
 /* ─── 푸터 사업자 정보 ─── */
 .site-footer-biz {
-  font-size: 11px; color: #9CA3AF; line-height: 1.8;
+  font-size: 11px; color: var(--muted); line-height: 1.8;
   margin-top: 12px; padding-top: 12px;
   border-top: 1px solid #F3F4F6; text-align: center;
 }
-.site-footer-biz a { color: #9CA3AF; }
+.site-footer-biz a { color: var(--muted); }
 
 /* ─── Beta 뱃지 ─── */
 .logo-beta {
@@ -2804,7 +2809,7 @@ header { text-align: center; padding: 4px 0 2px; }
 
 /* ─── 베타 공지 ─── */
 .beta-notice {
-  font-size: 11px; color: #9CA3AF;
+  font-size: 11px; color: var(--muted);
   text-align: center; margin-top: 10px; line-height: 1.5;
 }
 
@@ -3229,3 +3234,42 @@ header { text-align: center; padding: 4px 0 2px; }
 }
 .rental-info-link:hover { border-color: var(--blue, #2563eb); }
 .rental-info-link:focus-visible { outline: 2px solid var(--blue, #2563eb); outline-offset: 2px; }
+
+/* ─── 404 ─── */
+.notfound {
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 40px 24px; text-align: center; display: grid; gap: 10px; justify-items: center;
+}
+.notfound-title { margin: 0; font-size: 19px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
+.notfound-desc { margin: 0; font-size: 14px; line-height: 1.6; color: var(--muted); max-width: 32ch; }
+.notfound-cta {
+  margin-top: 8px; min-height: 44px; display: inline-flex; align-items: center;
+  padding: 0 20px; border-radius: 22px; background: var(--blue); color: #fff;
+  font-size: 14px; font-weight: 700; text-decoration: none;
+}
+.notfound-cta:hover { background: #1d4ed8; }
+
+/* ─── 데스크톱 (방문자 32% — Windows 30% · Mac 3%) ───────────────────────
+   전 화면이 680px 단일 컬럼이라 1440px 모니터에서 양옆 절반이 비었다.
+   2단 그리드는 DOM 순서 때문에 한쪽에 큰 빈칸이 생겨 쓰지 않는다. 대신
+   폭을 넓히고, 가로로 늘어놓을 수 있는 것(유사단지·단지정보·질문칩)만 여러 열로 편다. */
+@media (min-width: 1024px) {
+  .app { max-width: 860px; }
+
+  /* 6곳짜리 리스트는 세로로 길게 끄는 대신 2열로 */
+  .similar-apts-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .similar-apts-list li { margin: 0; }
+  .similar-apt-card { height: 100%; }
+
+  /* 단지 정보는 한 줄에 네 항목까지 */
+  .apt-info-grid { grid-template-columns: repeat(4, 1fr); }
+
+  /* 데스크톱에는 하단 고정 바가 필요 없다 — 페이지 끝 CTA로 충분하다 */
+  .detail-mobile-actions { display: none; }
+  .detail-report { padding-bottom: 0; }
+
+  /* 읽는 거리에 맞춰 답과 본문만 조금 키운다 */
+  .verdict-line { font-size: 19px; }
+  .vibe-feed-line { font-size: 14.5px; }
+  .osm-map { height: 360px; }
+}

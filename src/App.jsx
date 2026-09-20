@@ -16,6 +16,7 @@ import SajuPage from './SajuPage.jsx'
 import PrivacyPage from './PrivacyPage.jsx'
 import TermsPage from './TermsPage.jsx'
 import { track } from './analytics.js'
+import NotFoundPage from './NotFoundPage.jsx'
 import { parseAddr } from './addr.js'
 import AdUnit from './AdUnit.jsx'
 import AdFitBanner from './AdFitBanner.jsx'
@@ -154,7 +155,10 @@ export default function App() {
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/report" element={<ReportPage />} />
-        <Route path="*" element={<SearchApp />} />
+        {/* /search와 홈만 SearchApp. 나머지는 404 — 전에는 오타 URL이 전부 홈으로 흡수됐다. */}
+        <Route path="/search" element={<SearchApp />} />
+        <Route path="/" element={<SearchApp />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   )

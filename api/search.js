@@ -3,6 +3,7 @@
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { setCors } from './_utils.js'
+import { rankResults } from './_search-rank.js'
 
 export const config = { regions: ['icn1'] }
 
@@ -57,15 +58,6 @@ function normalizeQuery(q) {
   return result
 }
 
-// addr에서 동/구/시 단위 추출 헬퍼
-// "경기도 광명시 철산동" → ["광명시", "철산동"]
-function extractAdminUnits(addr) {
-  return (addr || '').split(' ').filter(part =>
-    part.endsWith('동') || part.endsWith('구') || part.endsWith('시') ||
-    part.endsWith('군') || part.endsWith('읍') || part.endsWith('면')
-  )
-}
-
 export default function handler(req, res) {
   if (setCors(req, res)) return
   const { q } = req.query
@@ -75,57 +67,13 @@ export default function handler(req, res) {
   const enrich = loadEnrichMap()
   const rawQuery = q.trim()
   const query = normalizeQuery(rawQuery)
-  const normalQ = query.replace(/\s+/g, '')
 
-  const results = list
-    .map(i => {
-      const nm = i.kaptName || ''
-      const addr = i.addr || ''
-      const nmNorm = nm.replace(/\s+/g, '')
-      let score = 0
-
-      // 실거래 유래 단지의 검색용 별칭 (잠실동 "주공아파트 5단지" → "잠실주공5단지")
-      const aliases = i.aliases || []
-
-      if (nm === query) {
-        score = 5  // 아파트명 정확 일치
-      } else if (aliases.some(a => a === normalQ)) {
-        score = 4.5  // 별칭 정확 일치
-      } else if (nm.includes(query)) {
-        score = 4  // 아파트명 포함
-      } else if (nmNorm.includes(normalQ)) {
-        score = 3  // 아파트명 공백제거 포함
-      } else if (aliases.some(a => a.includes(normalQ))) {
-        score = 3  // 별칭 포함
-      } else {
-        const units = extractAdminUnits(addr)
-        const strongUnitMatch = query.length >= 2 && units.some(unit => unit.startsWith(query))
-        const weakUnitMatch = query.length >= 2 && units.some(unit =>
-          unit.includes(query) || query.includes(unit)
-        )
-        if (strongUnitMatch) score = 3.5
-        else if (weakUnitMatch) score = 2.5
-        else if (addr.includes(query)) score = 2
-        else if (addr.replace(/\s+/g, '').includes(normalQ)) score = 1
-      }
-
-      const isMetro = /^(서울|경기)/.test(addr)
-      const finalScore = score + (isMetro ? 1 : 0)  // 서울/경기 +1 보너스
-      return score > 0 ? { apt: i, score: finalScore } : null
-    })
-    .filter(Boolean)
-    .sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score  // 1차: 복합점수 내림차순
-      // 2차: 세대수 내림차순
-      const aCnt = enrich.get(a.apt.kaptCode)?.kaptdaCnt || 0
-      const bCnt = enrich.get(b.apt.kaptCode)?.kaptdaCnt || 0
-      if (bCnt !== aCnt) return bCnt - aCnt
-      return (a.apt.kaptName || '').localeCompare(b.apt.kaptName || '', 'ko')  // 3차: 가나다
-    })
-    .map(m => {
-      const extra = enrich.get(m.apt.kaptCode)
-      if (!extra) return m.apt
-      return { ...m.apt, kaptdaCnt: extra.kaptdaCnt, useAprDay: extra.useAprDay, summary: extra.summary }
+  const ranked = rankResults(list, query, (code) => enrich.get(code)?.kaptdaCnt || 0)
+  const results = ranked
+    .map(apt => {
+      const extra = enrich.get(apt.kaptCode)
+      if (!extra) return apt
+      return { ...apt, kaptdaCnt: extra.kaptdaCnt, useAprDay: extra.useAprDay, summary: extra.summary }
     })
     .slice(0, 20)
 

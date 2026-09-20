@@ -3,19 +3,22 @@ name: Apt Vibe Pre-generation
 # 수근수근 요약 사전 생성(public/vibe/*.json + public/apt-vibe.json).
 # 요약은 30일이 지나야 다시 만든다 — 주 1회, 상한 120곳이면 임대 단지 약 390곳이 4주에 한 바퀴 돈다.
 #
-# 비용이 드는 작업이라(Opus 5, 단지당 약 $0.018 → 주 최대 약 $2) 자동 실행은 꺼 두었다.
-# 켜려면 아래 schedule 주석을 푼다. 그 전까지는 Actions 탭에서 수동 실행.
+# 스케줄을 켜 둔 이유: 요약은 60일이 지나면 클라이언트가 안 쓰고 실시간(약 5초)으로 돌아간다.
+# 자동 갱신이 없으면 배포한 개선이 두 달 뒤 조용히 사라진다.
+# 주기 설계: 대상 약 600곳(임대 337 + 세대수 상위 300, 일부 겹침)을 주 150곳씩 4주에 한 바퀴.
+# 배치는 25일 지난 것만 다시 만들고 오래된 것부터 처리하므로, 클라이언트 만료(60일) 전에 갱신된다.
+# 비용은 주 150곳 × 약 $0.019 ≈ $2.9, 월 $12 안쪽. 실제로는 건너뛰는 게 있어 더 적다.
 on:
-  # schedule:
-  #   - cron: '0 18 * * 0'  # 매주 월요일 03:00 KST
+  schedule:
+    - cron: '0 18 * * 0'  # 매주 월요일 03:00 KST
   workflow_dispatch:
     inputs:
       target:
         description: '대상 (--type=rental | --top=300 | --all)'
-        default: '--type=rental'
+        default: '--type=rental --top=300'
       max:
         description: '이번 실행 상한(곳)'
-        default: '120'
+        default: '150'
 
 jobs:
   generate:
@@ -33,7 +36,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-        run: node scripts/build-apt-vibe.mjs ${{ inputs.target || '--type=rental' }} --max=${{ inputs.max || '120' }}
+        run: node scripts/build-apt-vibe.mjs ${{ inputs.target || '--type=rental --top=300' }} --max=${{ inputs.max || '150' }}
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
