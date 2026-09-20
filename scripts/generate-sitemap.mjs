@@ -57,16 +57,51 @@ const aptUrls = [...aptList, ...extraApts.filter(a => !seenCodes.has(a.kaptCode)
 
 const allUrls = [...staticUrls, ...briefingUrls, ...aptUrls]
 
-const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allUrls.map(u => `  <url>
+const urlBlock = (u) => `  <url>
     <loc>${u.loc}</loc>${u.lastmod ? `
     <lastmod>${u.lastmod}</lastmod>` : ''}
     <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
-  </url>`).join('\n')}
+  </url>`
+
+const urlsetXml = (urls) => `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map(urlBlock).join('\n')}
 </urlset>`
 
-writeFileSync(join(process.cwd(), 'public', 'sitemap.xml'), xml)
+// 사이트맵을 쪼개 색인으로 묶는다.
+//
+// 왜: 구글이 sitemap.xml을 2026-04-16에 한 번 읽고 '발견된 페이지 1'로 기록한 뒤 5개월째
+// 다시 읽지 않았다. 단지 URL 3,346개가 들어간 건 4/22라 엿새 차이로 어긋났고, 그 한 번의
+// 판단 때문에 6,732개 단지 페이지가 발견조차 되지 않았다.
+// 쪼개면 (1) 새 주소라 구글이 새로 읽고 (2) 바뀐 조각만 lastmod로 다시 읽으며
+// (3) 조각별 '발견된 페이지'가 보여 어디서 막히는지 진단이 된다.
+const CHUNK = 2000
+const files = []
+
+files.push({ name: 'sitemap-pages.xml', urls: [...staticUrls, ...briefingUrls] })
+for (let i = 0; i < aptUrls.length; i += CHUNK) {
+  files.push({ name: `sitemap-apt-${Math.floor(i / CHUNK) + 1}.xml`, urls: aptUrls.slice(i, i + CHUNK) })
+}
+
+const latest = (urls) => urls.map(u => u.lastmod).filter(Boolean).sort().pop() || TODAY
+
+for (const f of files) {
+  writeFileSync(join(process.cwd(), 'public', f.name), urlsetXml(f.urls))
+}
+
+const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${files.map(f => `  <sitemap>
+    <loc>${BASE_URL}/${f.name}</loc>
+    <lastmod>${latest(f.urls)}</lastmod>
+  </sitemap>`).join('\n')}
+</sitemapindex>`
+writeFileSync(join(process.cwd(), 'public', 'sitemap-index.xml'), indexXml)
+
+// 기존 sitemap.xml도 그대로 둔다 — 이미 제출돼 있고, 지우면 그 항목이 404가 된다.
+writeFileSync(join(process.cwd(), 'public', 'sitemap.xml'), urlsetXml(allUrls))
+
 const withMod = allUrls.filter(u => u.lastmod).length
 console.log(`사이트맵 생성 완료: ${allUrls.length}개 URL (lastmod ${withMod}개 · 요약 보유 단지 ${Object.keys(vibeMap).length}곳)`)
+console.log(`  색인 sitemap-index.xml + 조각 ${files.length}개: ${files.map(f => `${f.name}(${f.urls.length})`).join(' ')}`)
