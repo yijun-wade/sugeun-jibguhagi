@@ -1112,12 +1112,12 @@ header { text-align: center; padding: 4px 0 2px; }
   font-size: 12px; color: var(--muted); line-height: 1.5; margin: 0 0 12px;
 }
 .verdict-share {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 13px; font-weight: 700; color: #fff;
-  background: var(--blue); border: 0; border-radius: 10px;
-  padding: 9px 16px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 4px;
+  min-height: 44px; margin: 0 0 -10px -4px; padding: 0 4px;
+  font-size: 13px; font-weight: 600; color: var(--blue);
+  background: none; border: 0; cursor: pointer; font-family: inherit;
 }
-.verdict-share:hover { filter: brightness(1.05); }
+.verdict-share:hover { text-decoration: underline; }
 
 /* 동네 Q&A */
 .qna-card {
@@ -1132,11 +1132,18 @@ header { text-align: center; padding: 4px 0 2px; }
 .qna-title { font-size: 15px; font-weight: 700; color: var(--text); }
 .qna-sub { font-size: 11px; color: var(--muted); }
 .qna-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+/* 실측 29px였다. 1차 행동으로 세운 요소인데 기준(44px)의 2/3. 칩의 생김새는 두고
+   터치 영역만 넓힌다 — 버튼은 투명 44px, 안쪽 span이 칩 모양을 그린다. */
 .qna-chip {
-  font-size: 12px; font-weight: 600; color: var(--blue);
-  background: var(--blue-lt); border: 1px solid var(--blue-md);
-  padding: 6px 11px; border-radius: 16px; cursor: pointer;
+  min-height: 44px; padding: 0; display: inline-flex; align-items: center;
+  background: none; border: 0; cursor: pointer; font-family: inherit;
 }
+.qna-chip > span {
+  font-size: 13px; font-weight: 600; color: var(--blue);
+  background: var(--blue-lt); border: 1px solid var(--blue-md);
+  padding: 7px 12px; border-radius: 16px;
+}
+.qna-chip:hover > span { border-color: var(--blue); }
 .qna-chip:disabled { opacity: 0.5; cursor: default; }
 .qna-form { display: flex; gap: 8px; }
 .qna-input {
@@ -1906,7 +1913,8 @@ header { text-align: center; padding: 4px 0 2px; }
   }
   .mobile-collect-btn.collected { background: var(--green); }
   /* sticky 바 가리지 않게 콘텐츠 하단 여백 */
-  .detail-report { padding-bottom: 80px; }
+  /* 하단 고정 저장 바를 없앴으므로 그 자리만큼 띄우던 여백도 없앤다 */
+  .detail-report { padding-bottom: 0; }
   .collect-cta-card { padding: 18px; gap: 12px; }
   .collect-cta-icon { font-size: 28px; }
   .collect-cta-title { font-size: 15px; }
@@ -3222,11 +3230,14 @@ header { text-align: center; padding: 4px 0 2px; }
 /* 임대 단지 안내 카드 */
 .rental-info {
   background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-  padding: 16px 18px; margin: 12px 0;
+  padding: 12px 16px; margin: 12px 0;
 }
-.rental-info-title { font-size: 15px; font-weight: 700; color: var(--text, inherit); }
-.rental-info-sub { margin: 6px 0 12px; font-size: 13px; line-height: 1.6; color: var(--muted); }
-.rental-info-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.rental-info-title { font-weight: 700; color: var(--text, inherit); }
+.rental-info-sub { margin: 0 0 8px; font-size: 13px; line-height: 1.5; color: var(--muted); }
+/* 링크 4개를 한 줄로 — 좁은 화면에선 줄바꿈 대신 가로로 민다 */
+.rental-info-links { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -4px; padding: 0 4px; }
+.rental-info-links::-webkit-scrollbar { display: none; }
+.rental-info-link { flex: 0 0 auto; }
 .rental-info-link {
   display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 14px;
   border: 1px solid var(--border); border-radius: 999px; background: #fff;
@@ -3273,3 +3284,10 @@ header { text-align: center; padding: 4px 0 2px; }
   .vibe-feed-line { font-size: 14.5px; }
   .osm-map { height: 360px; }
 }
+
+/* ─── 터치 영역 44px (실측에서 걸린 나머지) ───
+   뒤로 34 · 저장 40 · 질문 입력·제출 40 · 지도 링크 39px였다. 생김새는 두고 높이만 맞춘다. */
+.detail-back { min-height: 44px; padding: 0 4px; margin-left: -4px; }
+.collect-btn { min-height: 44px; }
+.qna-input, .qna-submit { min-height: 44px; }
+.map-deeplink-btn { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
