@@ -233,9 +233,8 @@ export default function AptDetailPage() {
         </div>
         <div className="brand-en">SuZip · 수집</div>
       </header>
-      <h1 style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>
-        {evalData.aptNm} {evalData.dong} 실거주 후기 및 동네 분위기
-      </h1>
+{/* h1은 DetailReport의 보이는 단지명이다. 전에는 화면 밖으로 숨긴 h1을 따로 두어
+          크롤러가 보는 구조와 사람이 보는 구조가 달랐다. */}
       <DetailReport apt={evalData} onBack={goBack} onCollectionChange={setCollection} />
     </div>
   )

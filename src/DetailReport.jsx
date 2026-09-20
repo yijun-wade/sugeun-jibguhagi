@@ -132,6 +132,39 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
     if (!saving) setToast('uncollect')
   }, [apt, collected, onCollectionChange, delta, otherSaved])
 
+  // 다른 단지로 가는 넛지. 전에는 첫 화면(y=819)에 있어, 이 단지 설명(y=886~)을 읽기도 전에
+  // 나가는 문을 권했다. "막다른 페이지 탈출구"로 만든 것인데 막다른 곳은 페이지 끝이지 첫 화면이 아니다.
+  // 요약 → 원문 → 질문 다음으로 내린다.
+  const nudgeEl = similarItems && similarItems.length > 0 && (
+        <button
+          type="button"
+          className="discover-nudge"
+          onClick={() => {
+            track('discover_nudge_click', { apt_name: apt.aptNm, from: 'after_vibe', count: similarItems.length, mode: rentalNoPrice ? 'rental' : hasPrice ? 'price' : 'units' })
+            similarRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }}
+        >
+          <span className="discover-nudge-icon" aria-hidden="true">🏘</span>
+          <span className="discover-nudge-text">
+            <span className="discover-nudge-title">
+              {rentalNoPrice
+                ? `${apt.regionName || '이 근처'} 다른 공공임대·청년주택 ${similarItems.length}곳`
+                : hasPrice
+                  ? `이 근처 비슷한 값 단지 ${similarItems.length}곳`
+                  : `${apt.regionName || '이 근처'} 다른 단지 ${similarItems.length}곳`}
+            </span>
+            <span className="discover-nudge-sub">
+              {rentalNoPrice
+                ? '같은 구 먼저 · 세대수 큰 순'
+                : hasPrice
+                  ? `${apt.regionName || '이 근처'} · 이 집과 값이 비슷한 순`
+                  : `같은 ${apt.regionName || '이 근처'} · 규모 큰 단지 순`}
+            </span>
+          </span>
+          <span className="discover-nudge-arrow" aria-hidden="true">↓</span>
+        </button>
+      )
+
   return (
     <div className="detail-report">
       {/* 토스트는 눈으로만 보였고 스크린리더에는 저장·해제·공유 결과가 전혀 안 읽혔다.
@@ -151,7 +184,7 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       <div className="detail-header">
         <button className="detail-back" aria-label="목록으로 돌아가기" onClick={onBack}>← 뒤로</button>
         <div className="detail-title">
-          <div className="detail-apt-name">{apt.aptNm}</div>
+          <h1 className="detail-apt-name">{apt.aptNm}</h1>
           <div className="detail-apt-loc">{apt.dong} · {apt.regionName}</div>
         </div>
         <div className="detail-header-actions">
@@ -185,13 +218,14 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       {/* 살만해요? 종합 버디트 히어로 — SEO 착지 첫 화면 훅 + 공유 유도 */}
       {(heroSummary || (apt.verdict && apt.verdict !== '실거래 데이터 없음')) && (
         <div className="verdict-hero" ref={heroRef}>
-          <div className="verdict-badge">이 단지, 살만해요?</div>
+          <h2 className="verdict-badge">이 단지, 살만해요?</h2>
           <p className="verdict-line">{heroSummary || apt.verdict}</p>
           {apt.priceJudgment?.sentence && (
             <p className="verdict-price">{apt.priceJudgment.sentence}</p>
           )}
+          {/* 30일 4명이 쓴 기능이 첫 화면의 유일한 꽉 찬 버튼이었다 — 텍스트 링크로 낮춘다 */}
           <button type="button" className="verdict-share" onClick={handleShareRich}>
-            <span aria-hidden="true">💬</span> 친구에게 공유
+            친구에게 공유 <span aria-hidden="true">↗</span>
           </button>
         </div>
       )}
@@ -227,42 +261,6 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
 
       {/* 임대 단지: 시세 대신 입주 정보. 실거래가 없는 단지에서 가격 바가 비는 자리를 채운다. */}
       {isRental && <RentalInfoCard aptNm={apt.aptNm} hasPrice={hasPrice} />}
-
-      {/* 동네 Q&A — 탭 아래 세 번째 블록에 있을 때도 1.5%가 썼다(저장의 3배, 보고서의 15배).
-          방문자가 가져온 질문(소음·주차·관리비·내부)에 바로 닿도록 첫 화면으로 올린다. */}
-      <NeighborhoodQnA aptNm={apt.aptNm} dong={apt.dong} gu={apt.regionName} rental={isRental} />
-
-      {/* 상단 discovery 넛지 — SEO 착지자가 실제 보는 위치에서 '막다른길' 탈출구를 노출.
-          리스트 자체는 SEO 내부링크 위해 하단 유지, 여기선 진입 통로만 끌어올림. */}
-      {similarItems && similarItems.length > 0 && (
-        <button
-          type="button"
-          className="discover-nudge"
-          onClick={() => {
-            track('discover_nudge_click', { apt_name: apt.aptNm, from: 'detail_top', count: similarItems.length, mode: rentalNoPrice ? 'rental' : hasPrice ? 'price' : 'units' })
-            similarRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-          }}
-        >
-          <span className="discover-nudge-icon" aria-hidden="true">🏘</span>
-          <span className="discover-nudge-text">
-            <span className="discover-nudge-title">
-              {rentalNoPrice
-                ? `${apt.regionName || '이 근처'} 다른 공공임대·청년주택 ${similarItems.length}곳`
-                : hasPrice
-                  ? `이 근처 비슷한 값 단지 ${similarItems.length}곳`
-                  : `${apt.regionName || '이 근처'} 다른 단지 ${similarItems.length}곳`}
-            </span>
-            <span className="discover-nudge-sub">
-              {rentalNoPrice
-                ? '같은 구 먼저 · 세대수 큰 순'
-                : hasPrice
-                  ? `${apt.regionName || '이 근처'} · 이 집과 값이 비슷한 순`
-                  : `같은 ${apt.regionName || '이 근처'} · 규모 큰 단지 순`}
-            </span>
-          </span>
-          <span className="discover-nudge-arrow" aria-hidden="true">↓</span>
-        </button>
-      )}
 
       {/* 최근 본 집 비교 진입 — 리텐션 게이트(자동 캐처 기반). 본 집 2곳↑(현재 포함)일 때. */}
       {SHOW_RETENTION_ENTRY && otherViewed.length >= 1 && (
@@ -395,44 +393,8 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
         })}
       >
         {tab === '시세'       && <PriceTab apt={apt} />}
-        {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} apt={apt} onVibe={(v) => setHeroSummary(v.summary || null)} />}
+        {tab === '동네·이야기' && <NeighborhoodStoriesTab dong={apt.dong} aptNm={apt.aptNm} addr={apt.addr} apt={apt} onVibe={(v) => setHeroSummary(v.summary || null)} rental={isRental} nudge={nudgeEl} />}
       </div>
-
-      {/* 콘텐츠 끝 큰 수집 CTA — 미수집 상태에서만 노출.
-          착지자 맥락으로 카피 분기: 담은 집 0곳=결정 유보, 1곳+=비교 완성. */}
-      {!collected && !rentalNoPrice && !apt.priceLoading && (
-        <button
-          type="button"
-          className="collect-cta-card"
-          onClick={() => {
-            track('detail_collect_click', {
-              apt_name: apt.aptNm,
-              from: 'cta_card',
-              variant: otherSaved.length > 0 ? 'compare' : 'defer',
-              has_saved: otherSaved.length,
-            })
-            handleCollect()
-          }}
-        >
-          <span className="collect-cta-icon" aria-hidden="true">★</span>
-          <span className="collect-cta-text">
-            {otherSaved.length > 0 ? (
-              <>
-                <span className="collect-cta-title">
-                  {otherSaved[0].aptNm}{otherSaved.length > 1 ? ` 외 ${otherSaved.length - 1}곳` : ''} 담는 중 · 이 집도 같이 볼까요?
-                </span>
-                <span className="collect-cta-sub">저장한 집끼리 나란히 비교돼요</span>
-              </>
-            ) : (
-              <>
-                <span className="collect-cta-title">이 단지 거래 올라오면 여기서 알려드릴게요</span>
-                <span className="collect-cta-sub">다시 오면 저장할 때랑 얼마나 달라졌는지 보여드려요</span>
-              </>
-            )}
-          </span>
-          <span className="collect-cta-arrow" aria-hidden="true">›</span>
-        </button>
-      )}
 
       {/* 저장 직후 인라인 확인 — 즉시 보상 + 다음 행동 2개(비교 / 동네 구독) */}
       {justSaved && (
@@ -477,19 +439,6 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
         <SimilarApts kaptCode={apt.kaptCode} avg={apt.recentAvg} gu={apt.regionName} aptNm={apt.aptNm} items={similarItems} mode={rentalNoPrice ? 'rental' : hasPrice ? 'price' : 'units'} />
       </div>
 
-      {/* 모바일 sticky — 임대·무가격 단지에서는 "새 거래 뜨면 알려드려요"가 지킬 수 없는 약속이라 뺀다. */}
-      {!rentalNoPrice && (
-      <div className="detail-mobile-actions">
-        <button
-          disabled={!!apt.priceLoading}
-          className={`mobile-collect-btn${collected ? ' collected' : ''}`}
-          aria-label={collected ? `${apt.aptNm} 저장 취소` : `${apt.aptNm} 저장`}
-          onClick={() => { track('detail_collect_click', { apt_name: apt.aptNm, from: 'mobile_sticky' }); handleCollect() }}
-        >
-          {collected ? '✓ 저장됨 · 변동 지켜보는 중' : '★ 저장 · 새 거래 뜨면 알려드려요'}
-        </button>
-      </div>
-      )}
     </div>
   )
 }
@@ -913,7 +862,7 @@ function AptInfoCard({ apt }) {
 
   return (
     <div className="apt-info-card">
-      <div className="apt-info-title">단지 정보</div>
+      <h2 className="apt-info-title">단지 정보</h2>
       <div className="apt-info-grid">
         {items.map(({ label, value }) => (
           <div key={label} className="apt-info-item">
@@ -959,12 +908,12 @@ function NeighborhoodQnA({ aptNm, dong, gu, rental = false }) {
   return (
     <div className="qna-card">
       <div className="qna-head">
-        <span className="qna-title">궁금한 것부터 물어보세요</span>
+        <h2 className="qna-title">더 궁금한 게 있나요?</h2>
         <span className="qna-sub">모아둔 이야기에서 AI가 답을 찾아드려요</span>
       </div>
       <div className="qna-chips" ref={chipsRef}>
         {SUGGESTED.map((s) => (
-          <button key={s} className="qna-chip" onClick={() => ask(s, 'chip')} disabled={loading}>{s}</button>
+          <button key={s} className="qna-chip" onClick={() => ask(s, 'chip')} disabled={loading}><span>{s}</span></button>
         ))}
       </div>
       <form className="qna-form" onSubmit={(e) => { e.preventDefault(); ask(q, 'free') }}>
@@ -1011,11 +960,11 @@ function RentalInfoCard({ aptNm, hasPrice }) {
   const links = [...NOTICE_LINKS].sort((a, b) => (b.key === first) - (a.key === first))
   return (
     <div className="rental-info" ref={ref}>
-      <div className="rental-info-title">공공임대·청년주택 단지예요</div>
+      {/* 214px → 약 100px. 이 카드가 요약을 첫 화면 밖으로 밀어냈다. 설명은 한 줄로 줄이고
+          실제 행동인 공고 링크만 남긴다. */}
       <p className="rental-info-sub">
-        {hasPrice
-          ? '입주 자격·임대료·모집 일정은 공고에서 확인하세요.'
-          : '매매 실거래가 없는 단지라 시세 대신 살아본 이야기를 모았어요. 입주 자격·임대료·모집 일정은 공고에서 확인하세요.'}
+        <b className="rental-info-title">공공임대·청년주택</b>
+        {hasPrice ? ' · 입주 자격·임대료는 모집공고에서 확인하세요' : ' · 매매 실거래가 없는 단지예요. 입주 자격·임대료는 모집공고에서 확인하세요'}
       </p>
       <div className="rental-info-links">
         {links.map(l => (
@@ -1059,7 +1008,7 @@ function VibeReport({ aptNm, kaptCode }) {
               className="qna-chip"
               onClick={() => { track('vibe_report', { apt_name: aptNm, kapt_code: kaptCode, reason: r }); setSent(true) }}
             >
-              {r}
+              <span>{r}</span>
             </button>
           ))}
         </div>
@@ -1069,7 +1018,7 @@ function VibeReport({ aptNm, kaptCode }) {
 }
 
 /* ── 동네·이야기 통합 탭 ─────────────────── */
-function NeighborhoodStoriesTab({ dong, aptNm, addr, apt, onVibe }) {
+function NeighborhoodStoriesTab({ dong, aptNm, addr, apt, onVibe, rental = false, nudge = null }) {
   const [vibe, setVibe] = useState(null)
   const [vibeSummary, setVibeSummary] = useState(null)
   const [vibeLinks, setVibeLinks] = useState([])
@@ -1114,7 +1063,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt, onVibe }) {
       {/* 수군수군 — 동네 이야기 */}
       <div className="vibe-card">
         <div className="vibe-card-header">
-          <span className="vibe-card-badge">수군수군</span>
+          <h2 className="vibe-card-badge">수군수군</h2>
           <span className="vibe-card-sub">인터넷에 떠도는 이야기를 AI가 모아봤어요</span>
         </div>
         {vibeLoading ? (
@@ -1130,10 +1079,10 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt, onVibe }) {
                 const CAT_ICON = { 교통: '🚇', 학군: '📚', 분위기: '🏘️', 이슈: '📣' }
                 return cat.lines.length > 0 && (
                   <div key={cat.label} className="vibe-feed-item">
-                    <div className="vibe-feed-label">
-                      <span className="vibe-feed-icon">{CAT_ICON[cat.label] || '💬'}</span>
+                    <h3 className="vibe-feed-label">
+                      <span className="vibe-feed-icon" aria-hidden="true">{CAT_ICON[cat.label] || '💬'}</span>
                       {cat.label}
-                    </div>
+                    </h3>
                     <div className="vibe-feed-lines">
                       {cat.lines.map((line, i) => (
                         <p key={i} className="vibe-feed-line">{line}</p>
@@ -1169,6 +1118,13 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt, onVibe }) {
         )}
       </div>
 
+
+      {/* 질문은 요약을 읽고 '남는 것'을 묻는 자리다. 9/20 오전엔 첫 화면에 올렸는데, 그때는 요약이
+          6초 뒤에 떴다. 지금은 0.4~1.4초에 뜨므로 요약이 먼저다 — 요약에 이미 있는 걸 묻고 몇 초를
+          기다리게 하지 않는다. 사용률(30일 1.5%)이 떨어지는지는 qna_ask로 본다. */}
+      <NeighborhoodQnA aptNm={aptNm} dong={dong} gu={apt?.regionName} rental={rental} />
+
+      {nudge}
 
       {/* 단지 인포 카드 */}
       <AptInfoCard apt={apt} />

@@ -41,7 +41,7 @@ export default function GlossaryPage() {
           <a href="/" className="site-nav-link">이불 속 임장</a>
           <a href="/briefing" className="site-nav-link">이불 속 뉴스</a>
           <a href="/policy" className="site-nav-link">이불 속 정책</a>
-          <a href="/glossary" className="site-nav-link site-nav-active"><span className="nav-bubble">이불 속</span> 사전</a>
+          <a href="/glossary" className="site-nav-link site-nav-active">이불 속 사전</a>
         </nav>
       </header>
 

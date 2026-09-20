@@ -473,13 +473,8 @@ function SearchApp() {
         {searchedQuery && <meta name="robots" content="noindex, follow" />}
       </Helmet>
 
-      {/* 사주 프로모션 — 네비 위 얇은 배너 */}
-      <a href="/saju" className="saju-top-banner" onClick={() => track('saju_banner_click', { from: location.pathname })}>
-        <span className="saju-top-badge">무료</span>
-        <span className="saju-top-text">🔮 나는 어느 동네 살아야 잘 풀릴까? 사주로 확인</span>
-        <span className="saju-top-arrow">›</span>
-      </a>
-
+      {/* 사주 배너는 뺐다(2026-09-20). 30일 시작 9명짜리가 전 화면 최상단을 차지했다.
+          /saju 페이지 자체는 주소로 계속 열린다 — 광고 랜딩이자 구글에 색인된 URL이다. */}
       {/* 항상 표시되는 통합 헤더 */}
       <header className="site-header">
         <a href="/" className="site-header-logo">
@@ -490,7 +485,7 @@ function SearchApp() {
           <a href="/" className="site-nav-link site-nav-active">이불 속 임장</a>
           <a href="/briefing" className="site-nav-link">속닥속닥 뉴스</a>
           <a href="/policy" className="site-nav-link">이불 속 정책</a>
-          <a href="/glossary" className="site-nav-link"><span className="nav-bubble">이불 속</span> 사전</a>
+          <a href="/glossary" className="site-nav-link">이불 속 사전</a>
           <a href="/report" className="site-nav-link">살까말까 보고서</a>
         </nav>
       </header>
@@ -585,7 +580,7 @@ function SearchApp() {
               (2) 예시 검색을 바로 실행하는 버튼으로 끝낸다. */}
       {isHome && (
         <section className="hero-value">
-          <h2 className="hero-value-title">퇴근 후, 이불 속에서 하는 임장</h2>
+          <h1 className="hero-value-title">퇴근 후, 이불 속에서 하는 임장</h1>
           <p className="hero-value-sub">발품 팔기 전에 아파트 이름만 넣어보세요.</p>
           <ul className="hero-value-list">
             <li><span aria-hidden="true">🗣</span> 그 동네 사람들이 실제로 하는 이야기</li>
@@ -733,7 +728,7 @@ function SearchApp() {
           {resultTab === 'search' ? (
             <>
               <div className="search-result-header">
-                <span className="search-result-title">'{searchedQuery}' 검색 결과</span>
+                <h1 className="search-result-title">'{searchedQuery}' 검색 결과</h1>
                 <span className="search-result-count">
                   {totalCount <= cards.length ? `${cards.length}개` : `${cards.length}개 / 전체 ${totalCount}개`}
                 </span>

@@ -19,7 +19,7 @@ export default function PrivacyPage() {
         <a href="/" style={{ display: 'inline-block', marginBottom: 24, color: '#2563eb', textDecoration: 'none', fontSize: 14 }}>← 홈으로</a>
 
         <h1 style={{ fontSize: 26, fontWeight: 900, color: '#111827', marginBottom: 6 }}>개인정보 처리방침</h1>
-        <p style={{ fontSize: 13, color: '#6B7280', marginBottom: 24 }}>시행일: 2026년 5월 11일</p>
+        <p style={{ fontSize: 13, color: '#5b6472', marginBottom: 24 }}>시행일: 2026년 5월 11일</p>
 
         <p style={P_STYLE}>
           준준팩토리(이하 "회사")는 "수군수군 우리집"(suzip.kr, 이하 "서비스")의 이용자 개인정보를 중요하게 생각하며,

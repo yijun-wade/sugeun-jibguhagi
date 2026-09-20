@@ -36,7 +36,7 @@ export default function EvalCard({ apt, onDetail, onCollectionChange }) {
       {/* 헤더 */}
       <div className="eval-header">
         <div>
-          <div className="eval-name">{apt.aptNm}</div>
+          <h2 className="eval-name">{apt.aptNm}</h2>
           <div className="eval-loc">{apt.dong} · {apt.regionName} · {apt.buildYear}년식</div>
         </div>
         <button className={`eval-collect-btn${collected ? ' collected' : ''}`} onClick={handleCollect} aria-label={collected ? `${apt.aptNm} 저장 취소` : `${apt.aptNm} 저장`}>
