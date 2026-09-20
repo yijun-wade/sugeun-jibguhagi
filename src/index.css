@@ -2666,7 +2666,7 @@ header { text-align: center; padding: 4px 0 2px; }
 .saju-btn-pay:disabled { opacity: 0.6; cursor: not-allowed; }
 .saju-btn-home { display: block; height: 52px; line-height: 52px; text-align: center; background: #EFF6FF; color: var(--blue); border: 1.5px solid #BFDBFE; border-radius: 12px; font-size: 15px; font-weight: 700; text-decoration: none; margin-bottom: 16px; }
 .saju-pay-note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 10px; }
-.saju-disclaimer { font-size: 11px; color: #9CA3AF; text-align: center; line-height: 1.6; margin-top: 16px; }
+.saju-disclaimer { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.6; margin-top: 16px; }
 .saju-pillar-card { background: linear-gradient(135deg, #1e3a8a, #2563eb); border-radius: 20px; padding: 28px 24px; text-align: center; margin-bottom: 16px; }
 .saju-pillars { display: flex; gap: 8px; margin-top: 20px; justify-content: center; }
 .saju-pillar-col { flex: 1; border-radius: 10px; padding: 10px 4px; text-align: center; }
@@ -2792,11 +2792,11 @@ header { text-align: center; padding: 4px 0 2px; }
 
 /* ─── 푸터 사업자 정보 ─── */
 .site-footer-biz {
-  font-size: 11px; color: #9CA3AF; line-height: 1.8;
+  font-size: 11px; color: var(--muted); line-height: 1.8;
   margin-top: 12px; padding-top: 12px;
   border-top: 1px solid #F3F4F6; text-align: center;
 }
-.site-footer-biz a { color: #9CA3AF; }
+.site-footer-biz a { color: var(--muted); }
 
 /* ─── Beta 뱃지 ─── */
 .logo-beta {
@@ -2809,7 +2809,7 @@ header { text-align: center; padding: 4px 0 2px; }
 
 /* ─── 베타 공지 ─── */
 .beta-notice {
-  font-size: 11px; color: #9CA3AF;
+  font-size: 11px; color: var(--muted);
   text-align: center; margin-top: 10px; line-height: 1.5;
 }
 

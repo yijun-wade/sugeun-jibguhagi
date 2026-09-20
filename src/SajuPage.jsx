@@ -77,7 +77,7 @@ function SajuInput({ onPreview }) {
         <span style={{ background: '#f97316', color: '#fff', fontSize: 12, fontWeight: 800, padding: '4px 10px', borderRadius: 20 }}>
           오픈기념 무료
         </span>
-        <span style={{ fontSize: 13, color: '#9CA3AF', textDecoration: 'line-through' }}>원가 1,900원</span>
+        <span style={{ fontSize: 13, color: '#6B7280', textDecoration: 'line-through' }}>원가 1,900원</span>
       </div>
 
       <div style={{ fontSize: 13, color: '#2563eb', fontWeight: 700, marginBottom: 8 }}>이불 속 터잡기</div>
@@ -104,7 +104,7 @@ function SajuInput({ onPreview }) {
         </div>
 
         <div className="saju-field">
-          <label>태어난 시 <span style={{ color: '#9CA3AF', fontWeight: 400 }}>(모르면 건너뛰어요)</span></label>
+          <label>태어난 시 <span style={{ color: '#6B7280', fontWeight: 400 }}>(모르면 건너뛰어요)</span></label>
           <select style={{ width: '100%' }} value={si} onChange={e => setSi(e.target.value)}>
             <option value="">시 모름</option>
             {SI_LIST.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
@@ -154,7 +154,7 @@ function SajuInput({ onPreview }) {
           {/* 1순위 지역 */}
           <div style={{ padding: '14px 16px', borderBottom: '1px solid #E5E7EB' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <span style={{ fontSize: 11, color: '#9CA3AF' }}>1순위</span>
+              <span style={{ fontSize: 11, color: '#6B7280' }}>1순위</span>
               <span style={{ fontSize: 16, fontWeight: 800, color: '#111827' }}>마포구</span>
               <span style={{ fontSize: 11, color: '#7c3aed', fontWeight: 700 }}>水 오행</span>
               <span style={{ marginLeft: 'auto', fontSize: 16, fontWeight: 900, color: '#2563eb' }}>95점</span>
@@ -186,12 +186,12 @@ function SajuInput({ onPreview }) {
                 <div key={apt.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid #F3F4F6' }}>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: '#111827' }}>{apt.name}</div>
-                    <div style={{ fontSize: 11, color: '#9CA3AF' }}>{apt.dong} · {apt.year}년</div>
+                    <div style={{ fontSize: 11, color: '#6B7280' }}>{apt.dong} · {apt.year}년</div>
                   </div>
                   <div style={{ fontSize: 15, fontWeight: 900, color: '#2563eb' }}>{apt.avg}억</div>
                 </div>
               ))}
-              <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 6, textAlign: 'right' }}>+ 더 많은 단지 →</div>
+              <div style={{ fontSize: 11, color: '#6B7280', marginTop: 6, textAlign: 'right' }}>+ 더 많은 단지 →</div>
             </div>
           </div>
 
@@ -200,11 +200,11 @@ function SajuInput({ onPreview }) {
             <div style={{ filter: 'blur(4px)', pointerEvents: 'none' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                 <span style={{ fontSize: 14, fontWeight: 700 }}>2순위 ████ · 85점</span>
-                <span style={{ fontSize: 11, color: '#9CA3AF' }}>용신 水 · 한강변</span>
+                <span style={{ fontSize: 11, color: '#6B7280' }}>용신 水 · 한강변</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: 14, fontWeight: 700 }}>3순위 ████ · 76점</span>
-                <span style={{ fontSize: 11, color: '#9CA3AF' }}>용신 水 · 한강 접근</span>
+                <span style={{ fontSize: 11, color: '#6B7280' }}>용신 水 · 한강 접근</span>
               </div>
             </div>
             <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 4 }}>
@@ -222,7 +222,7 @@ function SajuInput({ onPreview }) {
             </div>
           </div>
 
-          <div style={{ padding: '10px 16px', background: '#F9FAFB', fontSize: 11, color: '#9CA3AF', textAlign: 'center' }}>
+          <div style={{ padding: '10px 16px', background: '#F9FAFB', fontSize: 11, color: '#6B7280', textAlign: 'center' }}>
             내 생년월일을 입력하면 실제 내 사주로 분석해드려요
           </div>
         </div>
@@ -367,13 +367,13 @@ function SajuLoading({ birthData, onResult, onError }) {
         <p style={{ fontSize: 13, fontWeight: 700, color: '#374151', marginBottom: 4 }}>
           🙏 광고 클릭으로 무료 서비스를 응원해주세요
         </p>
-        <p style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 16 }}>
+        <p style={{ fontSize: 12, color: '#6B7280', marginBottom: 16 }}>
           클릭해도 이 페이지는 그대로 유지돼요 (새 탭으로 열림)
         </p>
         <AdFitBanner />
       </div>
 
-      <p style={{ fontSize: 11, color: '#9CA3AF', lineHeight: 1.6 }}>
+      <p style={{ fontSize: 11, color: '#6B7280', lineHeight: 1.6 }}>
         이 서비스는 광고 수익으로 운영돼요.<br/>원가 1,900원을 광고 클릭으로 대신해주세요.
       </p>
     </div>
@@ -531,7 +531,7 @@ function SajuResult({ result, onBack }) {
                 <div style={{ fontSize: 15, fontWeight: 800, color: '#1e3a8a', letterSpacing: 1 }}>
                   {val?.split(' ')[0]}
                 </div>
-                <div style={{ fontSize: 11, color: '#9CA3AF' }}>{val?.match(/\(([^)]+)\)/)?.[1] || ''}</div>
+                <div style={{ fontSize: 11, color: '#6B7280' }}>{val?.match(/\(([^)]+)\)/)?.[1] || ''}</div>
               </div>
             ))}
           </div>
@@ -572,7 +572,7 @@ function SajuResult({ result, onBack }) {
           <section key={region.gu} className="saju-region-card">
             <div className="saju-region-header">
               <div>
-                <span style={{ fontSize: 12, color: '#9CA3AF', marginRight: 6 }}>{i+1}순위</span>
+                <span style={{ fontSize: 12, color: '#6B7280', marginRight: 6 }}>{i+1}순위</span>
                 <span style={{ fontSize: 18, fontWeight: 800 }}>{region.gu}</span>
               </div>
               <span className="saju-region-score">{region.score}점</span>
@@ -605,7 +605,7 @@ function SajuResult({ result, onBack }) {
                   <div key={apt.name} className="saju-apt-row">
                     <div>
                       <div style={{ fontSize: 14, fontWeight: 700 }}>{apt.name}</div>
-                      <div style={{ fontSize: 11, color: '#9CA3AF' }}>{apt.dong} · {apt.year}년 · {apt.units?.toLocaleString()}세대</div>
+                      <div style={{ fontSize: 11, color: '#6B7280' }}>{apt.dong} · {apt.year}년 · {apt.units?.toLocaleString()}세대</div>
                     </div>
                     <div style={{ fontSize: 16, fontWeight: 800, color: '#2563eb' }}>{apt.avg}억</div>
                   </div>
