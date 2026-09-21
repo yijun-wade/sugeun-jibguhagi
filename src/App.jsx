@@ -17,6 +17,8 @@ import PrivacyPage from './PrivacyPage.jsx'
 import TermsPage from './TermsPage.jsx'
 import { track } from './analytics.js'
 import NotFoundPage from './NotFoundPage.jsx'
+import UpdatesPage from './UpdatesPage.jsx'
+import SiteFooter from './SiteFooter.jsx'
 import { parseAddr } from './addr.js'
 import AdUnit from './AdUnit.jsx'
 import AdFitBanner from './AdFitBanner.jsx'
@@ -129,6 +131,7 @@ function PageViewTracker() {
       : path === '/report' ? 'report'
       : path.startsWith('/search') ? 'search'
       : path.startsWith('/saju') ? 'saju'
+      : path.startsWith('/updates') ? 'updates'
       : path === '/privacy' ? 'privacy'
       : path === '/terms' ? 'terms'
       : 'other'
@@ -156,6 +159,7 @@ export default function App() {
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/report" element={<ReportPage />} />
         {/* /search와 홈만 SearchApp. 나머지는 404 — 전에는 오타 URL이 전부 홈으로 흡수됐다. */}
+        <Route path="/updates" element={<UpdatesPage />} />
         <Route path="/search" element={<SearchApp />} />
         <Route path="/" element={<SearchApp />} />
         <Route path="*" element={<NotFoundPage />} />
@@ -817,24 +821,7 @@ function SearchApp() {
 
       {isHome && <AdFitBanner />}
 
-      <footer className="site-footer">
-        <p className="site-footer-copy">© 2026 수군수군 우리집 · SuZip</p>
-        <p className="site-footer-ai">이 서비스는 인터넷 글을 AI가 자동 수집·요약해요. 실제 사실과 다를 수 있으며 투자·거래 참고 자료로 활용할 수 없어요.</p>
-        <div className="site-footer-links">
-          <a href="https://blog.naver.com/kaimex" target="_blank" rel="noopener noreferrer">블로그</a>
-          <span>·</span>
-          <a href="/briefing">속닥속닥 뉴스</a>
-          <span>·</span>
-          <a href="/terms.html" target="_blank" rel="noopener noreferrer">이용약관</a>
-          <span>·</span>
-          <a href="mailto:fiveio27@gmail.com">문의하기</a>
-        </div>
-        <div className="site-footer-biz">
-          상호: 준준팩토리 · 대표: 전이준 · 사업자등록번호: 895-24-01970<br/>
-          서울특별시 용산구 이촌로 100-8 · 통신판매업 신고: 준비 중<br/>
-          고객센터: <a href="mailto:fiveio27@gmail.com">fiveio27@gmail.com</a>
-        </div>
-      </footer>
+      <SiteFooter from="home" />
     </div>
   )
 }
