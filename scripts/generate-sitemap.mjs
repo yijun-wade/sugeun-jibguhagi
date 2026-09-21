@@ -18,10 +18,14 @@ const briefingDates = existsSync(briefingIndexPath)
   : []
 
 const TODAY = new Date().toISOString().slice(0, 10)
+// /updates의 lastmod는 가장 최근 항목의 날짜 (src/updates-data.js)
+const { UPDATES } = await import('../src/updates-data.js')
+const UPDATES_LASTMOD = UPDATES[0]?.date || TODAY
 
 const staticUrls = [
   { loc: `${BASE_URL}/`, changefreq: 'daily', priority: '1.0', lastmod: TODAY },
   { loc: `${BASE_URL}/briefing`, changefreq: 'daily', priority: '0.9', lastmod: TODAY },
+  { loc: `${BASE_URL}/updates`, changefreq: 'monthly', priority: '0.3', lastmod: UPDATES_LASTMOD },
 ]
 
 const briefingUrls = briefingDates.map(item => ({

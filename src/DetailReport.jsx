@@ -9,7 +9,7 @@ import { isSubscribed, subscribeRegion, getInterest } from './interest.js'
 import SimilarApts from './SimilarApts.jsx'
 import { isRentalName } from './apt-type.js'
 import { useImpression } from './useImpression.js'
-import { loadVibe } from './vibe-loader.js'
+import { loadVibe, vibeFreshness } from './vibe-loader.js'
 import ViewedCompare from './ViewedCompare.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -1023,6 +1023,7 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt, onVibe, rental = false
   const [vibeSummary, setVibeSummary] = useState(null)
   const [vibeLinks, setVibeLinks] = useState([])
   const [vibeFailed, setVibeFailed] = useState(false)
+  const [vibeFresh, setVibeFresh] = useState(null)
   const [vibeLoading, setVibeLoading] = useState(true)
   // stories 비노출 중 — API 호출도 중단 (복구 시 아래 주석 해제 + 위 UI 주석도 해제)
   const [stories, setStories] = useState([])
@@ -1030,11 +1031,11 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt, onVibe, rental = false
   useEffect(() => {
     const controller = new AbortController()
     const { signal } = controller
-    setVibe(null); setVibeSummary(null); setVibeLinks([]); setVibeFailed(false); setVibeLoading(true)
+    setVibe(null); setVibeSummary(null); setVibeLinks([]); setVibeFailed(false); setVibeFresh(null); setVibeLoading(true)
     // 미리 만들어 둔 정적 요약 먼저, 없으면 실시간 API (vibe-loader.js).
     loadVibe({ kaptCode: apt?.kaptCode, aptNm, dong, gu: apt?.regionName, aptType: apt?.aptType }, { signal })
       .then(v => {
-        setVibe(v.categories); setVibeSummary(v.summary); setVibeLinks(v.links); setVibeFailed(v.source === 'error'); setVibeLoading(false)
+        setVibe(v.categories); setVibeSummary(v.summary); setVibeLinks(v.links); setVibeFailed(v.source === 'error'); setVibeFresh(vibeFreshness(v)); setVibeLoading(false)
         onVibe?.(v)
         // 핵심 가치가 뜨기까지 걸린 시간 — 사전 생성의 효과를 재는 선행 지표(목표: 중앙값 1초 미만).
         // 2026-09 라이브 계측은 5.4~6.2초였고 평균 세션이 15~27초다.
@@ -1105,6 +1106,8 @@ function NeighborhoodStoriesTab({ dong, aptNm, addr, apt, onVibe, rental = false
               </ul>
             )}
             <div className="vibe-source-note">
+              {/* 언제 모은 이야기인지 — AI가 정리한 내용을 믿을지 말지를 가르는 정보다 */}
+              {vibeFresh && <span className="vibe-fresh">{vibeFresh} · </span>}
               직접 임장 가보는 게 제일 정확해요 😊
             </div>
             <VibeReport aptNm={aptNm} kaptCode={apt?.kaptCode} />

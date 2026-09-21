@@ -56,3 +56,21 @@ export async function loadVibe({ kaptCode, aptNm, dong, gu, aptType }, { fetchFn
     return done({}, 'error')
   }
 }
+
+/**
+ * 요약 카드에 적을 한 줄 — 이 이야기를 언제 모았는지.
+ * 재방문자에게만 의미 있는 '업데이트 내역'과 달리, 이건 처음 온 사람에게도 의미가 있다:
+ * AI가 정리한 내용이 얼마나 최근 것인지는 믿을지 말지를 가르는 정보다.
+ * 날짜는 한국 시간 기준.
+ */
+export function vibeFreshness(v, now = Date.now()) {
+  if (!v) return null
+  if (v.source === 'live') return '방금 모은 이야기예요'
+  if (v.source !== 'static' || !v.generatedAt) return null
+  const t = new Date(v.generatedAt).getTime()
+  if (!Number.isFinite(t)) return null
+  const kst = (ms) => new Date(ms + 9 * 3600 * 1000)
+  const d = kst(t), n = kst(now)
+  const md = `${d.getUTCMonth() + 1}월 ${d.getUTCDate()}일`
+  return `${d.getUTCFullYear() === n.getUTCFullYear() ? md : `${d.getUTCFullYear()}년 ${md}`}에 모은 이야기예요`
+}

@@ -3325,3 +3325,17 @@ h1.search-result-title { font-size: inherit; font-weight: inherit; display: inli
 .report-input { min-height: 44px; }
 .report-slider { min-height: 44px; }
 .briefing-personal-chip { min-height: 44px; display: inline-flex; align-items: center; }
+
+/* ─── 업데이트 내역 (/updates) ─── */
+.updates { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px 20px; }
+.updates-title { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.4px; color: var(--text); }
+.updates-lead { margin: 6px 0 0; font-size: var(--fs-body); color: var(--muted); }
+.updates-entry { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border); }
+.updates-date { display: block; font-size: var(--fs-caption); font-weight: 700; color: var(--blue); font-variant-numeric: tabular-nums; }
+.updates-entry-title { margin: 4px 0 0; font-size: 17px; font-weight: 800; line-height: 1.4; letter-spacing: -0.3px; color: var(--text); text-wrap: balance; }
+.updates-items { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 16px; }
+.updates-what { margin: 0; font-size: 15px; font-weight: 700; line-height: 1.5; color: var(--text); }
+.updates-why { margin: 3px 0 0; font-size: var(--fs-body); line-height: 1.65; color: var(--text2); }
+.updates-contact { margin: 28px 0 0; padding-top: 20px; border-top: 1px solid var(--border); font-size: var(--fs-body); color: var(--muted); }
+.updates-contact a { color: var(--blue); min-height: 44px; display: inline-flex; align-items: center; }
+.vibe-fresh { font-variant-numeric: tabular-nums; }

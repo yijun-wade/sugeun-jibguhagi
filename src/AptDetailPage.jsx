@@ -12,6 +12,7 @@ import { isRentalName } from './apt-type.js'
 import { getCollection } from './collection.js'
 import { recordInterest } from './interest.js'
 import NotFoundPage from './NotFoundPage.jsx'
+import SiteFooter from './SiteFooter.jsx'
 
 // 실거래 없이 바로 그릴 수 있는 부분. /api/apt 응답만으로 만든다.
 // 전에는 stories(네이버 5쿼리)와 trade 6회가 모두 끝나야 페이지 전체가 한 번에 그려졌다.
@@ -236,6 +237,7 @@ export default function AptDetailPage() {
 {/* h1은 DetailReport의 보이는 단지명이다. 전에는 화면 밖으로 숨긴 h1을 따로 두어
           크롤러가 보는 구조와 사람이 보는 구조가 달랐다. */}
       <DetailReport apt={evalData} onBack={goBack} onCollectionChange={setCollection} />
+      <SiteFooter from="apt_detail" />
     </div>
   )
 }
