@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sun, 20 Sep 2026 00:04:09 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 21 Sep 2026 00:06:33 GMT</lastBuildDate>
+    <item>
+      <title>전세값 10억 돌파, 금리 오르며 집값 양극화 심화</title>
+      <link>https://www.suzip.kr/briefing/2026-09-21</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-09-21</guid>
+      <pubDate>Sun, 20 Sep 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 외곽 지역까지 전세 10억 원대가 나타나며 한강벨트 수준의 가격대로 올라섰다.
+• 금리 상승으로 고정금리 대출이 비싸지면서 차주들이 변동금리를 선택하는 추세가 늘고 있다.
+• 정부가 농지 투기 단속에 나서면서 부동산 투기 억제 의지를 보이고 있다.
+
+정부 의도: 전세 물량 부족과 금리 인상으로 서민들의 주택 부담이 커지자, 정부는 투기 세력을 단속하고 청년층에 대출 특혜를 주는 방식으로 주택 시장을 안정시키려 하고 있다. 또한 농지 같은 부동산 투기를 적극 단속해 실수요자 보호에 나서는 메시지를 전달하려는 것이다.
+
+시장 변화: 전세 물량이 계속 줄면서 집값이 급등하고 있으며, 금리 인상으로 인한 대출 부담이 커지고 있다. 이로 인해 집값이 중저가대(15억 원 이하)로 쏠리면서 지역별, 가격대별 양극화가 심해질 것으로 보인다.</description>
+    </item>
     <item>
       <title>전세난 심화, 정부 규제 완화로 대출 문 열다</title>
       <link>https://www.suzip.kr/briefing/2026-09-20</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 부동산 정책으로 떨어진 지지율을 올리려고 서민의 내 집 마련을 돕겠다는 취지로 대출 규제를 풀었다. 총선 이전에 부동산 시장을 부양해서 국민 만족도를 높이려는 의도가 있다.
 
 시장 변화: 대출이 다시 풀리면서 무주택자의 구매력이 살아나겠지만, 자본금 많은 사람들의 투자 수요도 함께 늘어날 가능성이 크다. 특히 대기업 임직원처럼 특혜를 받는 계층과 일반인 사이의 부동산 구매력 격차가 더 벌어질 것 같다.</description>
-    </item>
-    <item>
-      <title>정책 변화 속 전세 급감, 매매와 월세로 쏠림</title>
-      <link>https://www.suzip.kr/briefing/2026-09-01</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-09-01</guid>
-      <pubDate>Mon, 31 Aug 2026 22:00:00 GMT</pubDate>
-      <description>• 김용범 정책실장 사퇴로 경제팀 인사 교체, 부동산 정책 기조 변화 예상
-• 서울 아파트 전세 거래량 전년 동기 대비 22.3% 급감, 월세 거래 증가
-• 대출 규제 강화로 금리 8% 수준까지 오르면서 영끌족(영혼까지 끌어모아 사는 사람들) 부담 증가
-
-정부 의도: 이재명 정부는 지지율 하락을 만회하고 경제 정책 신뢰도를 높이기 위해 정책팀을 교체했습니다. 동시에 대출과 실거주 규제를 강화해 투기를 억제하고 주택시장을 안정화하려는 의도로 보입니다.
-
-시장 변화: 전세 공급이 말라가면서 전세에서 월세로의 전환이 빨라지고 있습니다. 규제 강화로 인한 높은 금리와 까다로운 대출 심사로 인해 실수요자들은 서울 외곽의 중저가 아파트로 눈을 돌리고 있습니다.</description>
     </item>
   </channel>
 </rss>
