@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Thu, 08 Oct 2026 01:46:49 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 09 Oct 2026 01:57:21 GMT</lastBuildDate>
+    <item>
+      <title>전세값 상승 가속화, 매매와 동등 수준으로 확대</title>
+      <link>https://www.suzip.kr/briefing/2026-10-09</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-10-09</guid>
+      <pubDate>Thu, 08 Oct 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 아파트 전셋값이 올해 8.18% 올라 매매가격 상승률 8.19%와 거의 같아짐
+• 대출 규제에도 서울 주택가격이 87주 연속 상승 중인데 규제 효과가 제한적
+• 규제가 약한 비규제지역(평택·고양·김포 등)으로 수요가 쏠리는 추세 확산
+
+정부 의도: 정부는 대출 규제와 DSR·LTV 제한으로 집값 상승을 잡으려고 했다. 하지만 수도권 주택 공급 부족이 심각해서 규제만으로는 수요를 충분히 억제하기 어렵다고 본다. 따라서 비규제지역 분양을 늘려서 수요를 분산시키려는 전략이다.
+
+시장 변화: 전세값이 매매가처럼 빠르게 오르면서 전세 공급자들이 매매로 전환하고 있다. 이로 인해 전세 물량은 줄어들고 선택지도 적어진다. 평택·고양 같은 비규제지역 분양이 활발해지면서 수도권 주택 수요가 분산될 가능성이 있다.</description>
+    </item>
     <item>
       <title>실수요자 금융 지원 강화, 투기는 억제</title>
       <link>https://www.suzip.kr/briefing/2026-10-08</link>
@@ -253,19 +266,6 @@
 정부 의도: 전세난으로 국민 불만이 커지자 정부는 실수요자들이 집을 살 수 있도록 대출 규제를 풀기로 결정했습니다. 또한 주택 공급 부족이 근본 원인이라고 보고 있어, 당분간은 규제를 완화해 시장을 안정시키려는 전략입니다.
 
 시장 변화: 대출이 쉬워지면서 가을 이사철에 실제 집을 사려는 사람들의 거래가 늘어날 것으로 보입니다. 다만 정책이 자주 바뀌는 탓에 시장이 혼란스러워하고 있으며, 규제가 센 아파트 대신 오피스텔로 몰리는 현상도 계속될 것 같습니다.</description>
-    </item>
-    <item>
-      <title>서울 집값 84주 상승, 금리 인상 앞두고 실수요자 부담 가중</title>
-      <link>https://www.suzip.kr/briefing/2026-09-19</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-09-19</guid>
-      <pubDate>Fri, 18 Sep 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 아파트 값이 84주째 오르고 있으며, 강남은 식지만 강북과 수도권이 계속 오르는 중.
-• 집값이 올라 더 많은 대출을 받아야 하는데 금리까지 8%에 가까워져서 이중 부담이 커지는 상황.
-• 집값 부담이 커지면서 상반기에만 23만 명이 서울을 떠나 경기·인천으로 이사함.
-
-정부 의도: 이재명 정부는 태릉지구 같은 신규 주택 공급으로 전체적인 집값 오름을 잡으려고 하고 있습니다. 또한 토지거래와 대출 규제를 통해 투기 수요를 억제하고 실수요자들이 접근할 수 있는 시장을 만들려는 것이 목표입니다.
-
-시장 변화: 규제가 강해지면서 거래량은 줄었지만 집값과 전세금은 여전히 오르고 있습니다. 실수요자들이 살 집을 찾지 못하면서 전세나 월세 시장으로 몰리고 있어, 임차인의 주거비 부담이 더 커지고 있는 상황입니다.</description>
     </item>
   </channel>
 </rss>
