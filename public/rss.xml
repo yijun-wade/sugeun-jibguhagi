@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sat, 10 Oct 2026 01:40:04 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 11 Oct 2026 00:49:36 GMT</lastBuildDate>
+    <item>
+      <title>집값 억제 정책이 역효과…전세값만 치솟는 악순환</title>
+      <link>https://www.suzip.kr/briefing/2026-10-11</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-10-11</guid>
+      <pubDate>Sat, 10 Oct 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 아파트 평균값 13억 돌파, 신혼부부는 6억원 벽에 막혀 내집마련 포기 중
+• 갭투자 규제로 강남·용산 규제지역을 피해 비규제지역(광주·동탄)으로 수요 이동
+• 실거주 의무화 정책으로 전세가격이 4.1배 뛰고 주택담보대출은 952조원 역대 최고치 기록
+
+정부 의도: 투기를 줄이고 집값을 안정시키기 위해 갭투자 금지, 실거주 신고제, 대출 규제 등을 강하게 밀어붙였다. 서민이 집을 살 수 있는 환경을 만들겠다는 취지다.
+
+시장 변화: 하지만 결과는 정반대다. 규제가 심한 지역을 피하면서 수요가 외곽과 비규제지역으로 몰렸고, 전세 시장이 불안정해지면서 전세값이 폭등했다. 규제만 가득한데 주택 공급은 늘지 않으니 집값은 오를 대로 올랐다.</description>
+    </item>
     <item>
       <title>집값·전세값 동반 상승, 실수요자 '10억 벽' 직면</title>
       <link>https://www.suzip.kr/briefing/2026-10-10</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 강남 집값의 계속된 상승을 꺾기 위해 공급을 크게 늘리기로 했다. 동시에 투기 수요를 줄이기 위해 대출을 조이고 있다. 즉, 집을 많이 짓되 돈은 안 빌려주겠다는 전략이다.
 
 시장 변화: 앞으로 새 아파트가 많이 나올 예정이라 집값 상승세가 둔화될 가능성이 있다. 하지만 지금 당장은 외곽 지역으로 수요가 몰리면서 지역별 편차가 커질 것 같다.</description>
-    </item>
-    <item>
-      <title>전세값 10억 돌파, 금리 오르며 집값 양극화 심화</title>
-      <link>https://www.suzip.kr/briefing/2026-09-21</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-09-21</guid>
-      <pubDate>Sun, 20 Sep 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 외곽 지역까지 전세 10억 원대가 나타나며 한강벨트 수준의 가격대로 올라섰다.
-• 금리 상승으로 고정금리 대출이 비싸지면서 차주들이 변동금리를 선택하는 추세가 늘고 있다.
-• 정부가 농지 투기 단속에 나서면서 부동산 투기 억제 의지를 보이고 있다.
-
-정부 의도: 전세 물량 부족과 금리 인상으로 서민들의 주택 부담이 커지자, 정부는 투기 세력을 단속하고 청년층에 대출 특혜를 주는 방식으로 주택 시장을 안정시키려 하고 있다. 또한 농지 같은 부동산 투기를 적극 단속해 실수요자 보호에 나서는 메시지를 전달하려는 것이다.
-
-시장 변화: 전세 물량이 계속 줄면서 집값이 급등하고 있으며, 금리 인상으로 인한 대출 부담이 커지고 있다. 이로 인해 집값이 중저가대(15억 원 이하)로 쏠리면서 지역별, 가격대별 양극화가 심해질 것으로 보인다.</description>
     </item>
   </channel>
 </rss>
