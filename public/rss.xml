@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sun, 11 Oct 2026 00:49:36 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 12 Oct 2026 01:11:09 GMT</lastBuildDate>
+    <item>
+      <title>규제 1년, 집값 10% 뛰고 전세난 심화</title>
+      <link>https://www.suzip.kr/briefing/2026-10-12</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-10-12</guid>
+      <pubDate>Sun, 11 Oct 2026 22:00:00 GMT</pubDate>
+      <description>• 작년 10월 부동산 규제 이후 서울 아파트 값이 1년간 10.42% 올라 규제 전 6.61%보다 훨씬 빠르게 상승했다.
+• 전세가격도 토지거래허가제 이후 9.92% 올라 규제 전 2.41%의 4배 수준으로 뛰었다.
+• 전세사기 피해자가 4만 명을 넘었고, 2030 세대의 자산 형성 기반이 무너지고 있다.
+
+정부 의도: 정부는 집값 안정과 가계부채 억제를 목표로 대출 규제를 강화했다. 하지만 공급 부족 문제를 함께 해결하지 못해 규제의 효과가 제한적이다.
+
+시장 변화: 규제로 인한 공급 감소와 심리적 불안감이 '생존 매수'를 부추기면서 오히려 집값이 더 오르는 역효과가 생겼다. 공급 역량 부족 지역에서 가격 상승이 두드러지고 있다.</description>
+    </item>
     <item>
       <title>집값 억제 정책이 역효과…전세값만 치솟는 악순환</title>
       <link>https://www.suzip.kr/briefing/2026-10-11</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 토허제로 투기를 억제하고 공적주택 119만가구를 공급해 주거 불평등을 줄이려고 했다. 동시에 은행 가계대출을 조절하면서 집값 상승을 진정시키려는 것으로 보인다.
 
 시장 변화: 정부 정책이 자주 바뀌고 예측 불가능해지면서 주택 매매·전세 거래가 위축되고 있다. 결과적으로 제한된 공급 속에 전세가는 계속 오르고 월세로 내몰리는 세입자가 늘어나는 악순환이 벌어지고 있다.</description>
-    </item>
-    <item>
-      <title>강남 집값 잡으러 119만호 풀되, 대출은 바닥</title>
-      <link>https://www.suzip.kr/briefing/2026-09-22</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-09-22</guid>
-      <pubDate>Mon, 21 Sep 2026 22:00:00 GMT</pubDate>
-      <description>• 이재명 대통령이 2026~2030년 119만호 공급하는 '주거안정플랜'으로 강남 투기 수요를 꺾겠다고 공언했다.
-• 서울 외곽 집값이 86주 연속 상승하면서 강남 쏠림 현상이 심화되고 있다.
-• 은행 가계대출이 한 달 새 다시 바닥나면서 연말까지 대출받기 어려워질 것으로 보인다.
-
-정부 의도: 정부는 강남 집값의 계속된 상승을 꺾기 위해 공급을 크게 늘리기로 했다. 동시에 투기 수요를 줄이기 위해 대출을 조이고 있다. 즉, 집을 많이 짓되 돈은 안 빌려주겠다는 전략이다.
-
-시장 변화: 앞으로 새 아파트가 많이 나올 예정이라 집값 상승세가 둔화될 가능성이 있다. 하지만 지금 당장은 외곽 지역으로 수요가 몰리면서 지역별 편차가 커질 것 같다.</description>
     </item>
   </channel>
 </rss>
