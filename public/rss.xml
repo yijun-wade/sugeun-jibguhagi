@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Wed, 21 Oct 2026 00:31:35 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 22 Oct 2026 00:35:13 GMT</lastBuildDate>
+    <item>
+      <title>서울 집값 급등에 거래 절벽…전월세는 더 비싸진다</title>
+      <link>https://www.suzip.kr/briefing/2026-10-22</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-10-22</guid>
+      <pubDate>Wed, 21 Oct 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 아파트 매매가 1년 새 15.5% 올랐지만 9월 거래량은 2923건으로 급감했다.
+• 인천은 집값이 2개월 연속 떨어지는데 전·월세는 계속 올라 세입자 부담이 커지고 있다.
+• 정부가 주택공급 확대를 위해 부동산 PF(프로젝트 파이낸싱, 즉 부동산 개발 자금) 대출을 늘리려고 추진 중이다.
+
+정부 의도: 집값이 너무 빠르게 올라가고 거래가 거의 안 되는 상황을 풀려고 한다. 정부는 새로운 주택 공급을 늘려서 집값 상승을 진정시키고 실제 거래가 활발해지도록 하려는 것이다.
+
+시장 변화: 앞으로 새 아파트 공급이 늘어날 것 같으니 고가 아파트 중심으로는 가격 오름세가 둔화될 수 있다. 하지만 공급 준비 기간 동안은 전세와 월세 부족이 계속돼서 세입자들의 주거비 부담은 더 커질 가능성이 크다.</description>
+    </item>
     <item>
       <title>세종 집무실 이전에 전세값 급등, 대출 규제는 강화</title>
       <link>https://www.suzip.kr/briefing/2026-10-21</link>
@@ -253,19 +266,6 @@
 정부 의도: 부동산 시장 과열을 막기 위해 대출을 줄이고 있지만, 근본적인 문제는 공급 부족이다. 정부는 재개발·재정비 같은 주택 공급 사업을 추진해야 하는데, 이주 수요 때문에 오히려 가격이 오르는 악순환이 반복되고 있다.
 
 시장 변화: 공급이 늘어나지 않는 한 서울 집값은 계속 오를 수밖에 없다. 수도권 전·월세 가격도 함께 오르고 있어 월세 시장도 점점 비싸진다.</description>
-    </item>
-    <item>
-      <title>대출 규제 강화로 실수요자 부담 급증, 월세 100만원 돌파</title>
-      <link>https://www.suzip.kr/briefing/2026-10-02</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-10-02</guid>
-      <pubDate>Thu, 01 Oct 2026 22:00:00 GMT</pubDate>
-      <description>• 인천 아파트 평균 월세가 100만원을 넘어섰고, 전세는 줄어드는 추세가 지속 중이다.
-• 서울 중저가 아파트가 2% 올라 무주택자의 진입 장벽이 높아졌다.
-• 정부가 국채 발행을 5조원 축소하며 금리 인상 신호를 보내고 있다.
-
-정부 의도: 정부는 과열된 부동산 시장을 진정시키기 위해 금융 긴축으로 돈의 흐름을 막으려고 하고 있다. 특히 강남권 외 지역의 계속된 가격 상승을 제어하면서도, 실제 주택 공급이 시장에 미치는 효과를 기다리고 있는 상황이다.
-
-시장 변화: 대출 규제가 강해지면서 무주택자들이 대출받기 어려워져 중저가 주택으로 몰려가고 있고, 이는 오히려 중저가 아파트 가격을 올리는 악순환을 만들고 있다. 전세 시장은 계속 축소되는 반면 월세 시장이 커지고 있어, 세입자의 월 부담금이 늘어나고 있다.</description>
     </item>
   </channel>
 </rss>
