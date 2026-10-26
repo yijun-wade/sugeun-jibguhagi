@@ -2,13 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.suzip.kr/</loc>
-    <lastmod>2026-10-25</lastmod>
+    <lastmod>2026-10-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/briefing</loc>
-    <lastmod>2026-10-25</lastmod>
+    <lastmod>2026-10-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
@@ -17,6 +17,12 @@
     <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.suzip.kr/briefing/2026-10-26</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>never</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/briefing/2026-10-25</loc>
@@ -7381,7 +7387,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A13986509</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -7513,7 +7519,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10020749</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -7529,19 +7535,19 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10022803</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10024026</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10024198</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -7552,19 +7558,19 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10027568</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10027569</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10028056</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -7591,7 +7597,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12204005</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -7637,7 +7643,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10022512</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -7688,7 +7694,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023734</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -7724,7 +7730,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023467</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -7735,7 +7741,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10020935</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -7810,7 +7816,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12201004</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8007,7 +8013,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10020576</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8023,7 +8029,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10022468</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8034,7 +8040,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10025677</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8180,7 +8186,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A41279921</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8216,7 +8222,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A41279928</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8227,13 +8233,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A41279930</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A41279931</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8301,8 +8307,9 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12079601</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023016</loc>
@@ -8374,7 +8381,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12009001</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8435,7 +8442,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12078201</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8456,7 +8463,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12078707</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8640,7 +8647,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12076601</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8705,7 +8712,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12012201</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8727,7 +8734,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12072802</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8760,7 +8767,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10027951</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8782,7 +8789,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023118</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8823,7 +8830,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12170602</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8839,7 +8846,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12180404</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -8880,13 +8887,15 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12179002</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12179003</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12179004</loc>
@@ -8941,7 +8950,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12181403</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9023,7 +9032,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12181102</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9071,7 +9080,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10022963</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9142,7 +9151,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10024425</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9173,7 +9182,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12177802</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9224,7 +9233,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10024891</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9310,7 +9319,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10027157</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9336,7 +9345,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12185003</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9412,13 +9421,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12127007</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A12127008</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9481,7 +9490,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10025649</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9524,7 +9533,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15807005</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9577,7 +9586,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15807313</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9633,7 +9642,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15807704</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9649,7 +9658,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15807707</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9675,19 +9684,19 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15876401</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15876402</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15879501</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9754,7 +9763,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15886510</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9785,7 +9794,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023948</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -9948,7 +9957,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15870102</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -10267,7 +10276,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10024436</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -10473,13 +10482,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023934</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10024768</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -10555,13 +10564,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15703313</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15703318</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -10577,25 +10586,25 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15776414</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15776617</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15776715</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15776916</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -10686,7 +10695,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10024145</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -10816,7 +10825,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15774708</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -10870,19 +10879,19 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15780705</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15780806</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15780904</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -10894,7 +10903,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15781002</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -11016,7 +11025,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10020618</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -11114,7 +11123,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10021043</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -11230,7 +11239,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15722314</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -11261,7 +11270,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15785005</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -11277,7 +11286,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15785605</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -11288,7 +11297,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15785612</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -11319,8 +11328,9 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10020550</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10020771</loc>
@@ -11344,8 +11354,9 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10028063</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15277302</loc>
@@ -11709,13 +11720,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023598</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023604</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -11847,7 +11858,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10020672</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -11878,7 +11889,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10024745</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -11994,13 +12005,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10022360</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10026434</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -12081,7 +12092,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15278301</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -12103,24 +12114,25 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10021128</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10026039</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10026729</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10027764</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -12193,7 +12205,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10025386</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -12204,13 +12216,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10025527</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10025564</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -12222,7 +12234,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10025858</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -12238,13 +12250,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023288</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023956</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -12280,7 +12292,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10024302</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -12364,7 +12376,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15383308</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -12436,8 +12448,9 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15303204</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15303205</loc>
@@ -12705,7 +12718,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023489</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -12721,7 +12734,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10020541</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -12965,8 +12978,9 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10024925</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10027512</loc>
@@ -13136,7 +13150,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10021210</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -13147,7 +13161,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10022974</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -13232,7 +13246,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15005401</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -13334,7 +13348,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10026761</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -13420,18 +13434,19 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10022416</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023966</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10024524</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -13463,7 +13478,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15676701</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -13534,13 +13549,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15603003</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15603004</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -13552,7 +13567,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15603007</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -13664,7 +13679,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15606006</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -13675,7 +13690,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15676702</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -13919,7 +13934,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10022093</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -13955,7 +13970,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15676512</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -13992,7 +14007,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10020786</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14124,7 +14139,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10020718</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14150,7 +14165,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023372</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14187,7 +14202,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10025428</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14228,7 +14243,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15105301</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14244,13 +14259,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15105503</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15105602</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14308,13 +14323,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15178203</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15178204</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14345,7 +14360,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15192202</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14361,7 +14376,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10021418</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14382,7 +14397,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10022801</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14457,13 +14472,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15101509</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15101702</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14514,7 +14529,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A15179403</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14670,7 +14685,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A13706002</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14781,13 +14796,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A13713001</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A13713002</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14813,7 +14828,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A13778202</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14861,7 +14876,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A13778212</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -14872,13 +14887,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A13778214</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A13778306</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -15277,7 +15292,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023049</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -15303,8 +15318,9 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10024156</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10024240</loc>
@@ -15335,7 +15351,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10025375</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -15825,7 +15841,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A13593908</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -15967,7 +15983,7 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023020</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -16269,13 +16285,13 @@
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023129</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.suzip.kr/apt/A10023245</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
