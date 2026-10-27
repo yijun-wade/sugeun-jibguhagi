@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Mon, 26 Oct 2026 00:05:16 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 27 Oct 2026 01:23:43 GMT</lastBuildDate>
+    <item>
+      <title>대출규제, 서울만 피하고 지방만 폭락</title>
+      <link>https://www.suzip.kr/briefing/2026-10-27</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-10-27</guid>
+      <pubDate>Mon, 26 Oct 2026 22:00:00 GMT</pubDate>
+      <description>• 서강대·동덕여대 공동연구팀이 20년치 정부 부동산 정책을 분석한 결과, 대출규제는 서울 집값 안정에 거의 효과가 없는 것으로 나타났다.
+• 대출규제가 강화될수록 부산과 비수도권의 주택 가치는 크게 하락해 지역 간 부동산 양극화가 심해지고 있다.
+• 아파트 값 상승으로 진입장벽이 높아지자 상대적으로 저렴한 오피스텔로 실수요자들이 몰려 17개월 연속 가격이 올랐다.
+
+정부 의도: 정부는 대출규제를 통해 부동산 가격 안정과 집값 폭등을 막으려고 했다. 하지만 현금이 많은 사람들은 대출 없이도 서울에서 집을 사고, 빚에 의존하던 사람들만 대출이 막혀 집을 포기하는 상황이 벌어졌다.
+
+시장 변화: 대출규제는 서울 집값을 잡지 못했지만, 대신 지방 사람들에게만 피해를 줬다. 동시에 비싼 아파트를 못 사는 사람들이 오피스텔 같은 대체 상품으로 몰리면서 새로운 시장이 형성되고 있다.</description>
+    </item>
     <item>
       <title>서울 전세 급등, 강북·경기 매매 부상…양극화 심화</title>
       <link>https://www.suzip.kr/briefing/2026-10-26</link>
@@ -253,19 +266,6 @@
 정부 의도: 부동산과 가계대출에만 몰린 금융자금을 산업과 지역 발전에 쓰면서도 실제로 집이 필요한 사람들은 제대로 지원하려는 것이다. 동시에 투기꾼들의 대출은 막아서 주택시장 안정을 꾀하고 있다.
 
 시장 변화: 투기적 수요는 줄어들 테지만 실수요자들은 대출받기 더 수월해진다. 다만 전세 품귀 현상은 계속되면서 전세보증금은 오를 가능성이 있다.</description>
-    </item>
-    <item>
-      <title>집값·전세금 계속 오르는데 대출은 막혀있네</title>
-      <link>https://www.suzip.kr/briefing/2026-10-07</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-10-07</guid>
-      <pubDate>Tue, 06 Oct 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 재산세가 4년 뒤 76% 오를 수 있다는 추정이 나왔는데, 이는 집값이 계속 오를 경우의 시나리오입니다.
-• 전세 가격이 올해 누적 8.18% 올라 매매가격 상승률과 거의 같은 수준으로 치솟았습니다.
-• 대출이 어려워지면서 사람들이 더 싼 소형 아파트로 눈을 돌리고 있습니다.
-
-정부 의도: 정부는 부동산에 몰려있던 자금을 반도체·벤처 같은 첨단산업으로 돌리려고 합니다. 동시에 재산세와 대출 규제로 집값 상승을 억제하고 싶어 하는데, 실제로는 시장 과열을 완전히 잡지 못하고 있는 상황입니다.
-
-시장 변화: 집값과 전세금은 계속 오르지만 대출 규제는 강화되면서, 실제로 집을 살 수 있는 사람의 폭이 좁혀지고 있습니다. 이로 인해 수요가 경기 지역이나 소형 아파트 같은 '사갈 수 있는' 곳으로 몰려가는 현상이 생기고 있습니다.</description>
     </item>
   </channel>
 </rss>
