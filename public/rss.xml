@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Tue, 27 Oct 2026 01:23:43 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 28 Oct 2026 01:09:04 GMT</lastBuildDate>
+    <item>
+      <title>전세값 급등, 대출 규제 강화로 매수심 위축</title>
+      <link>https://www.suzip.kr/briefing/2026-10-28</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-10-28</guid>
+      <pubDate>Tue, 27 Oct 2026 22:00:00 GMT</pubDate>
+      <description>• 토스뱅크가 연 4.44%의 주택담보대출 상품을 출시했으나, 기존 대출 규제로 인해 실제 수요 연결은 제한적인 상황.
+• 강북 지역 전세값이 6억 원을 돌파했으며, 월세 비중이 50%를 넘으면서 전세시장 양극화가 심화 중.
+• 분양받은 아파트 입주율이 94%에 미치지 못하면서 건설사의 잔금 미회수 문제가 악화되고 있음.
+
+정부 의도: 정부는 대출 규제를 유지하면서도 금융 접근성을 높이려고 노력하고 있습니다. 하지만 과열된 부동산 시장을 식히면서 동시에 실수요자의 자금난을 해소하려는 이중의 목표를 추진 중입니다.
+
+시장 변화: 전세 시장이 월세로 빠르게 전환되고 있으며, 매매가 어려워지자 전세 수요가 몰리면서 전셋값이 매매가보다 더 빠르게 올라가는 역현상이 벌어지고 있습니다. 동시에 건설사의 자금난이 심화되면서 향후 분양 시장에도 영향을 미칠 우려가 있습니다.</description>
+    </item>
     <item>
       <title>대출규제, 서울만 피하고 지방만 폭락</title>
       <link>https://www.suzip.kr/briefing/2026-10-27</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 대출 규제와 DSR·LTV 제한으로 집값 상승을 잡으려고 했다. 하지만 수도권 주택 공급 부족이 심각해서 규제만으로는 수요를 충분히 억제하기 어렵다고 본다. 따라서 비규제지역 분양을 늘려서 수요를 분산시키려는 전략이다.
 
 시장 변화: 전세값이 매매가처럼 빠르게 오르면서 전세 공급자들이 매매로 전환하고 있다. 이로 인해 전세 물량은 줄어들고 선택지도 적어진다. 평택·고양 같은 비규제지역 분양이 활발해지면서 수도권 주택 수요가 분산될 가능성이 있다.</description>
-    </item>
-    <item>
-      <title>실수요자 금융 지원 강화, 투기는 억제</title>
-      <link>https://www.suzip.kr/briefing/2026-10-08</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-10-08</guid>
-      <pubDate>Wed, 07 Oct 2026 22:00:00 GMT</pubDate>
-      <description>• 정부가 국민성장펀드를 150조에서 200조로 확대해 부동산 대출 쏠림 현상을 첨단산업 투자로 돌린다.
-• 주택금융 47.8조 규모로 실수요자 지원을 늘리되 투기적 대출과 다주택자 대출은 제한한다.
-• 청년 특례 지원 나이를 만39세로 올리고 신혼·자녀가구 대출 한도를 상향해 서민층 주택 구매를 돕는다.
-
-정부 의도: 부동산과 가계대출에만 몰린 금융자금을 산업과 지역 발전에 쓰면서도 실제로 집이 필요한 사람들은 제대로 지원하려는 것이다. 동시에 투기꾼들의 대출은 막아서 주택시장 안정을 꾀하고 있다.
-
-시장 변화: 투기적 수요는 줄어들 테지만 실수요자들은 대출받기 더 수월해진다. 다만 전세 품귀 현상은 계속되면서 전세보증금은 오를 가능성이 있다.</description>
     </item>
   </channel>
 </rss>
