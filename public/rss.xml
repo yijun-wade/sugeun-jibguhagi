@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Fri, 30 Oct 2026 01:49:41 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 31 Oct 2026 01:30:33 GMT</lastBuildDate>
+    <item>
+      <title>집값 89주 연속 상승, 전세가 매매가 추월</title>
+      <link>https://www.suzip.kr/briefing/2026-10-31</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-10-31</guid>
+      <pubDate>Fri, 30 Oct 2026 22:00:00 GMT</pubDate>
+      <description>• 서울 아파트 전세가격 상승률(8.91%)이 매매가 상승률(8.73%)을 처음으로 추월했다.
+• 정부가 하남·김포에 10만 가구를 공급하고 재개발 착공을 가속화하면서 수도권 공급 확대에 나섰다.
+• 10·15 대책 1년이 지났지만 집값은 89주 연속 상승 중으로 정책 효과가 제한적이다.
+
+정부 의도: 정부는 공급 부족으로 오르는 집값을 잡기 위해 수도권에 신규 주택을 대량 공급하고 재개발을 빨리 진행하려고 한다. 동시에 대출 규제로 투기수요를 억제해 실제 집 필요한 사람들이 살 수 있는 시장을 만들려는 것이다.
+
+시장 변화: 앞으로 2~3년간 수도권 곳곳에서 새 아파트들이 많이 나올 것이라 공급은 늘어날 전망이다. 다만 지금까지의 패턴으로 보면 공급이 바로 가격 인하로 이어지지는 않을 수 있으므로 조금 더 기다려야 할 것 같다.</description>
+    </item>
     <item>
       <title>부동산 정책 불만 19%, 공급 확대도 당장 도움 안 돼</title>
       <link>https://www.suzip.kr/briefing/2026-10-30</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 집값 안정과 가계부채 억제를 목표로 대출 규제를 강화했다. 하지만 공급 부족 문제를 함께 해결하지 못해 규제의 효과가 제한적이다.
 
 시장 변화: 규제로 인한 공급 감소와 심리적 불안감이 '생존 매수'를 부추기면서 오히려 집값이 더 오르는 역효과가 생겼다. 공급 역량 부족 지역에서 가격 상승이 두드러지고 있다.</description>
-    </item>
-    <item>
-      <title>집값 억제 정책이 역효과…전세값만 치솟는 악순환</title>
-      <link>https://www.suzip.kr/briefing/2026-10-11</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-10-11</guid>
-      <pubDate>Sat, 10 Oct 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 아파트 평균값 13억 돌파, 신혼부부는 6억원 벽에 막혀 내집마련 포기 중
-• 갭투자 규제로 강남·용산 규제지역을 피해 비규제지역(광주·동탄)으로 수요 이동
-• 실거주 의무화 정책으로 전세가격이 4.1배 뛰고 주택담보대출은 952조원 역대 최고치 기록
-
-정부 의도: 투기를 줄이고 집값을 안정시키기 위해 갭투자 금지, 실거주 신고제, 대출 규제 등을 강하게 밀어붙였다. 서민이 집을 살 수 있는 환경을 만들겠다는 취지다.
-
-시장 변화: 하지만 결과는 정반대다. 규제가 심한 지역을 피하면서 수요가 외곽과 비규제지역으로 몰렸고, 전세 시장이 불안정해지면서 전세값이 폭등했다. 규제만 가득한데 주택 공급은 늘지 않으니 집값은 오를 대로 올랐다.</description>
     </item>
   </channel>
 </rss>
