@@ -24,17 +24,15 @@ jobs:
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
         run: node scripts/generate-briefing.mjs
 
-      - name: Generate blog post draft
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: node scripts/generate-blog-post.mjs
-
-      # 8시간 간격 하루 2편이므로 브리핑 1편 + 카테고리 1편.
-      # 카테고리는 5종을 돌려가며 쓰고, 소재 풀은 1,100건이 넘어 3년치가 있다.
-      - name: Generate category draft
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: node scripts/generate-category-posts.mjs --count=1
+      # 2026-11-02 제거: 블로그 초안(generate-blog-post.mjs)과
+      # 카테고리 초안(generate-category-posts.mjs --count=1).
+      #
+      # 네이버 블로그 채널은 8주/24편에 유입 0명으로 기각됐고(utm·리퍼러 모두 0),
+      # 발행을 돌리던 launchd(kr.suzip.publish)는 세션 만료로 9/9 이후 0편이면서
+      # 매일 2회 실패만 반복하다 오늘 정지됐다. 밀린 초안 20편.
+      # 즉 읽는 사람 없는 글에 매일 API를 두 번 쓰고 있었다.
+      #
+      # 되돌리기: 이 커밋 revert + 네이버 세션 1회 수동 로그인.
 
       - name: Collect new policies
         env:
