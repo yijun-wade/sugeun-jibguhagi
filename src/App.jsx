@@ -21,6 +21,7 @@ import AdFitBanner from './AdFitBanner.jsx'
 import CoupangBanner from './CoupangBanner.jsx'
 import { getCollection, toggleCollection } from './collection.js'
 import CompareView from './CompareView.jsx'
+import AuthButton from './AuthButton.jsx'
 
 // 히어로 예시 검색어. 5,600세대 대단지라 후기·실거래가 모두 풍부해
 // "검색하면 이런 게 나온다"를 빈 화면 없이 보여줄 수 있다.
@@ -496,6 +497,7 @@ function SearchApp() {
           <a href="/glossary" className="site-nav-link"><span className="nav-bubble">이불 속</span> 사전</a>
           <a href="/report" className="site-nav-link">살까말까 보고서</a>
         </nav>
+        <AuthButton />
       </header>
 
       {/* 홈 서브탭 — 헤더 바로 아래 */}

@@ -5,13 +5,16 @@ import { HelmetProvider } from 'react-helmet-async'
 import { Analytics } from '@vercel/analytics/react'
 import './index.css'
 import App from './App.jsx'
+import { AuthProvider } from './auth.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <HelmetProvider>
       <BrowserRouter>
-        <App />
-        <Analytics />
+        <AuthProvider>
+          <App />
+          <Analytics />
+        </AuthProvider>
       </BrowserRouter>
     </HelmetProvider>
   </StrictMode>,

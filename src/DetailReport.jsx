@@ -6,6 +6,8 @@ import { track } from './analytics.js'
 import { isCollected, toggleCollection, getCollection } from './collection.js'
 import { buildDelta } from './collection-delta.js'
 import { isSubscribed, subscribeRegion, getInterest } from './interest.js'
+import { shareApt, isKakaoShareAvailable } from './kakao-share.js'
+import { useAuth } from './auth.jsx'
 import SimilarApts from './SimilarApts.jsx'
 import ViewedCompare from './ViewedCompare.jsx'
 import { Link, useNavigate } from 'react-router-dom'
@@ -17,11 +19,15 @@ function isValidUrl(url) {
 
 const TABS = ['동네·이야기', '시세']
 
+// 빌드 시점에 결정되는 값이라 state로 둘 이유가 없다.
+const kakaoReady = isKakaoShareAvailable()
+
 // 가격 방향(↑상승/→보합/↓하락) → 색상 클래스
 const dirClass = (d) => d?.includes('상승') ? 'up' : d?.includes('하락') ? 'down' : 'flat'
 
 export default function DetailReport({ apt, onBack, onCollectionChange }) {
   const navigate = useNavigate()
+  const { pushSync } = useAuth()
   const [tab, setTab] = useState('동네·이야기')
   const [toast, setToast] = useState(null) // 'share' | 'uncollect' | null
   // 저장 직후 인라인 확인 블록 — 토스트와 달리 사라지지 않는다(즉시 보상 노출).
@@ -91,6 +97,17 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
     }
   }, [apt])
 
+  // 카카오톡 전용 공유. 데스크톱에서도 바로 전송되고, 카드에 단지명·판정이 실린다.
+  const handleShareKakao = useCallback(async () => {
+    track('share_click', { apt_name: apt.aptNm, from: 'verdict_hero', method: 'kakao' })
+    const result = await shareApt(apt)
+    track('share_result', { apt_name: apt.aptNm, method: 'kakao', result })
+    if (result !== 'sent') {
+      // SDK가 막히면 기존 경로로 떨어뜨린다. 버튼이 아무 일도 안 하는 것보다 낫다.
+      handleShareRich()
+    }
+  }, [apt, handleShareRich])
+
   const handleCollect = useCallback(() => {
     const next = toggleCollection(apt)
     const saving = !collected
@@ -102,10 +119,11 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       other_saved: otherSaved.length,
     })
     onCollectionChange?.(next)
+    pushSync() // 로그인 상태면 서버에도 올린다. 비로그인이면 아무 일도 안 한다.
     // 저장 성공은 인라인 확인 블록이 대신한다(사라지는 토스트로는 보상이 안 됨). 해제만 토스트.
     setJustSaved(saving)
     if (!saving) setToast('uncollect')
-  }, [apt, collected, onCollectionChange, delta, otherSaved])
+  }, [apt, collected, onCollectionChange, delta, otherSaved, pushSync])
 
   return (
     <div className="detail-report">
@@ -165,9 +183,16 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           {apt.priceJudgment?.sentence && (
             <p className="verdict-price">{apt.priceJudgment.sentence}</p>
           )}
-          <button type="button" className="verdict-share" onClick={handleShareRich}>
-            <span aria-hidden="true">💬</span> 친구에게 공유
-          </button>
+          <div className="verdict-share-row">
+            {kakaoReady && (
+              <button type="button" className="verdict-share verdict-share-kakao" onClick={handleShareKakao}>
+                <span aria-hidden="true">💬</span> 카카오톡으로 보내기
+              </button>
+            )}
+            <button type="button" className="verdict-share" onClick={handleShareRich}>
+              <span aria-hidden="true">🔗</span> 링크 공유
+            </button>
+          </div>
         </div>
       )}
 
