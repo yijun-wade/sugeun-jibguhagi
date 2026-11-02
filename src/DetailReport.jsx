@@ -6,6 +6,8 @@ import { track } from './analytics.js'
 import { isCollected, toggleCollection, getCollection } from './collection.js'
 import { buildDelta } from './collection-delta.js'
 import { isSubscribed, subscribeRegion, getInterest } from './interest.js'
+import { shareApt, isKakaoShareAvailable } from './kakao-share.js'
+import { useAuth } from './auth.jsx'
 import SimilarApts from './SimilarApts.jsx'
 import { isRentalName } from './apt-type.js'
 import { useImpression } from './useImpression.js'
@@ -24,11 +26,15 @@ const TABS = ['동네·이야기', '시세']
 // 지우지 않고 노출만 끈다. 첫 화면에서 판단 요소 7개가 경쟁하던 것을 줄이는 목적.
 const SHOW_RETENTION_ENTRY = false
 
+// 빌드 시점에 결정되는 값이라 state로 둘 이유가 없다.
+const kakaoReady = isKakaoShareAvailable()
+
 // 가격 방향(↑상승/→보합/↓하락) → 색상 클래스
 const dirClass = (d) => d?.includes('상승') ? 'up' : d?.includes('하락') ? 'down' : 'flat'
 
 export default function DetailReport({ apt, onBack, onCollectionChange }) {
   const navigate = useNavigate()
+  const { pushSync } = useAuth()
   // 공공임대·행복주택·청년안심주택 — 실거래가 없고, 보러 온 사람의 질문도 매수가 아니라 입주다.
   // 유입 상위 단지의 다수가 이 유형인데(2026-09 실측) 화면은 매수자용 블록으로 채워져 있었다.
   // 검색 카드 경로로 오면 aptType이 없을 수 있어 단지명으로 한 번 더 본다.
@@ -116,6 +122,17 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
     }
   }, [apt])
 
+  // 카카오톡 전용 공유. 데스크톱에서도 바로 전송되고, 카드에 단지명·판정이 실린다.
+  const handleShareKakao = useCallback(async () => {
+    track('share_click', { apt_name: apt.aptNm, from: 'verdict_hero', method: 'kakao' })
+    const result = await shareApt(apt)
+    track('share_result', { apt_name: apt.aptNm, method: 'kakao', result })
+    if (result !== 'sent') {
+      // SDK가 막히면 기존 경로로 떨어뜨린다. 버튼이 아무 일도 안 하는 것보다 낫다.
+      handleShareRich()
+    }
+  }, [apt, handleShareRich])
+
   const handleCollect = useCallback(() => {
     const next = toggleCollection(apt)
     const saving = !collected
@@ -127,10 +144,11 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
       other_saved: otherSaved.length,
     })
     onCollectionChange?.(next)
+    pushSync() // 로그인 상태면 서버에도 올린다. 비로그인이면 아무 일도 안 한다.
     // 저장 성공은 인라인 확인 블록이 대신한다(사라지는 토스트로는 보상이 안 됨). 해제만 토스트.
     setJustSaved(saving)
     if (!saving) setToast('uncollect')
-  }, [apt, collected, onCollectionChange, delta, otherSaved])
+  }, [apt, collected, onCollectionChange, delta, otherSaved, pushSync])
 
   // 다른 단지로 가는 넛지. 전에는 첫 화면(y=819)에 있어, 이 단지 설명(y=886~)을 읽기도 전에
   // 나가는 문을 권했다. "막다른 페이지 탈출구"로 만든 것인데 막다른 곳은 페이지 끝이지 첫 화면이 아니다.
@@ -223,10 +241,19 @@ export default function DetailReport({ apt, onBack, onCollectionChange }) {
           {apt.priceJudgment?.sentence && (
             <p className="verdict-price">{apt.priceJudgment.sentence}</p>
           )}
-          {/* 30일 4명이 쓴 기능이 첫 화면의 유일한 꽉 찬 버튼이었다 — 텍스트 링크로 낮춘다 */}
-          <button type="button" className="verdict-share" onClick={handleShareRich}>
-            친구에게 공유 <span aria-hidden="true">↗</span>
-          </button>
+          {/* 30일 4명이 쓴 기능이 첫 화면의 유일한 꽉 찬 버튼이었다 — 텍스트 링크로 낮춘다.
+              카톡 전용 경로를 더하되 위계는 올리지 않는다. 데스크톱에서 클립보드로 끝나던
+              구간을 메우는 것이 목적이지 공유를 더 밀어붙이는 것이 아니다. */}
+          <div className="verdict-share-row">
+            {kakaoReady && (
+              <button type="button" className="verdict-share" onClick={handleShareKakao}>
+                카카오톡으로 보내기 <span aria-hidden="true">↗</span>
+              </button>
+            )}
+            <button type="button" className="verdict-share" onClick={handleShareRich}>
+              링크 공유 <span aria-hidden="true">↗</span>
+            </button>
+          </div>
         </div>
       )}
 

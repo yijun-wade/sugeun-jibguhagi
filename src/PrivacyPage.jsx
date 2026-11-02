@@ -1,5 +1,11 @@
 import { Helmet } from 'react-helmet-async'
 
+// 카카오 로그인 도입에 따른 개정 조항의 시행일.
+// §9가 "변경 시 시행 7일 전 공지"를 약속하므로, 이 날짜는 로그인 기능 배포일보다
+// 최소 7일 뒤여야 하고, 이 페이지를 먼저 배포해 공지가 떠 있어야 한다.
+// ⚠️ null인 동안에는 개정 예정 안내만 노출된다. 배포 전 반드시 날짜를 넣을 것.
+const KAKAO_CLAUSE_EFFECTIVE = null // 예: '2026년 11월 15일'
+
 const SECTION_STYLE = { marginTop: 24, marginBottom: 12 }
 const H2_STYLE = { fontSize: 17, fontWeight: 800, color: '#111827', marginBottom: 8 }
 const P_STYLE = { fontSize: 14, color: '#374151', lineHeight: 1.75, marginBottom: 8 }
@@ -19,7 +25,12 @@ export default function PrivacyPage() {
         <a href="/" style={{ display: 'inline-block', marginBottom: 24, color: '#2563eb', textDecoration: 'none', fontSize: 14 }}>← 홈으로</a>
 
         <h1 style={{ fontSize: 26, fontWeight: 900, color: '#111827', marginBottom: 6 }}>개인정보 처리방침</h1>
-        <p style={{ fontSize: 13, color: '#5b6472', marginBottom: 24 }}>시행일: 2026년 5월 11일</p>
+        <p style={{ fontSize: 13, color: '#5b6472', marginBottom: 12 }}>시행일: 2026년 5월 11일</p>
+        <p style={{ fontSize: 13, color: '#92400E', background: '#FEF3C7', border: '1px solid #FDE68A', borderRadius: 8, padding: '10px 12px', marginBottom: 24, lineHeight: 1.7 }}>
+          <b>개정 안내</b> · 카카오 소셜 로그인 도입에 따라 수집 항목(제1조), 이용 목적(제2조), 보유 기간(제3조),
+          처리 위탁(제4조), 정보주체의 권리(제5조)가 개정됩니다.
+          {KAKAO_CLAUSE_EFFECTIVE ? ` 개정 조항은 ${KAKAO_CLAUSE_EFFECTIVE}부터 시행됩니다.` : ' 시행일은 추후 본 페이지를 통해 공지합니다.'}
+        </p>
 
         <p style={P_STYLE}>
           준준팩토리(이하 "회사")는 "수군수군 우리집"(suzip.kr, 이하 "서비스")의 이용자 개인정보를 중요하게 생각하며,
@@ -31,10 +42,12 @@ export default function PrivacyPage() {
           <p style={P_STYLE}>회사는 다음의 항목을 수집·처리합니다.</p>
           <ul style={UL_STYLE}>
             <li><b>사주 분석 기능 이용 시</b>: 생년월일, 출생 시간(선택), 성별</li>
+            <li><b>카카오 로그인 이용 시(선택)</b>: 카카오 회원번호(고유 식별자), 닉네임. 카카오(주)로부터 이용자 동의를 거쳐 제공받습니다. 이메일·전화번호·생년월일·프로필 사진은 제공받지 않습니다.</li>
+            <li><b>로그인 이용자의 저장 데이터</b>: 저장한 단지 목록, 단지 조회 이력, 구독한 지역. 기기 간 동기화를 위해 계정에 연결되어 저장됩니다.</li>
             <li><b>서비스 이용 과정에서 자동 수집</b>: 기기 식별자(브라우저 단위 무작위 ID), 접속 IP, 접속 일시, 페이지 이동 경로, 검색어, 광고 식별자</li>
             <li><b>문의 시</b>: 이메일 주소, 문의 내용</li>
           </ul>
-          <p style={P_STYLE}>회사는 회원가입을 요구하지 않으며, 이름·전화번호·주민등록번호 등 직접적 식별정보는 수집하지 않습니다.</p>
+          <p style={P_STYLE}>카카오 로그인은 선택 사항입니다. 로그인하지 않아도 서비스의 모든 조회 기능을 동일하게 이용할 수 있으며, 이 경우 위 계정 정보는 수집되지 않습니다. 회사는 이름·전화번호·주민등록번호 등 직접적 식별정보를 수집하지 않습니다.</p>
         </section>
 
         <section style={SECTION_STYLE}>
@@ -43,6 +56,7 @@ export default function PrivacyPage() {
             <li>사주 기반 동네 추천 결과 산출 및 제공</li>
             <li>서비스 개선을 위한 이용 통계 분석</li>
             <li>맞춤형 광고 노출 (Google AdSense, Meta Pixel)</li>
+            <li>회원 식별, 로그인 유지, 저장 데이터의 기기 간 동기화</li>
             <li>부정 이용 방지 및 보안</li>
             <li>이용자 문의 응대</li>
           </ul>
@@ -53,6 +67,7 @@ export default function PrivacyPage() {
           <ul style={UL_STYLE}>
             <li>사주 입력값(생년월일·시간·성별): 분석 결과 산출 즉시 폐기. 서버에 저장되지 않습니다.</li>
             <li>이용 통계(기기 식별자, 접속 로그): 수집일로부터 최대 24개월 후 자동 삭제</li>
+            <li>카카오 계정 정보 및 로그인 이용자의 저장 데이터: <b>회원 탈퇴(카카오 연결 끊기) 시 지체 없이 파기</b></li>
             <li>문의 이메일: 처리 완료 후 1년간 보관 후 삭제</li>
           </ul>
         </section>
@@ -65,6 +80,7 @@ export default function PrivacyPage() {
             <li><b>Google LLC</b> (미국): Google Analytics(이용 통계), Google AdSense(맞춤 광고), Search Console(검색 최적화)</li>
             <li><b>Meta Platforms, Inc.</b> (미국): Meta Pixel을 통한 광고 효과 측정</li>
             <li><b>Anthropic, PBC</b> (미국): 사주·콘텐츠 분석을 위한 AI 처리. 입력값은 분석 후 즉시 폐기</li>
+            <li><b>Supabase, Inc.</b> (미국): 회원 인증 및 로그인 이용자 데이터 저장. 데이터는 서울(ap-northeast-2) 리전에 보관됩니다</li>
             <li><b>Vercel Inc.</b> (미국): 서비스 호스팅 및 서버 운영</li>
           </ul>
           <p style={P_STYLE}>해외 위탁에 따른 개인정보의 국외 이전이 발생하며, 이는 「개인정보 보호법」 제28조의8에 따른 동의·계약 등 법적 근거에 의해 이루어집니다.</p>
@@ -77,6 +93,7 @@ export default function PrivacyPage() {
             <li>개인정보 열람·정정·삭제·처리정지 요구</li>
             <li>광고 추적 거부: 브라우저의 광고 추적 차단 기능, 또는 Google·Meta 광고 설정 페이지에서 거부 가능</li>
             <li>쿠키 거부: 브라우저 설정에서 쿠키 차단 가능 (단 일부 기능 제한 가능)</li>
+            <li><b>회원 탈퇴</b>: 서비스 내 로그아웃 후 아래 문의처로 탈퇴를 요청하시면 계정 정보와 저장 데이터를 지체 없이 파기합니다. 카카오 계정 설정의 <b>연결된 서비스 관리</b>에서 직접 연결을 끊으실 수도 있습니다.</li>
           </ul>
           <p style={P_STYLE}>권리 행사는 아래 문의처로 연락 주시면 지체 없이 처리합니다.</p>
         </section>

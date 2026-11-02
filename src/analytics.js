@@ -55,6 +55,14 @@ const META_STANDARD_EVENTS = {
   search: 'Search',
 }
 
+// 로그인·로그아웃 시 Amplitude의 user_id를 붙이고 뗀다.
+// 이게 있어야 "로그인 사용자 vs 비로그인 사용자"의 재방문율을 갈라 볼 수 있다.
+// 판정 기준(4주 후 W1 3배)을 측정하려면 필수다.
+export function setUserId(userId) {
+  if (!AMP_KEY) return
+  try { amplitude.setUserId(userId || undefined) } catch { /* noop */ }
+}
+
 export function track(eventName, params = {}) {
   // GA4
   if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
