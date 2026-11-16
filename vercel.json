@@ -46,7 +46,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": "(?i).*(facebookexternalhit|meta-externalagent|kakaotalk|kakaotalk-scrap|twitterbot|telegrambot|whatsapp|slackbot|discordbot|skypeuripreview|linkedinbot|bingbot|googlebot|naverbot|yeti|duckduckbot|applebot|msnbot|baiduspider|yandexbot).*"
+          "value": "(?i).*(facebookexternalhit|meta-externalagent|meta-externalfetcher|kakaotalk|kakaotalk-scrap|twitterbot|telegrambot|whatsapp|slackbot|discordbot|skypeuripreview|linkedinbot|bingbot|googlebot|naverbot|yeti|duckduckbot|applebot|msnbot|baiduspider|yandexbot|gptbot|oai-searchbot|chatgpt-user|claudebot|claude-user|claude-searchbot|anthropic-ai|perplexitybot|perplexity-user|bytespider|ccbot|amazonbot|cohere-ai|duckassistbot|youbot|diffbot|petalbot|imagesiftbot|timpibot|semrushbot|ahrefsbot|mj12bot|dotbot).*"
         }
       ],
       "destination": "/api/apt?kaptCode=:kaptCode&prerender=1"
