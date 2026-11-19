@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Wed, 18 Nov 2026 03:34:55 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 19 Nov 2026 03:08:16 GMT</lastBuildDate>
+    <item>
+      <title>신도시 10년 121% 오름, 지방도 전세 급등</title>
+      <link>https://www.suzip.kr/briefing/2026-11-19</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-11-19</guid>
+      <pubDate>Wed, 18 Nov 2026 22:00:00 GMT</pubDate>
+      <description>• 1기 신도시 아파트값이 10년 사이 121% 올랐고, 분당은 무려 210% 상승했다.
+• 지방 아파트 전셋값도 5천만원씩 뛰면서 전세 물건이 귀해지고 있다.
+• 서울은 외곽·소형이 오르고 강남권·중대형은 내리는 쏠림 현상이 심해졌다.
+
+정부 의도: 정부는 전세대출이 집값을 부추겼다고 보고 이를 조정하려고 한다. 동시에 대출 규제를 일부 완화해서 시장에 숨통을 틔워주되, 지방 활성화와 무분별한 가격 상승을 막으려는 중이다.
+
+시장 변화: 신도시와 외곽 지역의 가격 상승이 계속되는 반면 강남 같은 프리미엄 지역은 주춤하는 양극화가 심화될 것 같다. 전세 물건이 계속 줄면서 전세 구하기는 더 어려워지고 월세로 밀려날 가능성이 높다.</description>
+    </item>
     <item>
       <title>전세값 치솟고 매매거래 급감, 주택시장 경색</title>
       <link>https://www.suzip.kr/briefing/2026-11-18</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 공급 부족으로 오르는 집값을 잡기 위해 수도권에 신규 주택을 대량 공급하고 재개발을 빨리 진행하려고 한다. 동시에 대출 규제로 투기수요를 억제해 실제 집 필요한 사람들이 살 수 있는 시장을 만들려는 것이다.
 
 시장 변화: 앞으로 2~3년간 수도권 곳곳에서 새 아파트들이 많이 나올 것이라 공급은 늘어날 전망이다. 다만 지금까지의 패턴으로 보면 공급이 바로 가격 인하로 이어지지는 않을 수 있으므로 조금 더 기다려야 할 것 같다.</description>
-    </item>
-    <item>
-      <title>부동산 정책 불만 19%, 공급 확대도 당장 도움 안 돼</title>
-      <link>https://www.suzip.kr/briefing/2026-10-30</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-10-30</guid>
-      <pubDate>Thu, 29 Oct 2026 22:00:00 GMT</pubDate>
-      <description>• 정부 지지율 하락의 주요 원인으로 부동산 정책(19%)이 경제 문제(17%)보다 더 많이 지목됐다.
-• 서울 강남·강북 가격이 엇갈리며 오르는 가운데 무주택자들은 당장 매물을 찾지 못하고 있다.
-• 구리·하남 등 신규공급 지역도 매물이 나오자마자 대기가 11번까지 밀릴 정도로 수요 쏠림이 심하다.
-
-정부 의도: 정부는 2030년까지 대규모 주택을 공급해서 집값을 잡으려고 한다. 하지만 서울 접근성이 좋은 곳 중심으로 물량을 풀면서 즉각적인 수급 불균형을 해결하려는 의도도 담겨 있다.
-
-시장 변화: 신규공급 지역에 수요가 몰리면서 그곳 전세·월세 가격은 오르는 추세다. 다만 중장기 공급 계획만으로는 당장의 주택 부족 문제를 풀기 어려워 시장 심리가 쉽게 개선되지 않을 것 같다.</description>
     </item>
   </channel>
 </rss>
