@@ -6,7 +6,20 @@
     <description>퇴근 후 이불 속에서 하는 임장. 부동산 뉴스를 실수요자 관점으로 풀어드려요.</description>
     <language>ko</language>
     <atom:link href="https://www.suzip.kr/rss.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Fri, 27 Nov 2026 04:03:08 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 28 Nov 2026 03:49:42 GMT</lastBuildDate>
+    <item>
+      <title>금리 올라, 서울 전세난 심해지고 경기도 매매수요 늘어난다</title>
+      <link>https://www.suzip.kr/briefing/2026-11-28</link>
+      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-11-28</guid>
+      <pubDate>Fri, 27 Nov 2026 22:00:00 GMT</pubDate>
+      <description>• 기준금리가 3.25%로 올라가면서 서울 전세보증금이 계속 올라 내년 전세 계약 갱신이 어려워질 전망이다.
+• 서울 전세 비용이 올라가면서 경기도 중저가 아파트로 눈을 돌리는 수요자들이 늘고 있다.
+• 대출 규제로 자기자금 부담이 커지자 소형 아파트가 가격은 싸지만 거래와 청약 신청이 몰리는 추세다.
+
+정부 의도: 정부는 금리 인상과 종부세 강화로 다주택자와 투기수요를 억누르려고 한다. 대신 서민들이 작은 집이라도 자가를 가질 수 있도록 유도하는 한편, 2030년까지 49만 7천 가구를 공급해 주택 부족을 해결하려는 전략이다.
+
+시장 변화: 서울 전세 시장이 갈수록 비싸져서 전세를 포기하고 경기도 아파트를 사려는 사람들이 옮겨다니고 있다. 한편 금리와 대출 규제로 자금이 부족해진 사람들은 작은 아파트 쪽으로 눈을 돌리는 중이다.</description>
+    </item>
     <item>
       <title>서울 집값 보합, 전세 부족으로 매매시장 불안</title>
       <link>https://www.suzip.kr/briefing/2026-11-27</link>
@@ -253,19 +266,6 @@
 정부 의도: 정부는 고가 주택 대출을 제한해 부자의 투기를 막으려 했다. 하지만 이 정책이 일반인의 자금 조달까지 어렵게 만들었고, 결과적으로 사람들이 비싼 집 대신 싼 집으로 몰리게 됐다.
 
 시장 변화: 대출 규제로 15억 원대 고가 아파트 수요가 떨어지면서 소형 아파트로의 쏠림이 심해졌다. 강남 대신 강북 지역으로 청년 매수층이 이동하고 있으며, 전세값이 매매가를 따라가지 못해 전세 매물이 줄어들고 있다.</description>
-    </item>
-    <item>
-      <title>서울 약세, 경기 강세…규제 강화로 시장 양극화 심화</title>
-      <link>https://www.suzip.kr/briefing/2026-11-08</link>
-      <guid isPermaLink="true">https://www.suzip.kr/briefing/2026-11-08</guid>
-      <pubDate>Sat, 07 Nov 2026 22:00:00 GMT</pubDate>
-      <description>• 서울 아파트 매매가 3주 연속 상승률이 떨어지는 반면, 경기는 0.20% 올라 주도권이 이동 중
-• 강남권은 하락세인데 강북권은 강세를 보이며 서울 내에서도 지역별 격차 확대
-• 정부가 토허제 확대와 대출 규제 강화 카드를 검토하면서 시장 억제 기조 지속
-
-정부 의도: 부동산 가격 상승을 억제하려고 규제를 강화하고 있습니다. 하지만 실제로는 서울 외곽과 경기 지역으로 수요가 흘러가는 현상을 막지 못하고 있고, 정책 불확실성만 커지는 상황입니다.
-
-시장 변화: 규제가 강한 서울에서는 매물이 쌓이고 가격 상승이 둔화되는 반면, 규제가 약한 경기 지역으로 수요가 몰리면서 양극화가 심해질 것 같습니다. 결국 집을 사려는 사람들은 선택지가 줄어들고 금융 접근성도 더 어려워질 가능성이 높습니다.</description>
     </item>
   </channel>
 </rss>
